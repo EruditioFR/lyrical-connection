@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Hero from '@/components/home/Hero';
 import FeaturedArtists from '@/components/home/FeaturedArtists';
 import UpcomingEvents from '@/components/home/UpcomingEvents';
