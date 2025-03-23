@@ -1,5 +1,9 @@
-import { useLocation } from "react-router-dom";
+
+import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import Layout from '@/components/layout/Layout';
+import { Button } from "@/components/ui/button";
+import { Home } from 'lucide-react';
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,15 +16,23 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <Layout>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <h1 className="text-9xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-lyrical-700 to-gold-500">404</h1>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold mt-4 mb-6">Page non trouvée</h2>
+          <p className="text-muted-foreground mb-8">
+            La page que vous recherchez n'existe pas ou a été déplacée.
+          </p>
+          <Button size="lg" className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
+            <Link to="/" className="flex items-center gap-2">
+              <Home className="h-5 w-5" />
+              Retour à l'accueil
+            </Link>
+          </Button>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
