@@ -54,7 +54,7 @@ const Hero = () => {
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Music className="h-6 w-6" />
             </div>
-            <h3 className="text-xl font-serif font-semibold mb-2">Artistes Talentueux</h3>
+            <h3 className="text-xl font-serif font-semibold mb-2">Des Artistes Talentueux</h3>
             <p className="text-muted-foreground">Découvrez des chanteurs lyriques exceptionnels et suivez leur parcours artistique.</p>
           </div>
           
@@ -64,7 +64,7 @@ const Hero = () => {
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Calendar className="h-6 w-6" />
             </div>
-            <h3 className="text-xl font-serif font-semibold mb-2">Événements Exclusifs</h3>
+            <h3 className="text-xl font-serif font-semibold mb-2">Des Événements Exclusifs</h3>
             <p className="text-muted-foreground">Participez à des concerts, auditions et rencontres professionnelles de qualité.</p>
           </div>
           
@@ -74,7 +74,7 @@ const Hero = () => {
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Users className="h-6 w-6" />
             </div>
-            <h3 className="text-xl font-serif font-semibold mb-2">Communauté Passionnée</h3>
+            <h3 className="text-xl font-serif font-semibold mb-2">Une Communauté Passionnée</h3>
             <p className="text-muted-foreground">Rejoignez une communauté d'artistes et de professionnels partageant la même passion.</p>
           </div>
         </div>
