@@ -66,7 +66,7 @@ const FeaturedArtists = () => {
               className={`group rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border text-appear`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="relative aspect-[3/4] overflow-hidden">
+              <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
                 <img 
                   src={artist.image} 
                   alt={artist.name} 
@@ -86,7 +86,7 @@ const FeaturedArtists = () => {
                     En vedette
                   </div>
                 )}
-              </div>
+              </Link>
               <div className="p-4">
                 <h3 className="font-serif font-semibold text-lg hover:text-lyrical-700 transition-colors">
                   <Link to={`/artistes/${artist.id}`}>{artist.name}</Link>
