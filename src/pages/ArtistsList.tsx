@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -11,7 +10,7 @@ const artistsData = [
     id: '1',
     name: 'Sophia Laurent',
     voiceType: 'Soprano',
-    image: 'https://images.unsplash.com/photo-1516307343428-2c5675a99540?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     specialty: 'Opéra classique',
     location: 'Paris, France',
     featured: true
@@ -38,7 +37,7 @@ const artistsData = [
     id: '4',
     name: 'Jean-Michel Bernard',
     voiceType: 'Baryton',
-    image: 'https://images.unsplash.com/photo-1591803272481-8ad15505830e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
     specialty: 'Opéra contemporain',
     location: 'Marseille, France',
     featured: false
