@@ -301,9 +301,7 @@ const ArtistsList = () => {
                       alt={artist.name} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div 
-                      className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1649972904349-6e44c42644a7')] bg-cover bg-center bg-blend-overlay bg-gradient-to-t from-black/80 to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4"
-                    >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
                       <Button 
                         size="sm" 
                         className="mb-4 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white gap-2"
