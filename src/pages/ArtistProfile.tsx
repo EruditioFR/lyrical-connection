@@ -65,7 +65,7 @@ const artistsData = {
     education: 'École Normale de Musique de Paris',
     location: 'Lyon, France',
     repertoire: ['La Bohème', 'Roméo et Juliette', 'Werther', 'Faust'],
-    awards: ['Grand Prix de l'Opéra de Monte-Carlo (2018)', 'Prix d'Excellence au Concours International de Chant de Verviers (2016)'],
+    awards: ['Grand Prix de l\'Opéra de Monte-Carlo (2018)', 'Prix d\'Excellence au Concours International de Chant de Verviers (2016)'],
     socialMedia: {
       facebook: 'https://facebook.com',
       instagram: 'https://instagram.com',
@@ -110,8 +110,8 @@ const artistsData = {
     experience: '15 ans',
     education: 'Conservatoire de Musique de Genève',
     location: 'Toulouse, France',
-    repertoire: ['Giulio Cesare', 'L'Orfeo', 'Alcina', 'Dido and Aeneas'],
-    awards: ['Prix d'Interprétation au Festival de Musique Ancienne d'Utrecht (2017)', 'Diapason d'Or de l'Année pour son album "Cantates Italiennes" (2019)'],
+    repertoire: ['Giulio Cesare', 'L\'Orfeo', 'Alcina', 'Dido and Aeneas'],
+    awards: ['Prix d\'Interprétation au Festival de Musique Ancienne d\'Utrecht (2017)', 'Diapason d\'Or de l\'Année pour son album "Cantates Italiennes" (2019)'],
     socialMedia: {
       facebook: 'https://facebook.com',
       instagram: 'https://instagram.com',
@@ -120,7 +120,7 @@ const artistsData = {
     },
     videos: [
       {
-        title: 'Handel: Lascia ch'io pianga',
+        title: 'Handel: Lascia ch\'io pianga',
         thumbnail: 'https://img.youtube.com/vi/WuSiuMuBLhM/maxresdefault.jpg',
         url: 'https://www.youtube.com/watch?v=WuSiuMuBLhM'
       },
@@ -139,7 +139,7 @@ const artistsData = {
       },
       {
         id: '106',
-        title: 'L'Orfeo de Monteverdi',
+        title: 'L\'Orfeo de Monteverdi',
         date: '2024-01-20',
         location: 'Théâtre du Capitole, Toulouse'
       }
@@ -156,8 +156,8 @@ const artistsData = {
     experience: '10 ans',
     education: 'Conservatoire National Supérieur de Musique et de Danse de Paris',
     location: 'Bordeaux, France',
-    repertoire: ['Pelléas et Mélisande', 'Wozzeck', 'L'Amour de loin', 'Written on Skin'],
-    awards: ['Prix de la Création au Festival d'Art Lyrique d'Aix-en-Provence (2020)', 'Victoire de la Musique Classique - Artiste Lyrique de l'Année (2021)'],
+    repertoire: ['Pelléas et Mélisande', 'Wozzeck', 'L\'Amour de loin', 'Written on Skin'],
+    awards: ['Prix de la Création au Festival d\'Art Lyrique d\'Aix-en-Provence (2020)', 'Victoire de la Musique Classique - Artiste Lyrique de l\'Année (2021)'],
     socialMedia: {
       facebook: 'https://facebook.com',
       instagram: 'https://instagram.com',
@@ -171,7 +171,7 @@ const artistsData = {
         url: 'https://www.youtube.com/watch?v=LL6ubXDs3lU'
       },
       {
-        title: 'Saariaho: L'Amour de loin',
+        title: 'Saariaho: L\'Amour de loin',
         thumbnail: 'https://img.youtube.com/vi/yY33mhVcY7c/maxresdefault.jpg',
         url: 'https://www.youtube.com/watch?v=yY33mhVcY7c'
       }
