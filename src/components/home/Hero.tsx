@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Search, Music, Calendar, Users } from 'lucide-react';
-
 const Hero = () => {
-  return (
-    <section className="relative bg-gradient-to-b from-background to-muted overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-15"></div>
+  return <section className="relative bg-gradient-to-b from-background to-muted overflow-hidden">
+      <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-20 bg-slate-600"></div>
       
       <div className="container mx-auto px-4 md:px-6 py-24 md:py-32 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in">
@@ -20,19 +17,12 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-            <Button 
-              className="w-full sm:w-auto px-8 py-6 text-lg bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white"
-              asChild
-            >
+            <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
               <Link to="/artistes">
                 Découvrir les artistes
               </Link>
             </Button>
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto px-8 py-6 text-lg"
-              asChild
-            >
+            <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg" asChild>
               <Link to="/evenements">
                 Explorer les événements
               </Link>
@@ -45,11 +35,7 @@ const Hero = () => {
               <div className="flex items-center">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher un artiste, un événement..."
-                    className="w-full pl-10 pr-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0"
-                  />
+                  <input type="text" placeholder="Rechercher un artiste, un événement..." className="w-full pl-10 pr-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0" />
                 </div>
                 <Button className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white">
                   Rechercher
@@ -62,7 +48,9 @@ const Hero = () => {
       
       <div className="container mx-auto px-4 md:px-6 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{ animationDelay: '100ms' }}>
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{
+          animationDelay: '100ms'
+        }}>
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Music className="h-6 w-6" />
             </div>
@@ -70,7 +58,9 @@ const Hero = () => {
             <p className="text-muted-foreground">Découvrez des chanteurs lyriques exceptionnels et suivez leur parcours artistique.</p>
           </div>
           
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{
+          animationDelay: '200ms'
+        }}>
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Calendar className="h-6 w-6" />
             </div>
@@ -78,7 +68,9 @@ const Hero = () => {
             <p className="text-muted-foreground">Participez à des concerts, auditions et rencontres professionnelles de qualité.</p>
           </div>
           
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{
+          animationDelay: '300ms'
+        }}>
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Users className="h-6 w-6" />
             </div>
@@ -87,8 +79,6 @@ const Hero = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
