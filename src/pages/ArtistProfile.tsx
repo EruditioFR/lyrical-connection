@@ -52,6 +52,144 @@ const artistsData = {
         location: 'Opéra Bastille, Paris'
       }
     ]
+  },
+  '2': {
+    id: '2',
+    name: 'Alexandre Dupont',
+    voiceType: 'Ténor',
+    image: 'https://images.unsplash.com/photo-1552642986-ccb41e7059e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    bio: "Alexandre Dupont est un ténor français reconnu pour sa voix claire et puissante. Diplômé de l'École Normale de Musique de Paris, il s'est rapidement imposé sur la scène internationale avec ses interprétations du répertoire romantique.",
+    specialty: 'Opéra romantique',
+    experience: '12 ans',
+    education: 'École Normale de Musique de Paris',
+    location: 'Lyon, France',
+    repertoire: ['La Bohème', 'Roméo et Juliette', 'Werther', 'Faust'],
+    awards: ['Grand Prix de l'Opéra de Monte-Carlo (2018)', 'Prix d'Excellence au Concours International de Chant de Verviers (2016)'],
+    socialMedia: {
+      facebook: 'https://facebook.com',
+      instagram: 'https://instagram.com',
+      youtube: 'https://youtube.com',
+      linkedin: 'https://linkedin.com'
+    },
+    videos: [
+      {
+        title: 'Puccini: E lucevan le stelle',
+        thumbnail: 'https://img.youtube.com/vi/hxdiJ74AL5Y/maxresdefault.jpg',
+        url: 'https://www.youtube.com/watch?v=hxdiJ74AL5Y'
+      },
+      {
+        title: 'Verdi: La donna è mobile',
+        thumbnail: 'https://img.youtube.com/vi/xCFEk6Y8TmM/maxresdefault.jpg',
+        url: 'https://www.youtube.com/watch?v=xCFEk6Y8TmM'
+      }
+    ],
+    upcomingEvents: [
+      {
+        id: '103',
+        title: 'Recital au Théâtre des Champs-Élysées',
+        date: '2023-11-25',
+        location: 'Théâtre des Champs-Élysées, Paris'
+      },
+      {
+        id: '104',
+        title: 'La Bohème',
+        date: '2023-12-20',
+        location: 'Opéra de Lyon, Lyon'
+      }
+    ]
+  },
+  '3': {
+    id: '3',
+    name: 'Isabelle Moreau',
+    voiceType: 'Mezzo-soprano',
+    image: 'https://images.unsplash.com/photo-1553267751-1c148a7280a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1503149779833-1de50ebe5f8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    bio: "Isabelle Moreau est une mezzo-soprano reconnue pour sa voix riche et expressive. Spécialiste du répertoire baroque, elle s'est produite dans les plus grands festivals de musique ancienne en Europe.",
+    specialty: 'Opéra baroque',
+    experience: '15 ans',
+    education: 'Conservatoire de Musique de Genève',
+    location: 'Toulouse, France',
+    repertoire: ['Giulio Cesare', 'L'Orfeo', 'Alcina', 'Dido and Aeneas'],
+    awards: ['Prix d'Interprétation au Festival de Musique Ancienne d'Utrecht (2017)', 'Diapason d'Or de l'Année pour son album "Cantates Italiennes" (2019)'],
+    socialMedia: {
+      facebook: 'https://facebook.com',
+      instagram: 'https://instagram.com',
+      youtube: 'https://youtube.com',
+      linkedin: 'https://linkedin.com'
+    },
+    videos: [
+      {
+        title: 'Handel: Lascia ch'io pianga',
+        thumbnail: 'https://img.youtube.com/vi/WuSiuMuBLhM/maxresdefault.jpg',
+        url: 'https://www.youtube.com/watch?v=WuSiuMuBLhM'
+      },
+      {
+        title: 'Vivaldi: Stabat Mater',
+        thumbnail: 'https://img.youtube.com/vi/4KpbZISqWKI/maxresdefault.jpg',
+        url: 'https://www.youtube.com/watch?v=4KpbZISqWKI'
+      }
+    ],
+    upcomingEvents: [
+      {
+        id: '105',
+        title: 'Festival de Musique Baroque de Toulouse',
+        date: '2023-10-15',
+        location: 'Chapelle des Carmélites, Toulouse'
+      },
+      {
+        id: '106',
+        title: 'L'Orfeo de Monteverdi',
+        date: '2024-01-20',
+        location: 'Théâtre du Capitole, Toulouse'
+      }
+    ]
+  },
+  '4': {
+    id: '4',
+    name: 'Jean-Michel Bernard',
+    voiceType: 'Baryton',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+    coverImage: 'https://images.unsplash.com/photo-1513883049090-d0b7439799bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    bio: "Jean-Michel Bernard est un baryton français reconnu pour son engagement dans la création contemporaine. Après une formation au CNSMD de Paris, il s'est spécialisé dans l'interprétation d'œuvres du XXe et XXIe siècle.",
+    specialty: 'Opéra contemporain',
+    experience: '10 ans',
+    education: 'Conservatoire National Supérieur de Musique et de Danse de Paris',
+    location: 'Bordeaux, France',
+    repertoire: ['Pelléas et Mélisande', 'Wozzeck', 'L'Amour de loin', 'Written on Skin'],
+    awards: ['Prix de la Création au Festival d'Art Lyrique d'Aix-en-Provence (2020)', 'Victoire de la Musique Classique - Artiste Lyrique de l'Année (2021)'],
+    socialMedia: {
+      facebook: 'https://facebook.com',
+      instagram: 'https://instagram.com',
+      youtube: 'https://youtube.com',
+      linkedin: 'https://linkedin.com'
+    },
+    videos: [
+      {
+        title: 'Debussy: Pelléas et Mélisande',
+        thumbnail: 'https://img.youtube.com/vi/LL6ubXDs3lU/maxresdefault.jpg',
+        url: 'https://www.youtube.com/watch?v=LL6ubXDs3lU'
+      },
+      {
+        title: 'Saariaho: L'Amour de loin',
+        thumbnail: 'https://img.youtube.com/vi/yY33mhVcY7c/maxresdefault.jpg',
+        url: 'https://www.youtube.com/watch?v=yY33mhVcY7c'
+      }
+    ],
+    upcomingEvents: [
+      {
+        id: '107',
+        title: 'Festival Présences - Radio France',
+        date: '2023-12-05',
+        location: 'Maison de la Radio, Paris'
+      },
+      {
+        id: '108',
+        title: 'Written on Skin',
+        date: '2024-02-10',
+        location: 'Grand Théâtre de Bordeaux, Bordeaux'
+      }
+    ]
   }
 };
 
