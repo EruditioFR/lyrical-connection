@@ -7,7 +7,7 @@ import { Search, Music, Calendar, Users } from 'lucide-react';
 const Hero = () => {
   return (
     <section className="relative bg-gradient-to-b from-background to-muted overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-10"></div>
+      <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-15"></div>
       
       <div className="container mx-auto px-4 md:px-6 py-24 md:py-32 relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in">
