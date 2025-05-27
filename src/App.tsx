@@ -11,6 +11,7 @@ import ArtistProfile from "./pages/ArtistProfile";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/evenements" element={<Events />} />
             <Route path="/evenements/:id" element={<EventDetail />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/profil" element={<Profile />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

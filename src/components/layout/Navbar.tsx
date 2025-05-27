@@ -74,9 +74,11 @@ const Navbar = () => {
             
             {user ? (
               <div className="flex items-center space-x-2">
-                <Button variant="ghost" className="flex items-center space-x-2">
-                  <User className="h-5 w-5" />
-                  <span>Mon profil</span>
+                <Button variant="ghost" className="flex items-center space-x-2" asChild>
+                  <Link to="/profil">
+                    <User className="h-5 w-5" />
+                    <span>Mon profil</span>
+                  </Link>
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -152,9 +154,11 @@ const Navbar = () => {
               
               {user ? (
                 <div className="pt-2 space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
-                    <User className="h-4 w-4 mr-2" />
-                    Mon profil
+                  <Button variant="outline" className="w-full justify-start" asChild>
+                    <Link to="/profil" onClick={() => setIsMobileMenuOpen(false)}>
+                      <User className="h-4 w-4 mr-2" />
+                      Mon profil
+                    </Link>
                   </Button>
                   <Button 
                     variant="outline" 
