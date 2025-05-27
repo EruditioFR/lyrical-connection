@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Search, Menu, X, User, LogIn } from 'lucide-react';
+import { Search, Menu, X, User, LogIn, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   // Effet pour détecter le défilement
   useEffect(() => {
@@ -27,6 +29,11 @@ const Navbar = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <header
@@ -64,15 +71,35 @@ const Navbar = () => {
             <Button variant="ghost" size="icon" aria-label="Rechercher">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" className="flex items-center space-x-2" asChild>
-              <Link to="/connexion">
-                <LogIn className="h-5 w-5 mr-1" />
-                <span>Connexion</span>
-              </Link>
-            </Button>
-            <Button className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
-              <Link to="/inscription">Inscription</Link>
-            </Button>
+            
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>Mon profil</span>
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span>Déconnexion</span>
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button variant="ghost" className="flex items-center space-x-2" asChild>
+                  <Link to="/auth">
+                    <LogIn className="h-5 w-5 mr-1" />
+                    <span>Connexion</span>
+                  </Link>
+                </Button>
+                <Button className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
+                  <Link to="/auth">Inscription</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Bouton menu mobile */}
@@ -122,18 +149,36 @@ const Navbar = () => {
               >
                 Contact
               </Link>
-              <div className="pt-2 flex space-x-4">
-                <Button variant="outline" className="flex-1" asChild>
-                  <Link to="/connexion" onClick={() => setIsMobileMenuOpen(false)}>
-                    Connexion
-                  </Link>
-                </Button>
-                <Button className="flex-1 bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
-                  <Link to="/inscription" onClick={() => setIsMobileMenuOpen(false)}>
-                    Inscription
-                  </Link>
-                </Button>
-              </div>
+              
+              {user ? (
+                <div className="pt-2 space-y-2">
+                  <Button variant="outline" className="w-full justify-start">
+                    <User className="h-4 w-4 mr-2" />
+                    Mon profil
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start" 
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Déconnexion
+                  </Button>
+                </div>
+              ) : (
+                <div className="pt-2 flex space-x-4">
+                  <Button variant="outline" className="flex-1" asChild>
+                    <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                      Connexion
+                    </Link>
+                  </Button>
+                  <Button className="flex-1 bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
+                    <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)}>
+                      Inscription
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </nav>
           </div>
         </div>

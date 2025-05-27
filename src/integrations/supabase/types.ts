@@ -9,7 +9,66 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      artist_profiles: {
+        Row: {
+          bio: string | null
+          contact_email: string | null
+          cover_image_url: string | null
+          created_at: string
+          experience_years: number | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          phone: string | null
+          profile_image_url: string | null
+          repertoire: string[] | null
+          social_links: Json | null
+          stage_name: string
+          updated_at: string
+          user_id: string
+          voice_type: string | null
+          website: string | null
+        }
+        Insert: {
+          bio?: string | null
+          contact_email?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          experience_years?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          repertoire?: string[] | null
+          social_links?: Json | null
+          stage_name: string
+          updated_at?: string
+          user_id: string
+          voice_type?: string | null
+          website?: string | null
+        }
+        Update: {
+          bio?: string | null
+          contact_email?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          experience_years?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          phone?: string | null
+          profile_image_url?: string | null
+          repertoire?: string[] | null
+          social_links?: Json | null
+          stage_name?: string
+          updated_at?: string
+          user_id?: string
+          voice_type?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
