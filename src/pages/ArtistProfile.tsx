@@ -8,6 +8,13 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 
+interface SocialLinks {
+  facebook?: string;
+  instagram?: string;
+  youtube?: string;
+  linkedin?: string;
+}
+
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
   
@@ -66,6 +73,9 @@ const ArtistProfile = () => {
       </Layout>
     );
   }
+
+  // Safely cast social_links to our interface
+  const socialLinks = (artist.social_links as SocialLinks) || {};
 
   // Trouver les images
   const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
@@ -215,13 +225,13 @@ const ArtistProfile = () => {
               </div>
 
               {/* Réseaux sociaux si disponibles */}
-              {artist.social_links && Object.keys(artist.social_links).length > 0 && (
+              {socialLinks && Object.keys(socialLinks).length > 0 && (
                 <div className="mt-6">
                   <h3 className="text-sm font-medium text-muted-foreground mb-3">Réseaux sociaux</h3>
                   <div className="flex space-x-3">
-                    {artist.social_links.facebook && (
+                    {socialLinks.facebook && (
                       <a
-                        href={artist.social_links.facebook}
+                        href={socialLinks.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
@@ -230,9 +240,9 @@ const ArtistProfile = () => {
                         <Facebook className="h-5 w-5" />
                       </a>
                     )}
-                    {artist.social_links.instagram && (
+                    {socialLinks.instagram && (
                       <a
-                        href={artist.social_links.instagram}
+                        href={socialLinks.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
@@ -241,9 +251,9 @@ const ArtistProfile = () => {
                         <Instagram className="h-5 w-5" />
                       </a>
                     )}
-                    {artist.social_links.youtube && (
+                    {socialLinks.youtube && (
                       <a
-                        href={artist.social_links.youtube}
+                        href={socialLinks.youtube}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
@@ -252,9 +262,9 @@ const ArtistProfile = () => {
                         <Youtube className="h-5 w-5" />
                       </a>
                     )}
-                    {artist.social_links.linkedin && (
+                    {socialLinks.linkedin && (
                       <a
-                        href={artist.social_links.linkedin}
+                        href={socialLinks.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
