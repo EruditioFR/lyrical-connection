@@ -3,204 +3,36 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from "@/components/ui/button";
-import { PlayCircle, Music, Calendar, MapPin, Share2, Star, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react';
-
-// Données exemples d'artistes (dans un projet réel, ces données viendraient d'une API ou d'une base de données)
-const artistsData = {
-  '1': {
-    id: '1',
-    name: 'Sophia Laurent',
-    voiceType: 'Soprano',
-    image: 'https://images.unsplash.com/photo-1516307343428-2c5675a99540?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    bio: "Sophia Laurent est une soprano française reconnue pour sa voix puissante et expressive. Formée au Conservatoire National Supérieur de Musique de Paris, elle a remporté plusieurs concours internationaux et se produit régulièrement sur les plus grandes scènes d'Europe.",
-    specialty: 'Opéra classique',
-    experience: '8 ans',
-    education: 'Conservatoire National Supérieur de Musique de Paris',
-    location: 'Paris, France',
-    repertoire: ['La Traviata', 'La Bohème', 'Carmen', 'Les Noces de Figaro'],
-    awards: ['Premier Prix du Concours International de Chant de Toulouse (2019)', 'Révélation Artiste Lyrique aux Victoires de la Musique Classique (2020)'],
-    socialMedia: {
-      facebook: 'https://facebook.com',
-      instagram: 'https://instagram.com',
-      youtube: 'https://youtube.com',
-      linkedin: 'https://linkedin.com'
-    },
-    videos: [
-      {
-        title: 'Mozart: Queen of the Night Aria',
-        thumbnail: 'https://img.youtube.com/vi/YuBeBjqKSGQ/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=YuBeBjqKSGQ'
-      },
-      {
-        title: 'Puccini: O Mio Babbino Caro',
-        thumbnail: 'https://img.youtube.com/vi/RxZSP1Dc78Q/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=RxZSP1Dc78Q'
-      }
-    ],
-    upcomingEvents: [
-      {
-        id: '101',
-        title: 'Récital à l\'Opéra Garnier',
-        date: '2023-11-20',
-        location: 'Opéra Garnier, Paris'
-      },
-      {
-        id: '102',
-        title: 'La Traviata',
-        date: '2023-12-15',
-        location: 'Opéra Bastille, Paris'
-      }
-    ]
-  },
-  '2': {
-    id: '2',
-    name: 'Alexandre Dupont',
-    voiceType: 'Ténor',
-    image: 'https://images.unsplash.com/photo-1552642986-ccb41e7059e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    bio: "Alexandre Dupont est un ténor français reconnu pour sa voix claire et puissante. Diplômé de l'École Normale de Musique de Paris, il s'est rapidement imposé sur la scène internationale avec ses interprétations du répertoire romantique.",
-    specialty: 'Opéra romantique',
-    experience: '12 ans',
-    education: 'École Normale de Musique de Paris',
-    location: 'Lyon, France',
-    repertoire: ['La Bohème', 'Roméo et Juliette', 'Werther', 'Faust'],
-    awards: ['Grand Prix de l\'Opéra de Monte-Carlo (2018)', 'Prix d\'Excellence au Concours International de Chant de Verviers (2016)'],
-    socialMedia: {
-      facebook: 'https://facebook.com',
-      instagram: 'https://instagram.com',
-      youtube: 'https://youtube.com',
-      linkedin: 'https://linkedin.com'
-    },
-    videos: [
-      {
-        title: 'Puccini: E lucevan le stelle',
-        thumbnail: 'https://img.youtube.com/vi/hxdiJ74AL5Y/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=hxdiJ74AL5Y'
-      },
-      {
-        title: 'Verdi: La donna è mobile',
-        thumbnail: 'https://img.youtube.com/vi/xCFEk6Y8TmM/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=xCFEk6Y8TmM'
-      }
-    ],
-    upcomingEvents: [
-      {
-        id: '103',
-        title: 'Recital au Théâtre des Champs-Élysées',
-        date: '2023-11-25',
-        location: 'Théâtre des Champs-Élysées, Paris'
-      },
-      {
-        id: '104',
-        title: 'La Bohème',
-        date: '2023-12-20',
-        location: 'Opéra de Lyon, Lyon'
-      }
-    ]
-  },
-  '3': {
-    id: '3',
-    name: 'Isabelle Moreau',
-    voiceType: 'Mezzo-soprano',
-    image: 'https://images.unsplash.com/photo-1553267751-1c148a7280a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1503149779833-1de50ebe5f8a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    bio: "Isabelle Moreau est une mezzo-soprano reconnue pour sa voix riche et expressive. Spécialiste du répertoire baroque, elle s'est produite dans les plus grands festivals de musique ancienne en Europe.",
-    specialty: 'Opéra baroque',
-    experience: '15 ans',
-    education: 'Conservatoire de Musique de Genève',
-    location: 'Toulouse, France',
-    repertoire: ['Giulio Cesare', 'L\'Orfeo', 'Alcina', 'Dido and Aeneas'],
-    awards: ['Prix d\'Interprétation au Festival de Musique Ancienne d\'Utrecht (2017)', 'Diapason d\'Or de l\'Année pour son album "Cantates Italiennes" (2019)'],
-    socialMedia: {
-      facebook: 'https://facebook.com',
-      instagram: 'https://instagram.com',
-      youtube: 'https://youtube.com',
-      linkedin: 'https://linkedin.com'
-    },
-    videos: [
-      {
-        title: 'Handel: Lascia ch\'io pianga',
-        thumbnail: 'https://img.youtube.com/vi/WuSiuMuBLhM/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=WuSiuMuBLhM'
-      },
-      {
-        title: 'Vivaldi: Stabat Mater',
-        thumbnail: 'https://img.youtube.com/vi/4KpbZISqWKI/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=4KpbZISqWKI'
-      }
-    ],
-    upcomingEvents: [
-      {
-        id: '105',
-        title: 'Festival de Musique Baroque de Toulouse',
-        date: '2023-10-15',
-        location: 'Chapelle des Carmélites, Toulouse'
-      },
-      {
-        id: '106',
-        title: 'L\'Orfeo de Monteverdi',
-        date: '2024-01-20',
-        location: 'Théâtre du Capitole, Toulouse'
-      }
-    ]
-  },
-  '4': {
-    id: '4',
-    name: 'Jean-Michel Bernard',
-    voiceType: 'Baryton',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-    coverImage: 'https://images.unsplash.com/photo-1513883049090-d0b7439799bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    bio: "Jean-Michel Bernard est un baryton français reconnu pour son engagement dans la création contemporaine. Après une formation au CNSMD de Paris, il s'est spécialisé dans l'interprétation d'œuvres du XXe et XXIe siècle.",
-    specialty: 'Opéra contemporain',
-    experience: '10 ans',
-    education: 'Conservatoire National Supérieur de Musique et de Danse de Paris',
-    location: 'Bordeaux, France',
-    repertoire: ['Pelléas et Mélisande', 'Wozzeck', 'L\'Amour de loin', 'Written on Skin'],
-    awards: ['Prix de la Création au Festival d\'Art Lyrique d\'Aix-en-Provence (2020)', 'Victoire de la Musique Classique - Artiste Lyrique de l\'Année (2021)'],
-    socialMedia: {
-      facebook: 'https://facebook.com',
-      instagram: 'https://instagram.com',
-      youtube: 'https://youtube.com',
-      linkedin: 'https://linkedin.com'
-    },
-    videos: [
-      {
-        title: 'Debussy: Pelléas et Mélisande',
-        thumbnail: 'https://img.youtube.com/vi/LL6ubXDs3lU/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=LL6ubXDs3lU'
-      },
-      {
-        title: 'Saariaho: L\'Amour de loin',
-        thumbnail: 'https://img.youtube.com/vi/yY33mhVcY7c/maxresdefault.jpg',
-        url: 'https://www.youtube.com/watch?v=yY33mhVcY7c'
-      }
-    ],
-    upcomingEvents: [
-      {
-        id: '107',
-        title: 'Festival Présences - Radio France',
-        date: '2023-12-05',
-        location: 'Maison de la Radio, Paris'
-      },
-      {
-        id: '108',
-        title: 'Written on Skin',
-        date: '2024-02-10',
-        location: 'Grand Théâtre de Bordeaux, Bordeaux'
-      }
-    ]
-  }
-};
+import { PlayCircle, Music, Calendar, MapPin, Share2, Star, Facebook, Instagram, Youtube, Linkedin, ArrowLeft } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
   
-  // Récupère les données de l'artiste en fonction de l'ID
-  const artist = id ? artistsData[id as keyof typeof artistsData] : null;
+  // Récupérer les données de l'artiste depuis la base de données
+  const { data: artist, isLoading, error } = useQuery({
+    queryKey: ['artist-profile', id],
+    queryFn: async () => {
+      if (!id) throw new Error('ID artiste manquant');
+      
+      const { data, error } = await supabase
+        .from('artist_profiles')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-  // Si l'artiste n'existe pas, affiche un message d'erreur
-  if (!artist) {
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+
+  const { photos, getPhotoUrl } = useArtistPhotos(id || '');
+
+  // Si l'artiste n'existe pas ou erreur
+  if (error || (!isLoading && !artist)) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20">
@@ -210,7 +42,10 @@ const ArtistProfile = () => {
               L'artiste que vous recherchez n'existe pas ou a été supprimé.
             </p>
             <Button asChild>
-              <Link to="/artistes">Retour à la liste des artistes</Link>
+              <Link to="/artistes">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Retour à la liste des artistes
+              </Link>
             </Button>
           </div>
         </div>
@@ -218,11 +53,27 @@ const ArtistProfile = () => {
     );
   }
 
-  // Formater la date pour les événements à venir
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-    return new Date(dateString).toLocaleDateString('fr-FR', options);
-  };
+  // État de chargement
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center">
+            <h1 className="text-2xl font-serif font-bold mb-4">Chargement...</h1>
+            <p className="text-muted-foreground">Récupération des informations de l'artiste...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Trouver les images
+  const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
+  const profileImageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
+  const coverImageUrl = artist.cover_image_url || 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80';
+  
+  // Image par défaut si aucune photo
+  const defaultImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80';
 
   return (
     <Layout>
@@ -231,8 +82,8 @@ const ArtistProfile = () => {
         <div className="h-80 md:h-96 w-full">
           <div className="absolute inset-0">
             <img 
-              src={artist.coverImage} 
-              alt={`Couverture de ${artist.name}`} 
+              src={coverImageUrl} 
+              alt={`Couverture de ${artist.stage_name}`} 
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
@@ -243,19 +94,27 @@ const ArtistProfile = () => {
           <div className="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-20 md:-mt-16">
             <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-background shadow-lg">
               <img 
-                src={artist.image} 
-                alt={artist.name} 
+                src={profileImageUrl || defaultImage} 
+                alt={artist.stage_name} 
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = defaultImage;
+                }}
               />
             </div>
             <div className="text-center md:text-left pb-4">
               <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                <h1 className="text-3xl md:text-4xl font-serif font-bold">{artist.name}</h1>
-                <span className="inline-block bg-lyrical-100 text-lyrical-800 text-sm font-medium px-3 py-1 rounded-full">
-                  {artist.voiceType}
-                </span>
+                <h1 className="text-3xl md:text-4xl font-serif font-bold">{artist.stage_name}</h1>
+                {artist.voice_type && (
+                  <span className="inline-block bg-lyrical-100 text-lyrical-800 text-sm font-medium px-3 py-1 rounded-full">
+                    {artist.voice_type}
+                  </span>
+                )}
               </div>
-              <p className="text-muted-foreground mt-1">{artist.specialty} • {artist.location}</p>
+              <p className="text-muted-foreground mt-1">
+                {artist.voice_type && `${artist.voice_type} • `}
+                {artist.location || 'France'}
+              </p>
             </div>
             <div className="md:ml-auto flex space-x-3 pb-4">
               <Button variant="outline" size="sm" className="gap-2">
@@ -279,70 +138,45 @@ const ArtistProfile = () => {
             {/* Biographie */}
             <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <h2 className="text-2xl font-serif font-semibold mb-4">Biographie</h2>
-              <p className="text-muted-foreground">{artist.bio}</p>
+              <p className="text-muted-foreground">
+                {artist.bio || "Cet artiste n'a pas encore ajouté de biographie."}
+              </p>
             </section>
 
-            {/* Vidéos */}
-            <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h2 className="text-2xl font-serif font-semibold mb-4">Vidéos</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {artist.videos.map((video, index) => (
-                  <div key={index} className="rounded-lg overflow-hidden group">
-                    <a 
-                      href={video.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="block relative aspect-video"
-                    >
+            {/* Galerie photos */}
+            {photos && photos.length > 0 && (
+              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
+                <h2 className="text-2xl font-serif font-semibold mb-4">Galerie</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {photos.map((photo) => (
+                    <div key={photo.id} className="rounded-lg overflow-hidden group aspect-square">
                       <img 
-                        src={video.thumbnail} 
-                        alt={video.title} 
+                        src={getPhotoUrl(photo.file_path)} 
+                        alt={photo.file_name} 
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <PlayCircle className="h-12 w-12 text-white" />
-                      </div>
-                    </a>
-                    <h3 className="mt-2 font-medium">{video.title}</h3>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <Button variant="link" className="text-lyrical-700">
-                  Voir plus de vidéos
-                </Button>
-              </div>
-            </section>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Répertoire */}
-            <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h2 className="text-2xl font-serif font-semibold mb-4">Répertoire</h2>
-              <div className="flex flex-wrap gap-2">
-                {artist.repertoire.map((item, index) => (
-                  <span 
-                    key={index} 
-                    className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </section>
-
-            {/* Prix et récompenses */}
-            <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h2 className="text-2xl font-serif font-semibold mb-4">Prix et récompenses</h2>
-              <ul className="space-y-2">
-                {artist.awards.map((award, index) => (
-                  <li key={index} className="flex items-start">
-                    <div className="bg-gold-100 text-gold-700 p-1 rounded-full mr-3 mt-1">
-                      <Star className="h-4 w-4" />
-                    </div>
-                    <span>{award}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {artist.repertoire && artist.repertoire.length > 0 && (
+              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
+                <h2 className="text-2xl font-serif font-semibold mb-4">Répertoire</h2>
+                <div className="flex flex-wrap gap-2">
+                  {artist.repertoire.map((item, index) => (
+                    <span 
+                      key={index} 
+                      className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Barre latérale */}
@@ -351,103 +185,96 @@ const ArtistProfile = () => {
             <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
               <h2 className="text-xl font-serif font-semibold mb-4">Informations</h2>
               <div className="space-y-4">
-                <div className="flex items-start">
-                  <Music className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Type de voix</p>
-                    <p className="font-medium">{artist.voiceType}</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <Calendar className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Expérience</p>
-                    <p className="font-medium">{artist.experience}</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <MapPin className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Localisation</p>
-                    <p className="font-medium">{artist.location}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h3 className="text-sm font-medium text-muted-foreground mb-3">Réseaux sociaux</h3>
-                <div className="flex space-x-3">
-                  <a
-                    href={artist.socialMedia.facebook}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                    aria-label="Facebook"
-                  >
-                    <Facebook className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={artist.socialMedia.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                    aria-label="Instagram"
-                  >
-                    <Instagram className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={artist.socialMedia.youtube}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                    aria-label="YouTube"
-                  >
-                    <Youtube className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={artist.socialMedia.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                  </a>
-                </div>
-              </div>
-            </section>
-
-            {/* Événements à venir */}
-            <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h2 className="text-xl font-serif font-semibold mb-4">Événements à venir</h2>
-              {artist.upcomingEvents.length === 0 ? (
-                <p className="text-muted-foreground">Aucun événement à venir pour le moment.</p>
-              ) : (
-                <div className="space-y-4">
-                  {artist.upcomingEvents.map((event) => (
-                    <div key={event.id} className="border-b border-border last:border-0 pb-4 last:pb-0">
-                      <h3 className="font-medium">
-                        <Link to={`/evenements/${event.id}`} className="hover:text-lyrical-700 transition-colors">
-                          {event.title}
-                        </Link>
-                      </h3>
-                      <div className="flex items-center text-sm text-muted-foreground mt-1">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        <span>{formatDate(event.date)}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground mt-1">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span>{event.location}</span>
-                      </div>
-                      <div className="mt-2">
-                        <Button variant="outline" size="sm" className="w-full" asChild>
-                          <Link to={`/evenements/${event.id}`}>
-                            Détails et réservation
-                          </Link>
-                        </Button>
-                      </div>
+                {artist.voice_type && (
+                  <div className="flex items-start">
+                    <Music className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Type de voix</p>
+                      <p className="font-medium">{artist.voice_type}</p>
                     </div>
-                  ))}
+                  </div>
+                )}
+                {artist.experience_years && artist.experience_years > 0 && (
+                  <div className="flex items-start">
+                    <Calendar className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Expérience</p>
+                      <p className="font-medium">{artist.experience_years} an{artist.experience_years > 1 ? 's' : ''}</p>
+                    </div>
+                  </div>
+                )}
+                {artist.location && (
+                  <div className="flex items-start">
+                    <MapPin className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Localisation</p>
+                      <p className="font-medium">{artist.location}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Réseaux sociaux si disponibles */}
+              {artist.social_links && Object.keys(artist.social_links).length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-3">Réseaux sociaux</h3>
+                  <div className="flex space-x-3">
+                    {artist.social_links.facebook && (
+                      <a
+                        href={artist.social_links.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
+                        aria-label="Facebook"
+                      >
+                        <Facebook className="h-5 w-5" />
+                      </a>
+                    )}
+                    {artist.social_links.instagram && (
+                      <a
+                        href={artist.social_links.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
+                        aria-label="Instagram"
+                      >
+                        <Instagram className="h-5 w-5" />
+                      </a>
+                    )}
+                    {artist.social_links.youtube && (
+                      <a
+                        href={artist.social_links.youtube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
+                        aria-label="YouTube"
+                      >
+                        <Youtube className="h-5 w-5" />
+                      </a>
+                    )}
+                    {artist.social_links.linkedin && (
+                      <a
+                        href={artist.social_links.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin className="h-5 w-5" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Site web si disponible */}
+              {artist.website && (
+                <div className="mt-4">
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href={artist.website} target="_blank" rel="noopener noreferrer">
+                      Visiter le site web
+                    </a>
+                  </Button>
                 </div>
               )}
             </section>
