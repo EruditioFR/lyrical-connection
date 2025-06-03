@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -115,7 +116,6 @@ const ArtistProfile = () => {
                 style={{ objectPosition: 'center' }}
               />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
           </div>
         </div>
 
