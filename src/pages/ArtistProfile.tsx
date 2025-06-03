@@ -37,6 +37,11 @@ const ArtistProfile = () => {
 
   const { photos, getPhotoUrl } = useArtistPhotos(id || '');
 
+  // Fonction pour détecter si le fichier est une vidéo
+  const isVideo = (url: string) => {
+    return url.toLowerCase().includes('.mp4') || url.toLowerCase().includes('video');
+  };
+
   // Si l'artiste n'existe pas ou erreur
   if (error || (!isLoading && !artist)) {
     return (
@@ -92,12 +97,24 @@ const ArtistProfile = () => {
       <div className="relative">
         <div className="h-80 md:h-96 w-full">
           <div className="absolute inset-0">
-            <img 
-              src={coverImageUrl} 
-              alt={`Couverture de ${artist.stage_name}`} 
-              className="w-full h-full object-cover"
-              style={{ objectPosition: 'center' }}
-            />
+            {isVideo(coverImageUrl) ? (
+              <video 
+                src={coverImageUrl} 
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'center' }}
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <img 
+                src={coverImageUrl} 
+                alt={`Couverture de ${artist.stage_name}`} 
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'center' }}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
           </div>
         </div>

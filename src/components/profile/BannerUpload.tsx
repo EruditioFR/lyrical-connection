@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, X, Camera } from 'lucide-react';
+import { Upload, X, Camera, Video } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -17,25 +17,34 @@ const BannerUpload: React.FC<BannerUploadProps> = ({ currentBannerUrl, onBannerC
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
 
+  // Fonction pour détecter si le fichier est une vidéo
+  const isVideo = (url: string) => {
+    return url.toLowerCase().includes('.mp4') || url.toLowerCase().includes('video');
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Vérifier le type de fichier
-    if (!file.type.startsWith('image/')) {
+    // Vérifier le type de fichier (image ou vidéo MP4)
+    const isImageFile = file.type.startsWith('image/');
+    const isVideoFile = file.type === 'video/mp4';
+    
+    if (!isImageFile && !isVideoFile) {
       toast({
         title: "Erreur",
-        description: "Veuillez sélectionner une image valide.",
+        description: "Veuillez sélectionner une image ou une vidéo MP4 valide.",
         variant: "destructive",
       });
       return;
     }
 
-    // Vérifier la taille du fichier (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Vérifier la taille du fichier (max 10MB pour les vidéos, 5MB pour les images)
+    const maxSize = isVideoFile ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxSize) {
       toast({
         title: "Erreur",
-        description: "L'image ne doit pas dépasser 5MB.",
+        description: `Le fichier ne doit pas dépasser ${isVideoFile ? '10MB' : '5MB'}.`,
         variant: "destructive",
       });
       return;
@@ -74,14 +83,14 @@ const BannerUpload: React.FC<BannerUploadProps> = ({ currentBannerUrl, onBannerC
 
       toast({
         title: "Bannière mise à jour",
-        description: "Votre image de bannière a été mise à jour avec succès.",
+        description: "Votre bannière a été mise à jour avec succès.",
       });
 
     } catch (error) {
       console.error('Error uploading banner:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'uploader l'image de bannière.",
+        description: "Impossible d'uploader la bannière.",
         variant: "destructive",
       });
     } finally {
@@ -106,14 +115,14 @@ const BannerUpload: React.FC<BannerUploadProps> = ({ currentBannerUrl, onBannerC
 
       toast({
         title: "Bannière supprimée",
-        description: "L'image de bannière a été supprimée.",
+        description: "La bannière a été supprimée.",
       });
 
     } catch (error) {
       console.error('Error removing banner:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer l'image de bannière.",
+        description: "Impossible de supprimer la bannière.",
         variant: "destructive",
       });
     }
@@ -124,21 +133,32 @@ const BannerUpload: React.FC<BannerUploadProps> = ({ currentBannerUrl, onBannerC
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Camera className="h-5 w-5" />
-          Image de bannière
+          Bannière de profil
         </CardTitle>
         <CardDescription>
-          Ajoutez une image de bannière pour votre profil (format recommandé : 1200x400px)
+          Ajoutez une image ou une vidéo MP4 comme bannière (format recommandé : 1200x400px)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {currentBannerUrl ? (
           <div className="relative">
             <div className="w-full h-40 md:h-48 rounded-lg overflow-hidden bg-muted">
-              <img 
-                src={currentBannerUrl} 
-                alt="Bannière actuelle" 
-                className="w-full h-full object-cover"
-              />
+              {isVideo(currentBannerUrl) ? (
+                <video 
+                  src={currentBannerUrl} 
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img 
+                  src={currentBannerUrl} 
+                  alt="Bannière actuelle" 
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
             <Button
               variant="destructive"
@@ -152,7 +172,10 @@ const BannerUpload: React.FC<BannerUploadProps> = ({ currentBannerUrl, onBannerC
         ) : (
           <div className="w-full h-40 md:h-48 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center bg-muted/50">
             <div className="text-center">
-              <Camera className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+              <div className="flex justify-center gap-2 mb-2">
+                <Camera className="h-6 w-6 text-muted-foreground" />
+                <Video className="h-6 w-6 text-muted-foreground" />
+              </div>
               <p className="text-sm text-muted-foreground">Aucune bannière définie</p>
             </div>
           </div>
@@ -168,7 +191,7 @@ const BannerUpload: React.FC<BannerUploadProps> = ({ currentBannerUrl, onBannerC
             {uploading ? 'Upload...' : 'Changer la bannière'}
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,video/mp4"
               onChange={handleFileUpload}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               disabled={uploading}
