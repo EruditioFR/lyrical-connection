@@ -119,7 +119,7 @@ const ArtistProfile = () => {
         </div>
 
         <div className="container mx-auto px-4 md:px-6 relative">
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-20 md:-mt-16" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 -mt-20 md:-mt-16" style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}>
             <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-background shadow-lg">
               <img 
                 src={profileImageUrl || defaultImage} 
