@@ -95,10 +95,19 @@ const ArtistProfileForm = () => {
   };
 
   const handleBannerChange = (url: string | null) => {
-    setFormData({
+    const newFormData = {
       ...formData,
       cover_image_url: url || ''
-    });
+    };
+    setFormData(newFormData);
+    
+    // Auto-save the banner change if profile exists
+    if (profile) {
+      updateProfile({
+        ...newFormData,
+        updated_at: new Date().toISOString(),
+      });
+    }
   };
 
   const isLoading = isCreating || isUpdating;
