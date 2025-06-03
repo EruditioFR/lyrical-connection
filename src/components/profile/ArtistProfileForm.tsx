@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Plus } from 'lucide-react';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import PhotoGallery from './PhotoGallery';
+import BannerUpload from './BannerUpload';
 
 const voiceTypes = [
   'Soprano',
@@ -35,6 +35,7 @@ const ArtistProfileForm = () => {
     location: '',
     website: '',
     repertoire: [] as string[],
+    cover_image_url: '',
   });
 
   useEffect(() => {
@@ -49,6 +50,7 @@ const ArtistProfileForm = () => {
         location: profile.location || '',
         website: profile.website || '',
         repertoire: profile.repertoire || [],
+        cover_image_url: profile.cover_image_url || '',
       });
     }
   }, [profile]);
@@ -92,10 +94,27 @@ const ArtistProfileForm = () => {
     }
   };
 
+  const handleBannerChange = (url: string | null) => {
+    setFormData({
+      ...formData,
+      cover_image_url: url || ''
+    });
+  };
+
   const isLoading = isCreating || isUpdating;
 
   return (
     <div className="space-y-6">
+      {/* Bannière - affichée seulement si le profil existe */}
+      {profile && (
+        <div className="max-w-2xl mx-auto">
+          <BannerUpload 
+            currentBannerUrl={formData.cover_image_url || undefined}
+            onBannerChange={handleBannerChange}
+          />
+        </div>
+      )}
+
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle>Mon Profil Artiste</CardTitle>

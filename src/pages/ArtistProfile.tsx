@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -80,6 +79,8 @@ const ArtistProfile = () => {
   // Trouver les images
   const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
   const profileImageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
+  
+  // Utiliser l'image de bannière depuis la base de données ou une image par défaut
   const coverImageUrl = artist.cover_image_url || 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80';
   
   // Image par défaut si aucune photo
@@ -95,6 +96,7 @@ const ArtistProfile = () => {
               src={coverImageUrl} 
               alt={`Couverture de ${artist.stage_name}`} 
               className="w-full h-full object-cover"
+              style={{ objectPosition: 'center' }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
           </div>
