@@ -139,7 +139,7 @@ const ArtistProfile = () => {
                   </span>
                 )}
               </div>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-black mt-1">
                 {artist.voice_type && `${artist.voice_type} • `}
                 {artist.location || 'France'}
               </p>
