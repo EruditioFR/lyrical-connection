@@ -132,7 +132,7 @@ const ArtistProfile = () => {
             </div>
             <div className="text-center md:text-left pb-4">
               <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                <h1 className="text-3xl md:text-4xl font-serif font-bold">{artist.stage_name}</h1>
+                <h1 className="text-3xl md:text-4xl font-serif font-bold text-white">{artist.stage_name}</h1>
                 {artist.voice_type && (
                   <span className="inline-block bg-lyrical-100 text-lyrical-800 text-sm font-medium px-3 py-1 rounded-full">
                     {artist.voice_type}
