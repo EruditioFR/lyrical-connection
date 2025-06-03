@@ -36,6 +36,39 @@ export const useArtistProfile = () => {
     enabled: !!user?.id,
   });
 
+  const createMutation = useMutation({
+    mutationFn: async (profileData: Omit<ArtistProfileInsert, 'user_id'>) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('artist_profiles')
+        .insert({
+          ...profileData,
+          user_id: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['artist-profile', user?.id] });
+      toast({
+        title: "Profil créé",
+        description: "Votre profil artiste a été créé avec succès.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error creating profile:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer le profil.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const updateMutation = useMutation({
     mutationFn: async (updates: ArtistProfileUpdate) => {
       if (!user?.id) throw new Error('User not authenticated');
@@ -71,7 +104,9 @@ export const useArtistProfile = () => {
     profile,
     isLoading,
     error,
+    createProfile: createMutation.mutate,
     updateProfile: updateMutation.mutate,
+    isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
   };
 };
