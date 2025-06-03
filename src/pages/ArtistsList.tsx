@@ -22,6 +22,9 @@ const voiceTypes = [
 const ArtistCard = ({ artist }: { artist: any }) => {
   const { photos, getPhotoUrl } = useArtistPhotos(artist.id);
   
+  console.log('Artist data:', artist);
+  console.log('Photos for artist', artist.id, ':', photos);
+  
   // Trouver la photo de profil ou prendre la première photo
   const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
   const imageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
@@ -76,6 +79,10 @@ const ArtistsList = () => {
   
   const { artists, isLoading, error } = useArtists();
 
+  console.log('Artists from hook:', artists);
+  console.log('Loading state:', isLoading);
+  console.log('Error state:', error);
+
   // Fonction pour filtrer les artistes
   const filteredArtists = artists.filter(artist => {
     // Filtrer par terme de recherche
@@ -90,6 +97,8 @@ const ArtistsList = () => {
     
     return searchMatch && voiceTypeMatch;
   });
+
+  console.log('Filtered artists:', filteredArtists);
 
   // Gérer les changements de type de voix
   const handleVoiceTypeChange = (voiceType: string) => {
@@ -107,11 +116,13 @@ const ArtistsList = () => {
   };
 
   if (error) {
+    console.error('Error loading artists:', error);
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-serif font-bold mb-4">Erreur</h1>
           <p className="text-muted-foreground">Impossible de charger la liste des artistes.</p>
+          <p className="text-sm text-red-500 mt-2">{error?.message || 'Erreur inconnue'}</p>
         </div>
       </Layout>
     );
@@ -224,6 +235,11 @@ const ArtistsList = () => {
               <p className="text-muted-foreground">
                 {filteredArtists.length} {filteredArtists.length === 1 ? 'artiste trouvé' : 'artistes trouvés'}
               </p>
+              {artists.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Total en base: {artists.length} artiste{artists.length === 1 ? '' : 's'}
+                </p>
+              )}
             </div>
           )}
 
@@ -237,12 +253,12 @@ const ArtistsList = () => {
                   : "Essayez de modifier vos critères de recherche ou de réinitialiser les filtres."
                 }
               </p>
-              {selectedVoiceTypes.length > 0 || searchQuery && (
+              {(selectedVoiceTypes.length > 0 || searchQuery) && (
                 <Button onClick={resetFilters}>Réinitialiser les filtres</Button>
               )}
             </div>
           ) : (
-            !isLoading && (
+            !isLoading && filteredArtists.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
                 {filteredArtists.map((artist, index) => (
                   <div 
