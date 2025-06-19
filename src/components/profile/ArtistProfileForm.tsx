@@ -10,6 +10,7 @@ import { X, Plus } from 'lucide-react';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import PhotoGallery from './PhotoGallery';
 import BannerUpload from './BannerUpload';
+import AirManager from './AirManager';
 
 const voiceTypes = [
   'Soprano',
@@ -274,6 +275,13 @@ const ArtistProfileForm = () => {
       {profile && (
         <div className="max-w-2xl mx-auto">
           <PhotoGallery artistProfileId={profile.id} />
+        </div>
+      )}
+
+      {/* Gestionnaire d'airs - affiché seulement si le profil existe */}
+      {profile && (
+        <div className="max-w-2xl mx-auto">
+          <AirManager artistProfileId={profile.id} />
         </div>
       )}
     </div>

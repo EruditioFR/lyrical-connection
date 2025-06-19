@@ -6,12 +6,15 @@ import { PlayCircle, Music, Calendar, MapPin, Share2, Star, Facebook, Instagram,
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
+import AirPlayer from '@/components/profile/AirPlayer';
+
 interface SocialLinks {
   facebook?: string;
   instagram?: string;
   youtube?: string;
   linkedin?: string;
 }
+
 const ArtistProfile = () => {
   const {
     id
@@ -152,25 +155,40 @@ const ArtistProfile = () => {
               </p>
             </section>
 
+            {/* Airs - nouvelle section */}
+            <AirPlayer artistProfileId={id || ''} />
+
             {/* Galerie photos */}
-            {photos && photos.length > 0 && <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
+            {photos && photos.length > 0 && (
+              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
                 <h2 className="text-2xl font-serif font-semibold mb-4">Galerie</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {photos.map(photo => <div key={photo.id} className="rounded-lg overflow-hidden group aspect-square">
-                      <img src={getPhotoUrl(photo.file_path)} alt={photo.file_name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                    </div>)}
+                  {photos.map(photo => (
+                    <div key={photo.id} className="rounded-lg overflow-hidden group aspect-square">
+                      <img 
+                        src={getPhotoUrl(photo.file_path)} 
+                        alt={photo.file_name} 
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                      />
+                    </div>
+                  ))}
                 </div>
-              </section>}
+              </section>
+            )}
 
             {/* Répertoire */}
-            {artist.repertoire && artist.repertoire.length > 0 && <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
+            {artist.repertoire && artist.repertoire.length > 0 && (
+              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
                 <h2 className="text-2xl font-serif font-semibold mb-4">Répertoire</h2>
                 <div className="flex flex-wrap gap-2">
-                  {artist.repertoire.map((item, index) => <span key={index} className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm">
+                  {artist.repertoire.map((item, index) => (
+                    <span key={index} className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm">
                       {item}
-                    </span>)}
+                    </span>
+                  ))}
                 </div>
-              </section>}
+              </section>
+            )}
           </div>
 
           {/* Barre latérale */}
@@ -244,4 +262,5 @@ const ArtistProfile = () => {
       </div>
     </Layout>;
 };
+
 export default ArtistProfile;

@@ -9,6 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      artist_airs: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          description: string | null
+          display_order: number | null
+          duration: number | null
+          external_url: string | null
+          file_path: string | null
+          id: string
+          is_active: boolean | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          duration?: number | null
+          external_url?: string | null
+          file_path?: string | null
+          id?: string
+          is_active?: boolean | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          duration?: number | null
+          external_url?: string | null
+          file_path?: string | null
+          id?: string
+          is_active?: boolean | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_airs_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artist_photos: {
         Row: {
           artist_profile_id: string
