@@ -22,12 +22,15 @@ const voiceTypes = [
 const ArtistCard = ({ artist }: { artist: any }) => {
   const { photos, getPhotoUrl } = useArtistPhotos(artist.id);
   
-  console.log('Artist data:', artist);
-  console.log('Photos for artist', artist.id, ':', photos);
+  console.log('ArtistCard - Artist data:', artist);
+  console.log('ArtistCard - Photos for artist', artist.id, ':', photos);
   
   // Trouver la photo de profil ou prendre la première photo
   const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
   const imageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
+  
+  console.log('ArtistCard - Profile photo:', profilePhoto);
+  console.log('ArtistCard - Image URL:', imageUrl);
   
   // Image par défaut si aucune photo
   const defaultImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80';
@@ -40,7 +43,11 @@ const ArtistCard = ({ artist }: { artist: any }) => {
           alt={artist.stage_name} 
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           onError={(e) => {
+            console.log('Image error for artist', artist.stage_name, 'trying default image');
             e.currentTarget.src = defaultImage;
+          }}
+          onLoad={() => {
+            console.log('Image loaded successfully for artist', artist.stage_name);
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
@@ -79,9 +86,9 @@ const ArtistsList = () => {
   
   const { artists, isLoading, error } = useArtists();
 
-  console.log('Artists from hook:', artists);
-  console.log('Loading state:', isLoading);
-  console.log('Error state:', error);
+  console.log('ArtistsList - Artists from hook:', artists);
+  console.log('ArtistsList - Loading state:', isLoading);
+  console.log('ArtistsList - Error state:', error);
 
   // Fonction pour filtrer les artistes
   const filteredArtists = artists.filter(artist => {
@@ -98,7 +105,7 @@ const ArtistsList = () => {
     return searchMatch && voiceTypeMatch;
   });
 
-  console.log('Filtered artists:', filteredArtists);
+  console.log('ArtistsList - Filtered artists:', filteredArtists);
 
   // Gérer les changements de type de voix
   const handleVoiceTypeChange = (voiceType: string) => {
@@ -260,15 +267,18 @@ const ArtistsList = () => {
           ) : (
             !isLoading && filteredArtists.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-                {filteredArtists.map((artist, index) => (
-                  <div 
-                    key={artist.id}
-                    className="text-appear"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
-                    <ArtistCard artist={artist} />
-                  </div>
-                ))}
+                {filteredArtists.map((artist, index) => {
+                  console.log('Rendering artist card for:', artist.stage_name, 'at index:', index);
+                  return (
+                    <div 
+                      key={artist.id}
+                      className="text-appear"
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <ArtistCard artist={artist} />
+                    </div>
+                  );
+                })}
               </div>
             )
           )}
