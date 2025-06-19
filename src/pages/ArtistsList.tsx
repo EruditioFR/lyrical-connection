@@ -20,10 +20,11 @@ const voiceTypes = [
 ];
 
 const ArtistCard = ({ artist }: { artist: any }) => {
-  const { photos, getPhotoUrl } = useArtistPhotos(artist.id);
+  const { photos, getPhotoUrl, isLoading: photosLoading } = useArtistPhotos(artist.id);
   
   console.log('ArtistCard - Artist data:', artist);
   console.log('ArtistCard - Photos for artist', artist.id, ':', photos);
+  console.log('ArtistCard - Photos loading:', photosLoading);
   
   // Trouver la photo de profil ou prendre la première photo
   const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
@@ -38,18 +39,24 @@ const ArtistCard = ({ artist }: { artist: any }) => {
   return (
     <div className="group rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border">
       <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
-        <img 
-          src={imageUrl || defaultImage} 
-          alt={artist.stage_name} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            console.log('Image error for artist', artist.stage_name, 'trying default image');
-            e.currentTarget.src = defaultImage;
-          }}
-          onLoad={() => {
-            console.log('Image loaded successfully for artist', artist.stage_name);
-          }}
-        />
+        {photosLoading ? (
+          <div className="w-full h-full bg-muted flex items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin" />
+          </div>
+        ) : (
+          <img 
+            src={imageUrl || defaultImage} 
+            alt={artist.stage_name} 
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={(e) => {
+              console.log('Image error for artist', artist.stage_name, 'trying default image');
+              e.currentTarget.src = defaultImage;
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully for artist', artist.stage_name);
+            }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
           <Button 
             size="sm" 
