@@ -1,28 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { X, Plus } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, Phone, Music, Image as ImageIcon, Mic } from 'lucide-react';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
-import PhotoGallery from './PhotoGallery';
-import BannerUpload from './BannerUpload';
-import AirManager from './AirManager';
-import RepertoireManager from './RepertoireManager';
-
-const voiceTypes = [
-  'Soprano',
-  'Mezzo-soprano',
-  'Alto',
-  'Ténor',
-  'Baryton',
-  'Basse',
-  'Autre'
-];
+import ProfileBasicInfo from './ProfileBasicInfo';
+import ContactInfo from './ContactInfo';
+import RepertoireTab from './RepertoireTab';
+import PhotosTab from './PhotosTab';
+import AudioTab from './AudioTab';
 
 const ArtistProfileForm = () => {
   const { profile, createProfile, updateProfile, isCreating, isUpdating } = useArtistProfile();
@@ -73,30 +59,6 @@ const ArtistProfileForm = () => {
     }
   };
 
-  const addRepertoire = () => {
-    if (repertoireInput.trim() && !formData.repertoire.includes(repertoireInput.trim())) {
-      setFormData({
-        ...formData,
-        repertoire: [...formData.repertoire, repertoireInput.trim()]
-      });
-      setRepertoireInput('');
-    }
-  };
-
-  const removeRepertoire = (item: string) => {
-    setFormData({
-      ...formData,
-      repertoire: formData.repertoire.filter(r => r !== item)
-    });
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addRepertoire();
-    }
-  };
-
   const handleBannerChange = (url: string | null) => {
     const newFormData = {
       ...formData,
@@ -117,183 +79,93 @@ const ArtistProfileForm = () => {
 
   return (
     <div className="space-y-6">
-      {/* Bannière - affichée seulement si le profil existe */}
-      {profile && (
-        <div className="max-w-2xl mx-auto">
-          <BannerUpload 
-            currentBannerUrl={formData.cover_image_url || undefined}
-            onBannerChange={handleBannerChange}
-          />
-        </div>
-      )}
-
-      <Card className="max-w-2xl mx-auto">
+      <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Mon Profil Artiste</CardTitle>
           <CardDescription>
-            Gérez vos informations professionnelles et votre répertoire
+            Gérez vos informations professionnelles et votre contenu artistique
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="stage_name">Nom de scène *</Label>
-                <Input
-                  id="stage_name"
-                  value={formData.stage_name}
-                  onChange={(e) => setFormData({ ...formData, stage_name: e.target.value })}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="voice_type">Type de voix</Label>
-                <Select 
-                  value={formData.voice_type} 
-                  onValueChange={(value) => setFormData({ ...formData, voice_type: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un type de voix" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {voiceTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          <Tabs defaultValue="profile" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">Profil</span>
+              </TabsTrigger>
+              <TabsTrigger value="contact" className="flex items-center gap-2">
+                <Phone className="h-4 w-4" />
+                <span className="hidden sm:inline">Contact</span>
+              </TabsTrigger>
+              <TabsTrigger value="repertoire" className="flex items-center gap-2" disabled={!profile}>
+                <Music className="h-4 w-4" />
+                <span className="hidden sm:inline">Répertoire</span>
+              </TabsTrigger>
+              <TabsTrigger value="photos" className="flex items-center gap-2" disabled={!profile}>
+                <ImageIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Photos</span>
+              </TabsTrigger>
+              <TabsTrigger value="audio" className="flex items-center gap-2" disabled={!profile}>
+                <Mic className="h-4 w-4" />
+                <span className="hidden sm:inline">Audio</span>
+              </TabsTrigger>
+            </TabsList>
 
-            <div className="space-y-2">
-              <Label htmlFor="bio">Biographie</Label>
-              <Textarea
-                id="bio"
-                placeholder="Parlez-nous de votre parcours artistique..."
-                value={formData.bio}
-                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                rows={4}
+            <TabsContent value="profile" className="mt-6">
+              <ProfileBasicInfo
+                formData={formData}
+                setFormData={setFormData}
+                repertoireInput={repertoireInput}
+                setRepertoireInput={setRepertoireInput}
+                profile={profile}
+                onSubmit={handleSubmit}
+                isLoading={isLoading}
+                handleBannerChange={handleBannerChange}
               />
-            </div>
+            </TabsContent>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="experience_years">Années d'expérience</Label>
-                <Input
-                  id="experience_years"
-                  type="number"
-                  min="0"
-                  value={formData.experience_years}
-                  onChange={(e) => setFormData({ ...formData, experience_years: parseInt(e.target.value) || 0 })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="location">Localisation</Label>
-                <Input
-                  id="location"
-                  placeholder="Ville, Région"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                />
-              </div>
-            </div>
+            <TabsContent value="contact" className="mt-6">
+              <ContactInfo
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleSubmit}
+                isLoading={isLoading}
+                profile={profile}
+              />
+            </TabsContent>
 
-            {/* Ancien système de répertoire (conservé pour compatibilité) */}
-            <div className="space-y-2">
-              <Label>Répertoire libre (tags)</Label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Ajouter un style ou une note libre..."
-                  value={repertoireInput}
-                  onChange={(e) => setRepertoireInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                />
-                <Button type="button" onClick={addRepertoire} size="icon">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              {formData.repertoire.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {formData.repertoire.map((item, index) => (
-                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                      {item}
-                      <X 
-                        className="h-3 w-3 cursor-pointer" 
-                        onClick={() => removeRepertoire(item)}
-                      />
-                    </Badge>
-                  ))}
+            <TabsContent value="repertoire" className="mt-6">
+              {profile ? (
+                <RepertoireTab artistProfileId={profile.id} />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
                 </div>
               )}
-            </div>
+            </TabsContent>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="contact_email">Email de contact</Label>
-                <Input
-                  id="contact_email"
-                  type="email"
-                  value={formData.contact_email}
-                  onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-            </div>
+            <TabsContent value="photos" className="mt-6">
+              {profile ? (
+                <PhotosTab artistProfileId={profile.id} />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                </div>
+              )}
+            </TabsContent>
 
-            <div className="space-y-2">
-              <Label htmlFor="website">Site web</Label>
-              <Input
-                id="website"
-                type="url"
-                placeholder="https://..."
-                value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-              />
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Sauvegarde...' : (profile ? 'Mettre à jour le profil' : 'Créer le profil')}
-            </Button>
-          </form>
+            <TabsContent value="audio" className="mt-6">
+              {profile ? (
+                <AudioTab artistProfileId={profile.id} />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
-
-      {/* Gestionnaire de répertoire lyrique - affiché seulement si le profil existe */}
-      {profile && (
-        <div className="max-w-2xl mx-auto">
-          <RepertoireManager artistProfileId={profile.id} />
-        </div>
-      )}
-
-      {/* Galerie photos - affichée seulement si le profil existe */}
-      {profile && (
-        <div className="max-w-2xl mx-auto">
-          <PhotoGallery artistProfileId={profile.id} />
-        </div>
-      )}
-
-      {/* Gestionnaire d'airs - affiché seulement si le profil existe */}
-      {profile && (
-        <div className="max-w-2xl mx-auto">
-          <AirManager artistProfileId={profile.id} />
-        </div>
-      )}
     </div>
   );
 };
