@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { useArtistProfile } from '@/hooks/useArtistProfile';
 import PhotoGallery from './PhotoGallery';
 import BannerUpload from './BannerUpload';
 import AirManager from './AirManager';
+import RepertoireManager from './RepertoireManager';
 
 const voiceTypes = [
   'Soprano',
@@ -199,11 +201,12 @@ const ArtistProfileForm = () => {
               </div>
             </div>
 
+            {/* Ancien système de répertoire (conservé pour compatibilité) */}
             <div className="space-y-2">
-              <Label>Répertoire</Label>
+              <Label>Répertoire libre (tags)</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Ajouter une chanson ou un style..."
+                  placeholder="Ajouter un style ou une note libre..."
                   value={repertoireInput}
                   onChange={(e) => setRepertoireInput(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -270,6 +273,13 @@ const ArtistProfileForm = () => {
           </form>
         </CardContent>
       </Card>
+
+      {/* Gestionnaire de répertoire lyrique - affiché seulement si le profil existe */}
+      {profile && (
+        <div className="max-w-2xl mx-auto">
+          <RepertoireManager artistProfileId={profile.id} />
+        </div>
+      )}
 
       {/* Galerie photos - affichée seulement si le profil existe */}
       {profile && (
