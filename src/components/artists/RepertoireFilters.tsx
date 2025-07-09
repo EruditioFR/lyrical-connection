@@ -152,14 +152,14 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               <div className="space-y-2">
                 <Label>Catégorie</Label>
                 <Select
-                  value={filters.category || ''}
-                  onValueChange={(value) => handleFilterChange('category', value)}
+                  value={filters.category || "all"}
+                  onValueChange={(value) => handleFilterChange('category', value === "all" ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes les catégories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes les catégories</SelectItem>
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.value} value={cat.value}>
                         {cat.label}
@@ -172,14 +172,14 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               <div className="space-y-2">
                 <Label>Période</Label>
                 <Select
-                  value={filters.period || ''}
-                  onValueChange={(value) => handleFilterChange('period', value)}
+                  value={filters.period || "all"}
+                  onValueChange={(value) => handleFilterChange('period', value === "all" ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Toutes les périodes" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Toutes les périodes</SelectItem>
+                    <SelectItem value="all">Toutes les périodes</SelectItem>
                     {periods.map((period) => (
                       <SelectItem key={period.value} value={period.value}>
                         {period.label}
@@ -192,14 +192,14 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               <div className="space-y-2">
                 <Label>Type de voix</Label>
                 <Select
-                  value={filters.voiceType || ''}
-                  onValueChange={(value) => handleFilterChange('voiceType', value)}
+                  value={filters.voiceType || "all"}
+                  onValueChange={(value) => handleFilterChange('voiceType', value === "all" ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les types de voix" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les types de voix</SelectItem>
+                    <SelectItem value="all">Tous les types de voix</SelectItem>
                     {voiceTypes.map((voice) => (
                       <SelectItem key={voice.value} value={voice.value}>
                         {voice.label}
@@ -212,14 +212,14 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               <div className="space-y-2">
                 <Label>Niveau de maîtrise minimum</Label>
                 <Select
-                  value={filters.masteryLevel || ''}
-                  onValueChange={(value) => handleFilterChange('masteryLevel', value)}
+                  value={filters.masteryLevel || "all"}
+                  onValueChange={(value) => handleFilterChange('masteryLevel', value === "all" ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les niveaux" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les niveaux</SelectItem>
+                    <SelectItem value="all">Tous les niveaux</SelectItem>
                     {masteryLevels.map((level) => (
                       <SelectItem key={level.value} value={level.value}>
                         {level.label}

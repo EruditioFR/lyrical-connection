@@ -66,12 +66,12 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
             {/* Filtres de base */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Select value={voiceType} onValueChange={onVoiceTypeChange}>
+              <Select value={voiceType || "all"} onValueChange={(value) => onVoiceTypeChange(value === "all" ? "" : value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Type de voix" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les types</SelectItem>
+                  <SelectItem value="all">Tous les types</SelectItem>
                   {voiceTypes.map((type) => (
                     <SelectItem key={type} value={type}>
                       {type}
