@@ -80,6 +80,14 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     }
   };
 
+  // Fonction pour obtenir le titre à afficher (air ou œuvre)
+  const getDisplayTitle = (item: any) => {
+    if (item.work_roles && item.work_roles.aria_title) {
+      return item.work_roles.aria_title;
+    }
+    return item.lyrical_works.title;
+  };
+
   if (isLoading) {
     return <div className="text-center py-8">Chargement du répertoire...</div>;
   }
@@ -157,7 +165,7 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                         <SelectItem key={role.id} value={role.id}>
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4" />
-                            <span>{role.role_name}</span>
+                            <span>{role.aria_title || role.role_name}</span>
                             {role.voice_type && (
                               <Badge variant="outline" className="text-xs">
                                 {role.voice_type}
@@ -245,13 +253,15 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h4 className="font-semibold text-lg">{item.lyrical_works.title}</h4>
+                        <h4 className="font-semibold text-lg">{getDisplayTitle(item)}</h4>
                         <Badge className={getCategoryColor(item.lyrical_works.category)}>
                           {item.lyrical_works.category}
                         </Badge>
                       </div>
                       
-                      <p className="text-gray-600 mb-2">{item.lyrical_works.composer}</p>
+                      <p className="text-gray-600 mb-2">
+                        {item.lyrical_works.composer} - {item.lyrical_works.title}
+                      </p>
                       
                       {item.work_roles && (
                         <div className="flex items-center gap-2 mb-2">
