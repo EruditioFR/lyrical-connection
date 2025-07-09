@@ -4,48 +4,51 @@ import Layout from '@/components/layout/Layout';
 import { useArtists } from '@/hooks/useArtists';
 import SearchFilters from '@/components/artists/SearchFilters';
 import ArtistsGrid from '@/components/artists/ArtistsGrid';
+import type { RepertoireFilters } from '@/components/artists/RepertoireFilters';
 
 const ArtistsList = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedVoiceTypes, setSelectedVoiceTypes] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [voiceType, setVoiceType] = useState('');
+  const [location, setLocation] = useState('');
+  const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
   
-  const { artists, isLoading, error } = useArtists();
+  // Construire les filtres pour useArtists
+  const combinedFilters = {
+    voiceType: voiceType || undefined,
+    ...repertoireFilters,
+  };
+  
+  const { artists, isLoading, error } = useArtists(combinedFilters);
 
   console.log('ArtistsList - Artists from hook:', artists);
   console.log('ArtistsList - Loading state:', isLoading);
   console.log('ArtistsList - Error state:', error);
+  console.log('ArtistsList - Combined filters:', combinedFilters);
 
-  // Fonction pour filtrer les artistes
+  // Fonction pour filtrer les artistes côté client
   const filteredArtists = artists.filter(artist => {
     // Filtrer par terme de recherche
-    const searchMatch = artist.stage_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                       (artist.voice_type && artist.voice_type.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                       (artist.location && artist.location.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                       (artist.bio && artist.bio.toLowerCase().includes(searchQuery.toLowerCase()));
+    const searchMatch = !searchTerm || 
+                       artist.stage_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                       (artist.voice_type && artist.voice_type.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                       (artist.location && artist.location.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                       (artist.bio && artist.bio.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    // Filtrer par type de voix
-    const voiceTypeMatch = selectedVoiceTypes.length === 0 || 
-                          (artist.voice_type && selectedVoiceTypes.includes(artist.voice_type));
+    // Filtrer par localisation
+    const locationMatch = !location || 
+                         (artist.location && artist.location.toLowerCase().includes(location.toLowerCase()));
     
-    return searchMatch && voiceTypeMatch;
+    return searchMatch && locationMatch;
   });
 
   console.log('ArtistsList - Filtered artists:', filteredArtists);
 
-  // Gérer les changements de type de voix
-  const handleVoiceTypeChange = (voiceType: string) => {
-    setSelectedVoiceTypes(prev => 
-      prev.includes(voiceType) 
-        ? prev.filter(v => v !== voiceType) 
-        : [...prev, voiceType]
-    );
-  };
-
   // Réinitialiser tous les filtres
   const resetFilters = () => {
-    setSearchQuery('');
-    setSelectedVoiceTypes([]);
+    setSearchTerm('');
+    setVoiceType('');
+    setLocation('');
+    setRepertoireFilters({});
   };
 
   if (error) {
@@ -65,15 +68,27 @@ const ArtistsList = () => {
     <Layout>
       {/* En-tête de la page */}
       <section className="bg-gradient-to-b from-muted to-background py-12 md:py-20">
-        <SearchFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          isFilterOpen={isFilterOpen}
-          setIsFilterOpen={setIsFilterOpen}
-          selectedVoiceTypes={selectedVoiceTypes}
-          onVoiceTypeChange={handleVoiceTypeChange}
-          onResetFilters={resetFilters}
-        />
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
+              Nos Artistes
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Découvrez les talents qui composent notre communauté d'artistes lyriques.
+            </p>
+          </div>
+          
+          <SearchFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            voiceType={voiceType}
+            onVoiceTypeChange={setVoiceType}
+            location={location}
+            onLocationChange={setLocation}
+            repertoireFilters={repertoireFilters}
+            onRepertoireFiltersChange={setRepertoireFilters}
+          />
+        </div>
       </section>
 
       {/* Liste des artistes */}
@@ -81,8 +96,8 @@ const ArtistsList = () => {
         artists={artists}
         filteredArtists={filteredArtists}
         isLoading={isLoading}
-        searchQuery={searchQuery}
-        selectedVoiceTypes={selectedVoiceTypes}
+        searchQuery={searchTerm}
+        selectedVoiceTypes={voiceType ? [voiceType] : []}
         onResetFilters={resetFilters}
       />
     </Layout>
