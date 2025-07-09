@@ -4,31 +4,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, Plus, Music, User, Edit, Save, X } from 'lucide-react';
 import { useArtistRepertoire } from '@/hooks/useArtistRepertoire';
-import { useLyricalWorks, useWorkRoles } from '@/hooks/useLyricalWorks';
+import { useLyricalWorks } from '@/hooks/useLyricalWorks';
 import { useVenues } from '@/hooks/useVenues';
 
 interface RepertoireManagerProps {
   artistProfileId: string;
 }
 
-const masteryLevels = [
-  { value: 'beginner', label: 'Débutant' },
-  { value: 'intermediate', label: 'Intermédiaire' },
-  { value: 'advanced', label: 'Avancé' },
-  { value: 'expert', label: 'Expert' },
-];
-
 const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedWork, setSelectedWork] = useState<string>('');
   const [selectedRole, setSelectedRole] = useState<string>('');
-  const [masteryLevel, setMasteryLevel] = useState<string>('intermediate');
-  const [yearsExperience, setYearsExperience] = useState<number>(0);
   const [performanceYear, setPerformanceYear] = useState<number | null>(null);
   const [venue, setVenue] = useState<string>('');
   const [venueSearch, setVenueSearch] = useState<string>('');
@@ -37,8 +27,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
   const [editingItem, setEditingItem] = useState<string | null>(null);
 
   // États pour l'édition
-  const [editMasteryLevel, setEditMasteryLevel] = useState<string>('');
-  const [editYearsExperience, setEditYearsExperience] = useState<number>(0);
   const [editPerformanceYear, setEditPerformanceYear] = useState<number | null>(null);
   const [editVenue, setEditVenue] = useState<string>('');
   const [editVenueSearch, setEditVenueSearch] = useState<string>('');
@@ -56,8 +44,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
       artist_profile_id: artistProfileId,
       work_id: selectedWork,
       role_id: selectedRole,
-      mastery_level: masteryLevel,
-      years_experience: yearsExperience,
       performance_year: performanceYear,
       venue: venue || null,
       notes: notes || null,
@@ -66,8 +52,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     // Reset form
     setSelectedWork('');
     setSelectedRole('');
-    setMasteryLevel('intermediate');
-    setYearsExperience(0);
     setPerformanceYear(null);
     setVenue('');
     setVenueSearch('');
@@ -77,8 +61,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
 
   const handleEditStart = (item: any) => {
     setEditingItem(item.id);
-    setEditMasteryLevel(item.mastery_level || 'intermediate');
-    setEditYearsExperience(item.years_experience || 0);
     setEditPerformanceYear(item.performance_year || null);
     setEditVenue(item.venue || '');
     setEditVenueSearch(item.venue || '');
@@ -88,8 +70,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
   const handleEditSave = (id: string) => {
     updateRepertoire({
       id,
-      mastery_level: editMasteryLevel,
-      years_experience: editYearsExperience,
       performance_year: editPerformanceYear,
       venue: editVenue || null,
       notes: editNotes || null,
@@ -111,16 +91,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
       case 'oratorio': return 'bg-blue-100 text-blue-800';
       case 'song': return 'bg-green-100 text-green-800';
       case 'operetta': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getMasteryColor = (level: string) => {
-    switch (level) {
-      case 'beginner': return 'bg-yellow-100 text-yellow-800';
-      case 'intermediate': return 'bg-blue-100 text-blue-800';
-      case 'advanced': return 'bg-green-100 text-green-800';
-      case 'expert': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -261,35 +231,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="mastery-level">Niveau de maîtrise</Label>
-                  <Select value={masteryLevel} onValueChange={setMasteryLevel}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {masteryLevels.map((level) => (
-                        <SelectItem key={level.value} value={level.value}>
-                          {level.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="years-experience">Années d'expérience</Label>
-                  <Input
-                    id="years-experience"
-                    type="number"
-                    min="0"
-                    value={yearsExperience}
-                    onChange={(e) => setYearsExperience(parseInt(e.target.value) || 0)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
                   <Label htmlFor="performance-year">Année de représentation</Label>
                   <Input
                     id="performance-year"
@@ -413,34 +354,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                         <div className="space-y-4 mt-4 p-4 bg-gray-50 rounded-lg">
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <Label>Niveau de maîtrise</Label>
-                              <Select value={editMasteryLevel} onValueChange={setEditMasteryLevel}>
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {masteryLevels.map((level) => (
-                                    <SelectItem key={level.value} value={level.value}>
-                                      {level.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label>Années d'expérience</Label>
-                              <Input
-                                type="number"
-                                min="0"
-                                value={editYearsExperience}
-                                onChange={(e) => setEditYearsExperience(parseInt(e.target.value) || 0)}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
                               <Label>Année de représentation</Label>
                               <Input
                                 type="number"
@@ -514,17 +427,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                       ) : (
                         // Mode affichage
                         <div>
-                          <div className="flex items-center gap-4 mb-2">
-                            <Badge className={getMasteryColor(item.mastery_level || 'intermediate')}>
-                              {masteryLevels.find(l => l.value === item.mastery_level)?.label || 'Intermédiaire'}
-                            </Badge>
-                            {item.years_experience > 0 && (
-                              <span className="text-sm text-gray-600">
-                                {item.years_experience} an{item.years_experience > 1 ? 's' : ''} d'expérience
-                              </span>
-                            )}
-                          </div>
-
                           {(item.performance_year || item.venue) && (
                             <div className="flex items-center gap-4 mb-2 text-sm text-gray-600">
                               {item.performance_year && (
