@@ -33,15 +33,14 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
 
   const { repertoire, isLoading, addToRepertoire, deleteFromRepertoire, isAdding } = useArtistRepertoire(artistProfileId);
   const { works } = useLyricalWorks(searchTerm);
-  const { roles } = useWorkRoles(selectedWork);
 
   const handleAddToRepertoire = () => {
-    if (!selectedWork) return;
+    if (!selectedWork || !selectedRole) return;
 
     addToRepertoire({
       artist_profile_id: artistProfileId,
       work_id: selectedWork,
-      role_id: selectedRole || null,
+      role_id: selectedRole,
       mastery_level: masteryLevel,
       years_experience: yearsExperience,
       notes: notes || null,
@@ -88,27 +87,16 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     return item.lyrical_works.title;
   };
 
-  // Fonction pour créer une liste étendue incluant les airs
-  const getExtendedWorksList = () => {
-    const extendedList: any[] = [];
+  // Fonction pour créer une liste contenant uniquement les airs
+  const getAirsList = () => {
+    const airsList: any[] = [];
     
     works.forEach(work => {
-      // Ajouter l'œuvre elle-même
-      extendedList.push({
-        id: work.id,
-        title: work.title,
-        composer: work.composer,
-        category: work.category,
-        type: 'work',
-        displayTitle: work.title,
-        roleId: null
-      });
-      
-      // Ajouter tous les airs de cette œuvre
+      // Ajouter seulement les airs de cette œuvre
       if (work.work_roles && work.work_roles.length > 0) {
         work.work_roles.forEach(role => {
           if (role.aria_title) {
-            extendedList.push({
+            airsList.push({
               id: work.id,
               title: work.title,
               composer: work.composer,
@@ -124,13 +112,13 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
       }
     });
     
-    return extendedList;
+    return airsList;
   };
 
-  const handleItemSelection = (item: any) => {
-    setSelectedWork(item.id);
-    setSelectedRole(item.roleId || '');
-    setSearchTerm(item.displayTitle);
+  const handleAirSelection = (air: any) => {
+    setSelectedWork(air.id);
+    setSelectedRole(air.roleId);
+    setSearchTerm(air.displayTitle);
   };
 
   if (isLoading) {
@@ -145,19 +133,19 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
           Répertoire lyrique
         </CardTitle>
         <CardDescription>
-          Gérez votre répertoire d'œuvres lyriques et d'airs spécifiques
+          Gérez votre répertoire d'airs lyriques
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Bouton pour ajouter une œuvre */}
+        {/* Bouton pour ajouter un air */}
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Mes œuvres ({repertoire.length})</h3>
+          <h3 className="text-lg font-semibold">Mes airs ({repertoire.length})</h3>
           <Button
             onClick={() => setShowAddForm(!showAddForm)}
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            Ajouter une œuvre
+            Ajouter un air
           </Button>
         </div>
 
@@ -166,59 +154,53 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
           <Card className="border-2 border-dashed border-gray-300">
             <CardContent className="p-4 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="work-search">Rechercher une œuvre ou un air</Label>
+                <Label htmlFor="air-search">Rechercher un air</Label>
                 <Input
-                  id="work-search"
-                  placeholder="Tapez le titre de l'œuvre, un air ou le compositeur..."
+                  id="air-search"
+                  placeholder="Tapez le titre de l'air ou le compositeur..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 {searchTerm.length > 1 && (
                   <div className="border rounded-md max-h-60 overflow-y-auto">
-                    {getExtendedWorksList().map((item, index) => (
+                    {getAirsList().map((air, index) => (
                       <div
-                        key={`${item.id}-${item.roleId || 'work'}-${index}`}
+                        key={`${air.id}-${air.roleId}-${index}`}
                         className={`p-3 cursor-pointer hover:bg-gray-100 border-b last:border-b-0 ${
-                          selectedWork === item.id && selectedRole === (item.roleId || '') ? 'bg-blue-100' : ''
+                          selectedWork === air.id && selectedRole === air.roleId ? 'bg-blue-100' : ''
                         }`}
-                        onClick={() => handleItemSelection(item)}
+                        onClick={() => handleAirSelection(air)}
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              {item.type === 'aria' ? (
-                                <Music className="h-4 w-4 text-purple-600" />
-                              ) : (
-                                <User className="h-4 w-4 text-blue-600" />
-                              )}
-                              <span className="font-medium">{item.displayTitle}</span>
-                              {item.type === 'aria' && (
-                                <Badge variant="outline" className="text-xs">
-                                  Air
-                                </Badge>
-                              )}
+                              <Music className="h-4 w-4 text-purple-600" />
+                              <span className="font-medium">{air.displayTitle}</span>
+                              <Badge variant="outline" className="text-xs">
+                                Air
+                              </Badge>
                             </div>
                             <div className="text-sm text-gray-600">
-                              <span className="font-medium">{item.composer}</span>
-                              {item.type === 'aria' && (
-                                <span> - {item.title} ({item.roleName})</span>
-                              )}
-                              {item.type === 'work' && (
-                                <span> - {item.title}</span>
-                              )}
+                              <span className="font-medium">{air.composer}</span>
+                              <span> - {air.title} ({air.roleName})</span>
                             </div>
-                            {item.voiceType && (
+                            {air.voiceType && (
                               <Badge variant="outline" className="text-xs mt-1">
-                                {item.voiceType}
+                                {air.voiceType}
                               </Badge>
                             )}
                           </div>
-                          <Badge className={`text-xs ${getCategoryColor(item.category)}`}>
-                            {item.category}
+                          <Badge className={`text-xs ${getCategoryColor(air.category)}`}>
+                            {air.category}
                           </Badge>
                         </div>
                       </div>
                     ))}
+                    {getAirsList().length === 0 && (
+                      <div className="p-3 text-center text-gray-500">
+                        Aucun air trouvé
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -256,7 +238,7 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                 <Label htmlFor="notes">Notes (optionnel)</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Commentaires sur votre expérience avec cette œuvre..."
+                  placeholder="Commentaires sur votre expérience avec cet air..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
@@ -266,7 +248,7 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
               <div className="flex gap-2">
                 <Button
                   onClick={handleAddToRepertoire}
-                  disabled={!selectedWork || isAdding}
+                  disabled={!selectedWork || !selectedRole || isAdding}
                   className="flex-1"
                 >
                   {isAdding ? 'Ajout...' : 'Ajouter au répertoire'}
@@ -287,8 +269,8 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
           {repertoire.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <Music className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune œuvre dans votre répertoire</p>
-              <p className="text-sm">Ajoutez votre première œuvre pour commencer</p>
+              <p>Aucun air dans votre répertoire</p>
+              <p className="text-sm">Ajoutez votre premier air pour commencer</p>
             </div>
           ) : (
             repertoire.map((item) => (
