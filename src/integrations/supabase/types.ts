@@ -178,8 +178,10 @@ export type Database = {
           id: string
           mastery_level: string | null
           notes: string | null
+          performance_year: number | null
           role_id: string | null
           updated_at: string
+          venue: string | null
           work_id: string
           years_experience: number | null
         }
@@ -189,8 +191,10 @@ export type Database = {
           id?: string
           mastery_level?: string | null
           notes?: string | null
+          performance_year?: number | null
           role_id?: string | null
           updated_at?: string
+          venue?: string | null
           work_id: string
           years_experience?: number | null
         }
@@ -200,8 +204,10 @@ export type Database = {
           id?: string
           mastery_level?: string | null
           notes?: string | null
+          performance_year?: number | null
           role_id?: string | null
           updated_at?: string
+          venue?: string | null
           work_id?: string
           years_experience?: number | null
         }
@@ -264,6 +270,36 @@ export type Database = {
           language?: string | null
           period?: string | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      venues: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          id: string
+          name: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          type?: string | null
           updated_at?: string
         }
         Relationships: []

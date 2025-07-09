@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Plus, Music, User } from 'lucide-react';
+import { Trash2, Plus, Music, User, Edit, Save, X } from 'lucide-react';
 import { useArtistRepertoire } from '@/hooks/useArtistRepertoire';
 import { useLyricalWorks, useWorkRoles } from '@/hooks/useLyricalWorks';
+import { useVenues } from '@/hooks/useVenues';
 
 interface RepertoireManagerProps {
   artistProfileId: string;
@@ -28,11 +29,25 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [masteryLevel, setMasteryLevel] = useState<string>('intermediate');
   const [yearsExperience, setYearsExperience] = useState<number>(0);
+  const [performanceYear, setPerformanceYear] = useState<number | null>(null);
+  const [venue, setVenue] = useState<string>('');
+  const [venueSearch, setVenueSearch] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<string | null>(null);
 
-  const { repertoire, isLoading, addToRepertoire, deleteFromRepertoire, isAdding } = useArtistRepertoire(artistProfileId);
+  // États pour l'édition
+  const [editMasteryLevel, setEditMasteryLevel] = useState<string>('');
+  const [editYearsExperience, setEditYearsExperience] = useState<number>(0);
+  const [editPerformanceYear, setEditPerformanceYear] = useState<number | null>(null);
+  const [editVenue, setEditVenue] = useState<string>('');
+  const [editVenueSearch, setEditVenueSearch] = useState<string>('');
+  const [editNotes, setEditNotes] = useState<string>('');
+
+  const { repertoire, isLoading, addToRepertoire, updateRepertoire, deleteFromRepertoire, isAdding, isUpdating } = useArtistRepertoire(artistProfileId);
   const { works } = useLyricalWorks(searchTerm);
+  const { venues } = useVenues(venueSearch);
+  const { venues: editVenues } = useVenues(editVenueSearch);
 
   const handleAddToRepertoire = () => {
     if (!selectedWork || !selectedRole) return;
@@ -43,6 +58,8 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
       role_id: selectedRole,
       mastery_level: masteryLevel,
       years_experience: yearsExperience,
+      performance_year: performanceYear,
+      venue: venue || null,
       notes: notes || null,
     });
 
@@ -51,8 +68,37 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     setSelectedRole('');
     setMasteryLevel('intermediate');
     setYearsExperience(0);
+    setPerformanceYear(null);
+    setVenue('');
+    setVenueSearch('');
     setNotes('');
     setShowAddForm(false);
+  };
+
+  const handleEditStart = (item: any) => {
+    setEditingItem(item.id);
+    setEditMasteryLevel(item.mastery_level || 'intermediate');
+    setEditYearsExperience(item.years_experience || 0);
+    setEditPerformanceYear(item.performance_year || null);
+    setEditVenue(item.venue || '');
+    setEditVenueSearch(item.venue || '');
+    setEditNotes(item.notes || '');
+  };
+
+  const handleEditSave = (id: string) => {
+    updateRepertoire({
+      id,
+      mastery_level: editMasteryLevel,
+      years_experience: editYearsExperience,
+      performance_year: editPerformanceYear,
+      venue: editVenue || null,
+      notes: editNotes || null,
+    });
+    setEditingItem(null);
+  };
+
+  const handleEditCancel = () => {
+    setEditingItem(null);
   };
 
   const handleDeleteFromRepertoire = (id: string) => {
@@ -79,7 +125,6 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     }
   };
 
-  // Fonction pour obtenir le titre à afficher (air ou œuvre)
   const getDisplayTitle = (item: any) => {
     if (item.work_roles && item.work_roles.aria_title) {
       return item.work_roles.aria_title;
@@ -87,12 +132,10 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     return item.lyrical_works.title;
   };
 
-  // Fonction pour créer une liste contenant uniquement les airs
   const getAirsList = () => {
     const airsList: any[] = [];
     
     works.forEach(work => {
-      // Ajouter seulement les airs de cette œuvre
       if (work.work_roles && work.work_roles.length > 0) {
         work.work_roles.forEach(role => {
           if (role.aria_title) {
@@ -119,6 +162,17 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     setSelectedWork(air.id);
     setSelectedRole(air.roleId);
     setSearchTerm(air.displayTitle);
+  };
+
+  const handleVenueSelection = (selectedVenue: any, isEdit = false) => {
+    const venueText = `${selectedVenue.name}${selectedVenue.city ? `, ${selectedVenue.city}` : ''}`;
+    if (isEdit) {
+      setEditVenue(venueText);
+      setEditVenueSearch(venueText);
+    } else {
+      setVenue(venueText);
+      setVenueSearch(venueText);
+    }
   };
 
   if (isLoading) {
@@ -234,6 +288,49 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="performance-year">Année de représentation</Label>
+                  <Input
+                    id="performance-year"
+                    type="number"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    placeholder="ex: 2023"
+                    value={performanceYear || ''}
+                    onChange={(e) => setPerformanceYear(e.target.value ? parseInt(e.target.value) : null)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="venue-search">Lieu (opéra/festival)</Label>
+                  <Input
+                    id="venue-search"
+                    placeholder="Rechercher un lieu..."
+                    value={venueSearch}
+                    onChange={(e) => setVenueSearch(e.target.value)}
+                  />
+                  {venueSearch.length > 1 && venues.length > 0 && (
+                    <div className="border rounded-md max-h-40 overflow-y-auto bg-white">
+                      {venues.map((venueItem) => (
+                        <div
+                          key={venueItem.id}
+                          className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
+                          onClick={() => handleVenueSelection(venueItem)}
+                        >
+                          <div className="font-medium">{venueItem.name}</div>
+                          {venueItem.city && (
+                            <div className="text-sm text-gray-600">
+                              {venueItem.city}{venueItem.country && `, ${venueItem.country}`}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="notes">Notes (optionnel)</Label>
                 <Textarea
@@ -310,31 +407,162 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                           )}
                         </div>
                       )}
-                      
-                      <div className="flex items-center gap-4 mb-2">
-                        <Badge className={getMasteryColor(item.mastery_level || 'intermediate')}>
-                          {masteryLevels.find(l => l.value === item.mastery_level)?.label || 'Intermédiaire'}
-                        </Badge>
-                        {item.years_experience > 0 && (
-                          <span className="text-sm text-gray-600">
-                            {item.years_experience} an{item.years_experience > 1 ? 's' : ''} d'expérience
-                          </span>
-                        )}
-                      </div>
-                      
-                      {item.notes && (
-                        <p className="text-sm text-gray-700 italic mt-2">{item.notes}</p>
+
+                      {editingItem === item.id ? (
+                        // Mode édition
+                        <div className="space-y-4 mt-4 p-4 bg-gray-50 rounded-lg">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Niveau de maîtrise</Label>
+                              <Select value={editMasteryLevel} onValueChange={setEditMasteryLevel}>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {masteryLevels.map((level) => (
+                                    <SelectItem key={level.value} value={level.value}>
+                                      {level.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>Années d'expérience</Label>
+                              <Input
+                                type="number"
+                                min="0"
+                                value={editYearsExperience}
+                                onChange={(e) => setEditYearsExperience(parseInt(e.target.value) || 0)}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Année de représentation</Label>
+                              <Input
+                                type="number"
+                                min="1900"
+                                max={new Date().getFullYear()}
+                                placeholder="ex: 2023"
+                                value={editPerformanceYear || ''}
+                                onChange={(e) => setEditPerformanceYear(e.target.value ? parseInt(e.target.value) : null)}
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>Lieu</Label>
+                              <Input
+                                placeholder="Rechercher un lieu..."
+                                value={editVenueSearch}
+                                onChange={(e) => setEditVenueSearch(e.target.value)}
+                              />
+                              {editVenueSearch.length > 1 && editVenues.length > 0 && (
+                                <div className="border rounded-md max-h-40 overflow-y-auto bg-white">
+                                  {editVenues.map((venueItem) => (
+                                    <div
+                                      key={venueItem.id}
+                                      className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
+                                      onClick={() => handleVenueSelection(venueItem, true)}
+                                    >
+                                      <div className="font-medium">{venueItem.name}</div>
+                                      {venueItem.city && (
+                                        <div className="text-sm text-gray-600">
+                                          {venueItem.city}{venueItem.country && `, ${venueItem.country}`}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Notes</Label>
+                            <Textarea
+                              placeholder="Commentaires..."
+                              value={editNotes}
+                              onChange={(e) => setEditNotes(e.target.value)}
+                              rows={3}
+                            />
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => handleEditSave(item.id)}
+                              disabled={isUpdating}
+                              size="sm"
+                              className="flex items-center gap-2"
+                            >
+                              <Save className="h-4 w-4" />
+                              {isUpdating ? 'Sauvegarde...' : 'Sauvegarder'}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={handleEditCancel}
+                              size="sm"
+                              className="flex items-center gap-2"
+                            >
+                              <X className="h-4 w-4" />
+                              Annuler
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        // Mode affichage
+                        <div>
+                          <div className="flex items-center gap-4 mb-2">
+                            <Badge className={getMasteryColor(item.mastery_level || 'intermediate')}>
+                              {masteryLevels.find(l => l.value === item.mastery_level)?.label || 'Intermédiaire'}
+                            </Badge>
+                            {item.years_experience > 0 && (
+                              <span className="text-sm text-gray-600">
+                                {item.years_experience} an{item.years_experience > 1 ? 's' : ''} d'expérience
+                              </span>
+                            )}
+                          </div>
+
+                          {(item.performance_year || item.venue) && (
+                            <div className="flex items-center gap-4 mb-2 text-sm text-gray-600">
+                              {item.performance_year && (
+                                <span>Année: {item.performance_year}</span>
+                              )}
+                              {item.venue && (
+                                <span>Lieu: {item.venue}</span>
+                              )}
+                            </div>
+                          )}
+                          
+                          {item.notes && (
+                            <p className="text-sm text-gray-700 italic mt-2">{item.notes}</p>
+                          )}
+                        </div>
                       )}
                     </div>
                     
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteFromRepertoire(item.id)}
-                      className="text-red-600 hover:text-red-800 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      {editingItem !== item.id && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditStart(item)}
+                          className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteFromRepertoire(item.id)}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
