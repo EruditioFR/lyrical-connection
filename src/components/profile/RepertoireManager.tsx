@@ -88,6 +88,51 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
     return item.lyrical_works.title;
   };
 
+  // Fonction pour créer une liste étendue incluant les airs
+  const getExtendedWorksList = () => {
+    const extendedList: any[] = [];
+    
+    works.forEach(work => {
+      // Ajouter l'œuvre elle-même
+      extendedList.push({
+        id: work.id,
+        title: work.title,
+        composer: work.composer,
+        category: work.category,
+        type: 'work',
+        displayTitle: work.title,
+        roleId: null
+      });
+      
+      // Ajouter tous les airs de cette œuvre
+      if (work.work_roles && work.work_roles.length > 0) {
+        work.work_roles.forEach(role => {
+          if (role.aria_title) {
+            extendedList.push({
+              id: work.id,
+              title: work.title,
+              composer: work.composer,
+              category: work.category,
+              type: 'aria',
+              displayTitle: role.aria_title,
+              roleId: role.id,
+              roleName: role.role_name,
+              voiceType: role.voice_type
+            });
+          }
+        });
+      }
+    });
+    
+    return extendedList;
+  };
+
+  const handleItemSelection = (item: any) => {
+    setSelectedWork(item.id);
+    setSelectedRole(item.roleId || '');
+    setSearchTerm(item.displayTitle);
+  };
+
   if (isLoading) {
     return <div className="text-center py-8">Chargement du répertoire...</div>;
   }
@@ -100,7 +145,7 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
           Répertoire lyrique
         </CardTitle>
         <CardDescription>
-          Gérez votre répertoire d'œuvres lyriques avec autocomplétion
+          Gérez votre répertoire d'œuvres lyriques et d'airs spécifiques
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -121,63 +166,62 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
           <Card className="border-2 border-dashed border-gray-300">
             <CardContent className="p-4 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="work-search">Rechercher une œuvre</Label>
+                <Label htmlFor="work-search">Rechercher une œuvre ou un air</Label>
                 <Input
                   id="work-search"
-                  placeholder="Tapez le titre ou le compositeur..."
+                  placeholder="Tapez le titre de l'œuvre, un air ou le compositeur..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                {works.length > 0 && searchTerm.length > 1 && (
-                  <div className="border rounded-md max-h-40 overflow-y-auto">
-                    {works.map((work) => (
+                {searchTerm.length > 1 && (
+                  <div className="border rounded-md max-h-60 overflow-y-auto">
+                    {getExtendedWorksList().map((item, index) => (
                       <div
-                        key={work.id}
-                        className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                          selectedWork === work.id ? 'bg-blue-100' : ''
+                        key={`${item.id}-${item.roleId || 'work'}-${index}`}
+                        className={`p-3 cursor-pointer hover:bg-gray-100 border-b last:border-b-0 ${
+                          selectedWork === item.id && selectedRole === (item.roleId || '') ? 'bg-blue-100' : ''
                         }`}
-                        onClick={() => {
-                          setSelectedWork(work.id);
-                          setSearchTerm(work.title);
-                        }}
+                        onClick={() => handleItemSelection(item)}
                       >
-                        <div className="font-medium">{work.title}</div>
-                        <div className="text-sm text-gray-600">{work.composer}</div>
-                        <Badge className={`text-xs ${getCategoryColor(work.category)}`}>
-                          {work.category}
-                        </Badge>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              {item.type === 'aria' ? (
+                                <Music className="h-4 w-4 text-purple-600" />
+                              ) : (
+                                <User className="h-4 w-4 text-blue-600" />
+                              )}
+                              <span className="font-medium">{item.displayTitle}</span>
+                              {item.type === 'aria' && (
+                                <Badge variant="outline" className="text-xs">
+                                  Air
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              <span className="font-medium">{item.composer}</span>
+                              {item.type === 'aria' && (
+                                <span> - {item.title} ({item.roleName})</span>
+                              )}
+                              {item.type === 'work' && (
+                                <span> - {item.title}</span>
+                              )}
+                            </div>
+                            {item.voiceType && (
+                              <Badge variant="outline" className="text-xs mt-1">
+                                {item.voiceType}
+                              </Badge>
+                            )}
+                          </div>
+                          <Badge className={`text-xs ${getCategoryColor(item.category)}`}>
+                            {item.category}
+                          </Badge>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-
-              {/* Sélection du rôle */}
-              {selectedWork && roles.length > 0 && (
-                <div className="space-y-2">
-                  <Label htmlFor="role-select">Rôle spécifique (optionnel)</Label>
-                  <Select value={selectedRole} onValueChange={setSelectedRole}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un rôle" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roles.map((role) => (
-                        <SelectItem key={role.id} value={role.id}>
-                          <div className="flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            <span>{role.aria_title || role.role_name}</span>
-                            {role.voice_type && (
-                              <Badge variant="outline" className="text-xs">
-                                {role.voice_type}
-                              </Badge>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -257,10 +301,20 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
                         <Badge className={getCategoryColor(item.lyrical_works.category)}>
                           {item.lyrical_works.category}
                         </Badge>
+                        {item.work_roles && item.work_roles.aria_title && (
+                          <Badge variant="outline" className="text-xs">
+                            Air
+                          </Badge>
+                        )}
                       </div>
                       
                       <p className="text-gray-600 mb-2">
-                        {item.lyrical_works.composer} - {item.lyrical_works.title}
+                        <span className="font-medium">{item.lyrical_works.composer}</span>
+                        {item.work_roles && item.work_roles.aria_title ? (
+                          <span> - {item.lyrical_works.title}</span>
+                        ) : (
+                          <span> - {item.lyrical_works.title}</span>
+                        )}
                       </p>
                       
                       {item.work_roles && (
