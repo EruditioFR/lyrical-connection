@@ -71,7 +71,7 @@ const ArtistSearch = () => {
 
     await saveSearchMutation.mutateAsync({
       name: searchName,
-      search_criteria: criteria,
+      search_criteria: criteria as any,
     });
   };
 
