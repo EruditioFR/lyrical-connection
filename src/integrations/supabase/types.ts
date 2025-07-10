@@ -274,6 +274,151 @@ export type Database = {
         }
         Relationships: []
       }
+      professional_availability: {
+        Row: {
+          created_at: string
+          day_of_week: number
+          end_time: string | null
+          id: string
+          is_available: boolean | null
+          notes: string | null
+          professional_profile_id: string
+          start_time: string | null
+        }
+        Insert: {
+          created_at?: string
+          day_of_week: number
+          end_time?: string | null
+          id?: string
+          is_available?: boolean | null
+          notes?: string | null
+          professional_profile_id: string
+          start_time?: string | null
+        }
+        Update: {
+          created_at?: string
+          day_of_week?: number
+          end_time?: string | null
+          id?: string
+          is_available?: boolean | null
+          notes?: string | null
+          professional_profile_id?: string
+          start_time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_availability_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_profiles: {
+        Row: {
+          bio: string | null
+          company_name: string | null
+          contact_email: string | null
+          created_at: string
+          id: string
+          intervention_radius: number | null
+          is_active: boolean | null
+          is_verified: boolean | null
+          location: string | null
+          logo_url: string | null
+          phone: string | null
+          professional_role: Database["public"]["Enums"]["professional_role"]
+          social_links: Json | null
+          team_description: string | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          bio?: string | null
+          company_name?: string | null
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          intervention_radius?: number | null
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          professional_role: Database["public"]["Enums"]["professional_role"]
+          social_links?: Json | null
+          team_description?: string | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          bio?: string | null
+          company_name?: string | null
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          intervention_radius?: number | null
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          location?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          professional_role?: Database["public"]["Enums"]["professional_role"]
+          social_links?: Json | null
+          team_description?: string | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      professional_target_profiles: {
+        Row: {
+          age_range_max: number | null
+          age_range_min: number | null
+          created_at: string
+          experience_levels: string[] | null
+          id: string
+          languages: string[] | null
+          professional_profile_id: string
+          target_type: string
+          voice_types: string[] | null
+        }
+        Insert: {
+          age_range_max?: number | null
+          age_range_min?: number | null
+          created_at?: string
+          experience_levels?: string[] | null
+          id?: string
+          languages?: string[] | null
+          professional_profile_id: string
+          target_type: string
+          voice_types?: string[] | null
+        }
+        Update: {
+          age_range_max?: number | null
+          age_range_min?: number | null
+          created_at?: string
+          experience_levels?: string[] | null
+          id?: string
+          languages?: string[] | null
+          professional_profile_id?: string
+          target_type?: string
+          voice_types?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_target_profiles_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       venues: {
         Row: {
           city: string | null
@@ -350,7 +495,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      professional_role:
+        | "casting_director"
+        | "vocal_coach"
+        | "conductor"
+        | "opera_house_manager"
+        | "voice_teacher"
+        | "artistic_agent"
+        | "producer"
+        | "competition_director"
+      user_type: "artist" | "professional"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -477,6 +631,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      professional_role: [
+        "casting_director",
+        "vocal_coach",
+        "conductor",
+        "opera_house_manager",
+        "voice_teacher",
+        "artistic_agent",
+        "producer",
+        "competition_director",
+      ],
+      user_type: ["artist", "professional"],
+    },
   },
 } as const

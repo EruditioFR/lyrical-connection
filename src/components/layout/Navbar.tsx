@@ -2,13 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Search, Menu, X, User, LogIn, LogOut } from 'lucide-react';
+import { Search, Menu, X, User, LogIn, LogOut, Briefcase } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+
+  // Detect if user is professional based on metadata
+  const isProUser = user?.user_metadata?.user_type === 'professional';
 
   // Effet pour détecter le défilement
   useEffect(() => {
@@ -75,9 +78,9 @@ const Navbar = () => {
             {user ? (
               <div className="flex items-center space-x-2">
                 <Button variant="ghost" className="flex items-center space-x-2" asChild>
-                  <Link to="/profil">
-                    <User className="h-5 w-5" />
-                    <span>Mon profil</span>
+                  <Link to={isProUser ? "/profil-pro" : "/profil"}>
+                    {isProUser ? <Briefcase className="h-5 w-5" /> : <User className="h-5 w-5" />}
+                    <span>{isProUser ? 'Profil Pro' : 'Mon profil'}</span>
                   </Link>
                 </Button>
                 <Button 
@@ -155,9 +158,9 @@ const Navbar = () => {
               {user ? (
                 <div className="pt-2 space-y-2">
                   <Button variant="outline" className="w-full justify-start" asChild>
-                    <Link to="/profil" onClick={() => setIsMobileMenuOpen(false)}>
-                      <User className="h-4 w-4 mr-2" />
-                      Mon profil
+                    <Link to={isProUser ? "/profil-pro" : "/profil"} onClick={() => setIsMobileMenuOpen(false)}>
+                      {isProUser ? <Briefcase className="h-4 w-4 mr-2" /> : <User className="h-4 w-4 mr-2" />}
+                      {isProUser ? 'Profil Pro' : 'Mon profil'}
                     </Link>
                   </Button>
                   <Button 
