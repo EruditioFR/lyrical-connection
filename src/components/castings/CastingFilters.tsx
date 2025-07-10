@@ -130,14 +130,14 @@ const CastingFilters: React.FC<CastingFiltersProps> = ({ filters, onFiltersChang
         <div>
           <Label>Type de production</Label>
           <Select 
-            value={filters.production_type || ''} 
-            onValueChange={(value) => handleFilterChange('production_type', value || undefined)}
+            value={filters.production_type || 'all'} 
+            onValueChange={(value) => handleFilterChange('production_type', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Tous les types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les types</SelectItem>
+              <SelectItem value="all">Tous les types</SelectItem>
               {productionTypes.map(type => (
                 <SelectItem key={type.value} value={type.value}>
                   {type.label}
@@ -209,14 +209,14 @@ const CastingFilters: React.FC<CastingFiltersProps> = ({ filters, onFiltersChang
         <div>
           <Label>Compensation</Label>
           <Select 
-            value={filters.compensation_type || ''} 
-            onValueChange={(value) => handleFilterChange('compensation_type', value || undefined)}
+            value={filters.compensation_type || 'all'} 
+            onValueChange={(value) => handleFilterChange('compensation_type', value === 'all' ? undefined : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Tous les types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les types</SelectItem>
+              <SelectItem value="all">Tous les types</SelectItem>
               {compensationTypes.map(type => (
                 <SelectItem key={type.value} value={type.value}>
                   {type.label}
