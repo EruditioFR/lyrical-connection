@@ -1,0 +1,167 @@
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { toast } from 'sonner';
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price_monthly: number;
+  stripe_price_id: string;
+  features: string[];
+  limitations: Record<string, any>;
+  trial_days: number;
+  is_active: boolean;
+  display_order: number;
+}
+
+export interface Subscription {
+  id: string;
+  user_id: string;
+  plan_id: string;
+  stripe_customer_id: string;
+  stripe_subscription_id: string;
+  status: string;
+  current_period_start: string;
+  current_period_end: string;
+  trial_end: string;
+  canceled_at: string;
+  plan?: SubscriptionPlan;
+}
+
+export const useSubscription = () => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  // Fetch subscription plans
+  const { data: plans = [], isLoading: plansLoading } = useQuery({
+    queryKey: ['subscription-plans'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+      
+      if (error) throw error;
+      return data as SubscriptionPlan[];
+    }
+  });
+
+  // Fetch current user subscription
+  const { data: subscription, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ['subscription', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select(`
+          *,
+          plan:subscription_plans(*)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error;
+      return data as Subscription;
+    },
+    enabled: !!user?.id
+  });
+
+  // Create Stripe checkout session
+  const createCheckoutSession = useMutation({
+    mutationFn: async (planId: string) => {
+      const { data, error } = await supabase.functions.invoke('create-subscription', {
+        body: { plan_id: planId }
+      });
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de la création de la session de paiement');
+      console.error('Checkout error:', error);
+    }
+  });
+
+  // Manage subscription (Customer Portal)
+  const manageSubscription = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de l\'accès au portail client');
+      console.error('Portal error:', error);
+    }
+  });
+
+  // Check subscription status
+  const checkSubscriptionStatus = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+      toast.success('Statut d\'abonnement mis à jour');
+    },
+    onError: (error) => {
+      toast.error('Erreur lors de la vérification de l\'abonnement');
+      console.error('Check subscription error:', error);
+    }
+  });
+
+  // Helper function to check if user has access to a feature
+  const hasAccess = (feature: string): boolean => {
+    if (!subscription || !subscription.plan) return false;
+    
+    const limitations = subscription.plan.limitations;
+    
+    switch (feature) {
+      case 'premium_features':
+        return limitations.premium_features === true;
+      case 'unlimited_castings':
+        return limitations.castings_per_month >= 50;
+      case 'advanced_analytics':
+        return subscription.plan.name !== 'Gratuit';
+      default:
+        return true;
+    }
+  };
+
+  // Get usage limits
+  const getLimit = (limitType: string): number => {
+    if (!subscription || !subscription.plan) return 0;
+    return subscription.plan.limitations[limitType] || 0;
+  };
+
+  return {
+    plans,
+    plansLoading,
+    subscription,
+    subscriptionLoading,
+    createCheckoutSession,
+    manageSubscription,
+    checkSubscriptionStatus,
+    hasAccess,
+    getLimit,
+    isSubscribed: !!subscription && subscription.status === 'active'
+  };
+};

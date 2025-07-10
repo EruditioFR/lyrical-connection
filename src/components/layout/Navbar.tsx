@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings } from 'lucide-react';
+import { LogOut, User, Settings, CreditCard } from 'lucide-react';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -44,6 +44,12 @@ const Navbar = () => {
             className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
           >
             Castings
+          </Link>
+          <Link 
+            to="/pricing" 
+            className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+          >
+            Tarifs
           </Link>
           {user && (
             <>
@@ -89,6 +95,10 @@ const Navbar = () => {
                 <DropdownMenuItem onClick={() => navigate('/profil')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/subscription')}>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  <span>Abonnement</span>
                 </DropdownMenuItem>
                 {user.app_metadata.provider === 'email' && (
                   <DropdownMenuItem onClick={() => navigate('/auth/update-password')}>

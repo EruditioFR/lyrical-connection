@@ -17,6 +17,9 @@ import ProfessionalApplications from '@/pages/ProfessionalApplications';
 import NotFound from '@/pages/NotFound';
 import ArtistSearch from '@/pages/ArtistSearch';
 import ProfessionalEvents from '@/pages/ProfessionalEvents';
+import Pricing from '@/pages/Pricing';
+import Subscription from '@/pages/Subscription';
+import SubscriptionSuccess from '@/pages/SubscriptionSuccess';
 
 const queryClient = new QueryClient();
 
@@ -40,6 +43,9 @@ function App() {
           <Route path="/candidatures-reçues" element={<ProfessionalApplications />} />
           <Route path="/recherche-artistes" element={<ArtistSearch />} />
           <Route path="/mes-evenements" element={<ProfessionalEvents />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/subscription" element={<Subscription />} />
+          <Route path="/subscription-success" element={<SubscriptionSuccess />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

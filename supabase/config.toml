@@ -1,1 +1,10 @@
 project_id = "gozussastelqyolweech"
+
+[functions.create-subscription]
+verify_jwt = true
+
+[functions.check-subscription]
+verify_jwt = true
+
+[functions.customer-portal]
+verify_jwt = true
