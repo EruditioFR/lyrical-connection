@@ -2,6 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { RepertoireFilters } from '@/components/artists/RepertoireFilters';
+import { fictionalArtists } from '@/data/fictionalArtists';
 
 export interface Artist {
   id: string;
@@ -125,7 +126,68 @@ export const useArtists = (filters?: ArtistFilters) => {
         throw error;
       }
 
-      return data as Artist[];
+      const realArtists = data as Artist[];
+      
+      // Mixer les artistes réels et fictifs
+      const allArtists = [...realArtists, ...fictionalArtists];
+      
+      // Appliquer les filtres côté client pour les artistes fictifs
+      let filteredFictionalArtists = fictionalArtists;
+      
+      if (filters?.searchTerm) {
+        filteredFictionalArtists = fictionalArtists.filter(artist =>
+          artist.stage_name.toLowerCase().includes(filters.searchTerm!.toLowerCase()) ||
+          (artist.voice_type && artist.voice_type.toLowerCase().includes(filters.searchTerm!.toLowerCase())) ||
+          (artist.location && artist.location.toLowerCase().includes(filters.searchTerm!.toLowerCase())) ||
+          (artist.bio && artist.bio.toLowerCase().includes(filters.searchTerm!.toLowerCase()))
+        );
+      }
+      
+      if (filters?.voiceType) {
+        filteredFictionalArtists = filteredFictionalArtists.filter(artist =>
+          artist.voice_type === filters.voiceType
+        );
+      }
+      
+      if (filters?.location) {
+        filteredFictionalArtists = filteredFictionalArtists.filter(artist =>
+          artist.location && artist.location.toLowerCase().includes(filters.location!.toLowerCase())
+        );
+      }
+      
+      // Filtrage par répertoire pour les artistes fictifs
+      if (filters?.repertoire && (filters.repertoire.composer || filters.repertoire.category)) {
+        filteredFictionalArtists = filteredFictionalArtists.filter(artist => {
+          if (!artist.repertoire) return false;
+          
+          if (filters.repertoire!.composer) {
+            return artist.repertoire.some(work =>
+              work.toLowerCase().includes(filters.repertoire!.composer!.toLowerCase())
+            );
+          }
+          
+          // Pour les catégories, on peut faire une correspondance simple basée sur les noms des œuvres
+          if (filters.repertoire!.category) {
+            const categoryMap: Record<string, string[]> = {
+              'Opéra': ['Traviata', 'Carmen', 'Tosca', 'Rigoletto', 'Faust', 'Bohème'],
+              'Oratorio': ['Messiah', 'Passion', 'Requiem'],
+              'Mélodie': ['mélodie', 'lied', 'song']
+            };
+            
+            const keywords = categoryMap[filters.repertoire!.category] || [];
+            return artist.repertoire.some(work =>
+              keywords.some(keyword => work.toLowerCase().includes(keyword.toLowerCase()))
+            );
+          }
+          
+          return true;
+        });
+      }
+      
+      // Combiner les artistes réels filtrés avec les artistes fictifs filtrés
+      const finalResult = [...realArtists, ...filteredFictionalArtists];
+      
+      return finalResult;
     },
   });
 
