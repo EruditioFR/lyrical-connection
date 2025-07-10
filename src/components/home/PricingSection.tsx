@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Check, Star, Crown, Zap } from 'lucide-react';
 const plans = [{
-  name: "Premium",
+  name: "Artistes",
   price: "19",
   period: "mois",
   description: "Pour les artistes qui veulent maximiser leur visibilité",
