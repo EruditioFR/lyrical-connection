@@ -528,6 +528,77 @@ export type Database = {
           },
         ]
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          last_read_at: string | null
+          left_at: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          left_at?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          left_at?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_archived: boolean | null
+          last_message_at: string | null
+          title: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       event_applications: {
         Row: {
           applied_at: string
@@ -636,6 +707,156 @@ export type Database = {
           period?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_deleted: boolean | null
+          is_edited: boolean | null
+          message_type: string | null
+          reply_to_id: string | null
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
+          message_type?: string | null
+          reply_to_id?: string | null
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
+          message_type?: string | null
+          reply_to_id?: string | null
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          email_applications: boolean | null
+          email_events: boolean | null
+          email_marketing: boolean | null
+          email_messages: boolean | null
+          id: string
+          in_app_applications: boolean | null
+          in_app_events: boolean | null
+          in_app_messages: boolean | null
+          push_applications: boolean | null
+          push_events: boolean | null
+          push_messages: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_applications?: boolean | null
+          email_events?: boolean | null
+          email_marketing?: boolean | null
+          email_messages?: boolean | null
+          id?: string
+          in_app_applications?: boolean | null
+          in_app_events?: boolean | null
+          in_app_messages?: boolean | null
+          push_applications?: boolean | null
+          push_events?: boolean | null
+          push_messages?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_applications?: boolean | null
+          email_events?: boolean | null
+          email_marketing?: boolean | null
+          email_messages?: boolean | null
+          id?: string
+          in_app_applications?: boolean | null
+          in_app_events?: boolean | null
+          in_app_messages?: boolean | null
+          push_applications?: boolean | null
+          push_events?: boolean | null
+          push_messages?: boolean | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          content: string | null
+          created_at: string
+          data: Json | null
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
         }
         Relationships: []
       }
@@ -918,6 +1139,39 @@ export type Database = {
           },
         ]
       }
+      profile_views: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          profile_type: string
+          session_id: string | null
+          user_agent: string | null
+          viewed_profile_id: string
+          viewer_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          profile_type: string
+          session_id?: string | null
+          user_agent?: string | null
+          viewed_profile_id: string
+          viewer_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          profile_type?: string
+          session_id?: string | null
+          user_agent?: string | null
+          viewed_profile_id?: string
+          viewer_id?: string | null
+        }
+        Relationships: []
+      }
       saved_searches: {
         Row: {
           created_at: string
@@ -986,6 +1240,48 @@ export type Database = {
         }
         Relationships: []
       }
+      verification_requests: {
+        Row: {
+          created_at: string
+          documents: Json | null
+          id: string
+          notes: string | null
+          profile_id: string
+          profile_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          documents?: Json | null
+          id?: string
+          notes?: string | null
+          profile_id: string
+          profile_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          documents?: Json | null
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          profile_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       work_roles: {
         Row: {
           aria_title: string | null
@@ -1043,6 +1339,15 @@ export type Database = {
         | "concours"
         | "atelier"
         | "conference"
+      notification_type:
+        | "message"
+        | "casting_application"
+        | "event_registration"
+        | "profile_view"
+        | "casting_update"
+        | "event_update"
+        | "system"
+        | "invitation"
       professional_role:
         | "casting_director"
         | "vocal_coach"
@@ -1183,6 +1488,16 @@ export const Constants = {
       application_status: ["pending", "accepted", "rejected", "waitlisted"],
       event_status: ["draft", "published", "cancelled", "completed"],
       event_type: ["masterclass", "stage", "concours", "atelier", "conference"],
+      notification_type: [
+        "message",
+        "casting_application",
+        "event_registration",
+        "profile_view",
+        "casting_update",
+        "event_update",
+        "system",
+        "invitation",
+      ],
       professional_role: [
         "casting_director",
         "vocal_coach",
