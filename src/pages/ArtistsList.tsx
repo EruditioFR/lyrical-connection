@@ -12,20 +12,20 @@ const ArtistsList = () => {
   const [location, setLocation] = useState('');
   const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
   
-  // Construire les filtres pour useArtists
-  const combinedFilters = {
+  // Construire les filtres pour useArtists (seulement les filtres que le hook peut gérer)
+  const apiFilters = {
     voiceType: voiceType || undefined,
     ...repertoireFilters,
   };
   
-  const { artists, isLoading, error } = useArtists(combinedFilters);
+  const { artists, isLoading, error } = useArtists(apiFilters);
 
   console.log('ArtistsList - Artists from hook:', artists);
   console.log('ArtistsList - Loading state:', isLoading);
   console.log('ArtistsList - Error state:', error);
-  console.log('ArtistsList - Combined filters:', combinedFilters);
+  console.log('ArtistsList - API filters:', apiFilters);
 
-  // Fonction pour filtrer les artistes côté client
+  // Filtrer côté client pour les critères non gérés par l'API
   const filteredArtists = artists.filter(artist => {
     // Filtrer par terme de recherche
     const searchMatch = !searchTerm || 
