@@ -39,7 +39,7 @@ const Layout: React.FC<LayoutProps> = ({
   }, [location.pathname]);
   return <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow md:pt-20">{children}</main>
+      <main className="flex-grow">{children}</main>
       <Footer />
     </div>;
 };
