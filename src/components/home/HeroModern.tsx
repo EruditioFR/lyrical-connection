@@ -13,9 +13,9 @@ const HeroModern = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-lyrical-50/50 via-transparent to-gold-50/30"></div>
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center min-h-screen py-20">
+        <div className="flex flex-col lg:flex-row items-center min-h-screen">
           {/* Left Content */}
-          <div className="lg:w-1/2 lg:pr-12 text-center lg:text-left animate-fade-in">
+          <div className="lg:w-1/2 lg:pr-12 text-center lg:text-left animate-fade-in pt-20">
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-lyrical-100/80 text-lyrical-700 text-sm font-medium mb-6">
               <TrendingUp className="h-4 w-4 mr-2" />
               La plateforme leader de la musique lyrique
@@ -70,7 +70,7 @@ const HeroModern = () => {
           </div>
           
           {/* Right Content */}
-          <div className="lg:w-1/2 mt-12 lg:mt-0 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <div className="lg:w-1/2 mt-12 lg:mt-0 animate-fade-in pb-20" style={{ animationDelay: '200ms' }}>
             <div className="relative">
               {/* Main Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">

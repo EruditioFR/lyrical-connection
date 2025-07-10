@@ -1,37 +1,39 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Clock, MapPin } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, MapPin, Users } from 'lucide-react';
 
 // Données exemple pour les événements à venir
 const upcomingEvents = [
   {
     id: '1',
     title: 'Récital de Jeunes Talents',
-    date: '2023-11-15',
+    date: '2024-02-15',
     time: '20:00',
     location: 'Opéra Garnier, Paris',
-    image: 'https://images.unsplash.com/photo-1581681682051-7334b4537b14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
-    featured: true
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    featured: true,
+    attendees: 45
   },
   {
     id: '2',
-    title: 'Masterclass avec Maria Callas',
-    date: '2023-11-20',
+    title: 'Masterclass avec Natalie Dessay',
+    date: '2024-02-20',
     time: '14:30',
     location: 'Conservatoire de Lyon',
-    image: 'https://images.unsplash.com/photo-1598024077734-be87a601c1b3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
-    featured: false
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    featured: false,
+    attendees: 28
   },
   {
     id: '3',
     title: 'Concours International de Chant',
-    date: '2023-12-05',
+    date: '2024-03-05',
     time: '09:00',
     location: 'Théâtre des Champs-Élysées, Paris',
-    image: 'https://images.unsplash.com/photo-1587407627257-27b7127c868c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80',
-    featured: true
+    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    featured: true,
+    attendees: 120
   }
 ];
 
@@ -73,12 +75,23 @@ const UpcomingEvents = () => {
                   alt={event.title} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                
                 {event.featured && (
                   <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full">
                     À ne pas manquer
                   </div>
                 )}
+                
+                {/* Event attendees overlay */}
+                <div className="absolute bottom-3 left-3 flex items-center space-x-2 text-white">
+                  <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1">
+                    <Users className="h-3 w-3" />
+                    <span className="text-xs font-medium">{event.attendees}</span>
+                  </div>
+                </div>
               </div>
+              
               <div className="p-5">
                 <h3 className="font-serif font-semibold text-lg hover:text-lyrical-700 transition-colors">
                   <Link to={`/evenements/${event.id}`}>{event.title}</Link>
@@ -94,7 +107,7 @@ const UpcomingEvents = () => {
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4 mr-2" />
-                    <span>{event.location}</span>
+                    <span className="truncate">{event.location}</span>
                   </div>
                 </div>
                 <div className="mt-4">
@@ -109,6 +122,22 @@ const UpcomingEvents = () => {
               </div>
             </div>
           ))}
+        </div>
+        
+        {/* Call to action section */}
+        <div className="mt-16 text-center bg-card rounded-xl p-8 border animate-fade-in" style={{ animationDelay: '400ms' }}>
+          <h3 className="text-xl font-serif font-semibold mb-4">
+            Vous organisez un événement ?
+          </h3>
+          <p className="text-muted-foreground mb-6">
+            Créez et promouvez vos événements auprès de notre communauté d'artistes et de professionnels.
+          </p>
+          <Button 
+            className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white"
+            asChild
+          >
+            <Link to="/evenements/creer">Créer un événement</Link>
+          </Button>
         </div>
       </div>
     </section>
