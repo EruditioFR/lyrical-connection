@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -8,38 +9,83 @@ type Application = Tables<'applications'>;
 type ApplicationInsert = TablesInsert<'applications'>;
 type ApplicationUpdate = TablesUpdate<'applications'>;
 
-export const useApplications = (castingId?: string) => {
-  return useQuery({
-    queryKey: ['applications', castingId],
+// Application avec les données liées
+type ApplicationWithDetails = Application & {
+  castings?: Tables<'castings'>;
+  artist_profiles?: Tables<'artist_profiles'>;
+};
+
+export const useMyApplications = () => {
+  const { toast } = useToast();
+
+  const { data: applications = [], isLoading, error } = useQuery({
+    queryKey: ['my-applications'],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from('applications')
         .select(`
           *,
-          artist_profiles (
-            stage_name,
-            profile_image_url,
-            voice_type,
-            contact_email
+          castings (
+            id,
+            title,
+            location,
+            application_deadline
           )
         `)
         .order('created_at', { ascending: false });
-
-      if (castingId) {
-        query = query.eq('casting_id', castingId);
-      }
-
-      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching applications:', error);
         throw error;
       }
 
-      return data || [];
+      return data as ApplicationWithDetails[];
+    },
+  });
+
+  return {
+    applications,
+    isLoading,
+    error,
+  };
+};
+
+export const useCastingApplications = (castingId: string) => {
+  const { toast } = useToast();
+
+  const { data: applications = [], isLoading, error } = useQuery({
+    queryKey: ['casting-applications', castingId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('applications')
+        .select(`
+          *,
+          artist_profiles (
+            id,
+            stage_name,
+            voice_type,
+            location,
+            profile_image_url
+          )
+        `)
+        .eq('casting_id', castingId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching casting applications:', error);
+        throw error;
+      }
+
+      return data as ApplicationWithDetails[];
     },
     enabled: !!castingId,
   });
+
+  return {
+    applications,
+    isLoading,
+    error,
+  };
 };
 
 export const useCreateApplication = () => {
@@ -56,7 +102,19 @@ export const useCreateApplication = () => {
         .single();
 
       if (!profile) {
-        throw new Error('Profil artiste requis');
+        throw new Error('Profil artiste requis pour postuler');
+      }
+
+      // Vérifier si l'utilisateur a déjà postulé à ce casting
+      const { data: existingApplication } = await supabase
+        .from('applications')
+        .select('id')
+        .eq('casting_id', applicationData.casting_id)
+        .eq('artist_profile_id', profile.id)
+        .single();
+
+      if (existingApplication) {
+        throw new Error('Vous avez déjà postulé à ce casting');
       }
 
       const { data, error } = await supabase
@@ -76,17 +134,18 @@ export const useCreateApplication = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['my-applications'] });
+      queryClient.invalidateQueries({ queryKey: ['casting-applications'] });
       toast({
         title: "Candidature envoyée",
-        description: "Votre candidature a été soumise avec succès.",
+        description: "Votre candidature a été envoyée avec succès.",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Create application error:', error);
       toast({
         title: "Erreur",
-        description: "Impossible d'envoyer la candidature. Veuillez réessayer.",
+        description: error.message || "Impossible d'envoyer la candidature.",
         variant: "destructive",
       });
     },
@@ -114,7 +173,8 @@ export const useUpdateApplication = () => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['my-applications'] });
+      queryClient.invalidateQueries({ queryKey: ['casting-applications'] });
       toast({
         title: "Candidature mise à jour",
         description: "Les modifications ont été sauvegardées.",
@@ -129,4 +189,34 @@ export const useUpdateApplication = () => {
       });
     },
   });
+};
+
+export const useApplicationStats = (castingId: string) => {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['application-stats', castingId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('applications')
+        .select('status')
+        .eq('casting_id', castingId);
+
+      if (error) throw error;
+
+      const stats = {
+        total: data.length,
+        pending: data.filter(app => app.status === 'pending').length,
+        shortlisted: data.filter(app => app.status === 'shortlisted').length,
+        accepted: data.filter(app => app.status === 'accepted').length,
+        rejected: data.filter(app => app.status === 'rejected').length,
+      };
+
+      return stats;
+    },
+    enabled: !!castingId,
+  });
+
+  return {
+    stats,
+    isLoading,
+  };
 };

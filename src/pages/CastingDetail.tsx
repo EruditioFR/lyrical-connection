@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -114,15 +113,27 @@ const CastingDetail = () => {
               </div>
             </div>
             
-            {user && (
-              <Button 
-                className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
-                onClick={() => navigate(`/castings/${casting.id}/postuler`)}
-              >
-                <Send className="h-4 w-4 mr-2" />
-                Postuler
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {user && (
+                <Button 
+                  className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                  onClick={() => navigate(`/castings/${casting.id}/postuler`)}
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  Postuler
+                </Button>
+              )}
+              
+              {user && (
+                <Button
+                  variant="outline"
+                  onClick={() => navigate(`/castings/${casting.id}/candidatures`)}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Candidatures
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -312,13 +323,22 @@ const CastingDetail = () => {
             {/* Action */}
             {user && (
               <Card>
-                <CardContent className="pt-6">
+                <CardContent className="pt-6 space-y-3">
                   <Button 
                     className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
                     onClick={() => navigate(`/castings/${casting.id}/postuler`)}
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Postuler à ce casting
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => navigate(`/castings/${casting.id}/candidatures`)}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Voir les candidatures
                   </Button>
                 </CardContent>
               </Card>
