@@ -11,6 +11,7 @@ import { useArtists } from '@/hooks/useArtists';
 import { useSaveSearch } from '@/hooks/useSavedSearches';
 import { Loader2, Save, Download } from 'lucide-react';
 import type { RepertoireFilters } from '@/components/artists/RepertoireFilters';
+import type { SearchCriteria } from '@/types/search';
 
 const ArtistSearch = () => {
   const { user, loading } = useAuth();
@@ -48,7 +49,7 @@ const ArtistSearch = () => {
     const searchName = prompt('Nom de la recherche :');
     if (!searchName) return;
 
-    const criteria = {
+    const criteria: SearchCriteria = {
       searchTerm,
       voiceType,
       location,
@@ -57,7 +58,7 @@ const ArtistSearch = () => {
 
     await saveSearchMutation.mutateAsync({
       name: searchName,
-      search_criteria: criteria,
+      search_criteria: criteria as any,
     });
   };
 
@@ -80,6 +81,14 @@ const ArtistSearch = () => {
     a.download = `recherche-artistes-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
+  };
+
+  const handleLoadSearch = (criteria: SearchCriteria) => {
+    setSearchTerm(criteria.searchTerm || '');
+    setVoiceType(criteria.voiceType || '');
+    setLocation(criteria.location || '');
+    setRepertoireFilters(criteria.repertoireFilters || {});
+    setShowSavedSearches(false);
   };
 
   return (
@@ -123,15 +132,7 @@ const ArtistSearch = () => {
           {/* Panneau des recherches sauvegardées */}
           {showSavedSearches && (
             <div className="lg:col-span-1">
-              <SavedSearchesPanel
-                onLoadSearch={(criteria) => {
-                  setSearchTerm(criteria.searchTerm || '');
-                  setVoiceType(criteria.voiceType || '');
-                  setLocation(criteria.location || '');
-                  setRepertoireFilters(criteria.repertoireFilters || {});
-                  setShowSavedSearches(false);
-                }}
-              />
+              <SavedSearchesPanel onLoadSearch={handleLoadSearch} />
             </div>
           )}
 
@@ -161,7 +162,7 @@ const ArtistSearch = () => {
                   {artists.length} artiste{artists.length !== 1 ? 's' : ''} trouvé{artists.length !== 1 ? 's' : ''}
                 </div>
                 
-                <ArtistsGrid artists={artists} showContactButton={true} />
+                <ArtistsGrid artists={artists} />
                 
                 {artists.length === 0 && (
                   <div className="text-center py-12">

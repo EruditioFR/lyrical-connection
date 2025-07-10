@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSavedSearches, useDeleteSavedSearch } from '@/hooks/useSavedSearches';
 import { Loader2, Trash2, Search } from 'lucide-react';
+import type { SearchCriteria } from '@/types/search';
 
 interface SavedSearchesPanelProps {
-  onLoadSearch: (criteria: any) => void;
+  onLoadSearch: (criteria: SearchCriteria) => void;
 }
 
 const SavedSearchesPanel: React.FC<SavedSearchesPanelProps> = ({ onLoadSearch }) => {
@@ -47,52 +48,56 @@ const SavedSearchesPanel: React.FC<SavedSearchesPanelProps> = ({ onLoadSearch })
           </p>
         ) : (
           <div className="space-y-3">
-            {searches.map((search) => (
-              <div
-                key={search.id}
-                className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-medium text-sm">{search.name}</h4>
+            {searches.map((search) => {
+              const criteria = search.search_criteria as SearchCriteria;
+              
+              return (
+                <div
+                  key={search.id}
+                  className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h4 className="font-medium text-sm">{search.name}</h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteSearchMutation.mutate(search.id)}
+                      disabled={deleteSearchMutation.isPending}
+                      className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {criteria.searchTerm && (
+                      <Badge variant="secondary" className="text-xs">
+                        "{criteria.searchTerm}"
+                      </Badge>
+                    )}
+                    {criteria.voiceType && (
+                      <Badge variant="secondary" className="text-xs">
+                        {criteria.voiceType}
+                      </Badge>
+                    )}
+                    {criteria.location && (
+                      <Badge variant="secondary" className="text-xs">
+                        {criteria.location}
+                      </Badge>
+                    )}
+                  </div>
+                  
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    onClick={() => deleteSearchMutation.mutate(search.id)}
-                    disabled={deleteSearchMutation.isPending}
-                    className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
+                    onClick={() => onLoadSearch(criteria)}
+                    className="w-full text-xs"
                   >
-                    <Trash2 className="h-3 w-3" />
+                    Charger cette recherche
                   </Button>
                 </div>
-                
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {search.search_criteria.searchTerm && (
-                    <Badge variant="secondary" className="text-xs">
-                      "{search.search_criteria.searchTerm}"
-                    </Badge>
-                  )}
-                  {search.search_criteria.voiceType && (
-                    <Badge variant="secondary" className="text-xs">
-                      {search.search_criteria.voiceType}
-                    </Badge>
-                  )}
-                  {search.search_criteria.location && (
-                    <Badge variant="secondary" className="text-xs">
-                      {search.search_criteria.location}
-                    </Badge>
-                  )}
-                </div>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onLoadSearch(search.search_criteria)}
-                  className="w-full text-xs"
-                >
-                  Charger cette recherche
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </CardContent>
