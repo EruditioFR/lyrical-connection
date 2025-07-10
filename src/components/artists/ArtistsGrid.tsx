@@ -32,21 +32,24 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
   return (
     <section className="py-12">
       <div className="container mx-auto px-4 md:px-6">
-        {/* Indicateur de chargement */}
-        {isLoading && (
+        {/* Indicateur de chargement initial seulement */}
+        {isLoading && artists.length === 0 && (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-8 w-8 animate-spin" />
             <span className="ml-2">Chargement des artistes...</span>
           </div>
         )}
 
-        {/* Contenu principal - seulement quand pas en chargement */}
-        {!isLoading && (
+        {/* Contenu principal - affiché même pendant le chargement si on a déjà des données */}
+        {(!isLoading || artists.length > 0) && (
           <>
             {/* Résultats de recherche */}
             <div className="mb-8 flex justify-between items-center">
               <p className="text-muted-foreground">
                 {filteredArtists.length} {filteredArtists.length === 1 ? 'artiste trouvé' : 'artistes trouvés'}
+                {isLoading && artists.length > 0 && (
+                  <Loader2 className="inline h-4 w-4 animate-spin ml-2" />
+                )}
               </p>
               {artists.length > 0 && (
                 <p className="text-xs text-muted-foreground">
@@ -58,14 +61,18 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
             {/* Grille d'artistes ou message d'absence */}
             {filteredArtists.length === 0 ? (
               <div className="text-center py-20">
-                <h3 className="text-xl font-serif font-semibold mb-2">Aucun artiste trouvé</h3>
+                <h3 className="text-xl font-serif font-semibold mb-2">
+                  {isLoading ? 'Recherche en cours...' : 'Aucun artiste trouvé'}
+                </h3>
                 <p className="text-muted-foreground mb-6">
-                  {artists.length === 0 
-                    ? "Aucun artiste n'est encore inscrit sur la plateforme."
-                    : "Essayez de modifier vos critères de recherche ou de réinitialiser les filtres."
+                  {isLoading 
+                    ? "Nous recherchons les artistes correspondant à vos critères..."
+                    : artists.length === 0 
+                      ? "Aucun artiste n'est encore inscrit sur la plateforme."
+                      : "Essayez de modifier vos critères de recherche ou de réinitialiser les filtres."
                   }
                 </p>
-                {(selectedVoiceTypes.length > 0 || searchQuery.trim() !== '') && (
+                {!isLoading && (selectedVoiceTypes.length > 0 || searchQuery.trim() !== '') && (
                   <Button onClick={onResetFilters}>Réinitialiser les filtres</Button>
                 )}
               </div>
