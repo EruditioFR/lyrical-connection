@@ -2,7 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Music, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 const HeroModern = () => {
+  const leftContentRef = useAnimateOnScroll();
+  const rightContentRef = useAnimateOnScroll();
+
+  console.log('HeroModern rendered');
+  
   return <section className="relative min-h-screen bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-10"></div>
@@ -13,7 +19,7 @@ const HeroModern = () => {
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         <div className="flex flex-col lg:flex-row items-center min-h-screen">
           {/* Left Content */}
-          <div className="lg:w-1/2 lg:pr-12 text-center lg:text-left animate-fade-in pt-20">
+          <div ref={leftContentRef} className="lg:w-1/2 lg:pr-12 text-center lg:text-left text-appear pt-20">
             
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
@@ -56,9 +62,7 @@ const HeroModern = () => {
           </div>
           
           {/* Right Content */}
-          <div className="lg:w-1/2 mt-12 lg:mt-0 animate-fade-in pb-20" style={{
-          animationDelay: '200ms'
-        }}>
+          <div ref={rightContentRef} className="lg:w-1/2 mt-12 lg:mt-0 text-appear pb-20">
             <div className="relative">
               {/* Main Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">

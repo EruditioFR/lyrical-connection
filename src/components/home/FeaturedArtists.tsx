@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle, MapPin, Music } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 
 // Données exemple pour les artistes en vedette
 const featuredArtists = [
@@ -48,11 +49,13 @@ const featuredArtists = [
 ];
 
 const FeaturedArtists = () => {
+  const titleRef = useAnimateOnScroll();
+  
   return (
     <section className="bg-background py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div className="text-appear">
+          <div ref={titleRef} className="text-appear">
             <h2 className="text-3xl md:text-4xl font-serif font-bold">Artistes en vedette</h2>
             <p className="text-muted-foreground mt-2 max-w-2xl">
               Découvrez les artistes lyriques les plus prometteurs de notre plateforme.
