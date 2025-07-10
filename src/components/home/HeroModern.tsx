@@ -64,7 +64,7 @@ const HeroModern = () => {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Performance d'opéra" className="w-full h-[500px] object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-lyrical-900/40 to-transparent">
-                  <img src="https://images.unsplash.com/photo-1473177104440-ffee2f376098?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Intérieur d'opéra" className="w-full h-full object-cover opacity-80" />
+                  <img alt="Intérieur d'opéra" className="w-full h-full object-cover opacity-80" src="/lovable-uploads/bc42b65f-33b1-4117-9ae5-5771d3bf8825.png" />
                 </div>
               </div>
               
