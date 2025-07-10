@@ -10,10 +10,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { Plus, Loader2 } from 'lucide-react';
 
 const Castings = () => {
+  console.log('Castings component rendered');
   const navigate = useNavigate();
   const { user } = useAuth();
   const [filters, setFilters] = useState({});
   const { castings, isLoading } = useCastings(filters);
+  
+  console.log('Castings data:', { castings, isLoading, user });
 
   return (
     <Layout>
