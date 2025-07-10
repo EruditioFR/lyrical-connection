@@ -9,8 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { Briefcase, MapPin, Globe, Phone, Mail, Users, Clock, Target, Loader2 } from 'lucide-react';
+import type { Database } from '@/integrations/supabase/types';
 
-const professionalRoles = [
+type ProfessionalRole = Database['public']['Enums']['professional_role'];
+
+const professionalRoles: { value: ProfessionalRole; label: string; icon: string }[] = [
   { value: 'casting_director', label: 'Directeur de casting / Directeur artistique', icon: '🎭' },
   { value: 'vocal_coach', label: 'Chef de chant / Coach vocal', icon: '🎶' },
   { value: 'conductor', label: 'Chef d\'orchestre', icon: '🎼' },
@@ -24,7 +27,17 @@ const professionalRoles = [
 const ProfessionalProfileForm = () => {
   const { profile, isLoading, createProfile, updateProfile, isCreating, isUpdating } = useProfessionalProfile();
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    professional_role: ProfessionalRole | '';
+    company_name: string;
+    bio: string;
+    website: string;
+    location: string;
+    intervention_radius: number;
+    team_description: string;
+    contact_email: string;
+    phone: string;
+  }>({
     professional_role: '',
     company_name: '',
     bio: '',
@@ -62,10 +75,20 @@ const ProfessionalProfileForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Vérifier que professional_role n'est pas vide
+    if (!formData.professional_role) {
+      return;
+    }
+
+    const submitData = {
+      ...formData,
+      professional_role: formData.professional_role as ProfessionalRole
+    };
+    
     if (profile) {
-      updateProfile(formData);
+      updateProfile(submitData);
     } else {
-      createProfile(formData);
+      createProfile(submitData);
     }
   };
 
@@ -117,7 +140,7 @@ const ProfessionalProfileForm = () => {
                 <Label htmlFor="professional_role">Votre métier *</Label>
                 <Select 
                   value={formData.professional_role} 
-                  onValueChange={(value) => handleChange('professional_role', value)}
+                  onValueChange={(value: ProfessionalRole) => handleChange('professional_role', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionnez votre métier" />
@@ -269,7 +292,7 @@ const ProfessionalProfileForm = () => {
         <div className="flex justify-end gap-4">
           <Button 
             type="submit" 
-            disabled={isCreating || isUpdating}
+            disabled={isCreating || isUpdating || !formData.professional_role}
             className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
           >
             {isCreating || isUpdating ? (
