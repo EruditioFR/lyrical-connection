@@ -76,7 +76,7 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
                   return (
                     <div 
                       key={artist.id}
-                      className="text-appear"
+                      className="animate-fade-in"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       <ArtistCard artist={artist} />
