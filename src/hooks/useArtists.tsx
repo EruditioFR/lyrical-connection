@@ -64,63 +64,89 @@ export const useArtists = (filters?: ArtistFilters) => {
         query = query.ilike('location', `%${filters.location}%`);
       }
 
-      // If we have repertoire filters, we need to join with artist_repertoire
-      if (filters?.repertoire && (filters.repertoire.workId || filters.repertoire.composer || filters.repertoire.category || filters.repertoire.period || filters.repertoire.masteryLevel)) {
-        // Construire une requête complexe pour filtrer par répertoire
-        let repertoireQuery = supabase
-          .from('artist_repertoire')
-          .select(`
-            artist_profile_id,
-            lyrical_works!inner (
-              id,
-              title,
-              composer,
-              category,
-              period
-            ),
-            mastery_level
-          `);
+      // If we have repertoire filters, we need to join with artist_repertoire or artist_airs
+      if (filters?.repertoire && (filters.repertoire.workId || filters.repertoire.composer || filters.repertoire.category || filters.repertoire.period || filters.repertoire.masteryLevel || filters.repertoire.airSearch)) {
+        let artistIds: string[] = [];
 
-        if (filters.repertoire.workId) {
-          repertoireQuery = repertoireQuery.eq('work_id', filters.repertoire.workId);
-        }
-        
-        if (filters.repertoire.composer) {
-          repertoireQuery = repertoireQuery.ilike('lyrical_works.composer', `%${filters.repertoire.composer}%`);
-        }
-        
-        if (filters.repertoire.category) {
-          repertoireQuery = repertoireQuery.eq('lyrical_works.category', filters.repertoire.category);
-        }
-        
-        if (filters.repertoire.period) {
-          repertoireQuery = repertoireQuery.eq('lyrical_works.period', filters.repertoire.period);
-        }
-        
-        if (filters.repertoire.masteryLevel) {
-          // Filtrer par niveau de maîtrise minimum
-          const masteryOrder = ['beginner', 'intermediate', 'advanced', 'expert'];
-          const minIndex = masteryOrder.indexOf(filters.repertoire.masteryLevel);
-          const validLevels = masteryOrder.slice(minIndex);
-          repertoireQuery = repertoireQuery.in('mastery_level', validLevels);
+        // Recherche dans le répertoire traditionnel (lyrical_works)
+        if (filters.repertoire.workId || filters.repertoire.composer || filters.repertoire.category || filters.repertoire.period || filters.repertoire.masteryLevel) {
+          let repertoireQuery = supabase
+            .from('artist_repertoire')
+            .select(`
+              artist_profile_id,
+              lyrical_works!inner (
+                id,
+                title,
+                composer,
+                category,
+                period
+              ),
+              mastery_level
+            `);
+
+          if (filters.repertoire.workId) {
+            repertoireQuery = repertoireQuery.eq('work_id', filters.repertoire.workId);
+          }
+          
+          if (filters.repertoire.composer) {
+            repertoireQuery = repertoireQuery.ilike('lyrical_works.composer', `%${filters.repertoire.composer}%`);
+          }
+          
+          if (filters.repertoire.category) {
+            repertoireQuery = repertoireQuery.eq('lyrical_works.category', filters.repertoire.category);
+          }
+          
+          if (filters.repertoire.period) {
+            repertoireQuery = repertoireQuery.eq('lyrical_works.period', filters.repertoire.period);
+          }
+          
+          if (filters.repertoire.masteryLevel) {
+            // Filtrer par niveau de maîtrise minimum
+            const masteryOrder = ['beginner', 'intermediate', 'advanced', 'expert'];
+            const minIndex = masteryOrder.indexOf(filters.repertoire.masteryLevel);
+            const validLevels = masteryOrder.slice(minIndex);
+            repertoireQuery = repertoireQuery.in('mastery_level', validLevels);
+          }
+
+          const { data: repertoireData, error: repertoireError } = await repertoireQuery;
+          
+          if (repertoireError) {
+            console.error('Error fetching repertoire data:', repertoireError);
+            throw repertoireError;
+          }
+
+          artistIds = [...artistIds, ...(repertoireData?.map(item => item.artist_profile_id) || [])];
         }
 
-        const { data: repertoireData, error: repertoireError } = await repertoireQuery;
-        
-        if (repertoireError) {
-          console.error('Error fetching repertoire data:', repertoireError);
-          throw repertoireError;
-        }
+        // Recherche dans les airs (artist_airs)
+        if (filters.repertoire.airSearch) {
+          let airsQuery = supabase
+            .from('artist_airs')
+            .select('artist_profile_id')
+            .eq('is_active', true);
 
-        // Extraire les IDs des profils d'artistes qui correspondent aux filtres
-        const artistIds = repertoireData?.map(item => item.artist_profile_id) || [];
+          // Recherche dans le titre et la description des airs
+          airsQuery = airsQuery.or(`title.ilike.%${filters.repertoire.airSearch}%,description.ilike.%${filters.repertoire.airSearch}%`);
+
+          const { data: airsData, error: airsError } = await airsQuery;
+          
+          if (airsError) {
+            console.error('Error fetching airs data:', airsError);
+            throw airsError;
+          }
+
+          artistIds = [...artistIds, ...(airsData?.map(item => item.artist_profile_id) || [])];
+        }
         
-        if (artistIds.length === 0) {
+        // Dédupliquer les IDs d'artistes
+        const uniqueArtistIds = [...new Set(artistIds)];
+        
+        if (uniqueArtistIds.length === 0) {
           return []; // Aucun artiste ne correspond aux filtres
         }
 
         // Filtrer la requête principale par ces IDs
-        query = query.in('id', artistIds);
+        query = query.in('id', uniqueArtistIds);
       }
 
       const { data, error } = await query;
@@ -172,7 +198,7 @@ export const useArtists = (filters?: ArtistFilters) => {
       }
       
       // Filtrage par répertoire pour les artistes fictifs
-      if (filters?.repertoire && (filters.repertoire.composer || filters.repertoire.category)) {
+      if (filters?.repertoire && (filters.repertoire.composer || filters.repertoire.category || filters.repertoire.airSearch)) {
         filteredFictionalArtists = filteredFictionalArtists.filter(artist => {
           if (!artist.repertoire) return false;
           
@@ -193,6 +219,13 @@ export const useArtists = (filters?: ArtistFilters) => {
             const keywords = categoryMap[filters.repertoire!.category] || [];
             return artist.repertoire.some(work =>
               keywords.some(keyword => work.toLowerCase().includes(keyword.toLowerCase()))
+            );
+          }
+          
+          // Pour la recherche dans les airs (simulée pour les artistes fictifs)
+          if (filters.repertoire!.airSearch) {
+            return artist.repertoire.some(work =>
+              work.toLowerCase().includes(filters.repertoire!.airSearch!.toLowerCase())
             );
           }
           

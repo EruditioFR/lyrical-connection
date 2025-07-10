@@ -16,6 +16,7 @@ export interface RepertoireFilters {
   period?: string;
   voiceType?: string;
   masteryLevel?: string;
+  airSearch?: string; // Nouvelle propriété pour la recherche dans les airs
 }
 
 interface RepertoireFiltersProps {
@@ -143,6 +144,21 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               handleFilterChange('composer', e.target.value);
             }}
           />
+        </div>
+
+        {/* Recherche dans les airs */}
+        <div className="space-y-2">
+          <Label htmlFor="air-search">Rechercher dans les airs (audio/vidéo)</Label>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Input
+              id="air-search"
+              placeholder="Titre d'air, description..."
+              value={filters.airSearch || ''}
+              onChange={(e) => handleFilterChange('airSearch', e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         {/* Filtres avancés */}
@@ -294,8 +310,17 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
                   onClick={() => handleFilterChange('masteryLevel', undefined)}
                 />
               </Badge>
-            )}
-            <Button
+             )}
+             {filters.airSearch && (
+               <Badge variant="secondary" className="flex items-center gap-1">
+                 Air: {filters.airSearch}
+                 <X
+                   className="h-3 w-3 cursor-pointer"
+                   onClick={() => handleFilterChange('airSearch', undefined)}
+                 />
+               </Badge>
+             )}
+             <Button
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
