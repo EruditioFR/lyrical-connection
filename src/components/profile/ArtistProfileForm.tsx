@@ -25,6 +25,11 @@ const ArtistProfileForm = () => {
     website: '',
     repertoire: [] as string[],
     cover_image_url: '',
+    nationality: '',
+    birth_date: '',
+    gender: '',
+    spoken_languages: [] as string[],
+    project_description: ''
   });
 
   useEffect(() => {
@@ -40,6 +45,11 @@ const ArtistProfileForm = () => {
         website: profile.website || '',
         repertoire: profile.repertoire || [],
         cover_image_url: profile.cover_image_url || '',
+        nationality: profile.nationality || '',
+        birth_date: profile.birth_date || '',
+        gender: profile.gender || '',
+        spoken_languages: profile.spoken_languages || [],
+        project_description: profile.project_description || ''
       });
     }
   }, [profile]);

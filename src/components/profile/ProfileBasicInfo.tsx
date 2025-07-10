@@ -6,8 +6,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from 'lucide-react';
+import { X, Plus, CalendarIcon } from 'lucide-react';
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import BannerUpload from './BannerUpload';
+import { countries } from '@/constants/countries';
+import { languages } from '@/constants/languages';
 
 const voiceTypes = [
   'Soprano',
@@ -75,17 +83,99 @@ const ProfileBasicInfo = ({
       )}
 
       <form onSubmit={onSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="stage_name">Nom de scène *</Label>
+          <Input
+            id="stage_name"
+            value={formData.stage_name}
+            onChange={(e) => setFormData({ ...formData, stage_name: e.target.value })}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="bio">Biographie</Label>
+          <Textarea
+            id="bio"
+            placeholder="Parlez-nous de votre parcours artistique..."
+            value={formData.bio}
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+            rows={4}
+          />
+        </div>
+
+        {/* Nouveaux champs obligatoires */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="stage_name">Nom de scène *</Label>
-            <Input
-              id="stage_name"
-              value={formData.stage_name}
-              onChange={(e) => setFormData({ ...formData, stage_name: e.target.value })}
-              required
-            />
+            <Label htmlFor="nationality">Nationalité *</Label>
+            <Select 
+              value={formData.nationality} 
+              onValueChange={(value) => setFormData({ ...formData, nationality: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner une nationalité" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {countries.map((country) => (
+                  <SelectItem key={country} value={country}>
+                    {country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          
+
+          <div className="space-y-2">
+            <Label>Date de naissance *</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.birth_date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.birth_date ? (
+                    format(new Date(formData.birth_date), "dd MMMM yyyy", { locale: fr })
+                  ) : (
+                    <span>Sélectionner une date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={formData.birth_date ? new Date(formData.birth_date) : undefined}
+                  onSelect={(date) => setFormData({ ...formData, birth_date: date ? date.toISOString().split('T')[0] : '' })}
+                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="gender">Sexe *</Label>
+            <Select 
+              value={formData.gender} 
+              onValueChange={(value) => setFormData({ ...formData, gender: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner le sexe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="H">Homme</SelectItem>
+                <SelectItem value="F">Femme</SelectItem>
+                <SelectItem value="autre">Autre</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="voice_type">Type de voix</Label>
             <Select 
@@ -106,15 +196,47 @@ const ProfileBasicInfo = ({
           </div>
         </div>
 
+        {/* Langues parlées */}
         <div className="space-y-2">
-          <Label htmlFor="bio">Biographie</Label>
-          <Textarea
-            id="bio"
-            placeholder="Parlez-nous de votre parcours artistique..."
-            value={formData.bio}
-            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-            rows={4}
-          />
+          <Label>Langues parlées *</Label>
+          <div className="border rounded-md p-3 max-h-40 overflow-y-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {languages.map((language) => (
+                <div key={language} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`lang-${language}`}
+                    checked={formData.spoken_languages?.includes(language) || false}
+                    onCheckedChange={(checked) => {
+                      const currentLangs = formData.spoken_languages || [];
+                      if (checked) {
+                        setFormData({
+                          ...formData,
+                          spoken_languages: [...currentLangs, language]
+                        });
+                      } else {
+                        setFormData({
+                          ...formData,
+                          spoken_languages: currentLangs.filter((l: string) => l !== language)
+                        });
+                      }
+                    }}
+                  />
+                  <Label htmlFor={`lang-${language}`} className="text-sm font-normal">
+                    {language}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+          {formData.spoken_languages?.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {formData.spoken_languages.map((lang: string) => (
+                <Badge key={lang} variant="outline" className="text-xs">
+                  {lang}
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -138,6 +260,18 @@ const ProfileBasicInfo = ({
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             />
           </div>
+        </div>
+
+        {/* Présentation du projet */}
+        <div className="space-y-2">
+          <Label htmlFor="project_description">Présentation de votre projet artistique</Label>
+          <Textarea
+            id="project_description"
+            placeholder="Décrivez votre projet artistique, vos objectifs, votre vision..."
+            value={formData.project_description}
+            onChange={(e) => setFormData({ ...formData, project_description: e.target.value })}
+            rows={6}
+          />
         </div>
 
         {/* Tags libres (répertoire) */}

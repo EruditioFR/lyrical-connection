@@ -177,17 +177,22 @@ export type Database = {
       artist_profiles: {
         Row: {
           bio: string | null
+          birth_date: string | null
           contact_email: string | null
           cover_image_url: string | null
           created_at: string
           experience_years: number | null
+          gender: string | null
           id: string
           is_active: boolean | null
           location: string | null
+          nationality: string | null
           phone: string | null
           profile_image_url: string | null
+          project_description: string | null
           repertoire: string[] | null
           social_links: Json | null
+          spoken_languages: string[] | null
           stage_name: string
           updated_at: string
           user_id: string
@@ -196,17 +201,22 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
+          birth_date?: string | null
           contact_email?: string | null
           cover_image_url?: string | null
           created_at?: string
           experience_years?: number | null
+          gender?: string | null
           id?: string
           is_active?: boolean | null
           location?: string | null
+          nationality?: string | null
           phone?: string | null
           profile_image_url?: string | null
+          project_description?: string | null
           repertoire?: string[] | null
           social_links?: Json | null
+          spoken_languages?: string[] | null
           stage_name: string
           updated_at?: string
           user_id: string
@@ -215,17 +225,22 @@ export type Database = {
         }
         Update: {
           bio?: string | null
+          birth_date?: string | null
           contact_email?: string | null
           cover_image_url?: string | null
           created_at?: string
           experience_years?: number | null
+          gender?: string | null
           id?: string
           is_active?: boolean | null
           location?: string | null
+          nationality?: string | null
           phone?: string | null
           profile_image_url?: string | null
+          project_description?: string | null
           repertoire?: string[] | null
           social_links?: Json | null
+          spoken_languages?: string[] | null
           stage_name?: string
           updated_at?: string
           user_id?: string
