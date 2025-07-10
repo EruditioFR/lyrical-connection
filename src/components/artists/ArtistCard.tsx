@@ -26,8 +26,8 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist, showContactButton = fal
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-lyrical-100 to-gold-100">
-              <User className="h-16 w-16 text-gray-400" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-accent/20">
+              <User className="h-16 w-16 text-muted-foreground" />
             </div>
           )}
         </div>
