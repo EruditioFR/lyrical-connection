@@ -6,14 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, CalendarIcon } from 'lucide-react';
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { X, Plus } from 'lucide-react';
 import { Checkbox } from "@/components/ui/checkbox";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import BannerUpload from './BannerUpload';
+import { BirthDatePicker } from '@/components/ui/birth-date-picker';
 import { countries } from '@/constants/countries';
 import { languages } from '@/constants/languages';
 
@@ -127,34 +124,11 @@ const ProfileBasicInfo = ({
 
           <div className="space-y-2">
             <Label>Date de naissance *</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !formData.birth_date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.birth_date ? (
-                    format(new Date(formData.birth_date), "dd MMMM yyyy", { locale: fr })
-                  ) : (
-                    <span>Sélectionner une date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={formData.birth_date ? new Date(formData.birth_date) : undefined}
-                  onSelect={(date) => setFormData({ ...formData, birth_date: date ? date.toISOString().split('T')[0] : '' })}
-                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
+            <BirthDatePicker
+              value={formData.birth_date ? new Date(formData.birth_date) : undefined}
+              onChange={(date) => setFormData({ ...formData, birth_date: date ? date.toISOString().split('T')[0] : '' })}
+              placeholder="Sélectionner une date"
+            />
           </div>
         </div>
 
