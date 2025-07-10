@@ -10,7 +10,7 @@ const AudioTab = ({ artistProfileId }: AudioTabProps) => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium mb-2">Enregistrements audio</h3>
+        <h3 className="text-lg font-medium mb-2">Vos médias</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Ajoutez et gérez vos enregistrements audio et vidéos
         </p>

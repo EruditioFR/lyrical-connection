@@ -117,7 +117,7 @@ const ArtistProfileForm = () => {
               </TabsTrigger>
               <TabsTrigger value="audio" className="flex items-center gap-2" disabled={!profile}>
                 <Mic className="h-4 w-4" />
-                <span className="hidden sm:inline">Audio</span>
+                <span className="hidden sm:inline">Vos médias</span>
               </TabsTrigger>
             </TabsList>
 
