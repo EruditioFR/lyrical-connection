@@ -88,7 +88,8 @@ const PhotoGallery = ({ artistProfileId }: PhotoGalleryProps) => {
               {profilePhoto ? (
                 <AvatarImage 
                   src={getPhotoUrl(profilePhoto.file_path)} 
-                  alt="Photo de profil" 
+                  alt="Photo de profil"
+                  className="object-cover"
                 />
               ) : (
                 <AvatarFallback>
