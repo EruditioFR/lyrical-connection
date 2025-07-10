@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import SearchFilters from '@/components/artists/SearchFilters';
@@ -31,6 +31,19 @@ const ArtistSearch = () => {
   const { artists, isLoading } = useArtists(filters);
   const saveSearchMutation = useSaveSearch();
 
+  // Filter artists based on current criteria
+  const filteredArtists = useMemo(() => {
+    return artists.filter(artist => {
+      // Additional client-side filtering if needed
+      return true;
+    });
+  }, [artists]);
+
+  // Get selected voice types for display
+  const selectedVoiceTypes = useMemo(() => {
+    return voiceType ? [voiceType] : [];
+  }, [voiceType]);
+
   if (loading) {
     return (
       <Layout>
@@ -58,14 +71,14 @@ const ArtistSearch = () => {
 
     await saveSearchMutation.mutateAsync({
       name: searchName,
-      search_criteria: criteria as any,
+      search_criteria: criteria,
     });
   };
 
   const exportResults = () => {
     const csvContent = [
       ['Nom d\'artiste', 'Type de voix', 'Localisation', 'Années d\'expérience', 'Email'],
-      ...artists.map(artist => [
+      ...filteredArtists.map(artist => [
         artist.stage_name,
         artist.voice_type || 'Non spécifié',
         artist.location || 'Non spécifiée',
@@ -89,6 +102,13 @@ const ArtistSearch = () => {
     setLocation(criteria.location || '');
     setRepertoireFilters(criteria.repertoireFilters || {});
     setShowSavedSearches(false);
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setVoiceType('');
+    setLocation('');
+    setRepertoireFilters({});
   };
 
   return (
@@ -120,7 +140,7 @@ const ArtistSearch = () => {
             <Button
               variant="outline"
               onClick={exportResults}
-              disabled={artists.length === 0}
+              disabled={filteredArtists.length === 0}
             >
               <Download className="h-4 w-4 mr-2" />
               Exporter
@@ -152,30 +172,14 @@ const ArtistSearch = () => {
 
           {/* Résultats */}
           <div className={showSavedSearches ? "lg:col-span-2" : "lg:col-span-3"}>
-            {isLoading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-lyrical-600" />
-              </div>
-            ) : (
-              <>
-                <div className="mb-4 text-sm text-gray-500">
-                  {artists.length} artiste{artists.length !== 1 ? 's' : ''} trouvé{artists.length !== 1 ? 's' : ''}
-                </div>
-                
-                <ArtistsGrid artists={artists} />
-                
-                {artists.length === 0 && (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500 text-lg">
-                      Aucun artiste ne correspond à vos critères.
-                    </p>
-                    <p className="text-gray-400 text-sm mt-2">
-                      Essayez de modifier vos filtres de recherche.
-                    </p>
-                  </div>
-                )}
-              </>
-            )}
+            <ArtistsGrid 
+              artists={artists}
+              filteredArtists={filteredArtists}
+              isLoading={isLoading}
+              searchQuery={searchTerm}
+              selectedVoiceTypes={selectedVoiceTypes}
+              onResetFilters={handleResetFilters}
+            />
           </div>
         </div>
       </div>

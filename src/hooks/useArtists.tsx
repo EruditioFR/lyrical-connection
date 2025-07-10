@@ -13,9 +13,17 @@ export interface Artist {
   is_active: boolean | null;
   experience_years: number | null;
   repertoire: string[] | null;
+  contact_email: string | null;
 }
 
-export const useArtists = (filters?: RepertoireFilters) => {
+interface ArtistFilters {
+  searchTerm?: string;
+  voiceType?: string;
+  location?: string;
+  repertoire?: RepertoireFilters;
+}
+
+export const useArtists = (filters?: ArtistFilters) => {
   const { data: artists, isLoading, error } = useQuery({
     queryKey: ['artists', filters],
     queryFn: async () => {
@@ -30,13 +38,29 @@ export const useArtists = (filters?: RepertoireFilters) => {
           profile_image_url,
           is_active,
           experience_years,
-          repertoire
+          repertoire,
+          contact_email
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      // Si nous avons des filtres de répertoire, nous devons joindre avec artist_repertoire
-      if (filters && (filters.workId || filters.composer || filters.category || filters.period || filters.masteryLevel)) {
+      // Apply search term filter
+      if (filters?.searchTerm) {
+        query = query.ilike('stage_name', `%${filters.searchTerm}%`);
+      }
+
+      // Apply voice type filter
+      if (filters?.voiceType) {
+        query = query.eq('voice_type', filters.voiceType);
+      }
+
+      // Apply location filter
+      if (filters?.location) {
+        query = query.ilike('location', `%${filters.location}%`);
+      }
+
+      // If we have repertoire filters, we need to join with artist_repertoire
+      if (filters?.repertoire && (filters.repertoire.workId || filters.repertoire.composer || filters.repertoire.category || filters.repertoire.period || filters.repertoire.masteryLevel)) {
         // Construire une requête complexe pour filtrer par répertoire
         let repertoireQuery = supabase
           .from('artist_repertoire')
@@ -52,26 +76,26 @@ export const useArtists = (filters?: RepertoireFilters) => {
             mastery_level
           `);
 
-        if (filters.workId) {
-          repertoireQuery = repertoireQuery.eq('work_id', filters.workId);
+        if (filters.repertoire.workId) {
+          repertoireQuery = repertoireQuery.eq('work_id', filters.repertoire.workId);
         }
         
-        if (filters.composer) {
-          repertoireQuery = repertoireQuery.ilike('lyrical_works.composer', `%${filters.composer}%`);
+        if (filters.repertoire.composer) {
+          repertoireQuery = repertoireQuery.ilike('lyrical_works.composer', `%${filters.repertoire.composer}%`);
         }
         
-        if (filters.category) {
-          repertoireQuery = repertoireQuery.eq('lyrical_works.category', filters.category);
+        if (filters.repertoire.category) {
+          repertoireQuery = repertoireQuery.eq('lyrical_works.category', filters.repertoire.category);
         }
         
-        if (filters.period) {
-          repertoireQuery = repertoireQuery.eq('lyrical_works.period', filters.period);
+        if (filters.repertoire.period) {
+          repertoireQuery = repertoireQuery.eq('lyrical_works.period', filters.repertoire.period);
         }
         
-        if (filters.masteryLevel) {
+        if (filters.repertoire.masteryLevel) {
           // Filtrer par niveau de maîtrise minimum
           const masteryOrder = ['beginner', 'intermediate', 'advanced', 'expert'];
-          const minIndex = masteryOrder.indexOf(filters.masteryLevel);
+          const minIndex = masteryOrder.indexOf(filters.repertoire.masteryLevel);
           const validLevels = masteryOrder.slice(minIndex);
           repertoireQuery = repertoireQuery.in('mastery_level', validLevels);
         }
@@ -92,11 +116,6 @@ export const useArtists = (filters?: RepertoireFilters) => {
 
         // Filtrer la requête principale par ces IDs
         query = query.in('id', artistIds);
-      }
-
-      // Appliquer le filtre de type de voix si spécifié
-      if (filters?.voiceType) {
-        query = query.eq('voice_type', filters.voiceType);
       }
 
       const { data, error } = await query;
