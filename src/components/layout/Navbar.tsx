@@ -1,126 +1,112 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { 
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
-import { 
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { User, LogOut, Settings, FileText, Briefcase } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User, UserPlus, Settings } from 'lucide-react';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   return (
-    <nav className="border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-lyrical-600 to-gold-500 bg-clip-text text-transparent">
-              Lyrical
-            </Link>
-            
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>Découvrir</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="w-[400px] p-4">
-                      <div className="grid gap-3">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/artists"
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">Artistes</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Découvrez les profils des artistes lyriques
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/castings"
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">Castings</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Trouvez des opportunités d'auditions
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/events"
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                          >
-                            <div className="text-sm font-medium leading-none">Événements</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Concerts, opéras et masterclasses
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                      </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
+    <nav className="bg-white shadow">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        {/* Logo et titre */}
+        <Link to="/" className="flex items-center text-xl font-semibold text-gray-900">
+          Lyrical
+        </Link>
 
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">Mon compte</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => navigate('/profile')}>
+        {/* Navigation principale */}
+        <div className="hidden md:flex items-center space-x-8">
+          <Link 
+            to="/artistes" 
+            className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+          >
+            Artistes
+          </Link>
+          <Link 
+            to="/castings" 
+            className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+          >
+            Castings
+          </Link>
+          {user && (
+            <>
+              {/* Liens pour les professionnels */}
+              <Link 
+                to="/recherche-artistes" 
+                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+              >
+                Recherche avancée
+              </Link>
+              <Link 
+                to="/messages-professionnels" 
+                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+              >
+                Messages
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Actions : Authentification / Profil */}
+        <div className="flex items-center space-x-4">
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.user_metadata?.avatar_url} alt={user.user_metadata?.full_name} />
+                    <AvatarFallback>{user.user_metadata?.full_name?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/profil')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profil</span>
+                </DropdownMenuItem>
+                {user.app_metadata.provider === 'email' && (
+                  <DropdownMenuItem onClick={() => navigate('/auth/update-password')}>
                     <Settings className="mr-2 h-4 w-4" />
-                    Mon profil
+                    <span>Changer le mot de passe</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/mes-candidatures')}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Mes candidatures
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/castings/nouveau')}>
-                    <Briefcase className="mr-2 h-4 w-4" />
-                    Créer un casting
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Se déconnecter
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button onClick={() => navigate('/auth')}>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => signOut({ redirectTo: '/auth' })} >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Déconnexion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button variant="outline" size="sm" onClick={() => navigate('/auth/sign-in')}>
                 Se connecter
               </Button>
-            )}
-          </div>
+              <Button size="sm" onClick={() => navigate('/auth/sign-up')}>
+                S'inscrire
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </nav>

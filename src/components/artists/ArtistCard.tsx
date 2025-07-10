@@ -1,78 +1,109 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlayCircle, Loader2 } from 'lucide-react';
-import { useArtistPhotos } from '@/hooks/useArtistPhotos';
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Clock, User, MessageSquare, UserPlus } from 'lucide-react';
+import ContactArtistDialog from './ContactArtistDialog';
+import InviteArtistDialog from './InviteArtistDialog';
 
 interface ArtistCardProps {
-  artist: any;
+  artist: any; // Replace 'any' with a more specific type if possible
+  showContactButton?: boolean;
 }
 
-const ArtistCard: React.FC<ArtistCardProps> = ({ artist }) => {
-  const { photos, getPhotoUrl, isLoading: photosLoading } = useArtistPhotos(artist.id);
-  
-  console.log('ArtistCard - Artist data:', artist);
-  console.log('ArtistCard - Photos for artist', artist.id, ':', photos);
-  console.log('ArtistCard - Photos loading:', photosLoading);
-  
-  // Trouver la photo de profil ou prendre la première photo
-  const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
-  const imageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
-  
-  console.log('ArtistCard - Profile photo:', profilePhoto);
-  console.log('ArtistCard - Image URL:', imageUrl);
-  
-  // Image par défaut si aucune photo
-  const defaultImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80';
-  
+const ArtistCard: React.FC<ArtistCardProps> = ({ artist, showContactButton = false }) => {
   return (
-    <div className="group rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border">
-      <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
-        {photosLoading ? (
-          <div className="w-full h-full bg-muted flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin" />
-          </div>
-        ) : (
-          <img 
-            src={imageUrl || defaultImage} 
-            alt={artist.stage_name} 
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            onError={(e) => {
-              console.log('Image error for artist', artist.stage_name, 'trying default image');
-              e.currentTarget.src = defaultImage;
-            }}
-            onLoad={() => {
-              console.log('Image loaded successfully for artist', artist.stage_name);
-            }}
-          />
+    <Card className="hover:shadow-lg transition-all duration-300 group">
+      <div className="relative">
+        
+        {/* Photo ou placeholder */}
+        <div className="aspect-[4/3] overflow-hidden rounded-t-lg bg-gray-100">
+          {artist.profile_image_url ? (
+            <img
+              src={artist.profile_image_url}
+              alt={artist.stage_name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-lyrical-100 to-gold-100">
+              <User className="h-16 w-16 text-gray-400" />
+            </div>
+          )}
+        </div>
+        
+        {/* Badge type de voix */}
+        {artist.voice_type && (
+          <Badge className="absolute top-3 left-3 bg-white/90 text-gray-700 hover:bg-white">
+            {artist.voice_type}
+          </Badge>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
-          <Button 
-            size="sm" 
-            className="mb-4 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white gap-2"
-          >
-            <PlayCircle className="h-4 w-4" />
-            Écouter
-          </Button>
-        </div>
-      </Link>
-      <div className="p-4">
-        <h3 className="font-serif font-semibold text-lg hover:text-lyrical-700 transition-colors">
-          <Link to={`/artistes/${artist.id}`}>{artist.stage_name}</Link>
-        </h3>
-        <p className="text-muted-foreground text-sm">{artist.voice_type || 'Non spécifié'}</p>
-        <div className="flex items-center justify-between mt-2">
-          <p className="text-xs text-muted-foreground">
-            {artist.repertoire && artist.repertoire.length > 0 
-              ? artist.repertoire.slice(0, 2).join(', ') 
-              : 'Répertoire à découvrir'
-            }
-          </p>
-          <p className="text-xs text-muted-foreground">{artist.location || 'France'}</p>
-        </div>
       </div>
-    </div>
+
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          {/* Nom et localisation */}
+          <div>
+            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+              {artist.stage_name}
+            </h3>
+            {artist.location && (
+              <p className="text-sm text-gray-600 flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {artist.location}
+              </p>
+            )}
+          </div>
+
+          {/* Bio (tronquée) */}
+          {artist.bio && (
+            <p className="text-sm text-gray-600 line-clamp-2">
+              {artist.bio}
+            </p>
+          )}
+
+          {/* Expérience */}
+          {artist.experience_years !== null && artist.experience_years > 0 && (
+            <div className="flex items-center gap-1 text-sm text-gray-600">
+              <Clock className="h-3 w-3" />
+              {artist.experience_years} ans d'expérience
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-2 pt-2">
+            <Button asChild className="flex-1">
+              <Link to={`/artistes/${artist.id}`}>
+                Voir le profil
+              </Link>
+            </Button>
+            
+            {showContactButton && (
+              <div className="flex gap-1">
+                <ContactArtistDialog
+                  artistId={artist.id}
+                  artistName={artist.stage_name}
+                  trigger={
+                    <Button variant="outline" size="sm">
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
+                  }
+                />
+                <InviteArtistDialog
+                  artistId={artist.id}
+                  artistName={artist.stage_name}
+                  trigger={
+                    <Button variant="outline" size="sm">
+                      <UserPlus className="h-4 w-4" />
+                    </Button>
+                  }
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

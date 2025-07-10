@@ -334,6 +334,64 @@ export type Database = {
           },
         ]
       }
+      casting_invitations: {
+        Row: {
+          artist_profile_id: string
+          casting_id: string
+          created_at: string
+          id: string
+          message: string
+          professional_profile_id: string
+          responded_at: string | null
+          status: string
+          viewed_at: string | null
+        }
+        Insert: {
+          artist_profile_id: string
+          casting_id: string
+          created_at?: string
+          id?: string
+          message: string
+          professional_profile_id: string
+          responded_at?: string | null
+          status?: string
+          viewed_at?: string | null
+        }
+        Update: {
+          artist_profile_id?: string
+          casting_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          professional_profile_id?: string
+          responded_at?: string | null
+          status?: string
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_invitations_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_invitations_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_invitations_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       casting_roles: {
         Row: {
           casting_id: string
@@ -550,6 +608,57 @@ export type Database = {
           },
         ]
       }
+      professional_contacts: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          message: string
+          professional_profile_id: string
+          replied_at: string | null
+          status: string
+          subject: string
+          viewed_at: string | null
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          message: string
+          professional_profile_id: string
+          replied_at?: string | null
+          status?: string
+          subject: string
+          viewed_at?: string | null
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          professional_profile_id?: string
+          replied_at?: string | null
+          status?: string
+          subject?: string
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_contacts_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_contacts_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_profiles: {
         Row: {
           bio: string | null
@@ -647,6 +756,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "professional_target_profiles_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_searches: {
+        Row: {
+          created_at: string
+          id: string
+          is_alert_enabled: boolean | null
+          name: string
+          professional_profile_id: string
+          search_criteria: Json
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_alert_enabled?: boolean | null
+          name: string
+          professional_profile_id: string
+          search_criteria: Json
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_alert_enabled?: boolean | null
+          name?: string
+          professional_profile_id?: string
+          search_criteria?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_searches_professional_profile_id_fkey"
             columns: ["professional_profile_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
