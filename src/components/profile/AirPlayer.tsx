@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, ExternalLink, Music, Video, Link } from 'lucide-react';
 import { useArtistAirs } from '@/hooks/useArtistAirs';
+import VideoPlayerModal from './VideoPlayerModal';
 
 interface AirPlayerProps {
   artistProfileId: string;
@@ -13,6 +14,8 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
   const { airs, isLoading, getFileUrl } = useArtistAirs(artistProfileId);
   const [currentPlaying, setCurrentPlaying] = useState<string | null>(null);
   const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<any>(null);
 
   const activeAirs = airs.filter(air => air.is_active);
 
@@ -65,6 +68,20 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
 
   const openExternalLink = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleVideoPlay = (air: any) => {
+    setSelectedVideo(air);
+    setVideoModalOpen(true);
+  };
+
+  const getVideoUrl = (air: any) => {
+    if (air.type === 'url') {
+      return air.external_url;
+    } else if (air.file_path) {
+      return getFileUrl(air.file_path);
+    }
+    return '';
   };
 
   if (isLoading) {
@@ -122,16 +139,14 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                     </Button>
                   )}
                   
-                  {air.type === 'video' && air.file_path && (
-                    <div className="w-full max-w-md">
-                      <video 
-                        controls 
-                        className="w-full rounded"
-                        src={getFileUrl(air.file_path)}
-                      >
-                        Votre navigateur ne supporte pas la lecture vidéo.
-                      </video>
-                    </div>
+                  {air.type === 'video' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleVideoPlay(air)}
+                    >
+                      <Play className="h-4 w-4" />
+                    </Button>
                   )}
                   
                   {air.type === 'url' && (
@@ -148,6 +163,20 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
             );
           })}
         </div>
+
+        {/* Modale pour le player vidéo */}
+        {selectedVideo && (
+          <VideoPlayerModal
+            isOpen={videoModalOpen}
+            onClose={() => {
+              setVideoModalOpen(false);
+              setSelectedVideo(null);
+            }}
+            videoSrc={getVideoUrl(selectedVideo)}
+            title={selectedVideo.title}
+            description={selectedVideo.description}
+          />
+        )}
       </CardContent>
     </Card>
   );
