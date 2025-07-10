@@ -55,10 +55,10 @@ const Navbar = () => {
                 Recherche avancée
               </Link>
               <Link 
-                to="/messages-professionnels" 
+                to="/mes-evenements" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Messages
+                Mes Événements
               </Link>
             </>
           )}

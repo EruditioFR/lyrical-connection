@@ -528,6 +528,78 @@ export type Database = {
           },
         ]
       }
+      event_applications: {
+        Row: {
+          applied_at: string
+          artist_profile_id: string
+          created_at: string
+          event_id: string
+          experience_level: string | null
+          id: string
+          motivation: string | null
+          professional_notes: string | null
+          reviewed_at: string | null
+          special_requirements: string | null
+          status: Database["public"]["Enums"]["application_status"]
+          updated_at: string
+        }
+        Insert: {
+          applied_at?: string
+          artist_profile_id: string
+          created_at?: string
+          event_id: string
+          experience_level?: string | null
+          id?: string
+          motivation?: string | null
+          professional_notes?: string | null
+          reviewed_at?: string | null
+          special_requirements?: string | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+        }
+        Update: {
+          applied_at?: string
+          artist_profile_id?: string
+          created_at?: string
+          event_id?: string
+          experience_level?: string | null
+          id?: string
+          motivation?: string | null
+          professional_notes?: string | null
+          reviewed_at?: string | null
+          special_requirements?: string | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      event_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lyrical_works: {
         Row: {
           category: string
@@ -655,6 +727,89 @@ export type Database = {
             columns: ["professional_profile_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_events: {
+        Row: {
+          category_id: string | null
+          contact_info: string | null
+          created_at: string
+          currency: string | null
+          description: string | null
+          end_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          location: string | null
+          max_participants: number | null
+          price: number | null
+          professional_profile_id: string
+          program: string | null
+          registration_deadline: string | null
+          requirements: string | null
+          start_date: string
+          status: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          contact_info?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          end_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          price?: number | null
+          professional_profile_id: string
+          program?: string | null
+          registration_deadline?: string | null
+          requirements?: string | null
+          start_date: string
+          status?: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          contact_info?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          end_date?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          price?: number | null
+          professional_profile_id?: string
+          program?: string | null
+          registration_deadline?: string | null
+          requirements?: string | null
+          start_date?: string
+          status?: Database["public"]["Enums"]["event_status"]
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_events_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "event_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -880,6 +1035,14 @@ export type Database = {
       }
     }
     Enums: {
+      application_status: "pending" | "accepted" | "rejected" | "waitlisted"
+      event_status: "draft" | "published" | "cancelled" | "completed"
+      event_type:
+        | "masterclass"
+        | "stage"
+        | "concours"
+        | "atelier"
+        | "conference"
       professional_role:
         | "casting_director"
         | "vocal_coach"
@@ -1017,6 +1180,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      application_status: ["pending", "accepted", "rejected", "waitlisted"],
+      event_status: ["draft", "published", "cancelled", "completed"],
+      event_type: ["masterclass", "stage", "concours", "atelier", "conference"],
       professional_role: [
         "casting_director",
         "vocal_coach",

@@ -16,7 +16,7 @@ import MyApplications from '@/pages/MyApplications';
 import ProfessionalApplications from '@/pages/ProfessionalApplications';
 import NotFound from '@/pages/NotFound';
 import ArtistSearch from '@/pages/ArtistSearch';
-import ProfessionalMessages from '@/pages/ProfessionalMessages';
+import ProfessionalEvents from '@/pages/ProfessionalEvents';
 
 const queryClient = new QueryClient();
 
@@ -39,7 +39,7 @@ function App() {
           <Route path="/mes-candidatures" element={<MyApplications />} />
           <Route path="/candidatures-reçues" element={<ProfessionalApplications />} />
           <Route path="/recherche-artistes" element={<ArtistSearch />} />
-          <Route path="/messages-professionnels" element={<ProfessionalMessages />} />
+          <Route path="/mes-evenements" element={<ProfessionalEvents />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
