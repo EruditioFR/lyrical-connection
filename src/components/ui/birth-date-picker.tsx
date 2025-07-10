@@ -132,7 +132,13 @@ export function BirthDatePicker({ value, onChange, placeholder = "Sélectionner 
           mode="single"
           selected={value}
           onSelect={(date) => {
-            onChange(date);
+            if (date) {
+              // Créer une date locale pour éviter les problèmes de fuseau horaire
+              const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+              onChange(localDate);
+            } else {
+              onChange(undefined);
+            }
             setIsOpen(false);
           }}
           month={currentMonth}
