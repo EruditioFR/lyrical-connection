@@ -69,33 +69,9 @@ const HeroModern = () => {
               </div>
               
               {/* Floating Cards */}
-              <div className="absolute -left-6 top-1/4 bg-card rounded-xl p-4 shadow-lg border animate-scale-in" style={{
-              animationDelay: '400ms'
-            }}>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-lyrical-100 p-2 rounded-lg">
-                    <Music className="h-5 w-5 text-lyrical-700" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm">Profils Complets</div>
-                    <div className="text-xs text-muted-foreground">Audio, vidéo, répertoire</div>
-                  </div>
-                </div>
-              </div>
               
-              <div className="absolute -right-6 bottom-1/4 bg-card rounded-xl p-4 shadow-lg border animate-scale-in" style={{
-              animationDelay: '600ms'
-            }}>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gold-100 p-2 rounded-lg">
-                    <Users className="h-5 w-5 text-gold-700" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm">Réseau Pro</div>
-                    <div className="text-xs text-muted-foreground">Directeurs, agents</div>
-                  </div>
-                </div>
-              </div>
+              
+              
             </div>
           </div>
         </div>
