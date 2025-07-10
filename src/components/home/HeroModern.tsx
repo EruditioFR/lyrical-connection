@@ -75,11 +75,17 @@ const HeroModern = () => {
               {/* Main Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1507901747481-84a4f64ffd7d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                  src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
                   alt="Performance d'opéra"
                   className="w-full h-[500px] object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-lyrical-900/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-lyrical-900/40 to-transparent">
+                  <img 
+                    src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Artiste lyrique en concert"
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                </div>
               </div>
               
               {/* Floating Cards */}
