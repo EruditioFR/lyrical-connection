@@ -40,7 +40,11 @@ export const useArtists = (filters?: ArtistFilters) => {
           is_active,
           experience_years,
           repertoire,
-          contact_email
+          contact_email,
+          artist_photos!left (
+            file_path,
+            is_profile_photo
+          )
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
@@ -126,7 +130,19 @@ export const useArtists = (filters?: ArtistFilters) => {
         throw error;
       }
 
-      const realArtists = data as Artist[];
+      // Traiter les artistes réels pour récupérer la photo de profil favorite
+      const realArtists = (data as any[]).map(artist => {
+        const profilePhoto = artist.artist_photos?.find((photo: any) => photo.is_profile_photo);
+        const profileImageUrl = profilePhoto 
+          ? supabase.storage.from('artist-photos').getPublicUrl(profilePhoto.file_path).data.publicUrl
+          : artist.profile_image_url;
+        
+        return {
+          ...artist,
+          profile_image_url: profileImageUrl,
+          artist_photos: undefined // Ne pas exposer les photos dans l'interface Artist
+        } as Artist;
+      });
       
       // Mixer les artistes réels et fictifs
       const allArtists = [...realArtists, ...fictionalArtists];
