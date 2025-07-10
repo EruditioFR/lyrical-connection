@@ -22,12 +22,11 @@ const HeroModern = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
-              Connectez les <span className="bg-clip-text text-transparent bg-gradient-to-r from-lyrical-600 to-gold-500">talents lyriques</span> aux opportunités
+              Le tremplin digital des <span className="bg-clip-text text-transparent bg-gradient-to-r from-lyrical-600 to-gold-500">voix d'opéra</span>.
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-              La première plateforme dédiée aux chanteurs lyriques et aux professionnels de l'opéra. 
-              Créez votre profil, découvrez des opportunités et développez votre carrière.
+              Pensé pour révéler, connecter et propulser les carrières lyriques.
             </p>
             
             {/* CTA Buttons */}
