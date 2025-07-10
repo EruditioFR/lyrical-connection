@@ -1,21 +1,25 @@
 
 import React from 'react';
-import Hero from '@/components/home/Hero';
+import HeroModern from '@/components/home/HeroModern';
+import FeaturesDetailed from '@/components/home/FeaturesDetailed';
 import FeaturedArtists from '@/components/home/FeaturedArtists';
 import UpcomingEvents from '@/components/home/UpcomingEvents';
-import Features from '@/components/home/Features';
-import Testimonials from '@/components/home/Testimonials';
+import PricingSection from '@/components/home/PricingSection';
+import PortalsSection from '@/components/home/PortalsSection';
+import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CtaSection from '@/components/home/CtaSection';
 import Layout from '@/components/layout/Layout';
 
 const Index = () => {
   return (
     <Layout>
-      <Hero />
+      <HeroModern />
+      <FeaturesDetailed />
       <FeaturedArtists />
       <UpcomingEvents />
-      <Features />
-      <Testimonials />
+      <PricingSection />
+      <PortalsSection />
+      <TestimonialsSection />
       <CtaSection />
     </Layout>
   );
