@@ -103,7 +103,7 @@ const NotificationCenter = () => {
         </DropdownMenuTrigger>
         
         <DropdownMenuContent align="end" className="w-80 p-0">
-          <DropdownMenuHeader className="p-4 pb-2">
+          <div className="p-4 pb-2">
             <div className="flex items-center justify-between">
               <h3 className="font-medium">Notifications</h3>
               <div className="flex gap-1">
@@ -111,7 +111,7 @@ const NotificationCenter = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={markAllAsRead}
+                    onClick={() => markAllAsRead()}
                     className="text-xs px-2 py-1 h-auto"
                   >
                     <CheckCheck className="w-3 h-3 mr-1" />
@@ -134,7 +134,7 @@ const NotificationCenter = () => {
                 {unreadCount} nouvelle{unreadCount > 1 ? 's' : ''} notification{unreadCount > 1 ? 's' : ''}
               </p>
             )}
-          </DropdownMenuHeader>
+          </div>
           
           <DropdownMenuSeparator />
           

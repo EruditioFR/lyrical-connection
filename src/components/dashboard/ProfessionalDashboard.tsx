@@ -27,7 +27,7 @@ const ProfessionalDashboard = () => {
 
   // Filter data for the current professional
   const myCastings = castings.filter(c => c.professional_profile_id === profile?.id);
-  const myEvents = events.filter(e => e.professional_profile_id === profile?.id);
+  const myEvents: any[] = []; // TODO: Implement events hook
   const myApplications = applications.filter(app => 
     myCastings.some(casting => casting.id === app.casting_id)
   );

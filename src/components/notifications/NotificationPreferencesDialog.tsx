@@ -82,7 +82,7 @@ const NotificationPreferencesDialog = ({
         <div className="flex items-center space-x-2">
           <Switch
             id={`${emailKey}`}
-            checked={localPreferences[emailKey] || false}
+            checked={Boolean(localPreferences[emailKey])}
             onCheckedChange={(checked) => handleToggle(emailKey, checked)}
           />
           <Label htmlFor={`${emailKey}`} className="text-sm">Email</Label>
@@ -91,7 +91,7 @@ const NotificationPreferencesDialog = ({
         <div className="flex items-center space-x-2">
           <Switch
             id={`${pushKey}`}
-            checked={localPreferences[pushKey] || false}
+            checked={Boolean(localPreferences[pushKey])}
             onCheckedChange={(checked) => handleToggle(pushKey, checked)}
           />
           <Label htmlFor={`${pushKey}`} className="text-sm">Push</Label>
@@ -100,7 +100,7 @@ const NotificationPreferencesDialog = ({
         <div className="flex items-center space-x-2">
           <Switch
             id={`${inAppKey}`}
-            checked={localPreferences[inAppKey] || false}
+            checked={Boolean(localPreferences[inAppKey])}
             onCheckedChange={(checked) => handleToggle(inAppKey, checked)}
           />
           <Label htmlFor={`${inAppKey}`} className="text-sm">Dans l'app</Label>
@@ -189,7 +189,7 @@ const NotificationPreferencesDialog = ({
               <div className="flex items-center space-x-2">
                 <Switch
                   id="email_marketing"
-                  checked={localPreferences.email_marketing || false}
+                  checked={Boolean(localPreferences.email_marketing)}
                   onCheckedChange={(checked) => handleToggle('email_marketing', checked)}
                 />
                 <Label htmlFor="email_marketing">

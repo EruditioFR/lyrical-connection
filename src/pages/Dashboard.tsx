@@ -8,8 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
-  const { data: artistProfile, isLoading: artistLoading } = useArtistProfile();
-  const { data: professionalProfile, isLoading: professionalLoading } = useProfessionalProfile();
+  const { profile: artistProfile, isLoading: artistLoading } = useArtistProfile();
+  const { profile: professionalProfile, isLoading: professionalLoading } = useProfessionalProfile();
 
   if (loading || artistLoading || professionalLoading) {
     return (

@@ -42,8 +42,8 @@ const NewConversationDialog = ({
   const [searchType, setSearchType] = useState<'all' | 'artists' | 'professionals'>('all');
 
   const { createConversation, isCreating } = useConversations();
-  const { data: artists } = useArtists({});
-  const { data: professionalProfile } = useProfessionalProfile();
+  const { artists } = useArtists({});
+  const { profile: professionalProfile } = useProfessionalProfile();
 
   // Transform data to contacts format
   const allContacts: Contact[] = [
@@ -53,7 +53,7 @@ const NewConversationDialog = ({
       email: artist.contact_email || undefined,
       type: 'artist' as const,
       profileImage: artist.profile_image_url || undefined,
-      userId: artist.user_id
+      userId: artist.id // Using artist profile id instead of user_id
     })) || []),
     // Add professionals when available
   ];
@@ -61,7 +61,9 @@ const NewConversationDialog = ({
   const filteredContacts = allContacts.filter(contact => {
     const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          contact.email?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = searchType === 'all' || contact.type === searchType;
+    const matchesType = searchType === 'all' || 
+                    (searchType === 'artists' && contact.type === 'artist') ||
+                    (searchType === 'professionals' && contact.type === 'professional');
     return matchesSearch && matchesType;
   });
 
