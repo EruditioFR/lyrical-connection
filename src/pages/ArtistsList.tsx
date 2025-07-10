@@ -2,15 +2,20 @@
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useArtists } from '@/hooks/useArtists';
+import { useAuth } from '@/hooks/useAuth';
 import SearchFilters from '@/components/artists/SearchFilters';
 import ArtistsGrid from '@/components/artists/ArtistsGrid';
+import { ImageGenerationPanel } from '@/components/artists/ImageGenerationPanel';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { RepertoireFilters } from '@/components/artists/RepertoireFilters';
 
 const ArtistsList = () => {
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [voiceType, setVoiceType] = useState('');
   const [location, setLocation] = useState('');
   const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
+  const [refreshKey, setRefreshKey] = useState(0);
   
   // Construire les filtres pour useArtists (seulement les filtres que le hook peut gérer)
   const apiFilters = {
@@ -49,6 +54,10 @@ const ArtistsList = () => {
     setVoiceType('');
     setLocation('');
     setRepertoireFilters({});
+  };
+
+  const handleImagesGenerated = () => {
+    setRefreshKey(prev => prev + 1);
   };
 
   if (error) {
@@ -91,15 +100,42 @@ const ArtistsList = () => {
         </div>
       </section>
 
-      {/* Liste des artistes */}
-      <ArtistsGrid
-        artists={artists}
-        filteredArtists={filteredArtists}
-        isLoading={isLoading}
-        searchQuery={searchTerm}
-        selectedVoiceTypes={voiceType ? [voiceType] : []}
-        onResetFilters={resetFilters}
-      />
+      {/* Onglets pour afficher la liste des artistes et la génération d'images */}
+      {user ? (
+        <div className="container mx-auto px-4 md:px-6 py-8">
+          <Tabs defaultValue="artists" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="artists">Liste des Artistes</TabsTrigger>
+              <TabsTrigger value="generate-images">Générer des Images</TabsTrigger>
+            </TabsList>
+            <TabsContent value="artists" className="mt-6">
+              <ArtistsGrid
+                artists={artists}
+                filteredArtists={filteredArtists}
+                isLoading={isLoading}
+                searchQuery={searchTerm}
+                selectedVoiceTypes={voiceType ? [voiceType] : []}
+                onResetFilters={resetFilters}
+              />
+            </TabsContent>
+            <TabsContent value="generate-images" className="mt-6">
+              <ImageGenerationPanel
+                artists={artists}
+                onImagesGenerated={handleImagesGenerated}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+      ) : (
+        <ArtistsGrid
+          artists={artists}
+          filteredArtists={filteredArtists}
+          isLoading={isLoading}
+          searchQuery={searchTerm}
+          selectedVoiceTypes={voiceType ? [voiceType] : []}
+          onResetFilters={resetFilters}
+        />
+      )}
     </Layout>
   );
 };
