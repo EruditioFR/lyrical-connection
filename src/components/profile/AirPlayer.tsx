@@ -153,9 +153,37 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => openExternalLink(air.external_url!)}
+                      onClick={() => {
+                        // Si l'URL contient des mots-clés vidéo, ouvrir dans la modale
+                        const isVideoUrl = air.external_url && (
+                          air.external_url.includes('youtube') ||
+                          air.external_url.includes('vimeo') ||
+                          air.external_url.includes('dailymotion') ||
+                          air.external_url.includes('.mp4') ||
+                          air.external_url.includes('.webm') ||
+                          air.external_url.includes('.mov')
+                        );
+                        
+                        if (isVideoUrl) {
+                          handleVideoPlay(air);
+                        } else {
+                          openExternalLink(air.external_url!);
+                        }
+                      }}
                     >
-                      <ExternalLink className="h-4 w-4" />
+                      {/* Afficher l'icône appropriée selon le type de contenu */}
+                      {air.external_url && (
+                        air.external_url.includes('youtube') ||
+                        air.external_url.includes('vimeo') ||
+                        air.external_url.includes('dailymotion') ||
+                        air.external_url.includes('.mp4') ||
+                        air.external_url.includes('.webm') ||
+                        air.external_url.includes('.mov')
+                      ) ? (
+                        <Play className="h-4 w-4" />
+                      ) : (
+                        <ExternalLink className="h-4 w-4" />
+                      )}
                     </Button>
                   )}
                 </div>
