@@ -13,6 +13,9 @@ import EventDetail from "./pages/EventDetail";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import ProfessionalProfile from "./pages/ProfessionalProfile";
+import Castings from "./pages/Castings";
+import CastingDetail from "./pages/CastingDetail";
+import CreateCasting from "./pages/CreateCasting";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +33,9 @@ const App = () => (
             <Route path="/artistes/:id" element={<ArtistProfile />} />
             <Route path="/evenements" element={<Events />} />
             <Route path="/evenements/:id" element={<EventDetail />} />
+            <Route path="/castings" element={<Castings />} />
+            <Route path="/castings/:id" element={<CastingDetail />} />
+            <Route path="/castings/nouveau" element={<CreateCasting />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profil" element={<Profile />} />
             <Route path="/profil-pro" element={<ProfessionalProfile />} />

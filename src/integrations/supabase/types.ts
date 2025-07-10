@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          additional_documents: string[] | null
+          artist_profile_id: string
+          audition_notes: string | null
+          audition_scheduled_at: string | null
+          availability_notes: string | null
+          casting_id: string
+          cover_letter: string | null
+          created_at: string
+          id: string
+          motivation: string | null
+          professional_notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          additional_documents?: string[] | null
+          artist_profile_id: string
+          audition_notes?: string | null
+          audition_scheduled_at?: string | null
+          availability_notes?: string | null
+          casting_id: string
+          cover_letter?: string | null
+          created_at?: string
+          id?: string
+          motivation?: string | null
+          professional_notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          additional_documents?: string[] | null
+          artist_profile_id?: string
+          audition_notes?: string | null
+          audition_scheduled_at?: string | null
+          availability_notes?: string | null
+          casting_id?: string
+          cover_letter?: string | null
+          created_at?: string
+          id?: string
+          motivation?: string | null
+          professional_notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artist_airs: {
         Row: {
           artist_profile_id: string
@@ -231,6 +294,178 @@ export type Database = {
             columns: ["work_id"]
             isOneToOne: false
             referencedRelation: "lyrical_works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      casting_favorites: {
+        Row: {
+          artist_profile_id: string
+          casting_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          artist_profile_id: string
+          casting_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          artist_profile_id?: string
+          casting_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_favorites_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_favorites_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      casting_roles: {
+        Row: {
+          casting_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_lead_role: boolean | null
+          quantity_needed: number | null
+          role_name: string
+          voice_type: string | null
+        }
+        Insert: {
+          casting_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_lead_role?: boolean | null
+          quantity_needed?: number | null
+          role_name: string
+          voice_type?: string | null
+        }
+        Update: {
+          casting_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_lead_role?: boolean | null
+          quantity_needed?: number | null
+          role_name?: string
+          voice_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_roles_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      castings: {
+        Row: {
+          age_range_max: number | null
+          age_range_min: number | null
+          application_deadline: string | null
+          audition_date: string | null
+          audition_location: string | null
+          compensation_amount: number | null
+          compensation_type: string | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          location: string | null
+          production_type: string
+          professional_profile_id: string
+          repertoire_requirements: string[] | null
+          required_experience_level: string[] | null
+          required_languages: string[] | null
+          required_voice_types: string[] | null
+          specific_requirements: string | null
+          start_date: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+          view_count: number | null
+        }
+        Insert: {
+          age_range_max?: number | null
+          age_range_min?: number | null
+          application_deadline?: string | null
+          audition_date?: string | null
+          audition_location?: string | null
+          compensation_amount?: number | null
+          compensation_type?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          location?: string | null
+          production_type: string
+          professional_profile_id: string
+          repertoire_requirements?: string[] | null
+          required_experience_level?: string[] | null
+          required_languages?: string[] | null
+          required_voice_types?: string[] | null
+          specific_requirements?: string | null
+          start_date?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          age_range_max?: number | null
+          age_range_min?: number | null
+          application_deadline?: string | null
+          audition_date?: string | null
+          audition_location?: string | null
+          compensation_amount?: number | null
+          compensation_type?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          location?: string | null
+          production_type?: string
+          professional_profile_id?: string
+          repertoire_requirements?: string[] | null
+          required_experience_level?: string[] | null
+          required_languages?: string[] | null
+          required_voice_types?: string[] | null
+          specific_requirements?: string | null
+          start_date?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "castings_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -492,7 +727,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_casting_views: {
+        Args: { casting_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       professional_role:

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -33,6 +32,13 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const navigationItems = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Artistes', href: '/artistes' },
+    { name: 'Castings', href: '/castings' },
+    { name: 'Événements', href: '/evenements' }
+  ];
+
   const handleSignOut = async () => {
     await signOut();
     setIsMobileMenuOpen(false);
@@ -55,18 +61,11 @@ const Navbar = () => {
 
           {/* Navigation sur desktop */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/artistes" className="text-foreground/80 hover:text-foreground transition-colors">
-              Artistes
-            </Link>
-            <Link to="/evenements" className="text-foreground/80 hover:text-foreground transition-colors">
-              Événements
-            </Link>
-            <Link to="/a-propos" className="text-foreground/80 hover:text-foreground transition-colors">
-              À propos
-            </Link>
-            <Link to="/contact" className="text-foreground/80 hover:text-foreground transition-colors">
-              Contact
-            </Link>
+            {navigationItems.map((item) => (
+              <Link key={item.name} to={item.href} className="text-foreground/80 hover:text-foreground transition-colors">
+                {item.name}
+              </Link>
+            ))}
           </nav>
 
           {/* Actions */}
@@ -126,34 +125,16 @@ const Navbar = () => {
         <div className="md:hidden absolute top-16 inset-x-0 bg-background/95 backdrop-blur-md shadow-md animate-fade-in">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-col space-y-4">
-              <Link 
-                to="/artistes" 
-                className="text-foreground/80 hover:text-foreground py-2 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Artistes
-              </Link>
-              <Link 
-                to="/evenements" 
-                className="text-foreground/80 hover:text-foreground py-2 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Événements
-              </Link>
-              <Link 
-                to="/a-propos" 
-                className="text-foreground/80 hover:text-foreground py-2 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                À propos
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-foreground/80 hover:text-foreground py-2 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              {navigationItems.map((item) => (
+                <Link 
+                  key={item.name} 
+                  to={item.href} 
+                  className="text-foreground/80 hover:text-foreground py-2 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
               
               {user ? (
                 <div className="pt-2 space-y-2">
