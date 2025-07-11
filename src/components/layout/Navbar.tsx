@@ -69,10 +69,10 @@ const Navbar = () => {
             </>
           ) : (
             <Link 
-              to="/castings" 
+              to="/pricing" 
               className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
             >
-              Castings
+              Tarifs
             </Link>
           )}
         </div>
