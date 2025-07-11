@@ -97,7 +97,13 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!professionalProfile) return;
+    console.log('HandleSubmit called');
+    console.log('Professional profile:', professionalProfile);
+    
+    if (!professionalProfile) {
+      console.error('No professional profile found');
+      return;
+    }
 
     const eventData: CreateEventData & { id?: string } = {
       professional_profile_id: professionalProfile.id,
