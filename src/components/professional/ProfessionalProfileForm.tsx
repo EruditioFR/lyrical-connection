@@ -9,7 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { Briefcase, MapPin, Globe, Phone, Mail, Users, Clock, Target, Loader2 } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
+
 type ProfessionalRole = Database['public']['Enums']['professional_role'];
+
 const professionalRoles: {
   value: ProfessionalRole;
   label: string;
@@ -47,6 +49,7 @@ const professionalRoles: {
   label: 'Directeur de concours / jury',
   icon: '🎤'
 }];
+
 const ProfessionalProfileForm = () => {
   const {
     profile,
@@ -56,6 +59,7 @@ const ProfessionalProfileForm = () => {
     isCreating,
     isUpdating
   } = useProfessionalProfile();
+
   const [formData, setFormData] = useState<{
     professional_role: ProfessionalRole | '';
     company_name: string;
@@ -77,6 +81,7 @@ const ProfessionalProfileForm = () => {
     contact_email: '',
     phone: ''
   });
+
   useEffect(() => {
     if (profile) {
       setFormData({
@@ -92,12 +97,14 @@ const ProfessionalProfileForm = () => {
       });
     }
   }, [profile]);
+
   const handleChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
   };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -105,23 +112,31 @@ const ProfessionalProfileForm = () => {
     if (!formData.professional_role) {
       return;
     }
+
     const submitData = {
       ...formData,
       professional_role: formData.professional_role as ProfessionalRole
     };
+
     if (profile) {
       updateProfile(submitData);
     } else {
       createProfile(submitData);
     }
   };
+
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-[400px]">
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>;
+      </div>
+    );
   }
+
   const selectedRole = professionalRoles.find(role => role.value === formData.professional_role);
-  return <div className="max-w-4xl mx-auto space-y-6">
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-serif font-bold mb-2">Mon Profil Professionnel</h1>
         <p className="text-muted-foreground">
@@ -145,31 +160,48 @@ const ProfessionalProfileForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="company_name">Nom de société / organisation *</Label>
-                <Input id="company_name" value={formData.company_name} onChange={e => handleChange('company_name', e.target.value)} placeholder="Nom de votre société" required />
+                <Input
+                  id="company_name"
+                  value={formData.company_name}
+                  onChange={(e) => handleChange('company_name', e.target.value)}
+                  placeholder="Nom de votre société"
+                  required
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="professional_role">Votre métier *</Label>
-                <Select value={formData.professional_role} onValueChange={(value: ProfessionalRole) => handleChange('professional_role', value)}>
+                <Select
+                  value={formData.professional_role}
+                  onValueChange={(value: ProfessionalRole) => handleChange('professional_role', value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Sélectionnez votre métier" />
                   </SelectTrigger>
                   <SelectContent>
-                    {professionalRoles.map(role => <SelectItem key={role.value} value={role.value}>
+                    {professionalRoles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
                         <div className="flex items-center gap-2">
                           <span>{role.icon}</span>
                           <span>{role.label}</span>
                         </div>
-                      </SelectItem>)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-                {selectedRole}
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="bio">Présentation (max 1000 caractères)</Label>
-              <Textarea id="bio" value={formData.bio} onChange={e => handleChange('bio', e.target.value)} placeholder="Décrivez votre activité, votre expérience et vos spécialités..." maxLength={1000} rows={4} />
+              <Textarea
+                id="bio"
+                value={formData.bio}
+                onChange={(e) => handleChange('bio', e.target.value)}
+                placeholder="Décrivez votre activité, votre expérience et vos spécialités..."
+                maxLength={1000}
+                rows={4}
+              />
               <p className="text-sm text-muted-foreground">
                 {formData.bio.length}/1000 caractères
               </p>
@@ -191,7 +223,14 @@ const ProfessionalProfileForm = () => {
                 <Label htmlFor="contact_email">Email de contact</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="contact_email" type="email" value={formData.contact_email} onChange={e => handleChange('contact_email', e.target.value)} placeholder="contact@votresociete.com" className="pl-10" />
+                  <Input
+                    id="contact_email"
+                    type="email"
+                    value={formData.contact_email}
+                    onChange={(e) => handleChange('contact_email', e.target.value)}
+                    placeholder="contact@votresociete.com"
+                    className="pl-10"
+                  />
                 </div>
               </div>
               
@@ -199,7 +238,14 @@ const ProfessionalProfileForm = () => {
                 <Label htmlFor="phone">Téléphone</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="phone" type="tel" value={formData.phone} onChange={e => handleChange('phone', e.target.value)} placeholder="+33 1 23 45 67 89" className="pl-10" />
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleChange('phone', e.target.value)}
+                    placeholder="+33 1 23 45 67 89"
+                    className="pl-10"
+                  />
                 </div>
               </div>
             </div>
@@ -207,12 +253,24 @@ const ProfessionalProfileForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="location">Localisation</Label>
-                <Input id="location" value={formData.location} onChange={e => handleChange('location', e.target.value)} placeholder="Paris, France" />
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => handleChange('location', e.target.value)}
+                  placeholder="Paris, France"
+                />
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="intervention_radius">Rayon d'intervention (km)</Label>
-                <Input id="intervention_radius" type="number" min="0" max="1000" value={formData.intervention_radius} onChange={e => handleChange('intervention_radius', parseInt(e.target.value) || 0)} />
+                <Input
+                  id="intervention_radius"
+                  type="number"
+                  min="0"
+                  max="1000"
+                  value={formData.intervention_radius}
+                  onChange={(e) => handleChange('intervention_radius', parseInt(e.target.value) || 0)}
+                />
               </div>
             </div>
 
@@ -220,7 +278,14 @@ const ProfessionalProfileForm = () => {
               <Label htmlFor="website">Site web</Label>
               <div className="relative">
                 <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input id="website" type="url" value={formData.website} onChange={e => handleChange('website', e.target.value)} placeholder="https://www.votresite.com" className="pl-10" />
+                <Input
+                  id="website"
+                  type="url"
+                  value={formData.website}
+                  onChange={(e) => handleChange('website', e.target.value)}
+                  placeholder="https://www.votresite.com"
+                  className="pl-10"
+                />
               </div>
             </div>
           </CardContent>
@@ -240,21 +305,37 @@ const ProfessionalProfileForm = () => {
           <CardContent>
             <div className="space-y-2">
               <Label htmlFor="team_description">Description de l'équipe</Label>
-              <Textarea id="team_description" value={formData.team_description} onChange={e => handleChange('team_description', e.target.value)} placeholder="Présentez les membres de votre équipe, leurs spécialités..." rows={3} />
+              <Textarea
+                id="team_description"
+                value={formData.team_description}
+                onChange={(e) => handleChange('team_description', e.target.value)}
+                placeholder="Présentez les membres de votre équipe, leurs spécialités..."
+                rows={3}
+              />
             </div>
           </CardContent>
         </Card>
 
         {/* Bouton de sauvegarde */}
         <div className="flex justify-end gap-4">
-          <Button type="submit" disabled={isCreating || isUpdating || !formData.professional_role} className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600">
-            {isCreating || isUpdating ? <>
+          <Button
+            type="submit"
+            disabled={isCreating || isUpdating || !formData.professional_role}
+            className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+          >
+            {isCreating || isUpdating ? (
+              <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Sauvegarde...
-              </> : profile ? 'Mettre à jour' : 'Créer le profil'}
+              </>
+            ) : (
+              profile ? 'Mettre à jour' : 'Créer le profil'
+            )}
           </Button>
         </div>
       </form>
-    </div>;
+    </div>
+  );
 };
+
 export default ProfessionalProfileForm;
