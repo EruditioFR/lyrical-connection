@@ -62,26 +62,6 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading }: Pr
           </ul>
         </div>
 
-        <div className="space-y-2">
-          <h4 className="font-medium text-sm">Limites :</h4>
-          <ul className="space-y-1 text-xs text-muted-foreground">
-            {Object.entries(plan.limitations).map(([key, value]) => (
-              <li key={key} className="flex justify-between">
-                <span>
-                  {key === 'castings_per_month' && 'Castings par mois'}
-                  {key === 'messages_per_day' && 'Messages par jour'}
-                  {key === 'profile_views' && 'Vues de profil'}
-                  {key === 'team_members' && 'Membres d\'équipe'}
-                  {key === 'api_calls' && 'Appels API'}
-                </span>
-                <span className="font-medium">
-                  {typeof value === 'boolean' ? (value ? 'Oui' : 'Non') : 
-                   value === 9999 ? 'Illimité' : value}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </CardContent>
 
       <CardFooter>
