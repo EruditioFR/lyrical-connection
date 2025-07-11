@@ -2,16 +2,21 @@ import Layout from '@/components/layout/Layout';
 import ProfessionalDashboard from '@/components/dashboard/ProfessionalDashboard';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 import { useAuth } from '@/hooks/useAuth';
-import { useArtistProfile } from '@/hooks/useArtistProfile';
-import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
+import { useUserType } from '@/hooks/useUserType';
 import { Card, CardContent } from '@/components/ui/card';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
-  const { profile: artistProfile, isLoading: artistLoading } = useArtistProfile();
-  const { profile: professionalProfile, isLoading: professionalLoading } = useProfessionalProfile();
+  const { 
+    userType, 
+    isProfessional, 
+    isArtist, 
+    isLoading: userTypeLoading, 
+    artistProfile, 
+    professionalProfile 
+  } = useUserType();
 
-  if (loading || artistLoading || professionalLoading) {
+  if (loading || userTypeLoading) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8">
@@ -41,10 +46,6 @@ const Dashboard = () => {
       </Layout>
     );
   }
-
-  // Determine user type based on available profiles
-  const isProfessional = !!professionalProfile;
-  const isArtist = !!artistProfile;
 
   return (
     <Layout>

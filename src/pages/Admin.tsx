@@ -136,6 +136,7 @@ const Admin = () => {
             <TabsList>
               <TabsTrigger value="verification">Vérifications</TabsTrigger>
               <TabsTrigger value="users">Utilisateurs</TabsTrigger>
+              <TabsTrigger value="professionals">Professionnels</TabsTrigger>
               <TabsTrigger value="content">Contenu</TabsTrigger>
               <TabsTrigger value="settings">Paramètres</TabsTrigger>
             </TabsList>
@@ -156,6 +157,26 @@ const Admin = () => {
                   <div className="text-center py-8 text-muted-foreground">
                     <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p>Fonctionnalité en cours de développement</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="professionals">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gestion des profils professionnels</CardTitle>
+                  <CardDescription>
+                    Visualisez et gérez les profils professionnels de la plateforme
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                    <p>Fonctionnalité en cours de développement</p>
+                    <p className="text-sm mt-2">
+                      Les profils professionnels peuvent maintenant être créés correctement
+                    </p>
                   </div>
                 </CardContent>
               </Card>
