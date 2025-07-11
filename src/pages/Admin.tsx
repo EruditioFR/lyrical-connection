@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import VerificationPanel from '@/components/admin/VerificationPanel';
@@ -13,14 +14,18 @@ import {
   Settings, 
   BarChart3,
   AlertTriangle,
-  UserPlus
+  UserPlus,
+  Calendar,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import { useAdminStats } from '@/hooks/useAdminStats';
 
 const Admin = () => {
   const { user } = useAuth();
   const { isAdmin, isLoading: rolesLoading, refreshRoles } = useUserRoles();
+  const { data: stats, isLoading: statsLoading } = useAdminStats();
 
   if (!user) {
     return (
@@ -120,9 +125,14 @@ const Admin = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">1,234</div>
+                <div className="text-2xl font-bold">
+                  {statsLoading ? '...' : stats?.totalActiveUsers || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  +12% ce mois-ci
+                  {statsLoading ? '' : stats?.userGrowthPercentage ? 
+                    `${stats.userGrowthPercentage > 0 ? '+' : ''}${stats.userGrowthPercentage}% ce mois-ci` : 
+                    'Aucune donnée historique'
+                  }
                 </p>
               </CardContent>
             </Card>
@@ -133,7 +143,9 @@ const Admin = () => {
                 <FileCheck className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">23</div>
+                <div className="text-2xl font-bold">
+                  {statsLoading ? '...' : stats?.pendingVerifications || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Demandes à traiter
                 </p>
@@ -146,22 +158,62 @@ const Admin = () => {
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">456</div>
+                <div className="text-2xl font-bold">
+                  {statsLoading ? '...' : stats?.activeCastings || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  +7% cette semaine
+                  {statsLoading ? '' : stats?.castingGrowthPercentage ? 
+                    `${stats.castingGrowthPercentage > 0 ? '+' : ''}${stats.castingGrowthPercentage}% cette semaine` : 
+                    'Aucune donnée historique'
+                  }
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Signalements</CardTitle>
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium">Événements publiés</CardTitle>
+                <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">5</div>
+                <div className="text-2xl font-bold">
+                  {statsLoading ? '...' : stats?.publishedEvents || 0}
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  À examiner
+                  Événements actifs
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Statistiques supplémentaires */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Candidatures récentes</CardTitle>
+                <UserPlus className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {statsLoading ? '...' : stats?.recentApplications || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Derniers 30 jours
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Messages en attente</CardTitle>
+                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {statsLoading ? '...' : stats?.pendingContacts || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Contacts non traités
                 </p>
               </CardContent>
             </Card>
