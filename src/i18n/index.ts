@@ -1,4 +1,3 @@
-
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -8,7 +7,7 @@ const resources = {
   fr: {
     common: {
       loading: 'Chargement...',
-      error: 'Erreur',
+      error: 'Erreur', 
       save: 'Enregistrer',
       cancel: 'Annuler',
       delete: 'Supprimer',
@@ -42,8 +41,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: 'Connectez les {{talents}} aux opportunités',
-        titleHighlight: 'talents lyriques',
+        title: 'Connectez les talents lyriques aux opportunités',
         subtitle: 'La première plateforme dédiée aux chanteurs lyriques et aux professionnels de l\'opéra. Créez votre profil, découvrez des opportunités et développez votre carrière.',
         createProfile: 'Créer mon profil',
         discoverArtists: 'Découvrir les artistes',
@@ -133,8 +131,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: 'Connect {{talents}} to opportunities',
-        titleHighlight: 'lyrical talents',
+        title: 'Connect lyrical talents to opportunities',
         subtitle: 'The first platform dedicated to opera singers and opera professionals. Create your profile, discover opportunities and develop your career.',
         createProfile: 'Create my profile',
         discoverArtists: 'Discover artists',
@@ -224,8 +221,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: 'Verbinden Sie {{talents}} mit Möglichkeiten',
-        titleHighlight: 'lyrische Talente',
+        title: 'Verbinden Sie lyrische Talente mit Möglichkeiten',
         subtitle: 'Die erste Plattform für Opernsänger und Opernprofis. Erstellen Sie Ihr Profil, entdecken Sie Möglichkeiten und entwickeln Sie Ihre Karriere.',
         createProfile: 'Mein Profil erstellen',
         discoverArtists: 'Künstler entdecken',
@@ -315,8 +311,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: 'Connetti i {{talents}} alle opportunità',
-        titleHighlight: 'talenti lirici',
+        title: 'Connetti i talenti lirici alle opportunità',
         subtitle: 'La prima piattaforma dedicata ai cantanti lirici e ai professionisti dell\'opera. Crea il tuo profilo, scopri opportunità e sviluppa la tua carriera.',
         createProfile: 'Crea il mio profilo',
         discoverArtists: 'Scopri gli artisti',
@@ -406,8 +401,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: '连接{{talents}}与机会',
-        titleHighlight: '抒情人才',
+        title: '连接抒情人才与机会',
         subtitle: '首个专门为歌剧歌手和歌剧专业人士打造的平台。创建您的档案，发现机会，发展您的事业。',
         createProfile: '创建我的档案',
         discoverArtists: '发现艺术家',
@@ -497,8 +491,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: '{{talents}}을 기회와 연결하세요',
-        titleHighlight: '서정적 재능',
+        title: '서정적 재능을 기회와 연결하세요',
         subtitle: '오페라 가수와 오페라 전문가들을 위한 최초의 플랫폼입니다. 프로필을 만들고, 기회를 발견하고, 경력을 발전시키세요.',
         createProfile: '내 프로필 만들기',
         discoverArtists: '아티스트 발견',
