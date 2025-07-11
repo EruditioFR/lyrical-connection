@@ -51,15 +51,6 @@ export default function Pricing() {
           </p>
         </div>
 
-        {!user && (
-          <Card className="mb-8 border-blue-200 bg-blue-50">
-            <CardContent className="p-4 text-center">
-              <p className="text-blue-800">
-                Connectez-vous pour souscrire à un plan et débloquer toutes les fonctionnalités.
-              </p>
-            </CardContent>
-          </Card>
-        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {plans

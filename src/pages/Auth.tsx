@@ -216,18 +216,14 @@ const Auth = () => {
           </div>
 
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login" className="flex items-center gap-2">
                 <LogIn className="h-4 w-4" />
-                Connexion
+                J'ai déjà un compte
               </TabsTrigger>
-              <TabsTrigger value="artist" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Artiste
-              </TabsTrigger>
-              <TabsTrigger value="professional" className="flex items-center gap-2">
-                <Briefcase className="h-4 w-4" />
-                Professionnel
+              <TabsTrigger value="signup" className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Créer mon compte
               </TabsTrigger>
             </TabsList>
 
@@ -274,148 +270,153 @@ const Auth = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="artist">
+            <TabsContent value="signup">
               <Card>
                 <CardHeader>
-                  <CardTitle>Inscription Artiste</CardTitle>
+                  <CardTitle>Créer mon compte</CardTitle>
                   <CardDescription>
-                    Créez votre compte artiste
+                    Choisissez votre type de compte
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleArtistSignup} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="artist-stage-name">Nom de scène</Label>
-                      <Input
-                        id="artist-stage-name"
-                        type="text"
-                        placeholder="Votre nom d'artiste"
-                        value={artistSignupForm.stageName}
-                        onChange={(e) => setArtistSignupForm({ ...artistSignupForm, stageName: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="artist-email">Email</Label>
-                      <Input
-                        id="artist-email"
-                        type="email"
-                        placeholder="votre@email.com"
-                        value={artistSignupForm.email}
-                        onChange={(e) => setArtistSignupForm({ ...artistSignupForm, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="artist-password">Mot de passe</Label>
-                      <Input
-                        id="artist-password"
-                        type="password"
-                        value={artistSignupForm.password}
-                        onChange={(e) => setArtistSignupForm({ ...artistSignupForm, password: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="artist-confirm-password">Confirmer le mot de passe</Label>
-                      <Input
-                        id="artist-confirm-password"
-                        type="password"
-                        value={artistSignupForm.confirmPassword}
-                        onChange={(e) => setArtistSignupForm({ ...artistSignupForm, confirmPassword: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
-                      disabled={loading}
-                    >
-                      {loading ? 'Inscription...' : "S'inscrire comme artiste"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  <Tabs defaultValue="artist" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="artist" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Artiste
+                      </TabsTrigger>
+                      <TabsTrigger value="professional" className="flex items-center gap-2">
+                        <Briefcase className="h-4 w-4" />
+                        Professionnel
+                      </TabsTrigger>
+                    </TabsList>
 
-            <TabsContent value="professional">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Inscription Professionnel</CardTitle>
-                  <CardDescription>
-                    Créez votre compte professionnel
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleProfessionalSignup} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="pro-company-name">Nom de société / organisation</Label>
-                      <Input
-                        id="pro-company-name"
-                        type="text"
-                        placeholder="Nom de votre société"
-                        value={professionalSignupForm.companyName}
-                        onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, companyName: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pro-role">Votre métier</Label>
-                      <Select 
-                        value={professionalSignupForm.professionalRole} 
-                        onValueChange={(value) => setProfessionalSignupForm({ ...professionalSignupForm, professionalRole: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez votre métier" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {professionalRoles.map((role) => (
-                            <SelectItem key={role.value} value={role.value}>
-                              {role.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pro-email">Email</Label>
-                      <Input
-                        id="pro-email"
-                        type="email"
-                        placeholder="votre@email.com"
-                        value={professionalSignupForm.email}
-                        onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, email: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pro-password">Mot de passe</Label>
-                      <Input
-                        id="pro-password"
-                        type="password"
-                        value={professionalSignupForm.password}
-                        onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, password: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="pro-confirm-password">Confirmer le mot de passe</Label>
-                      <Input
-                        id="pro-confirm-password"
-                        type="password"
-                        value={professionalSignupForm.confirmPassword}
-                        onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, confirmPassword: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
-                      disabled={loading}
-                    >
-                      {loading ? 'Inscription...' : "S'inscrire comme professionnel"}
-                    </Button>
-                  </form>
+                    <TabsContent value="artist" className="mt-4">
+                      <form onSubmit={handleArtistSignup} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="artist-stage-name">Nom de scène</Label>
+                          <Input
+                            id="artist-stage-name"
+                            type="text"
+                            placeholder="Votre nom d'artiste"
+                            value={artistSignupForm.stageName}
+                            onChange={(e) => setArtistSignupForm({ ...artistSignupForm, stageName: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="artist-email">Email</Label>
+                          <Input
+                            id="artist-email"
+                            type="email"
+                            placeholder="votre@email.com"
+                            value={artistSignupForm.email}
+                            onChange={(e) => setArtistSignupForm({ ...artistSignupForm, email: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="artist-password">Mot de passe</Label>
+                          <Input
+                            id="artist-password"
+                            type="password"
+                            value={artistSignupForm.password}
+                            onChange={(e) => setArtistSignupForm({ ...artistSignupForm, password: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="artist-confirm-password">Confirmer le mot de passe</Label>
+                          <Input
+                            id="artist-confirm-password"
+                            type="password"
+                            value={artistSignupForm.confirmPassword}
+                            onChange={(e) => setArtistSignupForm({ ...artistSignupForm, confirmPassword: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                          disabled={loading}
+                        >
+                          {loading ? 'Inscription...' : "S'inscrire comme artiste"}
+                        </Button>
+                      </form>
+                    </TabsContent>
+
+                    <TabsContent value="professional" className="mt-4">
+                      <form onSubmit={handleProfessionalSignup} className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="pro-company-name">Nom de société / organisation</Label>
+                          <Input
+                            id="pro-company-name"
+                            type="text"
+                            placeholder="Nom de votre société"
+                            value={professionalSignupForm.companyName}
+                            onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, companyName: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="pro-role">Votre métier</Label>
+                          <Select 
+                            value={professionalSignupForm.professionalRole} 
+                            onValueChange={(value) => setProfessionalSignupForm({ ...professionalSignupForm, professionalRole: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Sélectionnez votre métier" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {professionalRoles.map((role) => (
+                                <SelectItem key={role.value} value={role.value}>
+                                  {role.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="pro-email">Email</Label>
+                          <Input
+                            id="pro-email"
+                            type="email"
+                            placeholder="votre@email.com"
+                            value={professionalSignupForm.email}
+                            onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, email: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="pro-password">Mot de passe</Label>
+                          <Input
+                            id="pro-password"
+                            type="password"
+                            value={professionalSignupForm.password}
+                            onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, password: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="pro-confirm-password">Confirmer le mot de passe</Label>
+                          <Input
+                            id="pro-confirm-password"
+                            type="password"
+                            value={professionalSignupForm.confirmPassword}
+                            onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, confirmPassword: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                          disabled={loading}
+                        >
+                          {loading ? 'Inscription...' : "S'inscrire comme professionnel"}
+                        </Button>
+                      </form>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
               </Card>
             </TabsContent>
