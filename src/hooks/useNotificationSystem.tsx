@@ -36,7 +36,7 @@ export const useNotificationSystem = () => {
       data 
     }: {
       userId: string;
-      type: 'upgrade_request' | 'account_expiry' | 'inactive_account' | 'payment_completed';
+      type: 'message' | 'casting_application' | 'event_registration' | 'profile_view' | 'casting_update' | 'event_update' | 'system' | 'invitation';
       title: string;
       content: string;
       data?: any;
@@ -107,11 +107,22 @@ export const useNotificationSystem = () => {
         throw artistError || professionalError;
       }
 
-      // Créer des notifications pour les comptes inactifs
+      // Créer des notifications système pour les comptes inactifs
       const allInactiveAccounts = [
         ...(inactiveArtists || []).map(a => ({ ...a, type: 'artist' })),
         ...(inactiveProfessionals || []).map(p => ({ ...p, type: 'professional' }))
       ];
+
+      // Créer une notification système pour l'admin
+      if (allInactiveAccounts.length > 0 && user?.id) {
+        await createNotification.mutateAsync({
+          userId: user.id,
+          type: 'system',
+          title: 'Comptes inactifs détectés',
+          content: `${allInactiveAccounts.length} comptes gratuits sont inactifs depuis plus de 30 jours.`,
+          data: { inactiveAccounts: allInactiveAccounts }
+        });
+      }
 
       return allInactiveAccounts;
     },

@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DatePickerWithRange } from '@/components/ui/date-picker';
+import { DateRange } from 'react-day-picker';
 import { 
   LineChart, 
   Line, 
@@ -33,7 +33,10 @@ import { useAdminManagement } from '@/hooks/useAdminManagement';
 
 const FreeAccountAnalytics = () => {
   const { freeAccounts } = useAdminManagement();
-  const [dateRange, setDateRange] = useState({ from: new Date(2024, 0, 1), to: new Date() });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(2024, 0, 1),
+    to: new Date()
+  });
 
   // Données simulées pour les graphiques
   const conversionData = [
