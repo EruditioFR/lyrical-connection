@@ -119,8 +119,7 @@ export const usePublicEvents = (filters?: {
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*),
-          event_applications(count)
+          category:event_categories(*)
         `)
         .eq('status', 'published')
         .gte('end_date', new Date().toISOString())
@@ -138,14 +137,26 @@ export const usePublicEvents = (filters?: {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       }
 
-      const { data, error } = await query;
+      const { data: events, error } = await query;
 
       if (error) throw error;
 
-      return data?.map((event: any) => ({
-        ...event,
-        applications_count: Array.isArray(event.event_applications) ? event.event_applications.length : 0
-      })) || [];
+      // Récupérer le nombre d'inscriptions pour chaque événement
+      const eventsWithCounts = await Promise.all(
+        (events || []).map(async (event) => {
+          const { count } = await supabase
+            .from('event_applications')
+            .select('*', { count: 'exact', head: true })
+            .eq('event_id', event.id);
+
+          return {
+            ...event,
+            applications_count: count || 0
+          };
+        })
+      );
+
+      return eventsWithCounts;
     },
   });
 };
@@ -155,21 +166,45 @@ export const useProfessionalEvents = () => {
   return useQuery({
     queryKey: ['professionalEvents'],
     queryFn: async (): Promise<ProfessionalEvent[]> => {
-      const { data, error } = await supabase
+      console.log('Fetching professional events...');
+      
+      // D'abord, récupérer les événements avec les catégories
+      const { data: events, error } = await supabase
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*),
-          event_applications(count)
+          category:event_categories(*)
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching events:', error);
+        throw error;
+      }
 
-      return data?.map((event: any) => ({
-        ...event,
-        applications_count: Array.isArray(event.event_applications) ? event.event_applications.length : 0
-      })) || [];
+      console.log('Events fetched:', events?.length || 0);
+
+      if (!events || events.length === 0) {
+        return [];
+      }
+
+      // Ensuite, récupérer le nombre d'inscriptions pour chaque événement
+      const eventsWithCounts = await Promise.all(
+        events.map(async (event) => {
+          const { count } = await supabase
+            .from('event_applications')
+            .select('*', { count: 'exact', head: true })
+            .eq('event_id', event.id);
+
+          return {
+            ...event,
+            applications_count: count || 0
+          };
+        })
+      );
+
+      console.log('Events with counts:', eventsWithCounts);
+      return eventsWithCounts;
     },
   });
 };
