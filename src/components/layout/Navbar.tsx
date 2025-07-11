@@ -12,12 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings, CreditCard } from 'lucide-react';
+import { LogOut, User, Settings, CreditCard, Shield } from 'lucide-react';
 import { useUserType } from '@/hooks/useUserType';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
   const { artistProfile, professionalProfile } = useUserType();
+  const { isAdmin } = useUserRoles();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -80,6 +82,16 @@ const Navbar = () => {
               >
                 Mes Événements
               </Link>
+              {/* Lien d'administration pour les admins */}
+              {isAdmin && (
+                <Link 
+                  to="/admin" 
+                  className="text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-1"
+                >
+                  <Shield className="h-4 w-4" />
+                  Administration
+                </Link>
+              )}
             </>
           ) : (
             <>
@@ -137,6 +149,16 @@ const Navbar = () => {
                     <CreditCard className="mr-2 h-4 w-4" />
                     <span>Abonnement</span>
                   </DropdownMenuItem>
+                  {/* Lien d'administration dans le menu déroulant pour les admins */}
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        <span>Administration</span>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   {user.app_metadata.provider === 'email' && (
                     <DropdownMenuItem onClick={() => navigate('/auth/update-password')}>
                       <Settings className="mr-2 h-4 w-4" />

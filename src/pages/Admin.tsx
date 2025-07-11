@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import VerificationPanel from '@/components/admin/VerificationPanel';
@@ -20,7 +19,7 @@ import { useUserRoles } from '@/hooks/useUserRoles';
 
 const Admin = () => {
   const { user } = useAuth();
-  const { isAdmin, isLoading: rolesLoading } = useUserRoles();
+  const { isAdmin, isLoading: rolesLoading, refreshRoles } = useUserRoles();
 
   if (!user) {
     return (
@@ -89,7 +88,7 @@ const Admin = () => {
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-primary-foreground" />
             </div>
-            <div>
+            <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold">Administration</h1>
                 <Badge variant="default" className="bg-green-600">
@@ -100,6 +99,16 @@ const Admin = () => {
                 Panneau d'administration de la plateforme
               </p>
             </div>
+            {/* Bouton de debug pour rafraîchir les rôles */}
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={refreshRoles}
+              className="gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Rafraîchir les rôles
+            </Button>
           </div>
 
           {/* Quick Stats */}

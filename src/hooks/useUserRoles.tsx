@@ -12,7 +12,12 @@ export const useUserRoles = () => {
   const { data: userRoles, isLoading } = useQuery({
     queryKey: ['user-roles', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
+      if (!user?.id) {
+        console.log('useUserRoles: Pas d\'utilisateur connecté');
+        return [];
+      }
+      
+      console.log('useUserRoles: Récupération des rôles pour l\'utilisateur:', user.id);
       
       const { data, error } = await supabase
         .from('user_roles')
@@ -20,16 +25,21 @@ export const useUserRoles = () => {
         .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error fetching user roles:', error);
+        console.error('useUserRoles: Erreur lors de la récupération des rôles:', error);
         throw error;
       }
 
+      console.log('useUserRoles: Rôles récupérés:', data);
       return data || [];
     },
     enabled: !!user?.id,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true,
   });
 
   const isAdmin = userRoles?.some(role => role.role === 'admin') || false;
+
+  console.log('useUserRoles: isAdmin =', isAdmin, 'pour utilisateur:', user?.email);
 
   const assignRole = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: 'admin' | 'user' }) => {
@@ -60,11 +70,18 @@ export const useUserRoles = () => {
     },
   });
 
+  // Fonction pour forcer le rafraîchissement des rôles
+  const refreshRoles = () => {
+    console.log('useUserRoles: Rafraîchissement forcé des rôles');
+    queryClient.invalidateQueries({ queryKey: ['user-roles', user?.id] });
+  };
+
   return {
     userRoles,
     isAdmin,
     isLoading,
     assignRole: assignRole.mutate,
     isAssigningRole: assignRole.isPending,
+    refreshRoles,
   };
 };
