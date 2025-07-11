@@ -20,6 +20,7 @@ import ProfessionalEvents from '@/pages/ProfessionalEvents';
 import Pricing from '@/pages/Pricing';
 import Subscription from '@/pages/Subscription';
 import SubscriptionSuccess from '@/pages/SubscriptionSuccess';
+import About from '@/pages/About';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/subscription" element={<Subscription />} />
           <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+          <Route path="/qui-sommes-nous" element={<About />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
