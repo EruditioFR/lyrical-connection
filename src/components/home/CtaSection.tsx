@@ -2,10 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 const CtaSection = () => {
+  const contentRef = useAnimateOnScroll();
+  
   return <section className="bg-gradient-to-r from-lyrical-900 to-gold-900 text-white py-24">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-5xl mx-auto text-center space-y-6 text-appear">
+        <div ref={contentRef} className="max-w-5xl mx-auto text-center space-y-6 text-appear">
           <h2 className="text-3xl md:text-4xl font-serif font-bold">Prêt à rejoindre la communauté de la musique lyrique ?</h2>
           <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto">
             Que vous soyez artiste ou professionnel, Lyrical Connection vous offre les outils nécessaires pour faire avancer votre carrière.

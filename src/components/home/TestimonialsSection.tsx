@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 
 const testimonials = [
   {
@@ -33,11 +34,14 @@ const testimonials = [
 ];
 
 const TestimonialsSection = () => {
+  const headerRef = useAnimateOnScroll();
+  const statsRef = useAnimateOnScroll();
+  
   return (
     <section className="py-24 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 text-appear">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
             Ils nous font confiance
           </h2>
@@ -49,12 +53,15 @@ const TestimonialsSection = () => {
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {testimonials.map((testimonial, index) => (
-            <div 
-              key={index}
-              className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in"
-              style={{ animationDelay: `${index * 150}ms` }}
-            >
+          {testimonials.map((testimonial, index) => {
+            const TestimonialCard = () => {
+              const cardRef = useAnimateOnScroll();
+              return (
+                <div 
+                  ref={cardRef}
+                  key={index}
+                  className="bg-card rounded-xl p-8 border border-border shadow-sm hover:shadow-md transition-all duration-300 text-appear"
+                >
               {/* Quote Icon */}
               <div className="mb-6">
                 <Quote className="h-8 w-8 text-lyrical-300" />
@@ -84,12 +91,15 @@ const TestimonialsSection = () => {
                   <div className="text-sm text-muted-foreground">{testimonial.role}</div>
                 </div>
               </div>
-            </div>
-          ))}
+                </div>
+              );
+            };
+            return <TestimonialCard key={index} />;
+          })}
         </div>
 
         {/* Stats Section */}
-        <div className="mt-20 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-2xl p-12 animate-fade-in" style={{ animationDelay: '600ms' }}>
+        <div ref={statsRef} className="mt-20 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-2xl p-12 text-appear">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-3xl md:text-4xl font-bold text-lyrical-700 mb-2">98%</div>

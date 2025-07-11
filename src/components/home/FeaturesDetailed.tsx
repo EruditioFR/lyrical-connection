@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Music, Users, Calendar, Search, MessageSquare, Trophy, BarChart3, Settings, Mic, Globe, Heart, Zap } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 const artistFeatures = [{
   icon: Music,
   title: "Profil Artistique Complet",
@@ -65,10 +66,15 @@ const professionalFeatures = [{
   color: "gold"
 }];
 const FeaturesDetailed = () => {
+  const introRef = useAnimateOnScroll();
+  const artistsSectionRef = useAnimateOnScroll();
+  const professionalsSectionRef = useAnimateOnScroll();
+  const ctaRef = useAnimateOnScroll();
+  
   return <section className="py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
         {/* Introduction */}
-        <div className="text-center max-w-4xl mx-auto mb-20 animate-fade-in">
+        <div ref={introRef} className="text-center max-w-4xl mx-auto mb-20 text-appear">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
             Une plateforme pensée pour tous les acteurs du lyrique
           </h2>
@@ -81,7 +87,7 @@ const FeaturesDetailed = () => {
         {/* Artistes Section */}
         <div className="mb-20">
           <div className="flex items-center justify-between mb-12">
-            <div className="animate-fade-in">
+            <div ref={artistsSectionRef} className="text-appear">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="bg-lyrical-100 p-3 rounded-xl">
                   <Mic className="h-8 w-8 text-lyrical-700" />
@@ -119,7 +125,7 @@ const FeaturesDetailed = () => {
         {/* Professionals Section */}
         <div>
           <div className="flex items-center justify-between mb-12">
-            <div className="animate-fade-in">
+            <div ref={professionalsSectionRef} className="text-appear">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="bg-gold-100 p-3 rounded-xl">
                   <Globe className="h-8 w-8 text-gold-700" />
@@ -155,7 +161,7 @@ const FeaturesDetailed = () => {
         </div>
         
         {/* Bottom CTA */}
-        <div className="mt-20 text-center bg-muted rounded-2xl p-12 animate-fade-in">
+        <div ref={ctaRef} className="mt-20 text-center bg-muted rounded-2xl p-12 text-appear">
           
           <h3 className="text-2xl md:text-3xl font-serif font-bold mb-4">
             Rejoignez la communauté lyrique

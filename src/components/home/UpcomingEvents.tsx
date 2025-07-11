@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, MapPin, Users } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 
 // Données exemple pour les événements à venir
 const upcomingEvents = [
@@ -44,11 +45,14 @@ const formatDate = (dateString: string) => {
 };
 
 const UpcomingEvents = () => {
+  const headerRef = useAnimateOnScroll();
+  const ctaRef = useAnimateOnScroll();
+  
   return (
     <section className="bg-muted py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div className="text-appear">
+          <div ref={headerRef} className="text-appear">
             <h2 className="text-3xl md:text-4xl font-serif font-bold">Événements à venir</h2>
             <p className="text-muted-foreground mt-2 max-w-2xl">
               Participez à des événements exclusifs et découvrez les talents lyriques en live.
@@ -125,7 +129,7 @@ const UpcomingEvents = () => {
         </div>
         
         {/* Call to action section */}
-        <div className="mt-16 text-center bg-card rounded-xl p-8 border animate-fade-in" style={{ animationDelay: '400ms' }}>
+        <div ref={ctaRef} className="mt-16 text-center bg-card rounded-xl p-8 border text-appear">
           <h3 className="text-xl font-serif font-semibold mb-4">
             Vous organisez un événement ?
           </h3>

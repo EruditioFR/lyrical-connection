@@ -12,13 +12,19 @@ import {
   BarChart3,
   Settings
 } from 'lucide-react';
+import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 
 const PortalsSection = () => {
+  const headerRef = useAnimateOnScroll();
+  const artistsPortalRef = useAnimateOnScroll();
+  const prosPortalRef = useAnimateOnScroll();
+  const bottomRef = useAnimateOnScroll();
+  
   return (
     <section className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 animate-fade-in">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 text-appear">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
             Deux univers, une passion commune
           </h2>
@@ -30,7 +36,7 @@ const PortalsSection = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
           {/* Portail Artistes */}
-          <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in">
+          <div ref={artistsPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
             {/* Header Card */}
             <div className="bg-gradient-to-br from-lyrical-600 to-lyrical-700 p-8 text-white">
               <div className="flex items-center space-x-4 mb-6">
@@ -102,7 +108,7 @@ const PortalsSection = () => {
           </div>
 
           {/* Portail Professionnels */}
-          <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <div ref={prosPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
             {/* Header Card */}
             <div className="bg-gradient-to-br from-gold-500 to-gold-600 p-8 text-white">
               <div className="flex items-center space-x-4 mb-6">
@@ -175,7 +181,7 @@ const PortalsSection = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-16 text-center animate-fade-in" style={{ animationDelay: '400ms' }}>
+        <div ref={bottomRef} className="mt-16 text-center text-appear">
           <div className="bg-card rounded-xl border p-8 max-w-4xl mx-auto">
             <h3 className="text-xl font-serif font-semibold mb-4">
               Vous ne savez pas par où commencer ?
