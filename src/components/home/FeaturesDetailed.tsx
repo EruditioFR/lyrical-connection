@@ -104,15 +104,25 @@ const FeaturesDetailed = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {artistFeatures.map((feature, index) => <div key={index} className="bg-card rounded-xl p-6 border border-border hover:border-lyrical-200 transition-all duration-300 hover:shadow-lg animate-fade-in" style={{
-            animationDelay: `${index * 100}ms`
-          }}>
-                <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
-                  <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
-                </div>
-                <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-              </div>)}
+            {artistFeatures.map((feature, index) => {
+              const FeatureCard = () => {
+                const cardRef = useAnimateOnScroll();
+                return (
+                  <div 
+                    ref={cardRef}
+                    key={index} 
+                    className="bg-card rounded-xl p-6 border border-border hover:border-lyrical-200 transition-all duration-300 hover:shadow-lg text-appear"
+                  >
+                    <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
+                      <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
+                    </div>
+                    <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                  </div>
+                );
+              };
+              return <FeatureCard key={index} />;
+            })}
           </div>
           
           <div className="md:hidden mt-8 text-center">
@@ -142,15 +152,25 @@ const FeaturesDetailed = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {professionalFeatures.map((feature, index) => <div key={index} className="bg-card rounded-xl p-6 border border-border hover:border-gold-200 transition-all duration-300 hover:shadow-lg animate-fade-in" style={{
-            animationDelay: `${index * 100}ms`
-          }}>
-                <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
-                  <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
-                </div>
-                <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
-                <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-              </div>)}
+            {professionalFeatures.map((feature, index) => {
+              const ProfessionalFeatureCard = () => {
+                const cardRef = useAnimateOnScroll();
+                return (
+                  <div 
+                    ref={cardRef}
+                    key={index} 
+                    className="bg-card rounded-xl p-6 border border-border hover:border-gold-200 transition-all duration-300 hover:shadow-lg text-appear"
+                  >
+                    <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
+                      <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
+                    </div>
+                    <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                  </div>
+                );
+              };
+              return <ProfessionalFeatureCard key={index} />;
+            })}
           </div>
           
           <div className="md:hidden mt-8 text-center">
