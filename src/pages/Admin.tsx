@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import VerificationPanel from '@/components/admin/VerificationPanel';
+import FreeAccountsPanel from '@/components/admin/FreeAccountsPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,15 +11,15 @@ import {
   FileCheck, 
   Settings, 
   BarChart3,
-  AlertTriangle 
+  AlertTriangle,
+  UserPlus
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRoles } from '@/hooks/useUserRoles';
 
 const Admin = () => {
   const { user } = useAuth();
-
-  // TODO: Add proper admin role checking
-  const isAdmin = true; // Placeholder - implement proper admin checking
+  const { isAdmin, isLoading: rolesLoading } = useUserRoles();
 
   if (!user) {
     return (
@@ -30,6 +31,25 @@ const Admin = () => {
                 <h2 className="text-xl font-semibold mb-2">Connexion requise</h2>
                 <p className="text-muted-foreground">
                   Vous devez être connecté pour accéder à l'administration
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (rolesLoading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8">
+          <Card>
+            <CardContent className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold mb-2">Vérification des permissions...</h2>
+                <p className="text-muted-foreground">
+                  Vérification de vos droits d'accès
                 </p>
               </div>
             </CardContent>
@@ -69,7 +89,12 @@ const Admin = () => {
               <Shield className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Administration</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold">Administration</h1>
+                <Badge variant="default" className="bg-green-600">
+                  Administrateur
+                </Badge>
+              </div>
               <p className="text-muted-foreground">
                 Panneau d'administration de la plateforme
               </p>
@@ -135,6 +160,7 @@ const Admin = () => {
           <Tabs defaultValue="verification" className="space-y-4">
             <TabsList>
               <TabsTrigger value="verification">Vérifications</TabsTrigger>
+              <TabsTrigger value="free-accounts">Comptes gratuits</TabsTrigger>
               <TabsTrigger value="users">Utilisateurs</TabsTrigger>
               <TabsTrigger value="professionals">Professionnels</TabsTrigger>
               <TabsTrigger value="content">Contenu</TabsTrigger>
@@ -143,6 +169,10 @@ const Admin = () => {
 
             <TabsContent value="verification">
               <VerificationPanel />
+            </TabsContent>
+
+            <TabsContent value="free-accounts">
+              <FreeAccountsPanel />
             </TabsContent>
 
             <TabsContent value="users">

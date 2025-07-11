@@ -181,10 +181,12 @@ export type Database = {
           contact_email: string | null
           cover_image_url: string | null
           created_at: string
+          created_by_admin: string | null
           experience_years: number | null
           gender: string | null
           id: string
           is_active: boolean | null
+          is_free_account: boolean | null
           location: string | null
           nationality: string | null
           phone: string | null
@@ -205,10 +207,12 @@ export type Database = {
           contact_email?: string | null
           cover_image_url?: string | null
           created_at?: string
+          created_by_admin?: string | null
           experience_years?: number | null
           gender?: string | null
           id?: string
           is_active?: boolean | null
+          is_free_account?: boolean | null
           location?: string | null
           nationality?: string | null
           phone?: string | null
@@ -229,10 +233,12 @@ export type Database = {
           contact_email?: string | null
           cover_image_url?: string | null
           created_at?: string
+          created_by_admin?: string | null
           experience_years?: number | null
           gender?: string | null
           id?: string
           is_active?: boolean | null
+          is_free_account?: boolean | null
           location?: string | null
           nationality?: string | null
           phone?: string | null
@@ -1121,9 +1127,11 @@ export type Database = {
           company_name: string | null
           contact_email: string | null
           created_at: string
+          created_by_admin: string | null
           id: string
           intervention_radius: number | null
           is_active: boolean | null
+          is_free_account: boolean | null
           is_verified: boolean | null
           location: string | null
           logo_url: string | null
@@ -1140,9 +1148,11 @@ export type Database = {
           company_name?: string | null
           contact_email?: string | null
           created_at?: string
+          created_by_admin?: string | null
           id?: string
           intervention_radius?: number | null
           is_active?: boolean | null
+          is_free_account?: boolean | null
           is_verified?: boolean | null
           location?: string | null
           logo_url?: string | null
@@ -1159,9 +1169,11 @@ export type Database = {
           company_name?: string | null
           contact_email?: string | null
           created_at?: string
+          created_by_admin?: string | null
           id?: string
           intervention_radius?: number | null
           is_active?: boolean | null
+          is_free_account?: boolean | null
           is_verified?: boolean | null
           location?: string | null
           logo_url?: string | null
@@ -1388,6 +1400,66 @@ export type Database = {
           },
         ]
       }
+      upgrade_requests: {
+        Row: {
+          created_at: string
+          id: string
+          payment_link: string | null
+          profile_id: string
+          profile_type: string
+          requested_by: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payment_link?: string | null
+          profile_id: string
+          profile_type: string
+          requested_by: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payment_link?: string | null
+          profile_id?: string
+          profile_type?: string
+          requested_by?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       venues: {
         Row: {
           city: string | null
@@ -1503,6 +1575,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: boolean
+      }
       increment_casting_views: {
         Args: { casting_id: string }
         Returns: undefined
@@ -1535,6 +1614,7 @@ export type Database = {
         | "artistic_agent"
         | "producer"
         | "competition_director"
+      user_role: "admin" | "user"
       user_type: "artist" | "professional"
     }
     CompositeTypes: {
@@ -1686,6 +1766,7 @@ export const Constants = {
         "producer",
         "competition_director",
       ],
+      user_role: ["admin", "user"],
       user_type: ["artist", "professional"],
     },
   },
