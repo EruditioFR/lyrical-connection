@@ -9,9 +9,10 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useCreateEvent, useEventCategories, CreateEventData, ProfessionalEvent } from '@/hooks/useEvents';
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
+import { AddressAutocomplete } from './AddressAutocomplete';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CalendarIcon, Loader2, MapPin } from 'lucide-react';
+import { CalendarIcon, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventFormProps {
@@ -46,7 +47,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [registrationDeadline, setRegistrationDeadline] = useState<Date>();
-  const [isGeolocating, setIsGeolocating] = useState(false);
 
   const { data: categories = [] } = useEventCategories();
   const { profile: professionalProfile } = useProfessionalProfile();
@@ -101,32 +101,12 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     }
   };
 
-  const handleGeolocation = async () => {
-    if (!formData.address.trim()) {
-      return;
-    }
-
-    setIsGeolocating(true);
-    try {
-      // Utilisation de l'API de géocodage de Nominatim (OpenStreetMap)
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(formData.address)}&limit=1`
-      );
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
-        const result = data[0];
-        setFormData(prev => ({
-          ...prev,
-          latitude: result.lat,
-          longitude: result.lon
-        }));
-      }
-    } catch (error) {
-      console.error('Erreur de géolocalisation:', error);
-    } finally {
-      setIsGeolocating(false);
-    }
+  const handleLocationSelect = (latitude: number, longitude: number) => {
+    setFormData(prev => ({
+      ...prev,
+      latitude: latitude.toString(),
+      longitude: longitude.toString()
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -359,7 +339,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Lieu et adresse avec géolocalisation */}
+          {/* Lieu et adresse */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="location">Ville</Label>
@@ -393,31 +373,15 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Adresse complète avec géolocalisation */}
+          {/* Adresse complète avec autocomplétion */}
           <div className="space-y-2">
             <Label htmlFor="address">Adresse complète</Label>
-            <div className="flex gap-2">
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleInputChange('address', e.target.value)}
-                placeholder="123 rue de la Paix, 75001 Paris, France"
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleGeolocation}
-                disabled={!formData.address.trim() || isGeolocating}
-                className="px-3"
-              >
-                {isGeolocating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <MapPin className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
+            <AddressAutocomplete
+              value={formData.address}
+              onChange={(value) => handleInputChange('address', value)}
+              onLocationSelect={handleLocationSelect}
+              placeholder="Tapez une adresse dans le monde entier..."
+            />
             {formData.latitude && formData.longitude && (
               <p className="text-sm text-muted-foreground">
                 Coordonnées: {parseFloat(formData.latitude).toFixed(6)}, {parseFloat(formData.longitude).toFixed(6)}
