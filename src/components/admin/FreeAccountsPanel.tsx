@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Bell, Settings, BarChart3 } from 'lucide-react';
+import { Plus, Bell, Settings, BarChart3, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import CreateFreeAccountDialog from './CreateFreeAccountDialog';
 import FreeAccountsStats from './FreeAccountsStats';
@@ -11,6 +11,8 @@ import FreeAccountsTable from './FreeAccountsTable';
 import NotificationCenter from './NotificationCenter';
 import AutomatedWorkflows from './AutomatedWorkflows';
 import FreeAccountAnalytics from './FreeAccountAnalytics';
+import PaymentManager from './PaymentManager';
+import UpgradeRequestManager from './UpgradeRequestManager';
 
 const FreeAccountsPanel = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -133,7 +135,7 @@ const FreeAccountsPanel = () => {
         <div>
           <h2 className="text-2xl font-bold">Gestion des comptes gratuits</h2>
           <p className="text-muted-foreground">
-            Système complet de gestion et automatisation ({allAccounts.length} comptes)
+            Système complet de gestion, automatisation et paiements ({allAccounts.length} comptes)
           </p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)} className="gap-2">
@@ -143,10 +145,14 @@ const FreeAccountsPanel = () => {
       </div>
 
       <Tabs defaultValue="accounts" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="accounts" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Comptes
+          </TabsTrigger>
+          <TabsTrigger value="payments" className="flex items-center gap-2">
+            <CreditCard className="h-4 w-4" />
+            Paiements
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -177,6 +183,23 @@ const FreeAccountsPanel = () => {
           />
 
           <FreeAccountsTable filteredAccounts={filteredAccounts} />
+        </TabsContent>
+
+        <TabsContent value="payments" className="space-y-6">
+          <Tabs defaultValue="overview" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+              <TabsTrigger value="requests">Demandes d'upgrade</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview">
+              <PaymentManager />
+            </TabsContent>
+            
+            <TabsContent value="requests">
+              <UpgradeRequestManager />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
 
         <TabsContent value="notifications">
