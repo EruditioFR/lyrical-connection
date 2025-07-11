@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
-import { Music, LogIn, UserPlus, User, Briefcase } from 'lucide-react';
+import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle } from 'lucide-react';
 
 const professionalRoles = [
   { value: 'casting_director', label: 'Directeur de casting / Directeur artistique' },
@@ -28,6 +28,8 @@ const Auth = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupEmail, setSignupEmail] = useState('');
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -123,11 +125,8 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Inscription réussie",
-          description: "Votre compte artiste a été créé avec succès !",
-        });
-        navigate('/');
+        setSignupEmail(artistSignupForm.email);
+        setSignupSuccess(true);
       }
     } catch (error) {
       toast({
@@ -183,11 +182,8 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
-        toast({
-          title: "Inscription réussie",
-          description: "Votre compte professionnel a été créé avec succès !",
-        });
-        navigate('/');
+        setSignupEmail(professionalSignupForm.email);
+        setSignupSuccess(true);
       }
     } catch (error) {
       toast({
@@ -199,6 +195,73 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
+  if (signupSuccess) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-20">
+          <div className="max-w-md mx-auto">
+            <Card className="text-center">
+              <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <div className="relative">
+                    <CheckCircle className="h-16 w-16 text-green-500" />
+                    <Mail className="h-8 w-8 text-lyrical-600 absolute -bottom-1 -right-1 bg-white rounded-full p-1" />
+                  </div>
+                </div>
+                <CardTitle className="text-2xl font-serif font-bold mb-2">
+                  Inscription réussie !
+                </CardTitle>
+                <CardDescription className="text-base">
+                  Votre compte a été créé avec succès
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <Mail className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-left">
+                      <h3 className="font-medium text-blue-900 mb-1">
+                        Confirmation requise
+                      </h3>
+                      <p className="text-sm text-blue-700 mb-2">
+                        Un email de confirmation a été envoyé à :
+                      </p>
+                      <p className="text-sm font-medium text-blue-900 bg-blue-100 rounded px-2 py-1">
+                        {signupEmail}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-left space-y-2">
+                  <h4 className="font-medium text-gray-900">Étapes suivantes :</h4>
+                  <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                    <li>Vérifiez votre boîte de réception (et dossier spam)</li>
+                    <li>Cliquez sur le lien de confirmation dans l'email</li>
+                    <li>Vous pourrez ensuite vous connecter à votre compte</li>
+                  </ol>
+                </div>
+
+                <div className="pt-4">
+                  <Button 
+                    onClick={() => {
+                      setSignupSuccess(false);
+                      setSignupEmail('');
+                    }}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Retour à la connexion
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
