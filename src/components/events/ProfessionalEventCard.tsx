@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -61,6 +62,16 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({
 
   return (
     <Card className="h-full">
+      {event.image_url && (
+        <div className="w-full h-48 overflow-hidden rounded-t-lg">
+          <img 
+            src={event.image_url} 
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+      
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
