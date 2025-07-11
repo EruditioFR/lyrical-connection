@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { LanguageSelector } from '@/components/ui/language-selector';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -17,6 +19,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
 
 const Navbar = () => {
+  const { t } = useTranslation(['navigation', 'common']);
   const { user, signOut } = useAuth();
   const { artistProfile, professionalProfile } = useUserType();
   const { isAdmin } = useUserRoles();
@@ -55,32 +58,32 @@ const Navbar = () => {
                 to="/artistes" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Artistes
+                {t('navigation:artists')}
               </Link>
               <Link 
                 to="/castings" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Castings
+                {t('navigation:castings')}
               </Link>
               <Link 
                 to="/pricing" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Tarifs
+                {t('navigation:pricing')}
               </Link>
               {/* Liens pour les professionnels */}
               <Link 
                 to="/recherche-artistes" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Recherche avancée
+                {t('navigation:search')}
               </Link>
               <Link 
                 to="/mes-evenements" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Mes Événements
+                {t('navigation:myEvents')}
               </Link>
               {/* Lien d'administration pour les admins */}
               {isAdmin && (
@@ -89,7 +92,7 @@ const Navbar = () => {
                   className="text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-1"
                 >
                   <Shield className="h-4 w-4" />
-                  Administration
+                  {t('navigation:admin')}
                 </Link>
               )}
             </>
@@ -99,26 +102,27 @@ const Navbar = () => {
                 to="/" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Accueil
+                {t('navigation:home')}
               </Link>
               <Link 
                 to="/qui-sommes-nous" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Qui sommes-nous
+                {t('navigation:about')}
               </Link>
               <Link 
                 to="/pricing" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
-                Tarifs
+                {t('navigation:pricing')}
               </Link>
             </>
           )}
         </div>
 
-        {/* Actions : Authentification / Profil */}
+        {/* Actions : Language + Authentification / Profil */}
         <div className="flex items-center space-x-4">
+          <LanguageSelector />
           {user ? (
             <div className="flex items-center space-x-3">
               <span className="text-sm font-medium text-gray-700">
@@ -143,7 +147,7 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate('/profil')}>
                     <User className="mr-2 h-4 w-4" />
-                    <span>Mon Profil</span>
+                    <span>{t('navigation:profile')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/subscription')}>
                     <CreditCard className="mr-2 h-4 w-4" />
@@ -155,7 +159,7 @@ const Navbar = () => {
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => navigate('/admin')}>
                         <Shield className="mr-2 h-4 w-4" />
-                        <span>Administration</span>
+                        <span>{t('navigation:admin')}</span>
                       </DropdownMenuItem>
                     </>
                   )}
@@ -168,7 +172,7 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Déconnexion
+                    {t('navigation:logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -176,10 +180,10 @@ const Navbar = () => {
           ) : (
             <>
               <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
-                Se connecter
+                {t('navigation:login')}
               </Button>
               <Button size="sm" onClick={() => navigate('/auth')}>
-                S'inscrire
+                {t('navigation:register')}
               </Button>
             </>
           )}
