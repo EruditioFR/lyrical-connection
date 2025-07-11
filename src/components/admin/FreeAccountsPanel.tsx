@@ -1,47 +1,127 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  User, 
-  Briefcase, 
-  Plus, 
-  CreditCard,
-  Mail,
-  Calendar,
-  Building
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import CreateFreeAccountDialog from './CreateFreeAccountDialog';
+import FreeAccountsStats from './FreeAccountsStats';
+import FreeAccountsFilters from './FreeAccountsFilters';
+import FreeAccountsTable from './FreeAccountsTable';
 
 const FreeAccountsPanel = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const { 
-    freeAccounts, 
-    isLoadingFreeAccounts, 
-    sendUpgradeRequest, 
-    isSendingUpgradeRequest 
-  } = useAdminManagement();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [accountTypeFilter, setAccountTypeFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
+  
+  const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
 
-  const handleUpgradeRequest = (profileId: string, profileType: 'artist' | 'professional', userId: string) => {
-    sendUpgradeRequest({ profileId, profileType, userId });
+  // Transform data for the table
+  const allAccounts = useMemo(() => {
+    const accounts = [];
+    
+    // Add artists
+    if (freeAccounts?.artists) {
+      accounts.push(...freeAccounts.artists.map(artist => ({
+        id: artist.id,
+        user_id: artist.user_id,
+        stage_name: artist.stage_name,
+        contact_email: artist.contact_email,
+        created_at: artist.created_at,
+        type: 'artist' as const
+      })));
+    }
+    
+    // Add professionals
+    if (freeAccounts?.professionals) {
+      accounts.push(...freeAccounts.professionals.map(professional => ({
+        id: professional.id,
+        user_id: professional.user_id,
+        company_name: professional.company_name,
+        contact_email: professional.contact_email,
+        created_at: professional.created_at,
+        type: 'professional' as const
+      })));
+    }
+    
+    return accounts;
+  }, [freeAccounts]);
+
+  // Filter accounts based on search and filters
+  const filteredAccounts = useMemo(() => {
+    let filtered = allAccounts;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(account => {
+        const name = account.stage_name || account.company_name || '';
+        const email = account.contact_email || '';
+        return name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               email.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+    }
+
+    // Account type filter
+    if (accountTypeFilter !== 'all') {
+      filtered = filtered.filter(account => account.type === accountTypeFilter);
+    }
+
+    // Date filter
+    if (dateFilter !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter(account => {
+        const createdAt = new Date(account.created_at);
+        
+        switch (dateFilter) {
+          case 'today':
+            return createdAt.toDateString() === now.toDateString();
+          case 'week':
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return createdAt >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return createdAt >= monthAgo;
+          case 'older':
+            const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return createdAt <= thirtyDaysAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    return filtered;
+  }, [allAccounts, searchTerm, accountTypeFilter, dateFilter]);
+
+  const activeFiltersCount = [searchTerm, accountTypeFilter !== 'all', dateFilter !== 'all']
+    .filter(Boolean).length;
+
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setAccountTypeFilter('all');
+    setDateFilter('all');
   };
 
   if (isLoadingFreeAccounts) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">Chargement...</h3>
-            <p className="text-muted-foreground">Récupération des comptes gratuits...</p>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">Comptes gratuits</h2>
+            <p className="text-muted-foreground">Chargement...</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+        <div className="animate-pulse space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
     );
   }
-
-  const totalAccounts = (freeAccounts?.artists?.length || 0) + (freeAccounts?.professionals?.length || 0);
 
   return (
     <div className="space-y-6">
@@ -49,7 +129,7 @@ const FreeAccountsPanel = () => {
         <div>
           <h2 className="text-2xl font-bold">Comptes gratuits</h2>
           <p className="text-muted-foreground">
-            Gérez les comptes gratuits créés par les administrateurs ({totalAccounts} comptes)
+            Gérez les comptes gratuits créés par les administrateurs ({allAccounts.length} comptes)
           </p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)} className="gap-2">
@@ -58,129 +138,20 @@ const FreeAccountsPanel = () => {
         </Button>
       </div>
 
-      {/* Comptes artistes */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
-            Comptes artistes ({freeAccounts?.artists?.length || 0})
-          </CardTitle>
-          <CardDescription>
-            Artistes avec des comptes gratuits créés par les administrateurs
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {freeAccounts?.artists?.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
-              Aucun compte artiste gratuit trouvé
-            </p>
-          ) : (
-            <div className="grid gap-4">
-              {freeAccounts?.artists?.map((artist) => (
-                <div key={artist.id} className="border rounded-lg p-4 flex items-center justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{artist.stage_name}</h3>
-                      <Badge variant="secondary" className="gap-1">
-                        <User className="h-3 w-3" />
-                        Artiste
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      {artist.contact_email && (
-                        <div className="flex items-center gap-1">
-                          <Mail className="h-3 w-3" />
-                          {artist.contact_email}
-                        </div>
-                      )}
-                      {artist.voice_type && (
-                        <div className="flex items-center gap-1">
-                          <span>{artist.voice_type}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(artist.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => handleUpgradeRequest(artist.id, 'artist', artist.user_id)}
-                    disabled={isSendingUpgradeRequest}
-                    variant="outline"
-                    className="gap-2"
-                  >
-                    <CreditCard className="h-4 w-4" />
-                    Passer en payant
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <FreeAccountsStats />
+      
+      <FreeAccountsFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        accountTypeFilter={accountTypeFilter}
+        onAccountTypeChange={setAccountTypeFilter}
+        dateFilter={dateFilter}
+        onDateFilterChange={setDateFilter}
+        onClearFilters={handleClearFilters}
+        activeFiltersCount={activeFiltersCount}
+      />
 
-      {/* Comptes professionnels */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5" />
-            Comptes professionnels ({freeAccounts?.professionals?.length || 0})
-          </CardTitle>
-          <CardDescription>
-            Professionnels avec des comptes gratuits créés par les administrateurs
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {freeAccounts?.professionals?.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
-              Aucun compte professionnel gratuit trouvé
-            </p>
-          ) : (
-            <div className="grid gap-4">
-              {freeAccounts?.professionals?.map((professional) => (
-                <div key={professional.id} className="border rounded-lg p-4 flex items-center justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{professional.company_name}</h3>
-                      <Badge variant="secondary" className="gap-1">
-                        <Building className="h-3 w-3" />
-                        Professionnel
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      {professional.contact_email && (
-                        <div className="flex items-center gap-1">
-                          <Mail className="h-3 w-3" />
-                          {professional.contact_email}
-                        </div>
-                      )}
-                      {professional.professional_role && (
-                        <div className="flex items-center gap-1">
-                          <span>{professional.professional_role.replace('_', ' ')}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(professional.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => handleUpgradeRequest(professional.id, 'professional', professional.user_id)}
-                    disabled={isSendingUpgradeRequest}
-                    variant="outline"
-                    className="gap-2"
-                  >
-                    <CreditCard className="h-4 w-4" />
-                    Passer en payant
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <FreeAccountsTable filteredAccounts={filteredAccounts} />
 
       <CreateFreeAccountDialog 
         open={showCreateDialog} 
