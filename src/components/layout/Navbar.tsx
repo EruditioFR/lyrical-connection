@@ -33,26 +33,26 @@ const Navbar = () => {
 
         {/* Navigation principale */}
         <div className="hidden md:flex items-center space-x-8">
-          <Link 
-            to="/artistes" 
-            className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-          >
-            Artistes
-          </Link>
-          <Link 
-            to="/castings" 
-            className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-          >
-            Castings
-          </Link>
-          <Link 
-            to="/pricing" 
-            className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-          >
-            Tarifs
-          </Link>
-          {user && (
+          {user ? (
             <>
+              <Link 
+                to="/artistes" 
+                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+              >
+                Artistes
+              </Link>
+              <Link 
+                to="/castings" 
+                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+              >
+                Castings
+              </Link>
+              <Link 
+                to="/pricing" 
+                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+              >
+                Tarifs
+              </Link>
               {/* Liens pour les professionnels */}
               <Link 
                 to="/recherche-artistes" 
@@ -67,6 +67,13 @@ const Navbar = () => {
                 Mes Événements
               </Link>
             </>
+          ) : (
+            <Link 
+              to="/castings" 
+              className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+            >
+              Castings
+            </Link>
           )}
         </div>
 
