@@ -85,6 +85,26 @@ export const useAdminStats = () => {
         ? Math.round((((activeCastings || 0) - lastWeekCastings) / lastWeekCastings) * 100)
         : 0;
 
+      // Récupérer les statistiques de nationalité
+      const { data: nationalityData } = await supabase
+        .from('artist_profiles')
+        .select('nationality')
+        .eq('is_active', true)
+        .not('nationality', 'is', null);
+
+      // Compter les nationalités
+      const nationalityStats = nationalityData?.reduce((acc, artist) => {
+        const nationality = artist.nationality || 'Non spécifié';
+        acc[nationality] = (acc[nationality] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      // Trier les nationalités par nombre décroissant et prendre le top 5
+      const topNationalities = Object.entries(nationalityStats)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5)
+        .map(([nationality, count]) => ({ nationality, count }));
+
       return {
         totalActiveUsers,
         userGrowthPercentage,
@@ -93,7 +113,8 @@ export const useAdminStats = () => {
         castingGrowthPercentage,
         publishedEvents,
         recentApplications,
-        pendingContacts
+        pendingContacts,
+        nationalityStats: topNationalities
       };
     },
     refetchInterval: 5 * 60 * 1000, // Rafraîchir toutes les 5 minutes

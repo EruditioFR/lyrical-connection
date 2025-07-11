@@ -11,9 +11,12 @@ import {
   Target
 } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
+import { useAdminStats } from '@/hooks/useAdminStats';
+import NationalityStatsCard from './NationalityStatsCard';
 
 const FreeAccountsStats = () => {
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
+  const { data: adminStats, isLoading: isLoadingAdminStats } = useAdminStats();
 
   if (isLoadingFreeAccounts) {
     return (
@@ -50,7 +53,7 @@ const FreeAccountsStats = () => {
     }).length;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total comptes gratuits</CardTitle>
@@ -103,6 +106,11 @@ const FreeAccountsStats = () => {
           </p>
         </CardContent>
       </Card>
+
+      <NationalityStatsCard 
+        nationalityStats={adminStats?.nationalityStats || []} 
+        isLoading={isLoadingAdminStats}
+      />
     </div>
   );
 };
