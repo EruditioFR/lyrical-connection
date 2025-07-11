@@ -6,18 +6,39 @@ export const useAdminStats = () => {
   return useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      // Récupérer le nombre d'utilisateurs actifs
-      const { count: activeUsers } = await supabase
+      // Récupérer les utilisateurs administrateurs pour les exclure
+      const { data: adminUsers } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin');
+
+      const adminUserIds = adminUsers?.map(admin => admin.user_id) || [];
+
+      // Récupérer le nombre d'artistes actifs (non-admin)
+      let artistQuery = supabase
         .from('artist_profiles')
         .select('*', { count: 'exact' })
         .eq('is_active', true);
 
-      const { count: activeProfessionals } = await supabase
+      if (adminUserIds.length > 0) {
+        artistQuery = artistQuery.not('user_id', 'in', `(${adminUserIds.join(',')})`);
+      }
+
+      const { count: activeArtists } = await artistQuery;
+
+      // Récupérer le nombre de professionnels actifs (non-admin)
+      let professionalQuery = supabase
         .from('professional_profiles')
         .select('*', { count: 'exact' })
         .eq('is_active', true);
 
-      const totalActiveUsers = (activeUsers || 0) + (activeProfessionals || 0);
+      if (adminUserIds.length > 0) {
+        professionalQuery = professionalQuery.not('user_id', 'in', `(${adminUserIds.join(',')})`);
+      }
+
+      const { count: activeProfessionals } = await professionalQuery;
+
+      const totalActiveUsers = (activeArtists || 0) + (activeProfessionals || 0);
 
       // Récupérer le nombre de demandes de vérification en attente
       const { count: pendingVerifications } = await supabase
@@ -56,17 +77,29 @@ export const useAdminStats = () => {
       const lastMonth = new Date();
       lastMonth.setMonth(lastMonth.getMonth() - 1);
 
-      const { count: lastMonthUsers } = await supabase
+      let lastMonthArtistQuery = supabase
         .from('artist_profiles')
         .select('*', { count: 'exact' })
         .lte('created_at', lastMonth.toISOString());
 
-      const { count: lastMonthProfessionals } = await supabase
+      if (adminUserIds.length > 0) {
+        lastMonthArtistQuery = lastMonthArtistQuery.not('user_id', 'in', `(${adminUserIds.join(',')})`);
+      }
+
+      const { count: lastMonthArtists } = await lastMonthArtistQuery;
+
+      let lastMonthProfessionalQuery = supabase
         .from('professional_profiles')
         .select('*', { count: 'exact' })
         .lte('created_at', lastMonth.toISOString());
 
-      const totalLastMonthUsers = (lastMonthUsers || 0) + (lastMonthProfessionals || 0);
+      if (adminUserIds.length > 0) {
+        lastMonthProfessionalQuery = lastMonthProfessionalQuery.not('user_id', 'in', `(${adminUserIds.join(',')})`);
+      }
+
+      const { count: lastMonthProfessionals } = await lastMonthProfessionalQuery;
+
+      const totalLastMonthUsers = (lastMonthArtists || 0) + (lastMonthProfessionals || 0);
       const userGrowthPercentage = totalLastMonthUsers > 0 
         ? Math.round(((totalActiveUsers - totalLastMonthUsers) / totalLastMonthUsers) * 100)
         : 0;
@@ -86,10 +119,16 @@ export const useAdminStats = () => {
         : 0;
 
       // Récupérer les données détaillées de TOUS les artistes (gratuits et payants)
-      const { data: artistsData } = await supabase
+      let artistDataQuery = supabase
         .from('artist_profiles')
         .select('nationality, voice_type, gender, birth_date')
         .eq('is_active', true);
+
+      if (adminUserIds.length > 0) {
+        artistDataQuery = artistDataQuery.not('user_id', 'in', `(${adminUserIds.join(',')})`);
+      }
+
+      const { data: artistsData } = await artistDataQuery;
 
       // Statistiques de nationalité
       const nationalityStats = artistsData?.reduce((acc, artist) => {
@@ -167,6 +206,8 @@ export const useAdminStats = () => {
 
       return {
         totalActiveUsers,
+        activeArtists: activeArtists || 0,
+        activeProfessionals: activeProfessionals || 0,
         userGrowthPercentage,
         pendingVerifications,
         activeCastings,

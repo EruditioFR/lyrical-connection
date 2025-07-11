@@ -132,7 +132,11 @@ const Admin = () => {
                 <div className="text-2xl font-bold">
                   {statsLoading ? '...' : stats?.totalActiveUsers || 0}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Badge variant="secondary">{stats?.activeArtists || 0} Artistes</Badge>
+                  <Badge variant="outline">{stats?.activeProfessionals || 0} Pros</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {statsLoading ? '' : stats?.userGrowthPercentage ? 
                     `${stats.userGrowthPercentage > 0 ? '+' : ''}${stats.userGrowthPercentage}% ce mois-ci` : 
                     'Aucune donnée historique'
