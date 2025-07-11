@@ -1,12 +1,16 @@
 
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, Bell, Settings, BarChart3 } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import CreateFreeAccountDialog from './CreateFreeAccountDialog';
 import FreeAccountsStats from './FreeAccountsStats';
 import FreeAccountsFilters from './FreeAccountsFilters';
 import FreeAccountsTable from './FreeAccountsTable';
+import NotificationCenter from './NotificationCenter';
+import AutomatedWorkflows from './AutomatedWorkflows';
+import FreeAccountAnalytics from './FreeAccountAnalytics';
 
 const FreeAccountsPanel = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -107,7 +111,7 @@ const FreeAccountsPanel = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Comptes gratuits</h2>
+            <h2 className="text-2xl font-bold">Gestion des comptes gratuits</h2>
             <p className="text-muted-foreground">Chargement...</p>
           </div>
         </div>
@@ -127,9 +131,9 @@ const FreeAccountsPanel = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Comptes gratuits</h2>
+          <h2 className="text-2xl font-bold">Gestion des comptes gratuits</h2>
           <p className="text-muted-foreground">
-            Gérez les comptes gratuits créés par les administrateurs ({allAccounts.length} comptes)
+            Système complet de gestion et automatisation ({allAccounts.length} comptes)
           </p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)} className="gap-2">
@@ -138,20 +142,55 @@ const FreeAccountsPanel = () => {
         </Button>
       </div>
 
-      <FreeAccountsStats />
-      
-      <FreeAccountsFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        accountTypeFilter={accountTypeFilter}
-        onAccountTypeChange={setAccountTypeFilter}
-        dateFilter={dateFilter}
-        onDateFilterChange={setDateFilter}
-        onClearFilters={handleClearFilters}
-        activeFiltersCount={activeFiltersCount}
-      />
+      <Tabs defaultValue="accounts" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="accounts" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Comptes
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <Bell className="h-4 w-4" />
+            Notifications
+          </TabsTrigger>
+          <TabsTrigger value="workflows" className="flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            Workflows
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Analytics
+          </TabsTrigger>
+        </TabsList>
 
-      <FreeAccountsTable filteredAccounts={filteredAccounts} />
+        <TabsContent value="accounts" className="space-y-6">
+          <FreeAccountsStats />
+          
+          <FreeAccountsFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            accountTypeFilter={accountTypeFilter}
+            onAccountTypeChange={setAccountTypeFilter}
+            dateFilter={dateFilter}
+            onDateFilterChange={setDateFilter}
+            onClearFilters={handleClearFilters}
+            activeFiltersCount={activeFiltersCount}
+          />
+
+          <FreeAccountsTable filteredAccounts={filteredAccounts} />
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <NotificationCenter />
+        </TabsContent>
+
+        <TabsContent value="workflows">
+          <AutomatedWorkflows />
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <FreeAccountAnalytics />
+        </TabsContent>
+      </Tabs>
 
       <CreateFreeAccountDialog 
         open={showCreateDialog} 
