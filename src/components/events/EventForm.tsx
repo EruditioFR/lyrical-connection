@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -102,6 +103,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   };
 
   const handleLocationSelect = (latitude: number, longitude: number) => {
+    console.log('Location selected:', { latitude, longitude });
     setFormData(prev => ({
       ...prev,
       latitude: latitude.toString(),
@@ -114,9 +116,15 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     
     console.log('HandleSubmit called');
     console.log('Professional profile:', professionalProfile);
+    console.log('Form data:', formData);
     
     if (!professionalProfile) {
       console.error('No professional profile found');
+      return;
+    }
+
+    if (!formData.title || !formData.event_type || !formData.start_date || !formData.end_date) {
+      console.error('Missing required fields');
       return;
     }
 
@@ -148,10 +156,13 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       eventData.id = event.id;
     }
 
+    console.log('Submitting event data:', eventData);
+
     try {
       await createEventMutation.mutateAsync(eventData);
       onClose();
     } catch (error) {
+      console.error('Error in handleSubmit:', error);
       // Error is handled by the hook
     }
   };

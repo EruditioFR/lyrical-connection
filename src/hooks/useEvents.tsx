@@ -24,6 +24,9 @@ export interface ProfessionalEvent {
   registration_deadline?: string;
   location?: string;
   venue?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
   max_participants?: number;
   price?: number;
   currency: string;
@@ -219,6 +222,8 @@ export const useCreateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...eventData }: CreateEventData & { id?: string }) => {
+      console.log('Creating/updating event with data:', eventData);
+      
       if (id) {
         const { data, error } = await supabase
           .from('professional_events')
@@ -227,7 +232,10 @@ export const useCreateEvent = () => {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error updating event:', error);
+          throw error;
+        }
         return data;
       } else {
         const { data, error } = await supabase
@@ -236,11 +244,15 @@ export const useCreateEvent = () => {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error creating event:', error);
+          throw error;
+        }
         return data;
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Event saved successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['professionalEvents'] });
       queryClient.invalidateQueries({ queryKey: ['publicEvents'] });
       toast({
@@ -248,10 +260,12 @@ export const useCreateEvent = () => {
         description: 'Événement sauvegardé avec succès',
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
+      console.error('Error saving event:', error);
+      const errorMessage = error?.message || 'Impossible de sauvegarder l\'événement';
       toast({
         title: 'Erreur',
-        description: 'Impossible de sauvegarder l\'événement',
+        description: errorMessage,
         variant: 'destructive',
       });
     },

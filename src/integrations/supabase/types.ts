@@ -969,6 +969,7 @@ export type Database = {
       }
       professional_events: {
         Row: {
+          address: string | null
           category_id: string | null
           contact_info: string | null
           created_at: string
@@ -979,7 +980,9 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean | null
+          latitude: number | null
           location: string | null
+          longitude: number | null
           max_participants: number | null
           price: number | null
           professional_profile_id: string
@@ -993,6 +996,7 @@ export type Database = {
           venue: string | null
         }
         Insert: {
+          address?: string | null
           category_id?: string | null
           contact_info?: string | null
           created_at?: string
@@ -1003,7 +1007,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           max_participants?: number | null
           price?: number | null
           professional_profile_id: string
@@ -1017,6 +1023,7 @@ export type Database = {
           venue?: string | null
         }
         Update: {
+          address?: string | null
           category_id?: string | null
           contact_info?: string | null
           created_at?: string
@@ -1027,7 +1034,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           max_participants?: number | null
           price?: number | null
           professional_profile_id?: string
