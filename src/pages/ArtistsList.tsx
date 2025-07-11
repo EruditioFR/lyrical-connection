@@ -83,10 +83,7 @@ const ArtistsList = () => {
       {/* Onglets pour afficher la liste des artistes et la génération d'images */}
       {user ? <div className="container mx-auto px-4 md:px-6 py-8">
           <Tabs defaultValue="artists" className="w-full">
-            <TabsList className="grid grid-cols-1 ">
-              <TabsTrigger value="artists">Liste des Artistes</TabsTrigger>
-              
-            </TabsList>
+            
             <TabsContent value="artists" className="mt-6">
               <ArtistsGrid artists={artists} filteredArtists={filteredArtists} isLoading={isLoading} searchQuery={searchTerm} selectedVoiceTypes={voiceType ? [voiceType] : []} onResetFilters={resetFilters} />
             </TabsContent>
