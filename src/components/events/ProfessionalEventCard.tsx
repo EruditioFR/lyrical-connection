@@ -2,7 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Calendar, MapPin, Users, Edit, Eye, MoreHorizontal } from 'lucide-react';
+import { Calendar, MapPin, Users, Edit, Eye, MoreHorizontal, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -84,7 +84,12 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({
               </Badge>
             </div>
             <h3 className="font-semibold line-clamp-2">
-              {event.title}
+              <Link 
+                to={`/evenements/${event.id}`}
+                className="hover:text-primary transition-colors"
+              >
+                {event.title}
+              </Link>
             </h3>
           </div>
           <DropdownMenu>
@@ -94,6 +99,12 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link to={`/evenements/${event.id}`}>
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Voir l'événement
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onEdit(event)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Modifier
@@ -146,22 +157,22 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({
           <Button 
             variant="outline" 
             size="sm" 
+            asChild
+            className="flex-1"
+          >
+            <Link to={`/evenements/${event.id}`}>
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Voir
+            </Link>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
             onClick={() => onEdit(event)}
             className="flex-1"
           >
             <Edit className="h-4 w-4 mr-2" />
             Modifier
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            asChild
-            className="flex-1"
-          >
-            <Link to={`/evenements/${event.id}/inscriptions`}>
-              <Users className="h-4 w-4 mr-2" />
-              Inscriptions
-            </Link>
           </Button>
         </div>
       </CardFooter>

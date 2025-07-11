@@ -19,6 +19,7 @@ import ProfessionalApplications from '@/pages/ProfessionalApplications';
 import NotFound from '@/pages/NotFound';
 import ArtistSearch from '@/pages/ArtistSearch';
 import ProfessionalEvents from '@/pages/ProfessionalEvents';
+import EventDetail from '@/pages/EventDetail';
 import Pricing from '@/pages/Pricing';
 import Subscription from '@/pages/Subscription';
 import SubscriptionSuccess from '@/pages/SubscriptionSuccess';
@@ -50,6 +51,7 @@ function App() {
             <Route path="/candidatures-reçues" element={<ProfessionalApplications />} />
             <Route path="/recherche-artistes" element={<ArtistSearch />} />
             <Route path="/mes-evenements" element={<ProfessionalEvents />} />
+            <Route path="/evenements/:id" element={<EventDetail />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
