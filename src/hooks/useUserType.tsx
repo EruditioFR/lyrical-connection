@@ -11,10 +11,12 @@ export const useUserType = () => {
   const isLoading = artistLoading || professionalLoading;
   
   // Forcer le statut professionnel pour les utilisateurs jbbejot (utilisateurs de test)
+  // Sauf pour jbbejot@gmail.com qui doit avoir un profil artiste
   const isTestUser = user?.email?.startsWith('jbbejot');
+  const isMainTestUser = user?.email === 'jbbejot@gmail.com';
   
-  if (isTestUser) {
-    // Pour les utilisateurs de test jbbejot*, toujours considérer comme professionnel
+  if (isTestUser && !isMainTestUser) {
+    // Pour les utilisateurs de test jbbejot* (sauf jbbejot@gmail.com), toujours considérer comme professionnel
     return {
       userType: 'professional' as const,
       isProfessional: true,
