@@ -85,6 +85,48 @@ export const useProfessionalMedia = (profileId?: string) => {
     }
   };
 
+  const addExternalLink = async (mediaType: 'photo' | 'video' | 'audio', url: string, title?: string, description?: string) => {
+    if (!profileId || !user) throw new Error('Profile ID and user required');
+    
+    setUploading(true);
+    try {
+      const mediaData: Omit<ProfessionalMediaInsert, 'professional_profile_id'> = {
+        media_type: mediaType,
+        file_name: title || 'Lien externe',
+        file_path: url, // Utiliser file_path pour stocker l'URL
+        file_size: null,
+        mime_type: null,
+        title: title || 'Lien externe',
+        description,
+      };
+
+      const { error: dbError } = await supabase
+        .from('professional_media')
+        .insert({
+          ...mediaData,
+          professional_profile_id: profileId,
+        });
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: "Lien ajouté",
+        description: "Votre lien a été ajouté avec succès.",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['professional-media', profileId] });
+    } catch (error) {
+      console.error('Error adding external link:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter le lien.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const deleteMedia = useMutation({
     mutationFn: async (mediaId: string) => {
       const media = await supabase
@@ -93,7 +135,8 @@ export const useProfessionalMedia = (profileId?: string) => {
         .eq('id', mediaId)
         .single();
 
-      if (media.data?.file_path) {
+      // Supprimer le fichier du storage seulement si ce n'est pas une URL externe
+      if (media.data?.file_path && !media.data.file_path.startsWith('http')) {
         await supabase.storage
           .from('professional-media')
           .remove([media.data.file_path]);
@@ -123,6 +166,12 @@ export const useProfessionalMedia = (profileId?: string) => {
   });
 
   const getMediaUrl = (filePath: string) => {
+    // Si c'est une URL externe, la retourner directement
+    if (filePath.startsWith('http')) {
+      return filePath;
+    }
+    
+    // Sinon, générer l'URL du storage Supabase
     const { data } = supabase.storage
       .from('professional-media')
       .getPublicUrl(filePath);
@@ -134,6 +183,7 @@ export const useProfessionalMedia = (profileId?: string) => {
     isLoading,
     uploading,
     uploadFile,
+    addExternalLink,
     deleteMedia: deleteMedia.mutate,
     getMediaUrl,
   };
