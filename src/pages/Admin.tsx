@@ -21,6 +21,10 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useAdminStats } from '@/hooks/useAdminStats';
+import NationalityStatsCard from '@/components/admin/NationalityStatsCard';
+import GenderStatsCard from '@/components/admin/GenderStatsCard';
+import VoiceTypeStatsCard from '@/components/admin/VoiceTypeStatsCard';
+import AgeStatsCard from '@/components/admin/AgeStatsCard';
 
 const Admin = () => {
   const { user } = useAuth();
@@ -184,6 +188,30 @@ const Admin = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Statistiques démographiques principales */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <NationalityStatsCard 
+              nationalityStats={stats?.nationalityStats || []} 
+              isLoading={statsLoading}
+            />
+            
+            <GenderStatsCard 
+              genderDistribution={stats?.genderDistribution || []} 
+              isLoading={statsLoading}
+            />
+            
+            <VoiceTypeStatsCard 
+              voiceTypeDistribution={stats?.voiceTypeDistribution || []}
+              voiceTypeByGender={stats?.voiceTypeByGender || {}}
+              isLoading={statsLoading}
+            />
+            
+            <AgeStatsCard 
+              ageDistribution={stats?.ageDistribution || []}
+              isLoading={statsLoading}
+            />
           </div>
 
           {/* Statistiques supplémentaires */}

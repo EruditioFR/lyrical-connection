@@ -85,7 +85,7 @@ export const useAdminStats = () => {
         ? Math.round((((activeCastings || 0) - lastWeekCastings) / lastWeekCastings) * 100)
         : 0;
 
-      // Récupérer les données détaillées des artistes pour les nouvelles statistiques
+      // Récupérer les données détaillées de TOUS les artistes (gratuits et payants)
       const { data: artistsData } = await supabase
         .from('artist_profiles')
         .select('nationality, voice_type, gender, birth_date')
