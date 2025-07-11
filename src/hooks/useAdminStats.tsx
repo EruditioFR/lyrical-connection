@@ -85,25 +85,85 @@ export const useAdminStats = () => {
         ? Math.round((((activeCastings || 0) - lastWeekCastings) / lastWeekCastings) * 100)
         : 0;
 
-      // Récupérer les statistiques de nationalité
-      const { data: nationalityData } = await supabase
+      // Récupérer les données détaillées des artistes pour les nouvelles statistiques
+      const { data: artistsData } = await supabase
         .from('artist_profiles')
-        .select('nationality')
-        .eq('is_active', true)
-        .not('nationality', 'is', null);
+        .select('nationality, voice_type, gender, birth_date')
+        .eq('is_active', true);
 
-      // Compter les nationalités
-      const nationalityStats = nationalityData?.reduce((acc, artist) => {
+      // Statistiques de nationalité
+      const nationalityStats = artistsData?.reduce((acc, artist) => {
         const nationality = artist.nationality || 'Non spécifié';
         acc[nationality] = (acc[nationality] || 0) + 1;
         return acc;
       }, {} as Record<string, number>) || {};
 
-      // Trier les nationalités par nombre décroissant et prendre le top 5
       const topNationalities = Object.entries(nationalityStats)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5)
         .map(([nationality, count]) => ({ nationality, count }));
+
+      // Statistiques de répartition par sexe
+      const genderStats = artistsData?.reduce((acc, artist) => {
+        const gender = artist.gender || 'Non spécifié';
+        acc[gender] = (acc[gender] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      const genderDistribution = Object.entries(genderStats).map(([gender, count]) => ({
+        gender: gender === 'H' ? 'Homme' : gender === 'F' ? 'Femme' : gender,
+        count
+      }));
+
+      // Statistiques des types de voix
+      const voiceTypeStats = artistsData?.reduce((acc, artist) => {
+        if (artist.voice_type) {
+          acc[artist.voice_type] = (acc[artist.voice_type] || 0) + 1;
+        }
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      const voiceTypeDistribution = Object.entries(voiceTypeStats)
+        .sort(([, a], [, b]) => b - a)
+        .map(([voiceType, count]) => ({ voiceType, count }));
+
+      // Statistiques des types de voix par sexe
+      const voiceTypeByGender = artistsData?.reduce((acc, artist) => {
+        if (artist.voice_type && artist.gender) {
+          const gender = artist.gender === 'H' ? 'Homme' : artist.gender === 'F' ? 'Femme' : 'Autre';
+          if (!acc[gender]) acc[gender] = {};
+          acc[gender][artist.voice_type] = (acc[gender][artist.voice_type] || 0) + 1;
+        }
+        return acc;
+      }, {} as Record<string, Record<string, number>>) || {};
+
+      // Statistiques par âge
+      const currentYear = new Date().getFullYear();
+      const ageStats = artistsData?.reduce((acc, artist) => {
+        if (artist.birth_date) {
+          const birthYear = new Date(artist.birth_date).getFullYear();
+          const age = currentYear - birthYear;
+          
+          let ageGroup = 'Non spécifié';
+          if (age < 18) ageGroup = 'Moins de 18 ans';
+          else if (age < 25) ageGroup = '18-24 ans';
+          else if (age < 35) ageGroup = '25-34 ans';
+          else if (age < 45) ageGroup = '35-44 ans';
+          else if (age < 55) ageGroup = '45-54 ans';
+          else if (age < 65) ageGroup = '55-64 ans';
+          else ageGroup = '65 ans et plus';
+          
+          acc[ageGroup] = (acc[ageGroup] || 0) + 1;
+        } else {
+          acc['Non spécifié'] = (acc['Non spécifié'] || 0) + 1;
+        }
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      const ageDistribution = Object.entries(ageStats).map(([ageGroup, count]) => ({
+        ageGroup,
+        count
+      }));
 
       return {
         totalActiveUsers,
@@ -114,7 +174,11 @@ export const useAdminStats = () => {
         publishedEvents,
         recentApplications,
         pendingContacts,
-        nationalityStats: topNationalities
+        nationalityStats: topNationalities,
+        genderDistribution,
+        voiceTypeDistribution,
+        voiceTypeByGender,
+        ageDistribution
       };
     },
     refetchInterval: 5 * 60 * 1000, // Rafraîchir toutes les 5 minutes

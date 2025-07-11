@@ -13,6 +13,9 @@ import {
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import { useAdminStats } from '@/hooks/useAdminStats';
 import NationalityStatsCard from './NationalityStatsCard';
+import GenderStatsCard from './GenderStatsCard';
+import VoiceTypeStatsCard from './VoiceTypeStatsCard';
+import AgeStatsCard from './AgeStatsCard';
 
 const FreeAccountsStats = () => {
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
@@ -53,64 +56,86 @@ const FreeAccountsStats = () => {
     }).length;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total comptes gratuits</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalFreeAccounts}</div>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Badge variant="secondary">{freeAccounts?.artists?.length || 0} Artistes</Badge>
-            <Badge variant="outline">{freeAccounts?.professionals?.length || 0} Pros</Badge>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-6">
+      {/* Statistiques principales */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total comptes gratuits</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalFreeAccounts}</div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Badge variant="secondary">{freeAccounts?.artists?.length || 0} Artistes</Badge>
+              <Badge variant="outline">{freeAccounts?.professionals?.length || 0} Pros</Badge>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Nouveaux (7j)</CardTitle>
-          <TrendingUp className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{recentAccounts}</div>
-          <p className="text-xs text-muted-foreground">
-            Comptes créés cette semaine
-          </p>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Nouveaux (7j)</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{recentAccounts}</div>
+            <p className="text-xs text-muted-foreground">
+              Comptes créés cette semaine
+            </p>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Anciens (30j+)</CardTitle>
-          <Clock className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{oldAccounts}</div>
-          <p className="text-xs text-muted-foreground">
-            Comptes éligibles à l'upgrade
-          </p>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Anciens (30j+)</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{oldAccounts}</div>
+            <p className="text-xs text-muted-foreground">
+              Comptes éligibles à l'upgrade
+            </p>
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Taux de conversion</CardTitle>
-          <Target className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">0%</div>
-          <p className="text-xs text-muted-foreground">
-            Gratuit → Payant
-          </p>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Taux de conversion</CardTitle>
+            <Target className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0%</div>
+            <p className="text-xs text-muted-foreground">
+              Gratuit → Payant
+            </p>
+          </CardContent>
+        </Card>
 
-      <NationalityStatsCard 
-        nationalityStats={adminStats?.nationalityStats || []} 
-        isLoading={isLoadingAdminStats}
-      />
+        <NationalityStatsCard 
+          nationalityStats={adminStats?.nationalityStats || []} 
+          isLoading={isLoadingAdminStats}
+        />
+      </div>
+
+      {/* Statistiques démographiques */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <GenderStatsCard 
+          genderDistribution={adminStats?.genderDistribution || []} 
+          isLoading={isLoadingAdminStats}
+        />
+        
+        <VoiceTypeStatsCard 
+          voiceTypeDistribution={adminStats?.voiceTypeDistribution || []}
+          voiceTypeByGender={adminStats?.voiceTypeByGender || {}}
+          isLoading={isLoadingAdminStats}
+        />
+        
+        <AgeStatsCard 
+          ageDistribution={adminStats?.ageDistribution || []}
+          isLoading={isLoadingAdminStats}
+        />
+      </div>
     </div>
   );
 };
