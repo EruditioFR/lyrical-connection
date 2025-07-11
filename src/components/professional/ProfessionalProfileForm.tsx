@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import { Briefcase, MapPin, Globe, Phone, Mail, Users, Clock, Target, Loader2 } from 'lucide-react';
+import { Briefcase, MapPin, Globe, Phone, Mail, Users, Loader2 } from 'lucide-react';
+import MediaUploadSection from './MediaUploadSection';
 import type { Database } from '@/integrations/supabase/types';
 
 type ProfessionalRole = Database['public']['Enums']['professional_role'];
@@ -108,7 +109,6 @@ const ProfessionalProfileForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Vérifier que professional_role n'est pas vide
     if (!formData.professional_role) {
       return;
     }
@@ -132,8 +132,6 @@ const ProfessionalProfileForm = () => {
       </div>
     );
   }
-
-  const selectedRole = professionalRoles.find(role => role.value === formData.professional_role);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -334,6 +332,11 @@ const ProfessionalProfileForm = () => {
           </Button>
         </div>
       </form>
+
+      {/* Section Médias - affichée seulement si le profil existe */}
+      {profile && (
+        <MediaUploadSection profileId={profile.id} />
+      )}
     </div>
   );
 };
