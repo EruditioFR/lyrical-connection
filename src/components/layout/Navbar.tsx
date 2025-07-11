@@ -13,14 +13,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User, Settings, CreditCard } from 'lucide-react';
+import { useUserType } from '@/hooks/useUserType';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
+  const { artistProfile, professionalProfile } = useUserType();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
+  };
+
+  // Déterminer le nom d'affichage selon le type de profil
+  const getDisplayName = () => {
+    if (professionalProfile?.company_name) {
+      return professionalProfile.company_name;
+    }
+    if (artistProfile?.stage_name) {
+      return artistProfile.stage_name;
+    }
+    // Fallback sur le nom d'utilisateur ou email
+    return user?.user_metadata?.full_name || user?.email?.split('@')[0];
   };
 
   return (
@@ -96,7 +110,7 @@ const Navbar = () => {
           {user ? (
             <div className="flex items-center space-x-3">
               <span className="text-sm font-medium text-gray-700">
-                {user.user_metadata?.full_name || user.email?.split('@')[0]}
+                {getDisplayName()}
               </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -108,7 +122,7 @@ const Navbar = () => {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.user_metadata?.full_name || 'Utilisateur'}</p>
+                      <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
