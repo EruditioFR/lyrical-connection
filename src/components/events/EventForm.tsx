@@ -11,7 +11,7 @@ import { useCreateEvent, useEventCategories, CreateEventData, ProfessionalEvent 
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CalendarIcon, Loader2 } from 'lucide-react';
+import { CalendarIcon, Loader2, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventFormProps {
@@ -31,6 +31,9 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     registration_deadline: '',
     location: '',
     venue: '',
+    address: '',
+    latitude: '',
+    longitude: '',
     max_participants: '',
     price: '',
     currency: 'EUR',
@@ -43,6 +46,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [registrationDeadline, setRegistrationDeadline] = useState<Date>();
+  const [isGeolocating, setIsGeolocating] = useState(false);
 
   const { data: categories = [] } = useEventCategories();
   const { profile: professionalProfile } = useProfessionalProfile();
@@ -62,6 +66,9 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
         registration_deadline: event.registration_deadline || '',
         location: event.location || '',
         venue: event.venue || '',
+        address: (event as any).address || '',
+        latitude: (event as any).latitude?.toString() || '',
+        longitude: (event as any).longitude?.toString() || '',
         max_participants: event.max_participants?.toString() || '',
         price: event.price?.toString() || '',
         currency: event.currency,
@@ -94,6 +101,34 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     }
   };
 
+  const handleGeolocation = async () => {
+    if (!formData.address.trim()) {
+      return;
+    }
+
+    setIsGeolocating(true);
+    try {
+      // Utilisation de l'API de géocodage de Nominatim (OpenStreetMap)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(formData.address)}&limit=1`
+      );
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const result = data[0];
+        setFormData(prev => ({
+          ...prev,
+          latitude: result.lat,
+          longitude: result.lon
+        }));
+      }
+    } catch (error) {
+      console.error('Erreur de géolocalisation:', error);
+    } finally {
+      setIsGeolocating(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -117,6 +152,9 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       registration_deadline: formData.registration_deadline || undefined,
       location: formData.location || undefined,
       venue: formData.venue || undefined,
+      address: formData.address || undefined,
+      latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
+      longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
       max_participants: formData.max_participants ? parseInt(formData.max_participants) : undefined,
       price: formData.price ? parseFloat(formData.price) : undefined,
       currency: formData.currency,
@@ -321,7 +359,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Lieu et capacité */}
+          {/* Lieu et adresse avec géolocalisation */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="location">Ville</Label>
@@ -353,6 +391,38 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
                 placeholder="20"
               />
             </div>
+          </div>
+
+          {/* Adresse complète avec géolocalisation */}
+          <div className="space-y-2">
+            <Label htmlFor="address">Adresse complète</Label>
+            <div className="flex gap-2">
+              <Input
+                id="address"
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                placeholder="123 rue de la Paix, 75001 Paris, France"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGeolocation}
+                disabled={!formData.address.trim() || isGeolocating}
+                className="px-3"
+              >
+                {isGeolocating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <MapPin className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            {formData.latitude && formData.longitude && (
+              <p className="text-sm text-muted-foreground">
+                Coordonnées: {parseFloat(formData.latitude).toFixed(6)}, {parseFloat(formData.longitude).toFixed(6)}
+              </p>
+            )}
           </div>
 
           {/* Prix */}

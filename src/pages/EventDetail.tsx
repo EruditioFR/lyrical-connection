@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
+import EventMap from '@/components/events/EventMap';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -125,6 +126,8 @@ const EventDetail = () => {
     );
   }
 
+  const eventData = event as any;
+
   return (
     <Layout>
       {/* En-tête avec image de couverture */}
@@ -221,12 +224,25 @@ const EventDetail = () => {
               </section>
             )}
 
-            {/* Lieu */}
-            {(event.location || event.venue) && (
+            {/* Lieu avec carte */}
+            {(event.location || event.venue || eventData.address) && (
               <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
                 <h2 className="text-2xl font-serif font-semibold mb-4">Lieu</h2>
                 {event.venue && <p className="font-medium mb-2">{event.venue}</p>}
-                {event.location && <p className="text-muted-foreground">{event.location}</p>}
+                {event.location && <p className="text-muted-foreground mb-4">{event.location}</p>}
+                {eventData.address && <p className="text-muted-foreground mb-4">{eventData.address}</p>}
+                
+                {/* Carte si les coordonnées sont disponibles */}
+                {eventData.latitude && eventData.longitude && (
+                  <div className="mt-4">
+                    <EventMap
+                      latitude={eventData.latitude}
+                      longitude={eventData.longitude}
+                      address={eventData.address}
+                      venue={event.venue}
+                    />
+                  </div>
+                )}
               </section>
             )}
 
