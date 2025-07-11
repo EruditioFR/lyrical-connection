@@ -61,8 +61,10 @@ export default function Pricing() {
           </Card>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {plans.map((plan) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {plans
+            .filter(plan => plan.name === 'Artistes' || plan.name === 'Professionnels')
+            .map((plan) => (
             <PricingCard
               key={plan.id}
               plan={plan}
@@ -77,26 +79,19 @@ export default function Pricing() {
           <h2 className="text-2xl font-semibold mb-4">Questions fréquentes</h2>
           <div className="max-w-3xl mx-auto space-y-4 text-left">
             <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Comment obtenir un compte gratuit ?</h3>
+              <h3 className="font-medium mb-2">Comment changer de plan ?</h3>
               <p className="text-muted-foreground text-sm">
-                Les comptes gratuits sont accordés par les administrateurs selon des critères spécifiques. 
-                Contactez-nous pour plus d'informations.
-              </p>
-            </div>
-            
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Qu'est-ce que le plan Early Bird ?</h3>
-              <p className="text-muted-foreground text-sm">
-                Le plan Early Bird est disponible pour certains utilisateurs gratuits qui souhaitent 
-                passer à un plan payant après 6 mois d'utilisation.
-              </p>
-            </div>
-            
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Puis-je changer de plan ?</h3>
-              <p className="text-muted-foreground text-sm">
-                Oui, vous pouvez changer de plan à tout moment depuis votre espace de gestion d'abonnement. 
+                Vous pouvez changer de plan à tout moment depuis votre espace de gestion d'abonnement. 
                 Les changements prennent effet immédiatement.
+              </p>
+            </div>
+            
+            
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-medium mb-2">Comment contacter le support ?</h3>
+              <p className="text-muted-foreground text-sm">
+                Pour toute question ou assistance, vous pouvez nous contacter via la messagerie 
+                intégrée ou par email.
               </p>
             </div>
 
