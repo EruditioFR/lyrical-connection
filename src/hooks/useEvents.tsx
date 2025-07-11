@@ -72,6 +72,9 @@ export interface CreateEventData {
   registration_deadline?: string;
   location?: string;
   venue?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
   max_participants?: number;
   price?: number;
   currency?: string;
