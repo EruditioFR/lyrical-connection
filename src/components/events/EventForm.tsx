@@ -100,7 +100,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       errors.endDate = 'La date de fin doit être après la date de début';
     }
     
-    if (start && registration && registration > start) {
+    if (start && registration && registration >= start) {
       errors.registrationDeadline = 'La date limite d\'inscription doit être avant la date de début';
     }
     
@@ -162,6 +162,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
 
     // Valider les dates avant soumission
     if (!validateDates(startDate, endDate, registrationDeadline)) {
+      console.error('Date validation failed');
       return;
     }
 
@@ -200,7 +201,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       onClose();
     } catch (error) {
       console.error('Error in handleSubmit:', error);
-      // L'erreur est déjà gérée par le hook
     }
   };
 
@@ -251,6 +251,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             selected={value}
             onSelect={onChange}
             initialFocus
+            locale={fr}
             className="pointer-events-auto"
             disabled={(date) => {
               if (minDate && date < minDate) return true;
@@ -268,6 +269,12 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       )}
     </div>
   );
+
+  const isFormValid = formData.title && 
+                     formData.event_type && 
+                     formData.start_date && 
+                     formData.end_date && 
+                     Object.keys(dateErrors).length === 0;
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -390,7 +397,8 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
                 label="Date limite d'inscription"
                 placeholder="Jusqu'à quand peut-on s'inscrire ?"
                 error={dateErrors.registrationDeadline}
-                maxDate={startDate}
+                minDate={new Date()}
+                maxDate={startDate ? new Date(startDate.getTime() - 24 * 60 * 60 * 1000) : undefined}
               />
             </div>
 
@@ -535,7 +543,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </Button>
             <Button
               type="submit"
-              disabled={createEventMutation.isPending || !formData.title || !formData.event_type || !formData.start_date || !formData.end_date || Object.keys(dateErrors).length > 0}
+              disabled={createEventMutation.isPending || !isFormValid}
               className="flex-1"
             >
               {createEventMutation.isPending ? (
