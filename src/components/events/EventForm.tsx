@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -53,7 +52,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const { profile: professionalProfile } = useProfessionalProfile();
   const createEventMutation = useCreateEvent();
 
-  // Remplir le formulaire si on modifie un événement
   useEffect(() => {
     if (event) {
       setFormData({
@@ -128,42 +126,42 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       return;
     }
 
-    const eventData: CreateEventData & { id?: string } = {
-      professional_profile_id: professionalProfile.id,
-      title: formData.title,
-      description: formData.description || undefined,
-      event_type: formData.event_type,
-      status: formData.status,
-      category_id: formData.category_id || undefined,
-      start_date: formData.start_date,
-      end_date: formData.end_date,
-      registration_deadline: formData.registration_deadline || undefined,
-      location: formData.location || undefined,
-      venue: formData.venue || undefined,
-      address: formData.address || undefined,
-      latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
-      longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
-      max_participants: formData.max_participants ? parseInt(formData.max_participants) : undefined,
-      price: formData.price ? parseFloat(formData.price) : undefined,
-      currency: formData.currency,
-      requirements: formData.requirements || undefined,
-      program: formData.program || undefined,
-      contact_info: formData.contact_info || undefined,
-      image_url: formData.image_url || undefined,
-    };
-
-    if (event) {
-      eventData.id = event.id;
-    }
-
-    console.log('Submitting event data:', eventData);
-
     try {
+      const eventData: CreateEventData & { id?: string } = {
+        professional_profile_id: professionalProfile.id,
+        title: formData.title,
+        description: formData.description || undefined,
+        event_type: formData.event_type,
+        status: formData.status,
+        category_id: formData.category_id || undefined,
+        start_date: formData.start_date,
+        end_date: formData.end_date,
+        registration_deadline: formData.registration_deadline || undefined,
+        location: formData.location || undefined,
+        venue: formData.venue || undefined,
+        address: formData.address || undefined,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
+        longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
+        max_participants: formData.max_participants ? parseInt(formData.max_participants) : undefined,
+        price: formData.price ? parseFloat(formData.price) : undefined,
+        currency: formData.currency,
+        requirements: formData.requirements || undefined,
+        program: formData.program || undefined,
+        contact_info: formData.contact_info || undefined,
+        image_url: formData.image_url || undefined,
+      };
+
+      if (event) {
+        eventData.id = event.id;
+      }
+
+      console.log('Submitting event data:', eventData);
+
       await createEventMutation.mutateAsync(eventData);
       onClose();
     } catch (error) {
       console.error('Error in handleSubmit:', error);
-      // Error is handled by the hook
+      // L'erreur est déjà gérée par le hook
     }
   };
 
@@ -185,7 +183,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Informations de base */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="title">Titre *</Label>
@@ -228,7 +225,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             />
           </div>
 
-          {/* Catégorie et statut */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category">Catégorie</Label>
@@ -266,7 +262,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Dates */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Date de début *</Label>
@@ -350,7 +345,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Lieu et adresse */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="location">Ville</Label>
@@ -384,7 +378,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Adresse complète avec autocomplétion */}
           <div className="space-y-2">
             <Label htmlFor="address">Adresse complète</Label>
             <AddressAutocomplete
@@ -400,7 +393,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             )}
           </div>
 
-          {/* Prix */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="price">Prix</Label>
@@ -432,7 +424,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          {/* Détails supplémentaires */}
           <div className="space-y-2">
             <Label htmlFor="requirements">Prérequis</Label>
             <Textarea
@@ -477,7 +468,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             />
           </div>
 
-          {/* Boutons */}
           <div className="flex gap-2 pt-4">
             <Button
               type="button"
