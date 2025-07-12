@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, Clock, MapPin, Share2, Users, ArrowLeft, Euro, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, Share2, Users, ArrowLeft, Euro, AlertCircle, Building, Mail, Phone, Globe } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
@@ -28,7 +28,16 @@ const EventDetail = () => {
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*)
+          category:event_categories(*),
+          professional_profile:professional_profiles(
+            id,
+            company_name,
+            bio,
+            location,
+            contact_email,
+            phone,
+            website
+          )
         `)
         .eq('id', id)
         .single();
@@ -193,6 +202,59 @@ const EventDetail = () => {
                 )}
               </div>
             </div>
+
+            {/* Organisateur */}
+            {eventData.professional_profile && (
+              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
+                <h2 className="text-2xl font-serif font-semibold mb-4 flex items-center gap-2">
+                  <Building className="h-5 w-5" />
+                  Organisateur
+                </h2>
+                <div className="space-y-3">
+                  <h3 className="text-lg font-medium">
+                    {eventData.professional_profile.company_name}
+                  </h3>
+                  {eventData.professional_profile.bio && (
+                    <p className="text-muted-foreground">
+                      {eventData.professional_profile.bio}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                    {eventData.professional_profile.location && (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        {eventData.professional_profile.location}
+                      </div>
+                    )}
+                    {eventData.professional_profile.contact_email && (
+                      <div className="flex items-center gap-1">
+                        <Mail className="h-4 w-4" />
+                        {eventData.professional_profile.contact_email}
+                      </div>
+                    )}
+                    {eventData.professional_profile.phone && (
+                      <div className="flex items-center gap-1">
+                        <Phone className="h-4 w-4" />
+                        {eventData.professional_profile.phone}
+                      </div>
+                    )}
+                    {eventData.professional_profile.website && (
+                      <div className="flex items-center gap-1">
+                        <Globe className="h-4 w-4" />
+                        <a 
+                          href={eventData.professional_profile.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="hover:text-primary"
+                        >
+                          Site web
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* Description */}
             {event.description && (

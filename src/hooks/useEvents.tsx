@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -125,7 +126,16 @@ export const usePublicEvents = (filters?: {
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*)
+          category:event_categories(*),
+          professional_profile:professional_profiles(
+            id,
+            company_name,
+            bio,
+            location,
+            contact_email,
+            phone,
+            website
+          )
         `)
         .eq('status', 'published')
         .gte('end_date', new Date().toISOString())
@@ -174,12 +184,21 @@ export const useProfessionalEvents = () => {
     queryFn: async (): Promise<ProfessionalEvent[]> => {
       console.log('Fetching professional events...');
       
-      // D'abord, récupérer les événements avec les catégories
+      // D'abord, récupérer les événements avec les catégories et le profil professionnel
       const { data: events, error } = await supabase
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*)
+          category:event_categories(*),
+          professional_profile:professional_profiles(
+            id,
+            company_name,
+            bio,
+            location,
+            contact_email,
+            phone,
+            website
+          )
         `)
         .order('created_at', { ascending: false });
 
