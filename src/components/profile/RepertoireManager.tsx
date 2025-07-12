@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, Plus, Music, User, Edit, Save, X } from 'lucide-react';
 import { useArtistRepertoire } from '@/hooks/useArtistRepertoire';
 import { useLyricalWorks } from '@/hooks/useLyricalWorks';
-import { useVenues } from '@/hooks/useVenues';
+import { useVenues, useSearchVenues } from '@/hooks/useVenues';
 
 interface RepertoireManagerProps {
   artistProfileId: string;
@@ -34,8 +33,8 @@ const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }
 
   const { repertoire, isLoading, addToRepertoire, updateRepertoire, deleteFromRepertoire, isAdding, isUpdating } = useArtistRepertoire(artistProfileId);
   const { works } = useLyricalWorks(searchTerm);
-  const { venues } = useVenues(venueSearch);
-  const { venues: editVenues } = useVenues(editVenueSearch);
+  const { data: venues = [] } = useSearchVenues(venueSearch);
+  const { data: editVenues = [] } = useSearchVenues(editVenueSearch);
 
   const handleAddToRepertoire = () => {
     if (!selectedWork || !selectedRole) return;
