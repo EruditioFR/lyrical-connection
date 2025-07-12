@@ -1,288 +1,207 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
-  Users, 
-  Eye, 
   Calendar, 
-  FileText, 
+  Users, 
   TrendingUp, 
-  Star,
-  MessageCircle,
-  CheckCircle,
-  Clock,
-  X
+  MessageSquare, 
+  Eye,
+  Crown,
+  Settings,
+  UserCheck,
+  Star
 } from 'lucide-react';
-import { useCastings } from '@/hooks/useCastings';
-import { useMyApplications } from '@/hooks/useApplications';
-import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import AnalyticsDashboard from './AnalyticsDashboard';
+import { Link } from 'react-router-dom';
+import { useProfessionalEvents } from '@/hooks/useEvents';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { EventPromotionManager } from '@/components/events/EventPromotionManager';
 
 const ProfessionalDashboard = () => {
-  const { profile } = useProfessionalProfile();
-  const { castings = [], isLoading: castingsLoading } = useCastings({});
-  const { applications = [], isLoading: applicationsLoading } = useMyApplications();
+  const { data: events = [] } = useProfessionalEvents();
+  const { data: analytics } = useAnalytics();
 
-  // Filter data for the current professional
-  const myCastings = castings.filter(c => c.professional_profile_id === profile?.id);
-  const myEvents: any[] = []; // TODO: Implement events hook
-  const myApplications = applications.filter(app => 
-    myCastings.some(casting => casting.id === app.casting_id)
-  );
-
-  // Calculate statistics
-  const stats = {
-    totalCastings: myCastings.length,
-    activeCastings: myCastings.filter(c => c.is_active).length,
-    totalEvents: myEvents.length,
-    upcomingEvents: myEvents.filter(e => new Date(e.start_date) > new Date()).length,
-    totalApplications: myApplications.length,
-    pendingApplications: myApplications.filter(a => a.status === 'pending').length,
-    totalViews: myCastings.reduce((sum, c) => sum + (c.view_count || 0), 0)
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending': return 'yellow';
-      case 'accepted': return 'green';
-      case 'rejected': return 'red';
-      default: return 'gray';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending': return <Clock className="w-3 h-3" />;
-      case 'accepted': return <CheckCircle className="w-3 h-3" />;
-      case 'rejected': return <X className="w-3 h-3" />;
-      default: return <FileText className="w-3 h-3" />;
-    }
-  };
+  // Statistiques rapides
+  const publishedEvents = events.filter(e => e.status === 'published');
+  const draftEvents = events.filter(e => e.status === 'draft');
+  const promotedEvents = events.filter(e => e.is_featured);
+  const totalApplications = events.reduce((sum, event) => sum + (event.applications_count || 0), 0);
 
   return (
     <div className="space-y-6">
-      {/* Welcome Header */}
-      <div>
-        <h1 className="text-2xl font-bold">
-          Tableau de bord professionnel
-        </h1>
-        <p className="text-muted-foreground">
-          Bienvenue, {profile?.company_name || 'Professionnel'}
-        </p>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* En-tête avec statistiques */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Castings actifs</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.activeCastings}</div>
-            <p className="text-xs text-muted-foreground">
-              sur {stats.totalCastings} total
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Événements à venir</CardTitle>
+            <CardTitle className="text-sm font-medium">Événements publiés</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.upcomingEvents}</div>
-            <p className="text-xs text-muted-foreground">
-              sur {stats.totalEvents} total
-            </p>
+            <div className="text-2xl font-bold">{publishedEvents.length}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Candidatures en attente</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Inscriptions totales</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingApplications}</div>
-            <p className="text-xs text-muted-foreground">
-              sur {stats.totalApplications} total
-            </p>
+            <div className="text-2xl font-bold">{totalApplications}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Vues totales</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Événements promus</CardTitle>
+            <Star className="h-4 w-4 text-gold-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalViews}</div>
-            <p className="text-xs text-muted-foreground">
-              vues sur vos castings
-            </p>
+            <div className="text-2xl font-bold text-gold-600">{promotedEvents.length}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Brouillons</CardTitle>
+            <Settings className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{draftEvents.length}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Content */}
+      {/* Contenu principal avec onglets */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Aperçu</TabsTrigger>
-          <TabsTrigger value="applications">Candidatures</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+          <TabsTrigger value="events">Mes événements</TabsTrigger>
+          <TabsTrigger value="promotion">Promotion</TabsTrigger>
+          <TabsTrigger value="analytics">Analytiques</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 lg:grid-cols-2">
-            {/* Recent Castings */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Événements récents */}
             <Card>
               <CardHeader>
-                <CardTitle>Castings récents</CardTitle>
-                <CardDescription>
-                  Vos derniers castings publiés
-                </CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Événements récents
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                {myCastings.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Aucun casting publié</p>
-                    <Button size="sm" className="mt-2">
-                      Créer un casting
-                    </Button>
-                  </div>
-                ) : (
+                {events.length > 0 ? (
                   <div className="space-y-3">
-                    {myCastings.slice(0, 5).map((casting) => (
-                      <div key={casting.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex-1">
-                          <h4 className="font-medium">{casting.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {casting.production_type} • {casting.location}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant={casting.is_active ? 'default' : 'secondary'}>
-                              {casting.is_active ? 'Actif' : 'Inactif'}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {casting.view_count || 0} vues
-                            </span>
+                    {events.slice(0, 3).map((event) => (
+                      <div key={event.id} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{event.title}</span>
+                            {event.is_featured && (
+                              <Badge variant="secondary" className="bg-gold-100 text-gold-700">
+                                <Star className="h-3 w-3 mr-1" />
+                                Promu
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {event.applications_count || 0} inscription(s)
                           </div>
                         </div>
-                        <Button variant="outline" size="sm">
-                          Gérer
-                        </Button>
+                        <Badge 
+                          variant={event.status === 'published' ? 'default' : 'secondary'}
+                        >
+                          {event.status === 'published' ? 'Publié' : 'Brouillon'}
+                        </Badge>
                       </div>
                     ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Aucun événement créé</p>
+                    <Button asChild className="mt-4">
+                      <Link to="/professional-events">Créer un événement</Link>
+                    </Button>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Upcoming Events */}
+            {/* Actions rapides */}
             <Card>
               <CardHeader>
-                <CardTitle>Événements à venir</CardTitle>
-                <CardDescription>
-                  Vos prochains événements
-                </CardDescription>
+                <CardTitle>Actions rapides</CardTitle>
               </CardHeader>
-              <CardContent>
-                {myEvents.filter(e => new Date(e.start_date) > new Date()).length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Aucun événement à venir</p>
-                    <Button size="sm" className="mt-2">
-                      Créer un événement
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {myEvents
-                      .filter(e => new Date(e.start_date) > new Date())
-                      .slice(0, 5)
-                      .map((event) => (
-                        <div key={event.id} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div className="flex-1">
-                            <h4 className="font-medium">{event.title}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(event.start_date).toLocaleDateString('fr-FR')} • {event.location}
-                            </p>
-                            <Badge variant="outline" className="mt-1">
-                              {event.event_type}
-                            </Badge>
-                          </div>
-                          <Button variant="outline" size="sm">
-                            Gérer
-                          </Button>
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
+              <CardContent className="space-y-3">
+                <Button asChild className="w-full justify-start">
+                  <Link to="/professional-events">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Créer un événement
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full justify-start">
+                  <Link to="/professional-events">
+                    <Users className="h-4 w-4 mr-2" />
+                    Gérer les inscriptions
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full justify-start">
+                  <Link to="/professional-messages">
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Messages
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full justify-start">
+                  <Link to="/profile">
+                    <UserCheck className="h-4 w-4 mr-2" />
+                    Mon profil
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="applications" className="space-y-4">
+        <TabsContent value="events">
           <Card>
             <CardHeader>
-              <CardTitle>Candidatures récentes</CardTitle>
-              <CardDescription>
-                Les dernières candidatures à vos castings
-              </CardDescription>
+              <CardTitle>Mes événements</CardTitle>
             </CardHeader>
             <CardContent>
-              {myApplications.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                  <p>Aucune candidature reçue</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {myApplications.slice(0, 10).map((application) => {
-                    const casting = myCastings.find(c => c.id === application.casting_id);
-                    
-                    return (
-                      <div key={application.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex-1">
-                          <h4 className="font-medium">
-                            Candidature pour "{casting?.title}"
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            Reçue le {new Date(application.created_at).toLocaleDateString('fr-FR')}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge 
-                              variant={getStatusColor(application.status) as any}
-                              className="gap-1"
-                            >
-                              {getStatusIcon(application.status)}
-                              {application.status === 'pending' ? 'En attente' :
-                               application.status === 'accepted' ? 'Acceptée' :
-                               application.status === 'rejected' ? 'Refusée' : application.status}
-                            </Badge>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          Examiner
-                        </Button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="text-center">
+                <Button asChild>
+                  <Link to="/professional-events">Gérer mes événements</Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-4">
-          <AnalyticsDashboard profileType="professional" />
+        <TabsContent value="promotion">
+          <EventPromotionManager />
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Analytiques
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-6">
+                <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground">Analytiques détaillées bientôt disponibles</p>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

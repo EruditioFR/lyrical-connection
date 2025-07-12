@@ -3,6 +3,7 @@ import React from 'react';
 import HeroModern from '@/components/home/HeroModern';
 import FeaturesDetailed from '@/components/home/FeaturesDetailed';
 import FeaturedArtists from '@/components/home/FeaturedArtists';
+import FeaturedEvents from '@/components/home/FeaturedEvents';
 import UpcomingEvents from '@/components/home/UpcomingEvents';
 import PricingSection from '@/components/home/PricingSection';
 import PortalsSection from '@/components/home/PortalsSection';
@@ -16,6 +17,7 @@ const Index = () => {
       <HeroModern />
       <FeaturesDetailed />
       <FeaturedArtists />
+      <FeaturedEvents />
       <UpcomingEvents />
       <PricingSection />
       <PortalsSection />
