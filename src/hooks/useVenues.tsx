@@ -53,6 +53,26 @@ export const useCreateVenue = () => {
     mutationFn: async (venueData: CreateVenueData): Promise<Venue> => {
       console.log('Creating venue with data:', venueData);
       
+      // Vérifier si le lieu existe déjà
+      const { data: existingVenues, error: searchError } = await supabase
+        .from('venues')
+        .select('*')
+        .ilike('name', venueData.name)
+        .eq('city', venueData.city || '')
+        .eq('country', venueData.country || '');
+
+      if (searchError) {
+        console.error('Error searching for existing venue:', searchError);
+        throw searchError;
+      }
+
+      // Si un lieu existe déjà, le retourner au lieu d'en créer un nouveau
+      if (existingVenues && existingVenues.length > 0) {
+        console.log('Venue already exists, returning existing venue:', existingVenues[0]);
+        return existingVenues[0] as Venue;
+      }
+
+      // Créer le nouveau lieu seulement s'il n'existe pas
       const { data, error } = await supabase
         .from('venues')
         .insert(venueData)
@@ -66,15 +86,24 @@ export const useCreateVenue = () => {
 
       return data;
     },
-    onSuccess: (data) => {
-      console.log('Venue created successfully:', data);
+    onSuccess: (data, variables) => {
+      console.log('Venue processed successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['venues'] });
+      
+      // Ne pas afficher de toast si c'est un lieu existant
+      const isNewVenue = data.created_at === data.updated_at;
+      if (isNewVenue) {
+        toast({
+          title: 'Succès',
+          description: 'Lieu créé avec succès',
+        });
+      }
     },
     onError: (error: any) => {
-      console.error('Error creating venue:', error);
+      console.error('Error processing venue:', error);
       toast({
         title: 'Erreur',
-        description: 'Impossible de créer le lieu',
+        description: 'Impossible de traiter le lieu',
         variant: 'destructive',
       });
     },
