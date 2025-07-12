@@ -132,12 +132,21 @@ export const useArtistRepertoire = (artistProfileId?: string) => {
     },
   });
 
+  // Wrapper function to match the expected signature
+  const updateRepertoire = (id: string, data: {
+    performance_year: number | null;
+    venue: string | null;
+    notes: string | null;
+  }) => {
+    updateMutation.mutate({ id, ...data });
+  };
+
   return {
     repertoire: repertoire || [],
     isLoading,
     error,
     addToRepertoire: addMutation.mutate,
-    updateRepertoire: updateMutation.mutate,
+    updateRepertoire,
     deleteFromRepertoire: deleteMutation.mutate,
     isAdding: addMutation.isPending,
     isUpdating: updateMutation.isPending,
