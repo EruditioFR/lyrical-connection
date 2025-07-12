@@ -12,7 +12,7 @@ import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { AddressAutocomplete } from './AddressAutocomplete';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CalendarIcon, Loader2 } from 'lucide-react';
+import { CalendarIcon, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventFormProps {
@@ -47,6 +47,10 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [registrationDeadline, setRegistrationDeadline] = useState<Date>();
+  const [dateErrors, setDateErrors] = useState<{
+    endDate?: string;
+    registrationDeadline?: string;
+  }>({});
 
   const { data: categories = [] } = useEventCategories();
   const { profile: professionalProfile } = useProfessionalProfile();
@@ -89,14 +93,44 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const validateDates = (start: Date | undefined, end: Date | undefined, registration: Date | undefined) => {
+    const errors: { endDate?: string; registrationDeadline?: string } = {};
+    
+    if (start && end && end < start) {
+      errors.endDate = 'La date de fin doit être après la date de début';
+    }
+    
+    if (start && registration && registration > start) {
+      errors.registrationDeadline = 'La date limite d\'inscription doit être avant la date de début';
+    }
+    
+    setDateErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleDateChange = (field: string, date: Date | undefined) => {
     if (date) {
       const isoString = date.toISOString();
       setFormData(prev => ({ ...prev, [field]: isoString }));
       
-      if (field === 'start_date') setStartDate(date);
-      if (field === 'end_date') setEndDate(date);
-      if (field === 'registration_deadline') setRegistrationDeadline(date);
+      let newStartDate = startDate;
+      let newEndDate = endDate;
+      let newRegistrationDeadline = registrationDeadline;
+      
+      if (field === 'start_date') {
+        setStartDate(date);
+        newStartDate = date;
+      }
+      if (field === 'end_date') {
+        setEndDate(date);
+        newEndDate = date;
+      }
+      if (field === 'registration_deadline') {
+        setRegistrationDeadline(date);
+        newRegistrationDeadline = date;
+      }
+      
+      validateDates(newStartDate, newEndDate, newRegistrationDeadline);
     }
   };
 
@@ -123,6 +157,11 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
 
     if (!formData.title || !formData.event_type || !formData.start_date || !formData.end_date) {
       console.error('Missing required fields');
+      return;
+    }
+
+    // Valider les dates avant soumission
+    if (!validateDates(startDate, endDate, registrationDeadline)) {
       return;
     }
 
@@ -173,16 +212,73 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     { value: 'conference', label: 'Conférence' },
   ];
 
+  const DatePicker = ({ 
+    value, 
+    onChange, 
+    label, 
+    placeholder = "Sélectionner", 
+    error,
+    minDate,
+    maxDate 
+  }: {
+    value?: Date;
+    onChange: (date: Date | undefined) => void;
+    label: string;
+    placeholder?: string;
+    error?: string;
+    minDate?: Date;
+    maxDate?: Date;
+  }) => (
+    <div className="space-y-2">
+      <Label className={error ? "text-red-500" : ""}>{label}</Label>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !value && "text-muted-foreground",
+              error && "border-red-500 focus:border-red-500"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {value ? format(value, "EEEE d MMMM yyyy", { locale: fr }) : placeholder}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0 z-50">
+          <Calendar
+            mode="single"
+            selected={value}
+            onSelect={onChange}
+            initialFocus
+            className="pointer-events-auto"
+            disabled={(date) => {
+              if (minDate && date < minDate) return true;
+              if (maxDate && date > maxDate) return true;
+              return false;
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      {error && (
+        <div className="flex items-center gap-1 text-sm text-red-500">
+          <AlertCircle className="h-3 w-3" />
+          {error}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {event ? 'Modifier l\'événement' : 'Créer un nouvel événement'}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="title">Titre *</Label>
@@ -262,87 +358,47 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label>Date de début *</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !startDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? format(startDate, "PP", { locale: fr }) : "Sélectionner"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={(date) => handleDateChange('start_date', date)}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+          <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+            <h3 className="font-medium text-blue-900 mb-4 flex items-center gap-2">
+              <CalendarIcon className="h-4 w-4" />
+              Programmation de l'événement
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DatePicker
+                value={startDate}
+                onChange={(date) => handleDateChange('start_date', date)}
+                label="Date de début *"
+                placeholder="Quand commence l'événement ?"
+                minDate={new Date()}
+              />
+
+              <DatePicker
+                value={endDate}
+                onChange={(date) => handleDateChange('end_date', date)}
+                label="Date de fin *"
+                placeholder="Quand se termine l'événement ?"
+                error={dateErrors.endDate}
+                minDate={startDate || new Date()}
+              />
             </div>
 
-            <div className="space-y-2">
-              <Label>Date de fin *</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !endDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, "PP", { locale: fr }) : "Sélectionner"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={(date) => handleDateChange('end_date', date)}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+            <div className="mt-4">
+              <DatePicker
+                value={registrationDeadline}
+                onChange={(date) => handleDateChange('registration_deadline', date)}
+                label="Date limite d'inscription"
+                placeholder="Jusqu'à quand peut-on s'inscrire ?"
+                error={dateErrors.registrationDeadline}
+                maxDate={startDate}
+              />
             </div>
 
-            <div className="space-y-2">
-              <Label>Date limite d'inscription</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !registrationDeadline && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {registrationDeadline ? format(registrationDeadline, "PP", { locale: fr }) : "Optionnel"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={registrationDeadline}
-                    onSelect={(date) => handleDateChange('registration_deadline', date)}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+            {startDate && endDate && !dateErrors.endDate && (
+              <div className="mt-3 p-2 bg-green-50 rounded text-sm text-green-700">
+                Durée de l'événement : {Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))} jour(s)
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -479,7 +535,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </Button>
             <Button
               type="submit"
-              disabled={createEventMutation.isPending || !formData.title || !formData.event_type || !formData.start_date || !formData.end_date}
+              disabled={createEventMutation.isPending || !formData.title || !formData.event_type || !formData.start_date || !formData.end_date || Object.keys(dateErrors).length > 0}
               className="flex-1"
             >
               {createEventMutation.isPending ? (
