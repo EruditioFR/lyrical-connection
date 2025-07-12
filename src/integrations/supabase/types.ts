@@ -1000,6 +1000,7 @@ export type Database = {
           title: string
           updated_at: string
           venue: string | null
+          venue_id: string | null
         }
         Insert: {
           address?: string | null
@@ -1027,6 +1028,7 @@ export type Database = {
           title: string
           updated_at?: string
           venue?: string | null
+          venue_id?: string | null
         }
         Update: {
           address?: string | null
@@ -1054,6 +1056,7 @@ export type Database = {
           title?: string
           updated_at?: string
           venue?: string | null
+          venue_id?: string | null
         }
         Relationships: [
           {
@@ -1061,6 +1064,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "event_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_events_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
             referencedColumns: ["id"]
           },
         ]

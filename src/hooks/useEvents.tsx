@@ -1,7 +1,7 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useCreateVenue } from '@/hooks/useVenues';
 
 export interface EventCategory {
   id: string;
@@ -261,6 +261,7 @@ export const useProfessionalEvents = () => {
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const createVenueMutation = useCreateVenue();
 
   return useMutation({
     mutationFn: async ({ id, ...eventData }: CreateEventData & { id?: string }) => {
@@ -289,11 +290,38 @@ export const useCreateEvent = () => {
         eventData.professional_profile_id = professionalProfile.id;
         console.log('Using professional_profile_id:', professionalProfile.id);
       }
+
+      let venueId: string | undefined;
+
+      // Créer un lieu si les informations sont fournies
+      if (eventData.venue || eventData.location || eventData.address) {
+        try {
+          const venueData = {
+            name: eventData.venue || eventData.address || 'Lieu sans nom',
+            city: eventData.location,
+            country: 'France', // Par défaut
+            type: 'event_venue',
+          };
+
+          const venue = await createVenueMutation.mutateAsync(venueData);
+          venueId = venue.id;
+          console.log('Venue created with ID:', venueId);
+        } catch (venueError) {
+          console.error('Error creating venue:', venueError);
+          // Continuer sans venue si la création échoue
+        }
+      }
+
+      // Préparer les données de l'événement avec venue_id
+      const eventDataWithVenue = {
+        ...eventData,
+        venue_id: venueId,
+      };
       
       if (id) {
         const { data, error } = await supabase
           .from('professional_events')
-          .update(eventData)
+          .update(eventDataWithVenue)
           .eq('id', id)
           .select()
           .single();
@@ -306,7 +334,7 @@ export const useCreateEvent = () => {
       } else {
         const { data, error } = await supabase
           .from('professional_events')
-          .insert(eventData)
+          .insert(eventDataWithVenue)
           .select()
           .single();
 
@@ -321,6 +349,7 @@ export const useCreateEvent = () => {
       console.log('Event saved successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['professionalEvents'] });
       queryClient.invalidateQueries({ queryKey: ['publicEvents'] });
+      queryClient.invalidateQueries({ queryKey: ['venues'] });
       toast({
         title: 'Succès',
         description: 'Événement sauvegardé avec succès',
