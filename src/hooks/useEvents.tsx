@@ -184,7 +184,29 @@ export const useProfessionalEvents = () => {
     queryFn: async (): Promise<ProfessionalEvent[]> => {
       console.log('Fetching professional events...');
       
-      // D'abord, récupérer les événements avec les catégories et le profil professionnel
+      // D'abord, récupérer le profil professionnel de l'utilisateur connecté
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        console.log('No authenticated user found');
+        return [];
+      }
+
+      // Récupérer le profil professionnel de l'utilisateur
+      const { data: professionalProfile } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!professionalProfile) {
+        console.log('No professional profile found for user:', user.id);
+        return [];
+      }
+
+      console.log('Professional profile found:', professionalProfile.id);
+      
+      // Ensuite, récupérer les événements avec les catégories et le profil professionnel
       const { data: events, error } = await supabase
         .from('professional_events')
         .select(`
@@ -200,6 +222,7 @@ export const useProfessionalEvents = () => {
             website
           )
         `)
+        .eq('professional_profile_id', professionalProfile.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -242,6 +265,30 @@ export const useCreateEvent = () => {
   return useMutation({
     mutationFn: async ({ id, ...eventData }: CreateEventData & { id?: string }) => {
       console.log('Creating/updating event with data:', eventData);
+      
+      // S'assurer que professional_profile_id est défini
+      if (!eventData.professional_profile_id) {
+        // Récupérer le profil professionnel de l'utilisateur connecté
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          throw new Error('Utilisateur non connecté');
+        }
+
+        const { data: professionalProfile, error: profileError } = await supabase
+          .from('professional_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+
+        if (profileError || !professionalProfile) {
+          console.error('Error fetching professional profile:', profileError);
+          throw new Error('Profil professionnel non trouvé');
+        }
+
+        eventData.professional_profile_id = professionalProfile.id;
+        console.log('Using professional_profile_id:', professionalProfile.id);
+      }
       
       if (id) {
         const { data, error } = await supabase
