@@ -29,8 +29,21 @@ interface MenuSection {
   items: MenuItem[];
 }
 
-export const MegaMenu = () => {
+interface MegaMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  menuType: string;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}
+
+export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave }: MegaMenuProps) => {
   const { isProfessional, isArtist } = useUserType();
+
+  // Don't render anything if not open
+  if (!isOpen) {
+    return null;
+  }
 
   // Menus pour les artistes
   const artistSections: MenuSection[] = [
@@ -190,7 +203,11 @@ export const MegaMenu = () => {
   const sections = isProfessional ? professionalSections : isArtist ? artistSections : defaultSections;
 
   return (
-    <div className="bg-white border-t border-gray-200 shadow-lg">
+    <div 
+      className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {sections.map((section, sectionIndex) => (
@@ -203,6 +220,7 @@ export const MegaMenu = () => {
                   <li key={itemIndex}>
                     <Link 
                       to={item.href}
+                      onClick={onClose}
                       className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
                     >
                       <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
