@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -36,9 +37,11 @@ interface MegaMenuProps {
   isOpen: boolean;
   onClose: () => void;
   menuType: string;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
-const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
+const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave }) => {
   const { t } = useTranslation(['navigation', 'common']);
   const { isProfessional, isArtist } = useUserType();
   const { isAdmin } = useUserRoles();
@@ -489,7 +492,11 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
   };
 
   return (
-    <div className="absolute top-full left-0 w-full bg-white shadow-xl border-t z-50">
+    <div 
+      className="absolute top-full left-0 w-full bg-white shadow-xl border-t z-50"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       {renderMenuContent()}
     </div>
   );

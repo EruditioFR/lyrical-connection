@@ -28,6 +28,7 @@ const Navbar = () => {
   
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const handleSignOut = async () => {
     await signOut();
@@ -54,7 +55,19 @@ const Navbar = () => {
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveMegaMenu(null);
-    }, 200);
+    }, 150);
+  };
+
+  const handleMegaMenuMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
+  const handleMegaMenuMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setActiveMegaMenu(null);
+    }, 150);
   };
 
   const closeMegaMenu = () => {
@@ -70,7 +83,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white shadow-sm border-b relative">
+    <nav className="bg-white shadow-sm border-b relative" ref={navRef}>
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center text-xl font-semibold text-gray-900">
@@ -227,6 +240,8 @@ const Navbar = () => {
         isOpen={activeMegaMenu !== null} 
         onClose={closeMegaMenu}
         menuType={activeMegaMenu || 'discover'}
+        onMouseEnter={handleMegaMenuMouseEnter}
+        onMouseLeave={handleMegaMenuMouseLeave}
       />
     </nav>
   );
