@@ -1,5 +1,5 @@
+
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { usePublicEvents, useEventCategories } from '@/hooks/useEvents';
