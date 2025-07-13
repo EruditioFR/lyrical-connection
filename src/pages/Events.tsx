@@ -8,6 +8,8 @@ import { EventFilters } from '@/components/events/EventFilters';
 import { Loader2 } from 'lucide-react';
 
 const Events = () => {
+  console.log('🚀 Events page loading...');
+  
   const { user, loading } = useAuth();
   const [filters, setFilters] = useState({
     event_type: '',
@@ -15,10 +17,25 @@ const Events = () => {
     search: ''
   });
 
-  const { data: events = [], isLoading: eventsLoading } = usePublicEvents(filters);
-  const { data: categories = [] } = useEventCategories();
+  console.log('🔍 Current filters:', filters);
+  console.log('👤 User authenticated:', !!user);
+
+  const { data: events = [], isLoading: eventsLoading, error: eventsError } = usePublicEvents(filters);
+  const { data: categories = [], error: categoriesError } = useEventCategories();
+
+  console.log('📊 Events data:', events?.length || 0, 'events loaded');
+  console.log('🏷️ Categories data:', categories?.length || 0, 'categories loaded');
+  
+  if (eventsError) {
+    console.error('❌ Events error:', eventsError);
+  }
+  
+  if (categoriesError) {
+    console.error('❌ Categories error:', categoriesError);
+  }
 
   if (loading) {
+    console.log('⏳ Auth loading...');
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 flex justify-center">
@@ -27,6 +44,8 @@ const Events = () => {
       </Layout>
     );
   }
+
+  console.log('✅ Events page rendering successfully');
 
   return (
     <Layout>
@@ -56,6 +75,15 @@ const Events = () => {
               {eventsLoading ? (
                 <div className="flex justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : eventsError ? (
+                <div className="text-center py-12">
+                  <h3 className="text-lg font-medium text-red-600 mb-2">
+                    Erreur de chargement
+                  </h3>
+                  <p className="text-gray-600">
+                    Impossible de charger les événements. Veuillez réessayer.
+                  </p>
                 </div>
               ) : events.length === 0 ? (
                 <div className="text-center py-12">

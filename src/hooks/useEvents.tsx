@@ -107,14 +107,27 @@ export const useEventCategories = () => {
   return useQuery({
     queryKey: ['eventCategories'],
     queryFn: async (): Promise<EventCategory[]> => {
-      const { data, error } = await supabase
-        .from('event_categories')
-        .select('*')
-        .order('name');
+      console.log('🏷️ Fetching event categories...');
+      try {
+        const { data, error } = await supabase
+          .from('event_categories')
+          .select('*')
+          .order('name');
 
-      if (error) throw error;
-      return data || [];
+        if (error) {
+          console.error('❌ Error fetching categories:', error);
+          throw error;
+        }
+        
+        console.log('✅ Categories fetched:', data?.length || 0);
+        return data || [];
+      } catch (error) {
+        console.error('❌ Unexpected error fetching categories:', error);
+        throw error;
+      }
     },
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 };
 
@@ -127,49 +140,78 @@ export const usePublicEvents = (filters?: {
   return useQuery({
     queryKey: ['publicEvents', filters],
     queryFn: async (): Promise<ProfessionalEvent[]> => {
-      let query = supabase
-        .from('professional_events')
-        .select(`
-          *,
-          category:event_categories(*)
-        `)
-        .eq('status', 'published')
-        .gte('end_date', new Date().toISOString())
-        .order('start_date');
+      console.log('📅 Fetching public events with filters:', filters);
+      
+      try {
+        let query = supabase
+          .from('professional_events')
+          .select(`
+            *,
+            category:event_categories(*)
+          `)
+          .eq('status', 'published')
+          .gte('end_date', new Date().toISOString())
+          .order('start_date');
 
-      if (filters?.event_type && ['masterclass', 'stage', 'concours', 'atelier', 'conference'].includes(filters.event_type)) {
-        query = query.eq('event_type', filters.event_type as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference');
+        if (filters?.event_type && ['masterclass', 'stage', 'concours', 'atelier', 'conference'].includes(filters.event_type)) {
+          query = query.eq('event_type', filters.event_type as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference');
+        }
+
+        if (filters?.category_id) {
+          query = query.eq('category_id', filters.category_id);
+        }
+
+        if (filters?.search) {
+          query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+        }
+
+        const { data: events, error } = await query;
+
+        if (error) {
+          console.error('❌ Error fetching events:', error);
+          throw error;
+        }
+
+        console.log('✅ Events fetched:', events?.length || 0);
+
+        if (!events || events.length === 0) {
+          return [];
+        }
+
+        // Récupérer le nombre d'inscriptions pour chaque événement
+        console.log('🔢 Fetching application counts...');
+        const eventsWithCounts = await Promise.all(
+          events.map(async (event) => {
+            try {
+              const { count } = await supabase
+                .from('event_applications')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_id', event.id);
+
+              return {
+                ...event,
+                applications_count: count || 0
+              };
+            } catch (error) {
+              console.warn('⚠️ Error fetching applications count for event', event.id, error);
+              return {
+                ...event,
+                applications_count: 0
+              };
+            }
+          })
+        );
+
+        console.log('✅ Events with counts prepared:', eventsWithCounts.length);
+        return eventsWithCounts;
+      } catch (error) {
+        console.error('❌ Unexpected error fetching public events:', error);
+        throw error;
       }
-
-      if (filters?.category_id) {
-        query = query.eq('category_id', filters.category_id);
-      }
-
-      if (filters?.search) {
-        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
-      }
-
-      const { data: events, error } = await query;
-
-      if (error) throw error;
-
-      // Récupérer le nombre d'inscriptions pour chaque événement
-      const eventsWithCounts = await Promise.all(
-        (events || []).map(async (event) => {
-          const { count } = await supabase
-            .from('event_applications')
-            .select('*', { count: 'exact', head: true })
-            .eq('event_id', event.id);
-
-          return {
-            ...event,
-            applications_count: count || 0
-          };
-        })
-      );
-
-      return eventsWithCounts;
     },
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
