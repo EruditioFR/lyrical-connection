@@ -280,7 +280,7 @@ const EventDetail = () => {
             <img 
               src={event.image_url} 
               alt={event.title} 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-top"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20"></div>
