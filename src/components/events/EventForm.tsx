@@ -7,12 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCreateEvent, useEventCategories, CreateEventData, ProfessionalEvent } from '@/hooks/useEvents';
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { AddressAutocomplete } from './AddressAutocomplete';
+import { EventMediaSection } from './EventMediaSection';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CalendarIcon, Loader2, AlertCircle } from 'lucide-react';
+import { CalendarIcon, Loader2, AlertCircle, Upload, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventFormProps {
@@ -49,6 +51,8 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     endDate?: string;
     registrationDeadline?: string;
   }>({});
+  const [logoUploadType, setLogoUploadType] = useState<'url' | 'upload'>('url');
+  const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const { data: categories = [] } = useEventCategories();
   const { profile: professionalProfile } = useProfessionalProfile();
@@ -137,6 +141,17 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       latitude: latitude.toString(),
       longitude: longitude.toString()
     }));
+  };
+
+  const handleLogoFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      // Pour l'instant, on stocke juste le fichier. 
+      // Dans une implémentation complète, il faudrait l'uploader vers Supabase Storage
+      const url = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, image_url: url }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -311,7 +326,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {event ? 'Modifier l\'événement' : 'Créer un nouvel événement'}
@@ -536,16 +551,50 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="image_url">URL de l'image</Label>
-            <Input
-              id="image_url"
-              type="url"
-              value={formData.image_url}
-              onChange={(e) => handleInputChange('image_url', e.target.value)}
-              placeholder="https://..."
-            />
+          {/* Logo de l'événement */}
+          <div className="space-y-4">
+            <Label className="text-base font-medium">Logo de l'événement</Label>
+            <Tabs value={logoUploadType} onValueChange={(value) => setLogoUploadType(value as 'url' | 'upload')}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="url">
+                  <LinkIcon className="h-4 w-4 mr-2" />
+                  URL du logo
+                </TabsTrigger>
+                <TabsTrigger value="upload">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload fichier
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="url" className="space-y-2">
+                <Input
+                  value={formData.image_url}
+                  onChange={(e) => handleInputChange('image_url', e.target.value)}
+                  placeholder="https://exemple.com/logo.jpg"
+                />
+              </TabsContent>
+
+              <TabsContent value="upload" className="space-y-2">
+                <Input
+                  type="file"
+                  onChange={handleLogoFileUpload}
+                  accept="image/*"
+                />
+                {formData.image_url && logoUploadType === 'upload' && (
+                  <div className="mt-2">
+                    <img
+                      src={formData.image_url}
+                      alt="Aperçu du logo"
+                      className="h-20 w-20 object-cover rounded border"
+                    />
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
+
+          {/* Galerie médias */}
+          <EventMediaSection professionalProfileId={professionalProfile?.id} />
 
           <div className="flex gap-2 pt-4">
             <Button

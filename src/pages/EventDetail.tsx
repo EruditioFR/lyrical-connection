@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -8,10 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, Clock, MapPin, Share2, Users, ArrowLeft, Euro, AlertCircle, Building, Mail, Phone, Globe } from 'lucide-react';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Calendar, Clock, MapPin, Share2, Users, ArrowLeft, AlertCircle, Building, Mail, Phone, Globe, Play, Volume2, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfessionalMedia } from '@/hooks/useProfessionalMedia';
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -96,6 +99,9 @@ const EventDetail = () => {
     enabled: !!id,
   });
 
+  // Fetch event media
+  const { media, getMediaUrl } = useProfessionalMedia(event?.professional_profile_id);
+
   const getEventTypeLabel = (type: string) => {
     const labels = {
       masterclass: 'Masterclass',
@@ -173,6 +179,17 @@ const EventDetail = () => {
       'ZAR': 'R',
     };
     return currencySymbols[currency] || currency;
+  };
+
+  const getMediaIcon = (mediaType: string) => {
+    switch (mediaType) {
+      case 'video':
+        return <Play className="h-4 w-4" />;
+      case 'audio':
+        return <Volume2 className="h-4 w-4" />;
+      default:
+        return <ImageIcon className="h-4 w-4" />;
+    }
   };
 
   if (isLoading) {
@@ -365,6 +382,58 @@ const EventDetail = () => {
               </section>
             )}
 
+            {/* Galerie média */}
+            {media && media.length > 0 && (
+              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
+                <h2 className="text-2xl font-serif font-semibold mb-4">Galerie média</h2>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {media.map((item, index) => (
+                      <CarouselItem key={item.id} className="md:basis-1/2 lg:basis-1/3">
+                        <div className="relative aspect-video bg-muted rounded-lg overflow-hidden group">
+                          {item.media_type === 'photo' ? (
+                            <img
+                              src={getMediaUrl(item.file_path)}
+                              alt={item.title || 'Media'}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : item.media_type === 'video' ? (
+                            <div className="w-full h-full bg-black flex items-center justify-center">
+                              <video
+                                src={getMediaUrl(item.file_path)}
+                                className="w-full h-full object-cover"
+                                poster=""
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
+                                <Play className="h-12 w-12 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="w-full h-full bg-muted flex items-center justify-center">
+                              <Volume2 className="h-12 w-12 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="absolute top-2 left-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {getMediaIcon(item.media_type)}
+                              <span className="ml-1 capitalize">{item.media_type}</span>
+                            </Badge>
+                          </div>
+                          {item.title && (
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                              <p className="text-white text-sm font-medium">{item.title}</p>
+                            </div>
+                          )}
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              </section>
+            )}
+
             {/* Programme */}
             {event.program && (
               <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
@@ -446,7 +515,7 @@ const EventDetail = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Prix</span>
                       <span className="font-medium">
-                        {event.price} - {event.currency || 'EUR'} ({getCurrencySymbol(event.currency || 'EUR')})
+                        {event.price} {event.currency || 'EUR'} ({getCurrencySymbol(event.currency || 'EUR')})
                       </span>
                     </div>
                   )}
