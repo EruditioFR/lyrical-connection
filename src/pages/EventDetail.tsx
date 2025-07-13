@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -32,31 +31,45 @@ const EventDetail = () => {
       
       console.log('🔍 Fetching event with ID:', id);
       
-      const { data, error } = await supabase
+      // First get the event
+      const { data: eventData, error: eventError } = await supabase
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*),
-          professional_profile:professional_profiles(
-            id,
-            company_name,
-            bio,
-            location,
-            contact_email,
-            phone,
-            website
-          )
+          category:event_categories(*)
         `)
         .eq('id', id)
-        .maybeSingle(); // Utiliser maybeSingle au lieu de single pour éviter l'erreur si pas de résultat
+        .maybeSingle();
 
-      if (error) {
-        console.error('❌ Error fetching event:', error);
-        throw error;
+      if (eventError) {
+        console.error('❌ Error fetching event:', eventError);
+        throw eventError;
       }
 
-      console.log('✅ Event data retrieved:', data);
-      return data;
+      if (!eventData) {
+        console.log('⚠️ No event found for ID:', id);
+        return null;
+      }
+
+      // Then get the professional profile separately
+      const { data: professionalProfile, error: profileError } = await supabase
+        .from('professional_profiles')
+        .select('*')
+        .eq('id', eventData.professional_profile_id)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('❌ Error fetching professional profile:', profileError);
+        // Don't throw error here, just log it and continue without profile data
+      }
+
+      const result = {
+        ...eventData,
+        professional_profile: professionalProfile
+      };
+
+      console.log('✅ Event data retrieved:', result);
+      return result;
     },
     enabled: !!id,
     retry: 3,

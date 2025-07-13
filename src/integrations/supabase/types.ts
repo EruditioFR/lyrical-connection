@@ -1060,6 +1060,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_professional_events_professional_profile_id"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "professional_events_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
