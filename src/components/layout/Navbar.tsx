@@ -103,7 +103,7 @@ const Navbar = () => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
-                    Mes Projets
+                    Menu
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </button>
                 </div>
