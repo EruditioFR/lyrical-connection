@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -207,6 +206,43 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     { value: 'concours', label: 'Concours' },
     { value: 'atelier', label: 'Atelier' },
     { value: 'conference', label: 'Conférence' },
+  ];
+
+  const currencies = [
+    // Top currencies
+    { value: 'EUR', label: 'EUR (€)', symbol: '€' },
+    { value: 'USD', label: 'USD ($)', symbol: '$' },
+    { value: 'GBP', label: 'GBP (£)', symbol: '£' },
+    // Other major currencies alphabetically
+    { value: 'AED', label: 'AED (د.إ)', symbol: 'د.إ' },
+    { value: 'AUD', label: 'AUD (A$)', symbol: 'A$' },
+    { value: 'BRL', label: 'BRL (R$)', symbol: 'R$' },
+    { value: 'CAD', label: 'CAD (C$)', symbol: 'C$' },
+    { value: 'CHF', label: 'CHF (Fr)', symbol: 'Fr' },
+    { value: 'CNY', label: 'CNY (¥)', symbol: '¥' },
+    { value: 'CZK', label: 'CZK (Kč)', symbol: 'Kč' },
+    { value: 'DKK', label: 'DKK (kr)', symbol: 'kr' },
+    { value: 'EGP', label: 'EGP (E£)', symbol: 'E£' },
+    { value: 'HKD', label: 'HKD (HK$)', symbol: 'HK$' },
+    { value: 'HUF', label: 'HUF (Ft)', symbol: 'Ft' },
+    { value: 'IDR', label: 'IDR (Rp)', symbol: 'Rp' },
+    { value: 'ILS', label: 'ILS (₪)', symbol: '₪' },
+    { value: 'INR', label: 'INR (₹)', symbol: '₹' },
+    { value: 'JPY', label: 'JPY (¥)', symbol: '¥' },
+    { value: 'KRW', label: 'KRW (₩)', symbol: '₩' },
+    { value: 'MAD', label: 'MAD (د.م.)', symbol: 'د.م.' },
+    { value: 'MXN', label: 'MXN (Mex$)', symbol: 'Mex$' },
+    { value: 'NOK', label: 'NOK (kr)', symbol: 'kr' },
+    { value: 'NZD', label: 'NZD (NZ$)', symbol: 'NZ$' },
+    { value: 'PLN', label: 'PLN (zł)', symbol: 'zł' },
+    { value: 'RON', label: 'RON (lei)', symbol: 'lei' },
+    { value: 'RUB', label: 'RUB (₽)', symbol: '₽' },
+    { value: 'SAR', label: 'SAR (﷼)', symbol: '﷼' },
+    { value: 'SEK', label: 'SEK (kr)', symbol: 'kr' },
+    { value: 'SGD', label: 'SGD (S$)', symbol: 'S$' },
+    { value: 'THB', label: 'THB (฿)', symbol: '฿' },
+    { value: 'TRY', label: 'TRY (₺)', symbol: '₺' },
+    { value: 'ZAR', label: 'ZAR (R)', symbol: 'R' },
   ];
 
   const DatePicker = ({ 
@@ -457,9 +493,11 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="EUR">EUR (€)</SelectItem>
-                  <SelectItem value="USD">USD ($)</SelectItem>
-                  <SelectItem value="GBP">GBP (£)</SelectItem>
+                  {currencies.map(currency => (
+                    <SelectItem key={currency.value} value={currency.value}>
+                      {currency.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

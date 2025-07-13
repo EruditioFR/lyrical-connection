@@ -137,6 +137,44 @@ const EventDetail = () => {
     }
   };
 
+  const getCurrencySymbol = (currency: string) => {
+    const currencySymbols: { [key: string]: string } = {
+      'EUR': '€',
+      'USD': '$',
+      'GBP': '£',
+      'AED': 'د.إ',
+      'AUD': 'A$',
+      'BRL': 'R$',
+      'CAD': 'C$',
+      'CHF': 'Fr',
+      'CNY': '¥',
+      'CZK': 'Kč',
+      'DKK': 'kr',
+      'EGP': 'E£',
+      'HKD': 'HK$',
+      'HUF': 'Ft',
+      'IDR': 'Rp',
+      'ILS': '₪',
+      'INR': '₹',
+      'JPY': '¥',
+      'KRW': '₩',
+      'MAD': 'د.م.',
+      'MXN': 'Mex$',
+      'NOK': 'kr',
+      'NZD': 'NZ$',
+      'PLN': 'zł',
+      'RON': 'lei',
+      'RUB': '₽',
+      'SAR': '﷼',
+      'SEK': 'kr',
+      'SGD': 'S$',
+      'THB': '฿',
+      'TRY': '₺',
+      'ZAR': 'R',
+    };
+    return currencySymbols[currency] || currency;
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -407,9 +445,8 @@ const EventDetail = () => {
                   {event.price && (
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Prix</span>
-                      <span className="font-medium flex items-center">
-                        {event.price} {event.currency || 'EUR'}
-                        <Euro className="h-3 w-3 ml-1" />
+                      <span className="font-medium">
+                        {event.price} - {event.currency || 'EUR'} ({getCurrencySymbol(event.currency || 'EUR')})
                       </span>
                     </div>
                   )}
