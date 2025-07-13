@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Users, Share2 } from 'lucide-react';
+import { Users, Share2, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -12,13 +12,18 @@ interface EventSidebarProps {
   event: any;
   applicationsCount: number;
   getCurrencySymbol: (currency: string) => string;
+  onRulesClick?: () => void;
 }
 
 const EventSidebar: React.FC<EventSidebarProps> = ({
   event,
   applicationsCount,
-  getCurrencySymbol
+  getCurrencySymbol,
+  onRulesClick
 }) => {
+  const hasRules = event?.participation_rules || event?.code_of_conduct || 
+                   event?.cancellation_policy || event?.liability_waiver;
+
   return (
     <Card className="shadow-sm border-border sticky top-20">
       <CardContent className="p-6">
@@ -68,6 +73,18 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
               Voir les inscriptions
             </Link>
           </Button>
+          
+          {hasRules && onRulesClick && (
+            <Button 
+              variant="outline" 
+              className="w-full gap-2"
+              onClick={onRulesClick}
+            >
+              <FileText className="w-4 h-4" />
+              Consulter le règlement
+            </Button>
+          )}
+          
           <Button variant="outline" className="w-full gap-2">
             <Share2 className="w-4 h-4" />
             Partager

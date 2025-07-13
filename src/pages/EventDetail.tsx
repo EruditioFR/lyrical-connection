@@ -35,6 +35,10 @@ const EventDetail = () => {
     window.open(audioSrc, '_blank');
   };
 
+  const handleRulesClick = () => {
+    setIsRulesModalOpen(true);
+  };
+
   if (isLoading) {
     return <EventDetailLoading />;
   }
@@ -69,7 +73,7 @@ const EventDetail = () => {
           getMediaUrl={getMediaUrl}
           onVideoClick={handleVideoClick}
           onAudioClick={handleAudioClick}
-          onRulesClick={() => setIsRulesModalOpen(true)}
+          onRulesClick={handleRulesClick}
         />
 
         {/* Barre latérale */}
@@ -78,6 +82,7 @@ const EventDetail = () => {
             event={event}
             applicationsCount={applicationsCount || 0}
             getCurrencySymbol={getCurrencySymbol}
+            onRulesClick={handleRulesClick}
           />
         </div>
       </div>
