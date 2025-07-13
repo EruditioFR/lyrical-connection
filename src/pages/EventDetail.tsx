@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -10,9 +9,11 @@ import EventMediaGallery from '@/components/events/EventMediaGallery';
 import EventSidebar from '@/components/events/EventSidebar';
 import EventContentSection from '@/components/events/EventContentSection';
 import EventLocation from '@/components/events/EventLocation';
+import EventRulesModal from '@/components/events/EventRulesModal';
 import VideoPlayerModal from '@/components/events/VideoPlayerModal';
 import { Button } from '@/components/ui/button';
-import { AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AlertCircle, FileText } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfessionalMedia } from '@/hooks/useProfessionalMedia';
 
@@ -20,6 +21,7 @@ const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [selectedVideo, setSelectedVideo] = useState<{src: string, title: string, description?: string} | null>(null);
+  const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
 
   console.log('🔍 EventDetail - Event ID:', id);
   console.log('🔍 EventDetail - Current user:', user?.id);
@@ -250,6 +252,9 @@ const EventDetail = () => {
     );
   }
 
+  const hasRules = event?.participation_rules || event?.code_of_conduct || 
+                   event?.cancellation_policy || event?.liability_waiver;
+
   return (
     <Layout>
       <EventHeader
@@ -293,6 +298,32 @@ const EventDetail = () => {
             />
           )}
 
+          {/* Section Règlement */}
+          {hasRules && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Règlement de l'événement
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Cet événement dispose d'un règlement spécifique incluant les conditions de participation, 
+                  le code de conduite et la politique d'annulation.
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsRulesModalOpen(true)}
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4" />
+                  Lire le règlement
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           <EventLocation event={event} />
 
           {event.contact_info && (
@@ -321,6 +352,15 @@ const EventDetail = () => {
           videoSrc={selectedVideo.src}
           title={selectedVideo.title}
           description={selectedVideo.description}
+        />
+      )}
+
+      {/* Modal pour le règlement */}
+      {hasRules && (
+        <EventRulesModal
+          isOpen={isRulesModalOpen}
+          onClose={() => setIsRulesModalOpen(false)}
+          event={event}
         />
       )}
     </Layout>
