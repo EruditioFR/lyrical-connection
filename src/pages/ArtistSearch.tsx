@@ -114,6 +114,7 @@ const ArtistSearch = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
+        {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Recherche d'artistes</h1>
@@ -148,40 +149,36 @@ const ArtistSearch = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Panneau des recherches sauvegardées */}
-          {showSavedSearches && (
-            <div className="lg:col-span-1">
-              <SavedSearchesPanel onLoadSearch={handleLoadSearch} />
-            </div>
-          )}
-
-          {/* Filtres */}
-          <div className={showSavedSearches ? "lg:col-span-1" : "lg:col-span-1"}>
-            <SearchFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              voiceType={voiceType}
-              onVoiceTypeChange={setVoiceType}
-              location={location}
-              onLocationChange={setLocation}
-              repertoireFilters={repertoireFilters}
-              onRepertoireFiltersChange={setRepertoireFilters}
-            />
+        {/* Panneau des recherches sauvegardées (collapsible) */}
+        {showSavedSearches && (
+          <div className="mb-8">
+            <SavedSearchesPanel onLoadSearch={handleLoadSearch} />
           </div>
+        )}
 
-          {/* Résultats */}
-          <div className={showSavedSearches ? "lg:col-span-2" : "lg:col-span-3"}>
-            <ArtistsGrid 
-              artists={artists}
-              filteredArtists={filteredArtists}
-              isLoading={isLoading}
-              searchQuery={searchTerm}
-              selectedVoiceTypes={selectedVoiceTypes}
-              onResetFilters={handleResetFilters}
-            />
-          </div>
+        {/* Filtres de recherche */}
+        <div className="mb-8">
+          <SearchFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            voiceType={voiceType}
+            onVoiceTypeChange={setVoiceType}
+            location={location}
+            onLocationChange={setLocation}
+            repertoireFilters={repertoireFilters}
+            onRepertoireFiltersChange={setRepertoireFilters}
+          />
         </div>
+
+        {/* Résultats */}
+        <ArtistsGrid 
+          artists={artists}
+          filteredArtists={filteredArtists}
+          isLoading={isLoading}
+          searchQuery={searchTerm}
+          selectedVoiceTypes={selectedVoiceTypes}
+          onResetFilters={handleResetFilters}
+        />
       </div>
     </Layout>
   );
