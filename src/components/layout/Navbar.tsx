@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +16,7 @@ import {
 import { LogOut, User, Settings, CreditCard, Shield, ChevronDown } from 'lucide-react';
 import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
-import MegaMenu from './MegaMenu';
+import { MegaMenu } from './MegaMenu';
 
 const Navbar = () => {
   const { t } = useTranslation(['navigation', 'common']);
@@ -190,6 +189,16 @@ const Navbar = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {/* Lien vers le profil public pour les artistes */}
+                  {isArtist && artistProfile && (
+                    <>
+                      <DropdownMenuItem onClick={() => navigate(`/artistes/${artistProfile.id}`)}>
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Voir mon profil</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={() => navigate('/profil')}>
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('navigation:profile')}</span>
