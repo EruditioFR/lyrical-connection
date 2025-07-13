@@ -1,10 +1,10 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 import EventMap from '@/components/events/EventMap';
+import VideoPlayerModal from '@/components/events/VideoPlayerModal';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ import { useProfessionalMedia } from '@/hooks/useProfessionalMedia';
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const [selectedVideo, setSelectedVideo] = useState<{src: string, title: string, description?: string} | null>(null);
 
   console.log('🔍 EventDetail - Event ID:', id);
   console.log('🔍 EventDetail - Current user:', user?.id);
@@ -190,6 +191,22 @@ const EventDetail = () => {
       default:
         return <ImageIcon className="h-4 w-4" />;
     }
+  };
+
+  const isVideoUrl = (url: string) => {
+    return url.startsWith('http') && (url.includes('youtube.com') || url.includes('vimeo.com') || url.includes('youtu.be') || url.includes('dailymotion.com') || url.endsWith('.mp4') || url.endsWith('.webm') || url.endsWith('.ogg'));
+  };
+
+  const isAudioUrl = (url: string) => {
+    return url.startsWith('http') && (url.includes('soundcloud.com') || url.includes('spotify.com') || url.endsWith('.mp3') || url.endsWith('.wav') || url.endsWith('.ogg'));
+  };
+
+  const handleVideoClick = (videoSrc: string, title: string, description?: string) => {
+    setSelectedVideo({ src: videoSrc, title, description });
+  };
+
+  const handleAudioClick = (audioSrc: string) => {
+    window.open(audioSrc, '_blank');
   };
 
   if (isLoading) {
@@ -390,27 +407,52 @@ const EventDetail = () => {
                   <CarouselContent>
                     {media.map((item, index) => (
                       <CarouselItem key={item.id} className="md:basis-1/2 lg:basis-1/3">
-                        <div className="relative aspect-video bg-muted rounded-lg overflow-hidden group">
+                        <div className="relative aspect-video bg-muted rounded-lg overflow-hidden group cursor-pointer">
                           {item.media_type === 'photo' ? (
                             <img
                               src={getMediaUrl(item.file_path)}
                               alt={item.title || 'Media'}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                              onClick={() => window.open(getMediaUrl(item.file_path), '_blank')}
                             />
                           ) : item.media_type === 'video' ? (
-                            <div className="w-full h-full bg-black flex items-center justify-center">
-                              <video
-                                src={getMediaUrl(item.file_path)}
-                                className="w-full h-full object-cover"
-                                poster=""
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
-                                <Play className="h-12 w-12 text-white" />
-                              </div>
+                            <div 
+                              className="w-full h-full bg-black flex items-center justify-center"
+                              onClick={() => handleVideoClick(getMediaUrl(item.file_path), item.title || 'Vidéo', item.description)}
+                            >
+                              {isVideoUrl(item.file_path) ? (
+                                <div className="relative w-full h-full">
+                                  {/* Miniature vidéo ou image de fond */}
+                                  <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                                    <div className="text-center text-white">
+                                      <Play className="h-16 w-16 mx-auto mb-2 text-white/80" />
+                                      <p className="text-sm font-medium">{item.title || 'Vidéo'}</p>
+                                    </div>
+                                  </div>
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
+                                    <Play className="h-12 w-12 text-white drop-shadow-lg" />
+                                  </div>
+                                </div>
+                              ) : (
+                                <video
+                                  src={getMediaUrl(item.file_path)}
+                                  className="w-full h-full object-cover"
+                                  muted
+                                  preload="metadata"
+                                />
+                              )}
                             </div>
                           ) : (
-                            <div className="w-full h-full bg-muted flex items-center justify-center">
-                              <Volume2 className="h-12 w-12 text-muted-foreground" />
+                            <div 
+                              className="w-full h-full bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors"
+                              onClick={() => handleAudioClick(getMediaUrl(item.file_path))}
+                            >
+                              <div className="text-center">
+                                <Volume2 className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                                <p className="text-sm font-medium text-muted-foreground">
+                                  {item.title || 'Audio'}
+                                </p>
+                              </div>
                             </div>
                           )}
                           <div className="absolute top-2 left-2">
@@ -419,7 +461,7 @@ const EventDetail = () => {
                               <span className="ml-1 capitalize">{item.media_type}</span>
                             </Badge>
                           </div>
-                          {item.title && (
+                          {item.title && item.media_type !== 'video' && (
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
                               <p className="text-white text-sm font-medium">{item.title}</p>
                             </div>
@@ -548,6 +590,17 @@ const EventDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal pour la lecture vidéo */}
+      {selectedVideo && (
+        <VideoPlayerModal
+          isOpen={!!selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          videoSrc={selectedVideo.src}
+          title={selectedVideo.title}
+          description={selectedVideo.description}
+        />
+      )}
     </Layout>
   );
 };
