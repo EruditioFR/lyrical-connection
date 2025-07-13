@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Calendar, MapPin, Euro, Users, Image, FileText } from 'lucide-react';
+import { Calendar, MapPin, Euro, Users, Image, FileText, Scale } from 'lucide-react';
 
 interface EventReviewStepProps {
   formData: any;
@@ -180,6 +180,51 @@ export const EventReviewStep: React.FC<EventReviewStepProps> = ({
           </CardContent>
         </Card>
       </div>
+
+      {(formData.participation_rules || formData.code_of_conduct || formData.cancellation_policy || formData.liability_waiver) && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Scale className="h-4 w-4" />
+              Règlement
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {formData.participation_rules && (
+              <div>
+                <Label className="text-sm font-medium">Conditions de participation</Label>
+                <p className="text-sm text-muted-foreground">
+                  {formData.participation_rules.length > 100 ? 
+                    formData.participation_rules.substring(0, 100) + '...' : 
+                    formData.participation_rules
+                  }
+                </p>
+              </div>
+            )}
+            {formData.code_of_conduct && (
+              <div>
+                <Label className="text-sm font-medium">Code de conduite</Label>
+                <p className="text-sm text-muted-foreground">
+                  {formData.code_of_conduct.length > 100 ? 
+                    formData.code_of_conduct.substring(0, 100) + '...' : 
+                    formData.code_of_conduct
+                  }
+                </p>
+              </div>
+            )}
+            {formData.cancellation_policy && (
+              <Badge variant="outline" className="text-xs">
+                Politique d'annulation définie
+              </Badge>
+            )}
+            {formData.liability_waiver && (
+              <Badge variant="outline" className="text-xs">
+                Décharge de responsabilité définie
+              </Badge>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {formData.image_url && (
         <Card>

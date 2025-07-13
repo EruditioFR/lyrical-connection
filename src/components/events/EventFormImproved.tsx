@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { EventEssentialStep } from './steps/EventEssentialStep';
 import { EventDetailsStep } from './steps/EventDetailsStep';
 import { EventPricingStep } from './steps/EventPricingStep';
 import { EventMediaStep } from './steps/EventMediaStep';
+import { EventRulesStep } from './steps/EventRulesStep';
 import { EventReviewStep } from './steps/EventReviewStep';
 
 interface EventFormImprovedProps {
@@ -41,6 +43,10 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
     program: '',
     contact_info: '',
     image_url: '',
+    participation_rules: '',
+    code_of_conduct: '',
+    cancellation_policy: '',
+    liability_waiver: '',
   });
 
   const [startDate, setStartDate] = useState<Date>();
@@ -83,6 +89,12 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
       hasErrors: false
     },
     { 
+      id: 'rules', 
+      title: 'Règlement', 
+      completed: !!(formData.participation_rules || formData.code_of_conduct),
+      hasErrors: false
+    },
+    { 
       id: 'review', 
       title: 'Révision', 
       completed: false,
@@ -116,6 +128,10 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
         program: event.program || '',
         contact_info: event.contact_info || '',
         image_url: event.image_url || '',
+        participation_rules: (event as any).participation_rules || '',
+        code_of_conduct: (event as any).code_of_conduct || '',
+        cancellation_policy: (event as any).cancellation_policy || '',
+        liability_waiver: (event as any).liability_waiver || '',
       });
       
       setStartDate(new Date(event.start_date));
@@ -351,6 +367,13 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
                 formData={formData}
                 handleInputChange={handleInputChange}
                 professionalProfileId={professionalProfile?.id}
+              />
+            </TabsContent>
+
+            <TabsContent value="rules">
+              <EventRulesStep
+                formData={formData}
+                handleInputChange={handleInputChange}
               />
             </TabsContent>
 
