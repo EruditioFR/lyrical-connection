@@ -25,7 +25,9 @@ import {
   Mail,
   Bell,
   Target,
-  Bookmark
+  Bookmark,
+  Phone,
+  UserPlus
 } from 'lucide-react';
 import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
@@ -228,7 +230,7 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
   );
 
   const renderProfessionalMenu = () => (
-    <div className="grid grid-cols-4 gap-6 p-8">
+    <div className="grid grid-cols-5 gap-6 p-8">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <Briefcase className="h-5 w-5 text-lyrical-600" />
@@ -302,6 +304,22 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
               <p className="text-sm text-gray-500">Informations entreprise</p>
             </div>
           </Link>
+          <Link to="/subscription" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <CreditCard className="h-4 w-4 text-green-500" />
+            <div>
+              <p className="font-medium text-gray-900">Abonnement</p>
+              <p className="text-sm text-gray-500">Plan et facturation</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Phone className="h-5 w-5 text-blue-600" />
+          Contacts
+        </h3>
+        <div className="space-y-3">
           <Link to="/messages" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
             <MessageSquare className="h-4 w-4 text-blue-500" />
             <div>
@@ -309,11 +327,18 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
               <p className="text-sm text-gray-500">Conversations</p>
             </div>
           </Link>
-          <Link to="/subscription" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
-            <CreditCard className="h-4 w-4 text-green-500" />
+          <Link to="/contacts-artistes" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <UserPlus className="h-4 w-4 text-green-500" />
             <div>
-              <p className="font-medium text-gray-900">Abonnement</p>
-              <p className="text-sm text-gray-500">Plan et facturation</p>
+              <p className="font-medium text-gray-900">Mes contacts artistes</p>
+              <p className="text-sm text-gray-500">Réseau professionnel</p>
+            </div>
+          </Link>
+          <Link to="/invitations" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <Mail className="h-4 w-4 text-purple-500" />
+            <div>
+              <p className="font-medium text-gray-900">Invitations envoyées</p>
+              <p className="text-sm text-gray-500">Suivi des demandes</p>
             </div>
           </Link>
         </div>
@@ -345,23 +370,109 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
   );
 
   const renderAdminMenu = () => (
-    <div className="grid grid-cols-3 gap-6 p-8">
-      {renderProfessionalMenu()}
-      <div className="col-span-1 border-l pl-6">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-red-600 flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Administration
-          </h3>
-          <div className="space-y-3">
-            <Link to="/admin" className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 transition-colors" onClick={onClose}>
-              <Shield className="h-4 w-4 text-red-500" />
-              <div>
-                <p className="font-medium text-gray-900">Panneau admin</p>
-                <p className="text-sm text-gray-500">Gestion plateforme</p>
-              </div>
-            </Link>
-          </div>
+    <div className="grid grid-cols-6 gap-6 p-8">
+      {/* Sections professionnelles */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Briefcase className="h-5 w-5 text-lyrical-600" />
+          Mes Projets
+        </h3>
+        <div className="space-y-3">
+          <Link to="/mes-evenements" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <Calendar className="h-4 w-4 text-blue-500" />
+            <div>
+              <p className="font-medium text-gray-900">Mes événements</p>
+              <p className="text-sm text-gray-500">Gestion des événements</p>
+            </div>
+          </Link>
+          <Link to="/castings/nouveau" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <Trophy className="h-4 w-4 text-yellow-500" />
+            <div>
+              <p className="font-medium text-gray-900">Créer un casting</p>
+              <p className="text-sm text-gray-500">Nouvelle audition</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Search className="h-5 w-5 text-green-500" />
+          Recherche
+        </h3>
+        <div className="space-y-3">
+          <Link to="/recherche-artistes" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <Users className="h-4 w-4 text-blue-500" />
+            <div>
+              <p className="font-medium text-gray-900">Trouver des artistes</p>
+              <p className="text-sm text-gray-500">Base de talents</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Settings className="h-5 w-5 text-gray-600" />
+          Gestion
+        </h3>
+        <div className="space-y-3">
+          <Link to="/profil-professionnel" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <User className="h-4 w-4 text-gray-500" />
+            <div>
+              <p className="font-medium text-gray-900">Mon profil pro</p>
+              <p className="text-sm text-gray-500">Informations entreprise</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Phone className="h-5 w-5 text-blue-600" />
+          Contacts
+        </h3>
+        <div className="space-y-3">
+          <Link to="/messages" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <MessageSquare className="h-4 w-4 text-blue-500" />
+            <div>
+              <p className="font-medium text-gray-900">Messages</p>
+              <p className="text-sm text-gray-500">Conversations</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <Lightbulb className="h-5 w-5 text-yellow-500" />
+          Ressources
+        </h3>
+        <div className="space-y-3">
+          <a href="#" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
+            <HelpCircle className="h-4 w-4 text-orange-500" />
+            <div>
+              <p className="font-medium text-gray-900">Centre d'aide</p>
+              <p className="text-sm text-gray-500">Support et guides</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      {/* Section Administration */}
+      <div className="space-y-4 border-l border-gray-200 pl-6">
+        <h3 className="text-lg font-semibold text-red-600 flex items-center gap-2">
+          <Shield className="h-5 w-5" />
+          Administration
+        </h3>
+        <div className="space-y-3">
+          <Link to="/admin" className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-50 transition-colors" onClick={onClose}>
+            <Shield className="h-4 w-4 text-red-500" />
+            <div>
+              <p className="font-medium text-gray-900">Panneau admin</p>
+              <p className="text-sm text-gray-500">Gestion plateforme</p>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
