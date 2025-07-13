@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useCreateVenue } from '@/hooks/useVenues';
+import { useAuth } from '@/hooks/useAuth';
 
 export interface EventCategory {
   id: string;
@@ -126,16 +127,7 @@ export const usePublicEvents = (filters?: {
         .from('professional_events')
         .select(`
           *,
-          category:event_categories(*),
-          professional_profile:professional_profiles(
-            id,
-            company_name,
-            bio,
-            location,
-            contact_email,
-            phone,
-            website
-          )
+          category:event_categories(*)
         `)
         .eq('status', 'published')
         .gte('end_date', new Date().toISOString())
@@ -177,83 +169,108 @@ export const usePublicEvents = (filters?: {
   });
 };
 
-// Hook pour récupérer les événements d'un professionnel
+// Hook pour récupérer les événements d'un professionnel - VERSION AMÉLIORÉE
 export const useProfessionalEvents = () => {
+  const { user } = useAuth();
+  
   return useQuery({
-    queryKey: ['professionalEvents'],
+    queryKey: ['professionalEvents', user?.id],
     queryFn: async (): Promise<ProfessionalEvent[]> => {
-      console.log('Fetching professional events...');
+      console.log('🔍 Starting professional events fetch...');
+      console.log('🔍 Current user:', user?.id);
       
-      // D'abord, récupérer le profil professionnel de l'utilisateur connecté
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        console.log('No authenticated user found');
+      if (!user?.id) {
+        console.log('❌ No authenticated user found');
         return [];
       }
 
-      // Récupérer le profil professionnel de l'utilisateur
-      const { data: professionalProfile } = await supabase
-        .from('professional_profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
+      try {
+        // Première étape : récupérer le profil professionnel
+        console.log('🔍 Fetching professional profile for user:', user.id);
+        
+        const { data: professionalProfile, error: profileError } = await supabase
+          .from('professional_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
 
-      if (!professionalProfile) {
-        console.log('No professional profile found for user:', user.id);
-        return [];
-      }
+        if (profileError) {
+          console.error('❌ Error fetching professional profile:', profileError);
+          if (profileError.code === 'PGRST116') {
+            console.log('ℹ️ No professional profile found for user');
+            return [];
+          }
+          throw profileError;
+        }
 
-      console.log('Professional profile found:', professionalProfile.id);
-      
-      // Ensuite, récupérer les événements avec les catégories et le profil professionnel
-      const { data: events, error } = await supabase
-        .from('professional_events')
-        .select(`
-          *,
-          category:event_categories(*),
-          professional_profile:professional_profiles(
-            id,
-            company_name,
-            bio,
-            location,
-            contact_email,
-            phone,
-            website
-          )
-        `)
-        .eq('professional_profile_id', professionalProfile.id)
-        .order('created_at', { ascending: false });
+        if (!professionalProfile) {
+          console.log('ℹ️ No professional profile found');
+          return [];
+        }
 
-      if (error) {
-        console.error('Error fetching events:', error);
+        console.log('✅ Professional profile found:', professionalProfile.id);
+        
+        // Deuxième étape : récupérer les événements
+        console.log('🔍 Fetching events for professional profile:', professionalProfile.id);
+        
+        const { data: events, error: eventsError } = await supabase
+          .from('professional_events')
+          .select(`
+            *,
+            category:event_categories(*)
+          `)
+          .eq('professional_profile_id', professionalProfile.id)
+          .order('created_at', { ascending: false });
+
+        if (eventsError) {
+          console.error('❌ Error fetching events:', eventsError);
+          throw eventsError;
+        }
+
+        console.log('✅ Events fetched successfully:', events?.length || 0);
+
+        if (!events || events.length === 0) {
+          console.log('ℹ️ No events found');
+          return [];
+        }
+
+        // Troisième étape : récupérer le nombre d'inscriptions pour chaque événement
+        console.log('🔍 Fetching application counts...');
+        
+        const eventsWithCounts = await Promise.all(
+          events.map(async (event) => {
+            try {
+              const { count } = await supabase
+                .from('event_applications')
+                .select('*', { count: 'exact', head: true })
+                .eq('event_id', event.id);
+
+              return {
+                ...event,
+                applications_count: count || 0
+              };
+            } catch (error) {
+              console.warn('⚠️ Error fetching applications count for event', event.id, error);
+              return {
+                ...event,
+                applications_count: 0
+              };
+            }
+          })
+        );
+
+        console.log('✅ Events with counts prepared:', eventsWithCounts.length);
+        return eventsWithCounts;
+
+      } catch (error) {
+        console.error('❌ Unexpected error in useProfessionalEvents:', error);
         throw error;
       }
-
-      console.log('Events fetched:', events?.length || 0);
-
-      if (!events || events.length === 0) {
-        return [];
-      }
-
-      // Ensuite, récupérer le nombre d'inscriptions pour chaque événement
-      const eventsWithCounts = await Promise.all(
-        events.map(async (event) => {
-          const { count } = await supabase
-            .from('event_applications')
-            .select('*', { count: 'exact', head: true })
-            .eq('event_id', event.id);
-
-          return {
-            ...event,
-            applications_count: count || 0
-          };
-        })
-      );
-
-      console.log('Events with counts:', eventsWithCounts);
-      return eventsWithCounts;
     },
+    enabled: !!user?.id, // Ne s'exécute que si l'utilisateur est authentifié
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 

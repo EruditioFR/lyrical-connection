@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -7,15 +8,17 @@ import { ProfessionalEventCard } from '@/components/events/ProfessionalEventCard
 import { EventForm } from '@/components/events/EventForm';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Loader2, Calendar, BarChart3 } from 'lucide-react';
+import { Plus, Loader2, Calendar, BarChart3, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ProfessionalEvents = () => {
   const { user, loading } = useAuth();
   const [showEventForm, setShowEventForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
+  const queryClient = useQueryClient();
   
-  const { data: events = [], isLoading } = useProfessionalEvents();
+  const { data: events = [], isLoading, error, refetch } = useProfessionalEvents();
 
   if (loading) {
     return (
@@ -47,6 +50,17 @@ const ProfessionalEvents = () => {
     setEditingEvent(null);
   };
 
+  const handleRefresh = () => {
+    console.log('🔄 Manual refresh triggered');
+    queryClient.invalidateQueries({ queryKey: ['professionalEvents'] });
+    refetch();
+  };
+
+  // Affichage des erreurs de débogage
+  if (error) {
+    console.error('Error in ProfessionalEvents:', error);
+  }
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -56,12 +70,52 @@ const ProfessionalEvents = () => {
             <p className="text-gray-600 mt-2">
               Gérez vos masterclass, stages et concours
             </p>
+            {/* Debug info */}
+            <div className="mt-2 text-xs text-gray-500">
+              <p>Utilisateur: {user?.email}</p>
+              <p>Événements trouvés: {events.length}</p>
+              {error && <p className="text-red-500">Erreur: {error.message}</p>}
+            </div>
           </div>
-          <Button onClick={() => setShowEventForm(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Nouvel événement
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={handleRefresh}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              Actualiser
+            </Button>
+            <Button onClick={() => setShowEventForm(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouvel événement
+            </Button>
+          </div>
         </div>
+
+        {/* Loading state */}
+        {isLoading && (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span className="ml-2">Chargement des événements...</span>
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <h3 className="text-red-800 font-medium">Erreur de chargement</h3>
+            <p className="text-red-600 text-sm mt-1">{error.message}</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefresh}
+              className="mt-2"
+            >
+              Réessayer
+            </Button>
+          </div>
+        )}
 
         {/* Statistiques */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -117,7 +171,7 @@ const ProfessionalEvents = () => {
             <TabsTrigger value="completed">
               Terminés ({completedEvents.length})
             </TabsTrigger>
-          </TabsList>
+          </Tabs>
 
           <TabsContent value="published">
             {publishedEvents.length === 0 ? (
@@ -174,16 +228,6 @@ const ProfessionalEvents = () => {
                 <p className="text-gray-600">
                   Vos événements passés apparaîtront ici
                 </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {completedEvents.map(event => (
-                  <ProfessionalEventCard
-                    key={event.id}
-                    event={event}
-                    onEdit={() => handleEditEvent(event)}
-                  />
-                ))}
               </div>
             )}
           </TabsContent>
