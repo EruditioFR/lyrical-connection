@@ -5,7 +5,7 @@ import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfessionalEvents } from '@/hooks/useEvents';
 import { ProfessionalEventCard } from '@/components/events/ProfessionalEventCard';
-import { EventForm } from '@/components/events/EventForm';
+import { EventFormImproved } from '@/components/events/EventFormImproved';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Loader2, Calendar, BarChart3, RefreshCw } from 'lucide-react';
@@ -56,7 +56,6 @@ const ProfessionalEvents = () => {
     refetch();
   };
 
-  // Affichage des erreurs de débogage
   if (error) {
     console.error('Error in ProfessionalEvents:', error);
   }
@@ -68,9 +67,8 @@ const ProfessionalEvents = () => {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Mes Événements</h1>
             <p className="text-gray-600 mt-2">
-              Gérez vos masterclass, stages et concours
+              Gérez vos masterclass, stages et concours avec un formulaire amélioré
             </p>
-            {/* Debug info */}
             <div className="mt-2 text-xs text-gray-500">
               <p>Utilisateur: {user?.email}</p>
               <p>Événements trouvés: {events.length}</p>
@@ -93,7 +91,6 @@ const ProfessionalEvents = () => {
           </div>
         </div>
 
-        {/* Loading state */}
         {isLoading && (
           <div className="flex justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin" />
@@ -101,7 +98,6 @@ const ProfessionalEvents = () => {
           </div>
         )}
 
-        {/* Error state */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <h3 className="text-red-800 font-medium">Erreur de chargement</h3>
@@ -243,9 +239,9 @@ const ProfessionalEvents = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Formulaire d'événement */}
+        {/* Formulaire d'événement amélioré */}
         {showEventForm && (
-          <EventForm
+          <EventFormImproved
             event={editingEvent}
             onClose={handleCloseForm}
           />
