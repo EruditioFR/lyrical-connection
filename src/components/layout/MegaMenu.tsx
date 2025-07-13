@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -234,7 +233,7 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <Briefcase className="h-5 w-5 text-lyrical-600" />
-          Mes Projets
+          Menu
         </h3>
         <div className="space-y-3">
           <Link to="/mes-evenements" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
@@ -375,7 +374,7 @@ const MegaMenu: React.FC<MegaMenuProps> = ({ isOpen, onClose, menuType }) => {
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <Briefcase className="h-5 w-5 text-lyrical-600" />
-          Mes Projets
+          Menu
         </h3>
         <div className="space-y-3">
           <Link to="/mes-evenements" className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors" onClick={onClose}>
