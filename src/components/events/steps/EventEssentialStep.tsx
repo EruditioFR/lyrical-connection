@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { AddressAutocomplete } from '../AddressAutocomplete';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CalendarIcon, AlertCircle } from 'lucide-react';
+import { CalendarIcon, AlertCircle, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface EventEssentialStepProps {
@@ -36,14 +36,15 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
   dateErrors,
   eventTypes
 }) => {
-  const DatePicker = ({ 
+  const DateTimePicker = ({ 
     value, 
     onChange, 
     label, 
     placeholder = "Sélectionner", 
     error,
     minDate,
-    maxDate 
+    maxDate,
+    showTime = false
   }: {
     value?: Date;
     onChange: (date: Date | undefined) => void;
@@ -52,47 +53,95 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
     error?: string;
     minDate?: Date;
     maxDate?: Date;
-  }) => (
-    <div className="space-y-2">
-      <Label className={error ? "text-red-500" : ""}>{label}</Label>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !value && "text-muted-foreground",
-              error && "border-red-500 focus:border-red-500"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {value ? format(value, "EEEE d MMMM yyyy", { locale: fr }) : placeholder}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 z-50">
-          <Calendar
-            mode="single"
-            selected={value}
-            onSelect={onChange}
-            initialFocus
-            locale={fr}
-            className="pointer-events-auto"
-            disabled={(date) => {
-              if (minDate && date < minDate) return true;
-              if (maxDate && date > maxDate) return true;
-              return false;
-            }}
-          />
-        </PopoverContent>
-      </Popover>
-      {error && (
-        <div className="flex items-center gap-1 text-sm text-red-500">
-          <AlertCircle className="h-3 w-3" />
-          {error}
+    showTime?: boolean;
+  }) => {
+    const [timeValue, setTimeValue] = React.useState(() => {
+      if (value) {
+        const hours = value.getHours().toString().padStart(2, '0');
+        const minutes = value.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+      }
+      return '09:00';
+    });
+
+    const handleDateSelect = (selectedDate: Date | undefined) => {
+      if (selectedDate && showTime) {
+        // Parse the time and combine with the selected date
+        const [hours, minutes] = timeValue.split(':').map(Number);
+        const newDate = new Date(selectedDate);
+        newDate.setHours(hours, minutes, 0, 0);
+        onChange(newDate);
+      } else {
+        onChange(selectedDate);
+      }
+    };
+
+    const handleTimeChange = (newTime: string) => {
+      setTimeValue(newTime);
+      if (value && showTime) {
+        const [hours, minutes] = newTime.split(':').map(Number);
+        const newDate = new Date(value);
+        newDate.setHours(hours, minutes, 0, 0);
+        onChange(newDate);
+      }
+    };
+
+    return (
+      <div className="space-y-2">
+        <Label className={error ? "text-red-500" : ""}>{label}</Label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "flex-1 justify-start text-left font-normal",
+                  !value && "text-muted-foreground",
+                  error && "border-red-500 focus:border-red-500"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {value ? format(value, "EEEE d MMMM yyyy", { locale: fr }) : placeholder}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 z-50">
+              <Calendar
+                mode="single"
+                selected={value}
+                onSelect={handleDateSelect}
+                initialFocus
+                locale={fr}
+                className="pointer-events-auto"
+                disabled={(date) => {
+                  if (minDate && date < minDate) return true;
+                  if (maxDate && date > maxDate) return true;
+                  return false;
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          
+          {showTime && (
+            <div className="flex items-center gap-2 min-w-[120px]">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Input
+                type="time"
+                value={timeValue}
+                onChange={(e) => handleTimeChange(e.target.value)}
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+        {error && (
+          <div className="flex items-center gap-1 text-sm text-red-500">
+            <AlertCircle className="h-3 w-3" />
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -153,27 +202,29 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
           Programmation
         </h4>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <DatePicker
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <DateTimePicker
             value={startDate}
             onChange={(date) => handleDateChange('start_date', date)}
-            label="Date de début *"
+            label="Date et heure de début *"
             placeholder="Quand commence l'événement ?"
             minDate={new Date()}
+            showTime={true}
           />
 
-          <DatePicker
+          <DateTimePicker
             value={endDate}
             onChange={(date) => handleDateChange('end_date', date)}
-            label="Date de fin *"
+            label="Date et heure de fin *"
             placeholder="Quand se termine l'événement ?"
             error={dateErrors.endDate}
             minDate={startDate || new Date()}
+            showTime={true}
           />
         </div>
 
         <div className="mt-4">
-          <DatePicker
+          <DateTimePicker
             value={registrationDeadline}
             onChange={(date) => handleDateChange('registration_deadline', date)}
             label="Date limite d'inscription"
@@ -181,6 +232,7 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
             error={dateErrors.registrationDeadline}
             minDate={new Date()}
             maxDate={startDate ? new Date(startDate.getTime() - 24 * 60 * 60 * 1000) : undefined}
+            showTime={false}
           />
         </div>
 
