@@ -17,6 +17,35 @@ import { AlertCircle, FileText } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfessionalMedia } from '@/hooks/useProfessionalMedia';
 
+// Define the event type with rules properties
+interface EventWithRules {
+  id: string;
+  title: string;
+  description?: string;
+  program?: string;
+  requirements?: string;
+  contact_info?: string;
+  start_date: string;
+  end_date: string;
+  location?: string;
+  venue?: string;
+  address?: string;
+  price?: number;
+  currency?: string;
+  max_participants?: number;
+  event_type: string;
+  status: string;
+  professional_profile_id: string;
+  participation_rules?: string;
+  code_of_conduct?: string;
+  cancellation_policy?: string;
+  liability_waiver?: string;
+  professional_profile?: any;
+  category?: any;
+  latitude?: number;
+  longitude?: number;
+}
+
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
@@ -29,7 +58,7 @@ const EventDetail = () => {
   // Fetch event data from professional_events table
   const { data: event, isLoading, error } = useQuery({
     queryKey: ['eventDetail', id],
-    queryFn: async () => {
+    queryFn: async (): Promise<EventWithRules | null> => {
       if (!id) {
         console.error('❌ No event ID provided');
         throw new Error('Event ID is required');
@@ -69,7 +98,7 @@ const EventDetail = () => {
         // Don't throw error here, just log it and continue without profile data
       }
 
-      const result = {
+      const result: EventWithRules = {
         ...eventData,
         professional_profile: professionalProfile
       };

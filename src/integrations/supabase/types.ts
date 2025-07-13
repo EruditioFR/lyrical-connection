@@ -976,7 +976,9 @@ export type Database = {
       professional_events: {
         Row: {
           address: string | null
+          cancellation_policy: string | null
           category_id: string | null
+          code_of_conduct: string | null
           contact_info: string | null
           created_at: string
           currency: string | null
@@ -987,9 +989,11 @@ export type Database = {
           image_url: string | null
           is_featured: boolean | null
           latitude: number | null
+          liability_waiver: string | null
           location: string | null
           longitude: number | null
           max_participants: number | null
+          participation_rules: string | null
           price: number | null
           professional_profile_id: string
           program: string | null
@@ -1004,7 +1008,9 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          cancellation_policy?: string | null
           category_id?: string | null
+          code_of_conduct?: string | null
           contact_info?: string | null
           created_at?: string
           currency?: string | null
@@ -1015,9 +1021,11 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean | null
           latitude?: number | null
+          liability_waiver?: string | null
           location?: string | null
           longitude?: number | null
           max_participants?: number | null
+          participation_rules?: string | null
           price?: number | null
           professional_profile_id: string
           program?: string | null
@@ -1032,7 +1040,9 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          cancellation_policy?: string | null
           category_id?: string | null
+          code_of_conduct?: string | null
           contact_info?: string | null
           created_at?: string
           currency?: string | null
@@ -1043,9 +1053,11 @@ export type Database = {
           image_url?: string | null
           is_featured?: boolean | null
           latitude?: number | null
+          liability_waiver?: string | null
           location?: string | null
           longitude?: number | null
           max_participants?: number | null
+          participation_rules?: string | null
           price?: number | null
           professional_profile_id?: string
           program?: string | null
