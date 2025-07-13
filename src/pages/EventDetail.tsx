@@ -18,11 +18,19 @@ const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
 
+  console.log('🔍 EventDetail - Event ID:', id);
+  console.log('🔍 EventDetail - Current user:', user?.id);
+
   // Fetch event data from professional_events table
   const { data: event, isLoading, error } = useQuery({
     queryKey: ['eventDetail', id],
     queryFn: async () => {
-      if (!id) throw new Error('Event ID is required');
+      if (!id) {
+        console.error('❌ No event ID provided');
+        throw new Error('Event ID is required');
+      }
+      
+      console.log('🔍 Fetching event with ID:', id);
       
       const { data, error } = await supabase
         .from('professional_events')
@@ -40,12 +48,19 @@ const EventDetail = () => {
           )
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle(); // Utiliser maybeSingle au lieu de single pour éviter l'erreur si pas de résultat
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching event:', error);
+        throw error;
+      }
+
+      console.log('✅ Event data retrieved:', data);
       return data;
     },
     enabled: !!id,
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 
   // Fetch applications count
@@ -59,7 +74,10 @@ const EventDetail = () => {
         .select('*', { count: 'exact', head: true })
         .eq('event_id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Error fetching applications count:', error);
+        throw error;
+      }
       return count || 0;
     },
     enabled: !!id,
@@ -116,7 +134,33 @@ const EventDetail = () => {
     );
   }
 
-  if (error || !event) {
+  if (error) {
+    console.error('❌ Event fetch error:', error);
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-20">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h1 className="text-3xl font-serif font-bold mb-4">Erreur de chargement</h1>
+            <p className="text-muted-foreground mb-6">
+              Une erreur s'est produite lors du chargement de l'événement : {error.message}
+            </p>
+            <div className="space-y-2">
+              <Button asChild>
+                <Link to="/mes-evenements">Retour à mes événements</Link>
+              </Button>
+              <div className="text-xs text-muted-foreground">
+                ID de l'événement: {id}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!event) {
+    console.warn('⚠️ No event found for ID:', id);
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20">
@@ -124,11 +168,16 @@ const EventDetail = () => {
             <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h1 className="text-3xl font-serif font-bold mb-4">Événement non trouvé</h1>
             <p className="text-muted-foreground mb-6">
-              L'événement que vous recherchez n'existe pas ou a été supprimé.
+              L'événement que vous recherchez n'existe pas ou n'est pas accessible.
             </p>
-            <Button asChild>
-              <Link to="/mes-evenements">Retour à mes événements</Link>
-            </Button>
+            <div className="space-y-2">
+              <Button asChild>
+                <Link to="/mes-evenements">Retour à mes événements</Link>
+              </Button>
+              <div className="text-xs text-muted-foreground">
+                ID recherché: {id}
+              </div>
+            </div>
           </div>
         </div>
       </Layout>

@@ -52,6 +52,7 @@ function App() {
             <Route path="/recherche-artistes" element={<ArtistSearch />} />
             <Route path="/mes-evenements" element={<ProfessionalEvents />} />
             <Route path="/evenements/:id" element={<EventDetail />} />
+            <Route path="/mes-evenements/:id" element={<EventDetail />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
