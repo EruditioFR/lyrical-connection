@@ -171,7 +171,7 @@ const ProfessionalEvents = () => {
             <TabsTrigger value="completed">
               Terminés ({completedEvents.length})
             </TabsTrigger>
-          </Tabs>
+          </TabsList>
 
           <TabsContent value="published">
             {publishedEvents.length === 0 ? (
@@ -228,6 +228,16 @@ const ProfessionalEvents = () => {
                 <p className="text-gray-600">
                   Vos événements passés apparaîtront ici
                 </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {completedEvents.map(event => (
+                  <ProfessionalEventCard
+                    key={event.id}
+                    event={event}
+                    onEdit={() => handleEditEvent(event)}
+                  />
+                ))}
               </div>
             )}
           </TabsContent>
