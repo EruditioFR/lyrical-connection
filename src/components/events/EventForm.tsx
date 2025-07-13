@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -30,8 +31,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     start_date: '',
     end_date: '',
     registration_deadline: '',
-    location: '',
-    venue: '',
     address: '',
     latitude: '',
     longitude: '',
@@ -67,8 +66,6 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
         start_date: event.start_date,
         end_date: event.end_date,
         registration_deadline: event.registration_deadline || '',
-        location: event.location || '',
-        venue: event.venue || '',
         address: (event as any).address || '',
         latitude: (event as any).latitude?.toString() || '',
         longitude: (event as any).longitude?.toString() || '',
@@ -177,8 +174,8 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
         start_date: formData.start_date,
         end_date: formData.end_date,
         registration_deadline: formData.registration_deadline || undefined,
-        location: formData.location || undefined,
-        venue: formData.venue || undefined,
+        location: undefined, // Removed location field
+        venue: undefined, // Removed venue field
         address: formData.address || undefined,
         latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
         longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
@@ -409,27 +406,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="location">Ville</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder="Paris, Lyon..."
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="venue">Lieu précis</Label>
-              <Input
-                id="venue"
-                value={formData.venue}
-                onChange={(e) => handleInputChange('venue', e.target.value)}
-                placeholder="Conservatoire, Studio..."
-              />
-            </div>
-
+          <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <Label htmlFor="max_participants">Participants max</Label>
               <Input
@@ -448,7 +425,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
               value={formData.address}
               onChange={(value) => handleInputChange('address', value)}
               onLocationSelect={handleLocationSelect}
-              placeholder="Tapez une adresse dans le monde entier..."
+              placeholder="Tapez une adresse..."
             />
             {formData.latitude && formData.longitude && (
               <p className="text-sm text-muted-foreground">

@@ -12,6 +12,16 @@ interface AddressSuggestion {
   lon: string;
   type: string;
   importance: number;
+  address?: {
+    house_number?: string;
+    road?: string;
+    city?: string;
+    town?: string;
+    village?: string;
+    postcode?: string;
+    state?: string;
+    country?: string;
+  };
 }
 
 interface AddressAutocompleteProps {
@@ -76,7 +86,8 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
           lat: item.lat,
           lon: item.lon,
           type: item.type,
-          importance: item.importance || 0
+          importance: item.importance || 0,
+          address: item.address
         }));
         
         setSuggestions(formattedSuggestions);
@@ -91,8 +102,47 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
     }
   };
 
+  const formatAddressDisplay = (suggestion: AddressSuggestion) => {
+    const { address } = suggestion;
+    if (!address) return suggestion.display_name;
+
+    // Construire l'adresse simplifiée
+    const parts = [];
+    
+    // Numéro et rue
+    if (address.house_number && address.road) {
+      parts.push(`${address.house_number} ${address.road}`);
+    } else if (address.road) {
+      parts.push(address.road);
+    }
+    
+    // Ville
+    const city = address.city || address.town || address.village;
+    if (city) {
+      parts.push(city);
+    }
+    
+    // Code postal
+    if (address.postcode) {
+      parts.push(address.postcode);
+    }
+    
+    // État/Région
+    if (address.state) {
+      parts.push(address.state);
+    }
+    
+    // Pays
+    if (address.country) {
+      parts.push(address.country);
+    }
+    
+    return parts.length > 0 ? parts.join(', ') : suggestion.display_name;
+  };
+
   const handleSuggestionClick = (suggestion: AddressSuggestion) => {
-    onChange(suggestion.display_name);
+    const formattedAddress = formatAddressDisplay(suggestion);
+    onChange(formattedAddress);
     onLocationSelect(parseFloat(suggestion.lat), parseFloat(suggestion.lon));
     setShowSuggestions(false);
     setSelectedIndex(-1);
@@ -173,29 +223,35 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
           ref={suggestionsRef}
           className="absolute z-50 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto"
         >
-          {suggestions.map((suggestion, index) => (
-            <button
-              key={suggestion.place_id}
-              type="button"
-              className={cn(
-                "w-full px-4 py-3 text-left hover:bg-muted/50 focus:bg-muted/50 focus:outline-none border-b border-border last:border-b-0",
-                selectedIndex === index && "bg-muted/50"
-              )}
-              onClick={() => handleSuggestionClick(suggestion)}
-            >
-              <div className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-foreground truncate">
-                    {suggestion.display_name.split(',')[0]}
-                  </div>
-                  <div className="text-xs text-muted-foreground line-clamp-2">
-                    {suggestion.display_name}
+          {suggestions.map((suggestion, index) => {
+            const formattedAddress = formatAddressDisplay(suggestion);
+            const { address } = suggestion;
+            const city = address?.city || address?.town || address?.village || '';
+            
+            return (
+              <button
+                key={suggestion.place_id}
+                type="button"
+                className={cn(
+                  "w-full px-4 py-3 text-left hover:bg-muted/50 focus:bg-muted/50 focus:outline-none border-b border-border last:border-b-0",
+                  selectedIndex === index && "bg-muted/50"
+                )}
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                <div className="flex items-start gap-3">
+                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-medium text-foreground truncate">
+                      {city || formattedAddress.split(',')[0]}
+                    </div>
+                    <div className="text-xs text-muted-foreground line-clamp-2">
+                      {formattedAddress}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
