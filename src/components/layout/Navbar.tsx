@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,23 +14,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings, CreditCard, Shield } from 'lucide-react';
+import { LogOut, User, Settings, CreditCard, Shield, ChevronDown } from 'lucide-react';
 import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
+import MegaMenu from './MegaMenu';
 
 const Navbar = () => {
   const { t } = useTranslation(['navigation', 'common']);
   const { user, signOut } = useAuth();
-  const { artistProfile, professionalProfile } = useUserType();
+  const { artistProfile, professionalProfile, isProfessional, isArtist } = useUserType();
   const { isAdmin } = useUserRoles();
   const navigate = useNavigate();
+  
+  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
   };
 
-  // Déterminer le nom d'affichage selon le type de profil
   const getDisplayName = () => {
     if (professionalProfile?.company_name) {
       return professionalProfile.company_name;
@@ -38,14 +41,38 @@ const Navbar = () => {
     if (artistProfile?.stage_name) {
       return artistProfile.stage_name;
     }
-    // Fallback sur le nom d'utilisateur ou email
     return user?.user_metadata?.full_name || user?.email?.split('@')[0];
   };
 
+  const handleMouseEnter = (menuType: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setActiveMegaMenu(menuType);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setActiveMegaMenu(null);
+    }, 200);
+  };
+
+  const closeMegaMenu = () => {
+    setActiveMegaMenu(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <nav className="bg-white shadow">
+    <nav className="bg-white shadow-sm border-b relative">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo et titre */}
+        {/* Logo */}
         <Link to="/" className="flex items-center text-xl font-semibold text-gray-900">
           Lyrical
         </Link>
@@ -54,37 +81,51 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-8">
           {user ? (
             <>
+              {/* Menu Artiste */}
+              {isArtist && (
+                <div 
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter('artist')}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
+                    Mon Espace
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Menu Professionnel */}
+              {isProfessional && (
+                <div 
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter('professional')}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
+                    Mes Projets
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Liens directs pour tous */}
               <Link 
                 to="/artistes" 
                 className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
               >
                 {t('navigation:artists')}
               </Link>
-              <Link 
-                to="/castings" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:castings')}
-              </Link>
-              <Link 
-                to="/pricing" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:pricing')}
-              </Link>
-              {/* Liens pour les professionnels */}
-              <Link 
-                to="/recherche-artistes" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:search')}
-              </Link>
-              <Link 
-                to="/mes-evenements" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:myEvents')}
-              </Link>
+              
+              {!isProfessional && (
+                <Link 
+                  to="/castings" 
+                  className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
+                >
+                  {t('navigation:castings')}
+                </Link>
+              )}
+
               {/* Lien d'administration pour les admins */}
               {isAdmin && (
                 <Link 
@@ -97,26 +138,17 @@ const Navbar = () => {
               )}
             </>
           ) : (
-            <>
-              <Link 
-                to="/" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:home')}
-              </Link>
-              <Link 
-                to="/qui-sommes-nous" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:about')}
-              </Link>
-              <Link 
-                to="/pricing" 
-                className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors"
-              >
-                {t('navigation:pricing')}
-              </Link>
-            </>
+            /* Menu pour utilisateurs non connectés */
+            <div 
+              className="relative"
+              onMouseEnter={() => handleMouseEnter('discover')}
+              onMouseLeave={handleMouseLeave}
+            >
+              <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
+                Découvrir
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </button>
+            </div>
           )}
         </div>
 
@@ -189,6 +221,13 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      {/* Mega Menu */}
+      <MegaMenu 
+        isOpen={activeMegaMenu !== null} 
+        onClose={closeMegaMenu}
+        menuType={activeMegaMenu || 'discover'}
+      />
     </nav>
   );
 };
