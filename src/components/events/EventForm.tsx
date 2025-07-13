@@ -12,10 +12,12 @@ import { useCreateEvent, useEventCategories, CreateEventData, ProfessionalEvent 
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { AddressAutocomplete } from './AddressAutocomplete';
 import { EventMediaSection } from './EventMediaSection';
+import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { CalendarIcon, Loader2, AlertCircle, Upload, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface EventFormProps {
   event?: ProfessionalEvent | null;
@@ -53,10 +55,12 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   }>({});
   const [logoUploadType, setLogoUploadType] = useState<'url' | 'upload'>('url');
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
 
   const { data: categories = [] } = useEventCategories();
   const { profile: professionalProfile } = useProfessionalProfile();
   const createEventMutation = useCreateEvent();
+  const { toast } = useToast();
 
   useEffect(() => {
     if (event) {
@@ -143,15 +147,66 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     }));
   };
 
-  const handleLogoFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setLogoFile(file);
-      // Pour l'instant, on stocke juste le fichier. 
-      // Dans une implémentation complète, il faudrait l'uploader vers Supabase Storage
-      const url = URL.createObjectURL(file);
-      setFormData(prev => ({ ...prev, image_url: url }));
+  const uploadLogoToStorage = async (file: File): Promise<string | null> => {
+    if (!professionalProfile?.id) return null;
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${professionalProfile.id}/${Date.now()}.${fileExt}`;
+
+    try {
+      const { data, error } = await supabase.storage
+        .from('professional-media')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error('Error uploading logo:', error);
+        toast({
+          title: 'Erreur',
+          description: 'Impossible d\'uploader le logo',
+          variant: 'destructive',
+        });
+        return null;
+      }
+
+      // Get the public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('professional-media')
+        .getPublicUrl(data.path);
+
+      return publicUrlData.publicUrl;
+    } catch (error) {
+      console.error('Error uploading logo:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'uploader le logo',
+        variant: 'destructive',
+      });
+      return null;
     }
+  };
+
+  const handleLogoFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLogoFile(file);
+    setIsUploadingLogo(true);
+
+    // Upload to Supabase Storage
+    const uploadedUrl = await uploadLogoToStorage(file);
+    
+    if (uploadedUrl) {
+      setFormData(prev => ({ ...prev, image_url: uploadedUrl }));
+      toast({
+        title: 'Succès',
+        description: 'Logo uploadé avec succès',
+      });
+    }
+
+    setIsUploadingLogo(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -579,8 +634,15 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
                   type="file"
                   onChange={handleLogoFileUpload}
                   accept="image/*"
+                  disabled={isUploadingLogo}
                 />
-                {formData.image_url && logoUploadType === 'upload' && (
+                {isUploadingLogo && (
+                  <div className="flex items-center gap-2 text-sm text-blue-600">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Upload en cours...
+                  </div>
+                )}
+                {formData.image_url && logoUploadType === 'upload' && !isUploadingLogo && (
                   <div className="mt-2">
                     <img
                       src={formData.image_url}
@@ -607,13 +669,13 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
             </Button>
             <Button
               type="submit"
-              disabled={createEventMutation.isPending || !isFormValid}
+              disabled={createEventMutation.isPending || !isFormValid || isUploadingLogo}
               className="flex-1"
             >
-              {createEventMutation.isPending ? (
+              {createEventMutation.isPending || isUploadingLogo ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Sauvegarde...
+                  {isUploadingLogo ? 'Upload...' : 'Sauvegarde...'}
                 </>
               ) : (
                 event ? 'Modifier' : 'Créer'
