@@ -204,7 +204,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
 
   return (
     <div 
-      className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg"
+      className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
