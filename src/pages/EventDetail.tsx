@@ -213,7 +213,6 @@ const EventDetail = () => {
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20"></div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
         </div>
         <div className="container mx-auto px-4 md:px-6 relative h-full flex items-end pb-6">
           <Button variant="outline" className="absolute top-6 left-4 md:left-6 bg-background/80 hover:bg-background" asChild>
