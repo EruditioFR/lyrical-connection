@@ -88,6 +88,10 @@ export interface CreateEventData {
   contact_info?: string;
   image_url?: string;
   is_featured?: boolean;
+  participation_rules?: string;
+  code_of_conduct?: string;
+  cancellation_policy?: string;
+  liability_waiver?: string;
 }
 
 export interface CreateApplicationData {
@@ -329,7 +333,7 @@ export const useCreateEvent = () => {
         }
       }
 
-      // Préparer les données de l'événement avec venue_id
+      // Préparer les données de l'événement avec venue_id et les champs de règlement
       const eventDataWithVenue = {
         ...eventData,
         venue_id: venueId,

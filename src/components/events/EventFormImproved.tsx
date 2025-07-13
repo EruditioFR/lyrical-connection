@@ -7,6 +7,7 @@ import { useCreateEvent, useEventCategories, CreateEventData, ProfessionalEvent 
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { EventWithRules } from '@/types/event';
 
 // Import step components
 import { EventFormProgress } from './EventFormProgress';
@@ -18,7 +19,7 @@ import { EventRulesStep } from './steps/EventRulesStep';
 import { EventReviewStep } from './steps/EventReviewStep';
 
 interface EventFormImprovedProps {
-  event?: ProfessionalEvent | null;
+  event?: EventWithRules | null;
   onClose: () => void;
 }
 
@@ -231,7 +232,7 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
     }
 
     try {
-      const eventData: CreateEventData & { id?: string } = {
+      const eventData: any = {
         professional_profile_id: professionalProfile.id,
         title: formData.title,
         description: formData.description || undefined,
@@ -253,6 +254,10 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
         program: formData.program || undefined,
         contact_info: formData.contact_info || undefined,
         image_url: formData.image_url || undefined,
+        participation_rules: formData.participation_rules || undefined,
+        code_of_conduct: formData.code_of_conduct || undefined,
+        cancellation_policy: formData.cancellation_policy || undefined,
+        liability_waiver: formData.liability_waiver || undefined,
       };
 
       if (event) {
