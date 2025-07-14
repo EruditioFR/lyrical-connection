@@ -24,12 +24,33 @@ interface EventFormProps {
   onClose: () => void;
 }
 
+type EventFormData = {
+  title: string;
+  description: string;
+  event_type: 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference';
+  status: 'draft' | 'published';
+  category_id: string;
+  start_date: string;
+  end_date: string;
+  registration_deadline: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  max_participants: string;
+  price: string;
+  currency: string;
+  requirements: string;
+  program: string;
+  contact_info: string;
+  image_url: string;
+};
+
 export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EventFormData>({
     title: '',
     description: '',
-    event_type: 'masterclass' as const,
-    status: 'draft' as 'draft' | 'published',
+    event_type: 'masterclass',
+    status: 'draft',
     category_id: '',
     start_date: '',
     end_date: '',
@@ -93,15 +114,8 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     }
   }, [event]);
 
-  const handleInputChange = (field: string, value: string) => {
-    if (field === 'event_type') {
-      setFormData(prev => ({ 
-        ...prev, 
-        [field]: value as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference'
-      }));
-    } else {
-      setFormData(prev => ({ ...prev, [field]: value }));
-    }
+  const handleInputChange = (field: keyof EventFormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const validateDates = (start: Date | undefined, end: Date | undefined, registration: Date | undefined) => {
