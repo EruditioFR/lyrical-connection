@@ -88,7 +88,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
       setFormData({
         title: event.title,
         description: event.description || '',
-        event_type: event.event_type,
+        event_type: event.event_type as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference',
         status: event.status === 'draft' || event.status === 'published' ? event.status : 'draft',
         category_id: event.category_id || '',
         start_date: event.start_date,
