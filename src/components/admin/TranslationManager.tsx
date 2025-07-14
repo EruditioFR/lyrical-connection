@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,7 @@ import { TranslationTable } from './TranslationTable';
 import { TranslationSuggestions } from './TranslationSuggestions';
 import { ImportExportDialog } from './ImportExportDialog';
 import { CreateTranslationKeyDialog } from './CreateTranslationKeyDialog';
+import { TranslationSyncPanel } from './TranslationSyncPanel';
 import { useTranslationKeys, useTranslations, useTranslationSuggestions } from '@/hooks/useTranslations';
 
 const SUPPORTED_LANGUAGES = [
@@ -26,7 +26,7 @@ export const TranslationManager = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showImportExportDialog, setShowImportExportDialog] = useState(false);
 
-  const { data: translationKeys = [], isLoading: keysLoading } = useTranslationKeys();
+  const { data: translationKeys = [], isLoading: keysLoading, refetch: refetchKeys } = useTranslationKeys();
   const { data: translations = [], isLoading: translationsLoading } = useTranslations();
   const { data: suggestions = [], isLoading: suggestionsLoading } = useTranslationSuggestions();
 
@@ -144,7 +144,7 @@ export const TranslationManager = () => {
 
       {/* Onglets principaux */}
       <Tabs defaultValue="translations" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="translations">Traductions</TabsTrigger>
           <TabsTrigger value="suggestions" className="relative">
             Suggestions IA
@@ -154,6 +154,7 @@ export const TranslationManager = () => {
               </Badge>
             )}
           </TabsTrigger>
+          <TabsTrigger value="sync">Synchronisation</TabsTrigger>
         </TabsList>
 
         <TabsContent value="translations" className="space-y-4">
@@ -218,6 +219,10 @@ export const TranslationManager = () => {
             translationKeys={translationKeys}
             supportedLanguages={SUPPORTED_LANGUAGES}
           />
+        </TabsContent>
+
+        <TabsContent value="sync">
+          <TranslationSyncPanel />
         </TabsContent>
       </Tabs>
 
