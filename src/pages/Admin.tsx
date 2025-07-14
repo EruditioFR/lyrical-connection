@@ -1,18 +1,18 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FreeAccountsPanel } from '@/components/admin/FreeAccountsPanel';
-import { VerificationPanel } from '@/components/admin/VerificationPanel';
-import { UpgradeRequestManager } from '@/components/admin/UpgradeRequestManager';
-import { PaymentManager } from '@/components/admin/PaymentManager';
-import { NotificationCenter } from '@/components/admin/NotificationCenter';
-import { AutomatedWorkflows } from '@/components/admin/AutomatedWorkflows';
+import FreeAccountsPanel from '@/components/admin/FreeAccountsPanel';
+import VerificationPanel from '@/components/admin/VerificationPanel';
+import UpgradeRequestManager from '@/components/admin/UpgradeRequestManager';
+import PaymentManager from '@/components/admin/PaymentManager';
+import NotificationCenter from '@/components/admin/NotificationCenter';
+import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
 import { TranslationManager } from '@/components/admin/TranslationManager';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
 
 const Admin = () => {
-  const { data: userRoles, isLoading } = useUserRoles();
+  const { userRoles, isLoading } = useUserRoles();
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">Chargement...</div>;
@@ -33,7 +33,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="accounts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="accounts">Comptes</TabsTrigger>
             <TabsTrigger value="verification">Vérification</TabsTrigger>
             <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
