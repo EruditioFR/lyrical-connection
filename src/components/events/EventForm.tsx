@@ -28,7 +28,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    event_type: 'masterclass' as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference',
+    event_type: 'masterclass' as const,
     status: 'draft' as 'draft' | 'published',
     category_id: '',
     start_date: '',
@@ -94,7 +94,14 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
   }, [event]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'event_type') {
+      setFormData(prev => ({ 
+        ...prev, 
+        [field]: value as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference'
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const validateDates = (start: Date | undefined, end: Date | undefined, registration: Date | undefined) => {
@@ -276,7 +283,7 @@ export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
     { value: 'concours', label: 'Concours' },
     { value: 'atelier', label: 'Atelier' },
     { value: 'conference', label: 'Conférence' },
-  ];
+  ] as const;
 
   const currencies = [
     // Top currencies

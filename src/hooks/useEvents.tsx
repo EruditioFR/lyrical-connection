@@ -400,10 +400,13 @@ export const useEventApplications = (eventId: string | undefined) => {
           artist_profile_id,
           status,
           created_at,
+          motivation,
+          experience_level,
+          special_requirements,
           artist_profiles!inner (
             id,
-            user_id,
-            stage_name
+            stage_name,
+            user_id
           )
         `)
         .eq('event_id', eventId)
@@ -418,7 +421,7 @@ export const useEventApplications = (eventId: string | undefined) => {
         id: app.id,
         event_id: app.event_id,
         artist_profile_id: app.artist_profile_id,
-        status: app.status,
+        status: app.status as 'pending' | 'accepted' | 'rejected',
         created_at: app.created_at,
         user_profiles: {
           first_name: app.artist_profiles?.stage_name?.split(' ')[0] || '',
