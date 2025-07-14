@@ -1,349 +1,306 @@
 
 import React from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import Layout from '@/components/layout/Layout';
-import { Button } from "@/components/ui/button";
-import { PlayCircle, Music, Calendar, MapPin, Share2, Star, Facebook, Instagram, Youtube, Linkedin, ArrowLeft, Edit } from 'lucide-react';
+import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useArtistPhotos } from '@/hooks/useArtistPhotos';
+import Layout from '@/components/layout/Layout';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { 
+  MapPin, 
+  Calendar, 
+  Globe, 
+  Mail, 
+  Phone, 
+  User,
+  Music,
+  Camera,
+  MessageCircle,
+  Edit
+} from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { useArtistProfile } from '@/hooks/useArtistProfile';
-import AirPlayer from '@/components/profile/AirPlayer';
-
-interface SocialLinks {
-  facebook?: string;
-  instagram?: string;
-  youtube?: string;
-  linkedin?: string;
-}
+import { useUserType } from '@/hooks/useUserType';
+import PhotosTab from '@/components/profile/PhotosTab';
+import AudioTab from '@/components/profile/AudioTab';
+import RepertoireTab from '@/components/profile/RepertoireTab';
+import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const { profile: myProfile } = useArtistProfile();
-  const navigate = useNavigate();
+  const { artistProfile: currentUserProfile, isProfessional } = useUserType();
 
-  // Récupérer les données de l'artiste depuis la base de données
-  const { data: artist, isLoading, error } = useQuery({
-    queryKey: ['artist-profile', id],
+  const { data: profile, isLoading, error } = useQuery({
+    queryKey: ['artist-profile-public', id],
     queryFn: async () => {
-      if (!id) throw new Error('ID artiste manquant');
+      if (!id) throw new Error('ID manquant');
+      
       const { data, error } = await supabase
         .from('artist_profiles')
         .select('*')
         .eq('id', id)
+        .eq('is_active', true)
         .single();
+
       if (error) throw error;
       return data;
     },
-    enabled: !!id
+    enabled: !!id,
   });
 
-  const { photos, getPhotoUrl } = useArtistPhotos(id || '');
+  // Si l'utilisateur connecté est un artiste et qu'il consulte son propre profil
+  const isOwnProfile = user && currentUserProfile?.id === id;
 
-  // Vérifier si c'est le profil de l'utilisateur connecté
-  const isMyProfile = myProfile?.id === id;
-
-  // Fonction pour détecter si le fichier est une vidéo
-  const isVideo = (url: string) => {
-    return url.toLowerCase().includes('.mp4') || url.toLowerCase().includes('video');
-  };
-
-  // Si l'artiste n'existe pas ou erreur
-  if (error || (!isLoading && !artist)) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center">
-            <h1 className="text-3xl font-serif font-bold mb-4">Artiste non trouvé</h1>
-            <p className="text-muted-foreground mb-6">
-              L'artiste que vous recherchez n'existe pas ou a été supprimé.
-            </p>
-            <Button asChild>
-              <Link to="/artistes">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Retour à la liste des artistes
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  // État de chargement
   if (isLoading) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center">
-            <h1 className="text-2xl font-serif font-bold mb-4">Chargement...</h1>
-            <p className="text-muted-foreground">Récupération des informations de l'artiste...</p>
+        <div className="container mx-auto px-4 py-8">
+          <div className="animate-pulse">
+            <div className="h-64 bg-gray-200 rounded-lg mb-8"></div>
+            <div className="space-y-4">
+              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
           </div>
         </div>
       </Layout>
     );
   }
 
-  // Safely cast social_links to our interface
-  const socialLinks = (artist.social_links as SocialLinks) || {};
+  if (error || !profile) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Profil non trouvé</h1>
+          <p className="text-gray-600">Ce profil d'artiste n'existe pas ou n'est plus actif.</p>
+          <Button 
+            onClick={() => window.history.back()} 
+            variant="outline" 
+            className="mt-4"
+          >
+            Retour
+          </Button>
+        </div>
+      </Layout>
+    );
+  }
 
-  // Trouver les images
-  const profilePhoto = photos?.find(photo => photo.is_profile_photo) || photos?.[0];
-  const profileImageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
-  // Utiliser l'image de bannière depuis la base de données ou une image par défaut
-  const coverImageUrl = artist.cover_image_url || 'https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80';
-
-  // Image par défaut si aucune photo
-  const defaultImage = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=774&q=80';
+  const calculateAge = (birthDate: string) => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    
+    return age;
+  };
 
   return (
     <Layout>
-      {/* En-tête de profil avec image de couverture */}
-      <div className="relative">
-        <div className="h-80 md:h-96 w-full">
-          <div className="absolute inset-0">
-            {isVideo(coverImageUrl) ? (
-              <video
-                src={coverImageUrl}
-                className="w-full h-full object-cover"
-                style={{ objectPosition: 'center' }}
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            ) : (
-              <img
-                src={coverImageUrl}
-                alt={`Couverture de ${artist.stage_name}`}
-                className="w-full h-full object-cover"
-                style={{ objectPosition: 'center' }}
-              />
-            )}
-          </div>
+      <div className="min-h-screen bg-gray-50">
+        {/* Banner */}
+        <div 
+          className="h-64 bg-gradient-to-r from-blue-600 to-purple-600 relative"
+          style={{
+            backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
-        <div className="container mx-auto px-4 md:px-6 relative">
-          <div
-            style={{ backgroundColor: 'rgba(212, 154, 28, 0.3)' }}
-            className="w-full flex flex-col md:flex-row items-center md:items-end gap-6 -mt-20 md:-mt-16"
-          >
-            <div className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-background shadow-lg">
-              <img
-                src={profileImageUrl || defaultImage}
-                alt={artist.stage_name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = defaultImage;
-                }}
-              />
-            </div>
-            <div className="text-center md:text-left pb-4">
-              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                <h1 className="text-3xl md:text-4xl font-serif font-bold text-white">{artist.stage_name}</h1>
-                {artist.voice_type && (
-                  <span className="inline-block bg-lyrical-100 text-lyrical-800 text-sm font-medium px-3 py-1 rounded-full">
-                    {artist.voice_type}
-                  </span>
-                )}
-              </div>
-              <p className="text-white mt-1">
-                {artist.voice_type && `${artist.voice_type} • `}
-                {artist.location || 'France'}
-              </p>
-            </div>
-            <div className="md:ml-auto flex space-x-3 pb-4">
-              {isMyProfile ? (
-                <Button 
-                  size="sm" 
-                  className="gap-2 bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white"
-                  onClick={() => navigate('/profil')}
-                >
-                  <Edit className="h-4 w-4" />
-                  Modifier mon profil
-                </Button>
-              ) : (
-                <>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Share2 className="h-4 w-4" />
-                    Partager
-                  </Button>
-                  <Button size="sm" className="gap-2 bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white">
-                    <Star className="h-4 w-4" />
-                    Suivre
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+        <div className="container mx-auto px-4 -mt-20 relative z-10">
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div className="flex items-start gap-6">
+              {/* Avatar */}
+              <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
+                <AvatarImage src={profile.profile_image_url || undefined} />
+                <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
+                  {getInitials(profile.stage_name)}
+                </AvatarFallback>
+              </Avatar>
 
-      {/* Contenu principal */}
-      <div className="container mx-auto px-4 md:px-6 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Colonne principale */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Biographie */}
-            <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h2 className="text-2xl font-serif font-semibold mb-4">Biographie</h2>
-              <p className="text-muted-foreground">
-                {artist.bio || "Cet artiste n'a pas encore ajouté de biographie."}
-              </p>
-            </section>
-
-            {/* Airs - nouvelle section */}
-            <AirPlayer artistProfileId={id || ''} />
-
-            {/* Galerie photos */}
-            {photos && photos.length > 0 && (
-              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-                <h2 className="text-2xl font-serif font-semibold mb-4">Galerie</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {photos.map((photo) => (
-                    <div key={photo.id} className="rounded-lg overflow-hidden group aspect-square">
-                      <img
-                        src={getPhotoUrl(photo.file_path)}
-                        alt={photo.file_name}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+              {/* Info principale */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                      {profile.stage_name}
+                    </h1>
+                    
+                    <div className="flex items-center gap-4 text-gray-600 mb-4">
+                      {profile.voice_type && (
+                        <Badge variant="secondary" className="text-sm">
+                          {profile.voice_type}
+                        </Badge>
+                      )}
+                      {profile.location && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          <span>{profile.location}</span>
+                        </div>
+                      )}
+                      {profile.birth_date && (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          <span>{calculateAge(profile.birth_date)} ans</span>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
 
-            {/* Répertoire */}
-            {artist.repertoire && artist.repertoire.length > 0 && (
-              <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-                <h2 className="text-2xl font-serif font-semibold mb-4">Répertoire</h2>
-                <div className="flex flex-wrap gap-2">
-                  {artist.repertoire.map((item, index) => (
-                    <span key={index} className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-
-          {/* Barre latérale */}
-          <div className="space-y-6">
-            {/* Informations de contact */}
-            <section className="bg-card rounded-xl p-6 shadow-sm border border-border">
-              <h2 className="text-xl font-serif font-semibold mb-4">Informations</h2>
-              <div className="space-y-4">
-                {artist.voice_type && (
-                  <div className="flex items-start">
-                    <Music className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Type de voix</p>
-                      <p className="font-medium">{artist.voice_type}</p>
-                    </div>
-                  </div>
-                )}
-                {artist.experience_years && artist.experience_years > 0 && (
-                  <div className="flex items-start">
-                    <Calendar className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Expérience</p>
-                      <p className="font-medium">
-                        {artist.experience_years} an{artist.experience_years > 1 ? 's' : ''}
+                    {profile.bio && (
+                      <p className="text-gray-700 max-w-2xl">
+                        {profile.bio}
                       </p>
-                    </div>
+                    )}
                   </div>
-                )}
-                {artist.location && (
-                  <div className="flex items-start">
-                    <MapPin className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Localisation</p>
-                      <p className="font-medium">{artist.location}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
 
-              {/* Réseaux sociaux si disponibles */}
-              {socialLinks && Object.keys(socialLinks).length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-sm font-medium text-muted-foreground mb-3">Réseaux sociaux</h3>
-                  <div className="flex space-x-3">
-                    {socialLinks.facebook && (
-                      <a
-                        href={socialLinks.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                        aria-label="Facebook"
+                  {/* Actions */}
+                  <div className="flex gap-2">
+                    {isOwnProfile && (
+                      <Button 
+                        variant="outline"
+                        onClick={() => window.location.href = '/profil'}
                       >
-                        <Facebook className="h-5 w-5" />
-                      </a>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Modifier
+                      </Button>
                     )}
-                    {socialLinks.instagram && (
-                      <a
-                        href={socialLinks.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                        aria-label="Instagram"
-                      >
-                        <Instagram className="h-5 w-5" />
-                      </a>
-                    )}
-                    {socialLinks.youtube && (
-                      <a
-                        href={socialLinks.youtube}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                        aria-label="YouTube"
-                      >
-                        <Youtube className="h-5 w-5" />
-                      </a>
-                    )}
-                    {socialLinks.linkedin && (
-                      <a
-                        href={socialLinks.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-muted hover:bg-muted/80 transition-colors p-2 rounded-full"
-                        aria-label="LinkedIn"
-                      >
-                        <Linkedin className="h-5 w-5" />
-                      </a>
+                    
+                    {!isOwnProfile && isProfessional && (
+                      <ContactArtistDialog artistProfile={profile}>
+                        <Button>
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Contacter
+                        </Button>
+                      </ContactArtistDialog>
                     )}
                   </div>
                 </div>
-              )}
+              </div>
+            </div>
 
-              {/* Site web si disponible */}
-              {artist.website && (
-                <div className="mt-4">
-                  <Button variant="outline" className="w-full" asChild>
-                    <a href={artist.website} target="_blank" rel="noopener noreferrer">
-                      Visiter le site web
-                    </a>
-                  </Button>
+            {/* Informations supplémentaires */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              {profile.experience_years !== null && (
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{profile.experience_years}</div>
+                  <div className="text-sm text-gray-600">Années d'expérience</div>
                 </div>
               )}
-            </section>
-
-            {/* Bouton de contact (seulement si ce n'est pas son propre profil) */}
-            {!isMyProfile && (
-              <div className="bg-gradient-to-r from-lyrical-600 to-gold-500 p-6 rounded-xl shadow-md">
-                <h2 className="text-xl font-serif font-semibold text-white mb-3">Vous êtes intéressé ?</h2>
-                <p className="text-white/90 mb-4">Contactez cet artiste pour vos projets ou événements.</p>
-                <Button className="w-full bg-white hover:bg-white/90 text-lyrical-900">
-                  Contacter l'artiste
-                </Button>
-              </div>
-            )}
+              
+              {profile.nationality && (
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-lg font-semibold text-gray-800">{profile.nationality}</div>
+                  <div className="text-sm text-gray-600">Nationalité</div>
+                </div>
+              )}
+              
+              {profile.spoken_languages && profile.spoken_languages.length > 0 && (
+                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                  <div className="text-lg font-semibold text-gray-800">
+                    {profile.spoken_languages.join(', ')}
+                  </div>
+                  <div className="text-sm text-gray-600">Langues parlées</div>
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Contenu en onglets */}
+          <Tabs defaultValue="repertoire" className="mb-8">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="repertoire">
+                <Music className="w-4 h-4 mr-2" />
+                Répertoire
+              </TabsTrigger>
+              <TabsTrigger value="photos">
+                <Camera className="w-4 h-4 mr-2" />
+                Photos
+              </TabsTrigger>
+              <TabsTrigger value="audio">
+                <User className="w-4 h-4 mr-2" />
+                Audio
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="repertoire" className="mt-6">
+              <RepertoireTab artistProfile={profile} />
+            </TabsContent>
+
+            <TabsContent value="photos" className="mt-6">
+              <PhotosTab artistProfile={profile} />
+            </TabsContent>
+
+            <TabsContent value="audio" className="mt-6">
+              <AudioTab artistProfile={profile} />
+            </TabsContent>
+          </Tabs>
+
+          {/* Contact et liens */}
+          {(profile.contact_email || profile.phone || profile.website) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Contact</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {profile.contact_email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-gray-500" />
+                    <a 
+                      href={`mailto:${profile.contact_email}`}
+                      className="text-primary hover:underline"
+                    >
+                      {profile.contact_email}
+                    </a>
+                  </div>
+                )}
+                
+                {profile.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-gray-500" />
+                    <a 
+                      href={`tel:${profile.phone}`}
+                      className="text-primary hover:underline"
+                    >
+                      {profile.phone}
+                    </a>
+                  </div>
+                )}
+                
+                {profile.website && (
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-gray-500" />
+                    <a 
+                      href={profile.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Site web
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </Layout>

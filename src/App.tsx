@@ -1,7 +1,9 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/hooks/useAuth';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
 import Dashboard from '@/pages/Dashboard';
@@ -35,37 +37,39 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profile/:id" element={<ArtistProfile />} />
-          <Route path="/evenements" element={<Events />} />
-          <Route path="/evenements/:id" element={<EventDetail />} />
-          <Route path="/artistes" element={<ArtistsList />} />
-          <Route path="/artistes/recherche" element={<ArtistSearch />} />
-          <Route path="/castings" element={<Castings />} />
-          <Route path="/castings/nouveau" element={<CreateCasting />} />
-          <Route path="/castings/:id" element={<CastingDetail />} />
-          <Route path="/castings/:id/postuler" element={<CastingApplication />} />
-          <Route path="/mes-candidatures" element={<MyApplications />} />
-          <Route path="/applications-professionnelles" element={<ProfessionalApplications />} />
-          <Route path="/mon-profil" element={<ProfessionalProfile />} />
-          <Route path="/a-propos" element={<About />} />
-          <Route path="/tarifs" element={<Pricing />} />
-          <Route path="/abonnement" element={<Subscription />} />
-          <Route path="/abonnement/succes" element={<SubscriptionSuccess />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/messages-professionnels" element={<ProfessionalMessages />} />
-          <Route path="/mes-evenements" element={<ProfessionalEvents />} />
-          <Route path="/evenements/nouveau" element={<CreateEvent />} />
-          <Route path="/mes-evenements/:id/modifier" element={<EditEvent />} />
-        </Routes>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profil" element={<Profile />} />
+            <Route path="/artistes" element={<ArtistsList />} />
+            <Route path="/artistes/recherche" element={<ArtistSearch />} />
+            <Route path="/artistes/:id" element={<ArtistProfile />} />
+            <Route path="/evenements" element={<Events />} />
+            <Route path="/evenements/:id" element={<EventDetail />} />
+            <Route path="/castings" element={<Castings />} />
+            <Route path="/castings/nouveau" element={<CreateCasting />} />
+            <Route path="/castings/:id" element={<CastingDetail />} />
+            <Route path="/castings/:id/postuler" element={<CastingApplication />} />
+            <Route path="/mes-candidatures" element={<MyApplications />} />
+            <Route path="/applications-professionnelles" element={<ProfessionalApplications />} />
+            <Route path="/profil-professionnel" element={<ProfessionalProfile />} />
+            <Route path="/a-propos" element={<About />} />
+            <Route path="/tarifs" element={<Pricing />} />
+            <Route path="/abonnement" element={<Subscription />} />
+            <Route path="/abonnement/succes" element={<SubscriptionSuccess />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/messages-professionnels" element={<ProfessionalMessages />} />
+            <Route path="/mes-evenements" element={<ProfessionalEvents />} />
+            <Route path="/evenements/nouveau" element={<CreateEvent />} />
+            <Route path="/mes-evenements/:id/modifier" element={<EditEvent />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
       <Toaster />
     </QueryClientProvider>
   );
