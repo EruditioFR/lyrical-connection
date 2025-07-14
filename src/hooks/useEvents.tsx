@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -107,7 +108,6 @@ export const useEventCategories = () => {
   return useQuery({
     queryKey: ['eventCategories'],
     queryFn: async (): Promise<EventCategory[]> => {
-      console.log('🏷️ Fetching event categories...');
       try {
         const { data, error } = await supabase
           .from('event_categories')
@@ -115,19 +115,16 @@ export const useEventCategories = () => {
           .order('name');
 
         if (error) {
-          console.error('❌ Error fetching categories:', error);
           throw error;
         }
         
-        console.log('✅ Categories fetched:', data?.length || 0);
         return data || [];
       } catch (error) {
-        console.error('❌ Unexpected error fetching categories:', error);
         throw error;
       }
     },
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: 2,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
@@ -140,8 +137,6 @@ export const usePublicEvents = (filters?: {
   return useQuery({
     queryKey: ['publicEvents', filters],
     queryFn: async (): Promise<ProfessionalEvent[]> => {
-      console.log('📅 Fetching public events with filters:', filters);
-      
       try {
         let query = supabase
           .from('professional_events')
@@ -168,18 +163,14 @@ export const usePublicEvents = (filters?: {
         const { data: events, error } = await query;
 
         if (error) {
-          console.error('❌ Error fetching events:', error);
           throw error;
         }
-
-        console.log('✅ Events fetched:', events?.length || 0);
 
         if (!events || events.length === 0) {
           return [];
         }
 
         // Récupérer le nombre d'inscriptions pour chaque événement
-        console.log('🔢 Fetching application counts...');
         const eventsWithCounts = await Promise.all(
           events.map(async (event) => {
             try {
@@ -193,7 +184,6 @@ export const usePublicEvents = (filters?: {
                 applications_count: count || 0
               };
             } catch (error) {
-              console.warn('⚠️ Error fetching applications count for event', event.id, error);
               return {
                 ...event,
                 applications_count: 0
@@ -202,38 +192,29 @@ export const usePublicEvents = (filters?: {
           })
         );
 
-        console.log('✅ Events with counts prepared:', eventsWithCounts.length);
         return eventsWithCounts;
       } catch (error) {
-        console.error('❌ Unexpected error fetching public events:', error);
         throw error;
       }
     },
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
-// Hook pour récupérer les événements d'un professionnel - VERSION AMÉLIORÉE
+// Hook pour récupérer les événements d'un professionnel
 export const useProfessionalEvents = () => {
   const { user } = useAuth();
   
   return useQuery({
     queryKey: ['professionalEvents', user?.id],
     queryFn: async (): Promise<ProfessionalEvent[]> => {
-      console.log('🔍 Starting professional events fetch...');
-      console.log('🔍 Current user:', user?.id);
-      
       if (!user?.id) {
-        console.log('❌ No authenticated user found');
         return [];
       }
 
       try {
-        // Première étape : récupérer le profil professionnel
-        console.log('🔍 Fetching professional profile for user:', user.id);
-        
+        // Récupérer le profil professionnel
         const { data: professionalProfile, error: profileError } = await supabase
           .from('professional_profiles')
           .select('id')
@@ -241,24 +222,17 @@ export const useProfessionalEvents = () => {
           .single();
 
         if (profileError) {
-          console.error('❌ Error fetching professional profile:', profileError);
           if (profileError.code === 'PGRST116') {
-            console.log('ℹ️ No professional profile found for user');
             return [];
           }
           throw profileError;
         }
 
         if (!professionalProfile) {
-          console.log('ℹ️ No professional profile found');
           return [];
         }
-
-        console.log('✅ Professional profile found:', professionalProfile.id);
         
-        // Deuxième étape : récupérer les événements
-        console.log('🔍 Fetching events for professional profile:', professionalProfile.id);
-        
+        // Récupérer les événements
         const { data: events, error: eventsError } = await supabase
           .from('professional_events')
           .select(`
@@ -269,20 +243,14 @@ export const useProfessionalEvents = () => {
           .order('created_at', { ascending: false });
 
         if (eventsError) {
-          console.error('❌ Error fetching events:', eventsError);
           throw eventsError;
         }
 
-        console.log('✅ Events fetched successfully:', events?.length || 0);
-
         if (!events || events.length === 0) {
-          console.log('ℹ️ No events found');
           return [];
         }
 
-        // Troisième étape : récupérer le nombre d'inscriptions pour chaque événement
-        console.log('🔍 Fetching application counts...');
-        
+        // Récupérer le nombre d'inscriptions pour chaque événement
         const eventsWithCounts = await Promise.all(
           events.map(async (event) => {
             try {
@@ -296,7 +264,6 @@ export const useProfessionalEvents = () => {
                 applications_count: count || 0
               };
             } catch (error) {
-              console.warn('⚠️ Error fetching applications count for event', event.id, error);
               return {
                 ...event,
                 applications_count: 0
@@ -305,17 +272,14 @@ export const useProfessionalEvents = () => {
           })
         );
 
-        console.log('✅ Events with counts prepared:', eventsWithCounts.length);
         return eventsWithCounts;
 
       } catch (error) {
-        console.error('❌ Unexpected error in useProfessionalEvents:', error);
         throw error;
       }
     },
-    enabled: !!user?.id, // Ne s'exécute que si l'utilisateur est authentifié
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    enabled: !!user?.id,
+    retry: 2,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
@@ -328,11 +292,8 @@ export const useCreateEvent = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...eventData }: CreateEventData & { id?: string }) => {
-      console.log('Creating/updating event with data:', eventData);
-      
       // S'assurer que professional_profile_id est défini
       if (!eventData.professional_profile_id) {
-        // Récupérer le profil professionnel de l'utilisateur connecté
         const { data: { user } } = await supabase.auth.getUser();
         
         if (!user) {
@@ -346,12 +307,10 @@ export const useCreateEvent = () => {
           .single();
 
         if (profileError || !professionalProfile) {
-          console.error('Error fetching professional profile:', profileError);
           throw new Error('Profil professionnel non trouvé');
         }
 
         eventData.professional_profile_id = professionalProfile.id;
-        console.log('Using professional_profile_id:', professionalProfile.id);
       }
 
       let venueId: string | undefined;
@@ -362,20 +321,17 @@ export const useCreateEvent = () => {
           const venueData = {
             name: eventData.venue || eventData.address || 'Lieu sans nom',
             city: eventData.location,
-            country: 'France', // Par défaut
+            country: 'France',
             type: 'event_venue',
           };
 
           const venue = await createVenueMutation.mutateAsync(venueData);
           venueId = venue.id;
-          console.log('Venue created with ID:', venueId);
         } catch (venueError) {
-          console.error('Error creating venue:', venueError);
           // Continuer sans venue si la création échoue
         }
       }
 
-      // Préparer les données de l'événement avec venue_id et les champs de règlement
       const eventDataWithVenue = {
         ...eventData,
         venue_id: venueId,
@@ -390,7 +346,6 @@ export const useCreateEvent = () => {
           .single();
 
         if (error) {
-          console.error('Error updating event:', error);
           throw error;
         }
         return data;
@@ -402,14 +357,12 @@ export const useCreateEvent = () => {
           .single();
 
         if (error) {
-          console.error('Error creating event:', error);
           throw error;
         }
         return data;
       }
     },
     onSuccess: (data) => {
-      console.log('Event saved successfully:', data);
       queryClient.invalidateQueries({ queryKey: ['professionalEvents'] });
       queryClient.invalidateQueries({ queryKey: ['publicEvents'] });
       queryClient.invalidateQueries({ queryKey: ['venues'] });
@@ -419,7 +372,6 @@ export const useCreateEvent = () => {
       });
     },
     onError: (error: any) => {
-      console.error('Error saving event:', error);
       const errorMessage = error?.message || 'Impossible de sauvegarder l\'événement';
       toast({
         title: 'Erreur',

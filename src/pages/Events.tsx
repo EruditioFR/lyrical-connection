@@ -5,11 +5,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePublicEvents, useEventCategories } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
 import { EventFilters } from '@/components/events/EventFilters';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Events = () => {
-  console.log('🚀 Events page loading...');
-  
   const { user, loading } = useAuth();
   const [filters, setFilters] = useState({
     event_type: '',
@@ -17,25 +16,10 @@ const Events = () => {
     search: ''
   });
 
-  console.log('🔍 Current filters:', filters);
-  console.log('👤 User authenticated:', !!user);
-
   const { data: events = [], isLoading: eventsLoading, error: eventsError } = usePublicEvents(filters);
   const { data: categories = [], error: categoriesError } = useEventCategories();
 
-  console.log('📊 Events data:', events?.length || 0, 'events loaded');
-  console.log('🏷️ Categories data:', categories?.length || 0, 'categories loaded');
-  
-  if (eventsError) {
-    console.error('❌ Events error:', eventsError);
-  }
-  
-  if (categoriesError) {
-    console.error('❌ Categories error:', categoriesError);
-  }
-
   if (loading) {
-    console.log('⏳ Auth loading...');
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 flex justify-center">
@@ -44,8 +28,6 @@ const Events = () => {
       </Layout>
     );
   }
-
-  console.log('✅ Events page rendering successfully');
 
   return (
     <Layout>
@@ -77,14 +59,12 @@ const Events = () => {
                   <Loader2 className="h-8 w-8 animate-spin" />
                 </div>
               ) : eventsError ? (
-                <div className="text-center py-12">
-                  <h3 className="text-lg font-medium text-red-600 mb-2">
-                    Erreur de chargement
-                  </h3>
-                  <p className="text-gray-600">
-                    Impossible de charger les événements. Veuillez réessayer.
-                  </p>
-                </div>
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    Impossible de charger les événements. Veuillez réessayer plus tard.
+                  </AlertDescription>
+                </Alert>
               ) : events.length === 0 ? (
                 <div className="text-center py-12">
                   <h3 className="text-lg font-medium text-gray-900 mb-2">

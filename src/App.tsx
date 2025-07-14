@@ -21,6 +21,9 @@ import ArtistSearch from '@/pages/ArtistSearch';
 import ProfessionalEvents from '@/pages/ProfessionalEvents';
 import Events from '@/pages/Events';
 import EventDetail from '@/pages/EventDetail';
+import CreateEvent from '@/pages/CreateEvent';
+import Messages from '@/pages/Messages';
+import ProfessionalMessages from '@/pages/ProfessionalMessages';
 import Pricing from '@/pages/Pricing';
 import Subscription from '@/pages/Subscription';
 import SubscriptionSuccess from '@/pages/SubscriptionSuccess';
@@ -54,7 +57,10 @@ function App() {
             <Route path="/mes-evenements" element={<ProfessionalEvents />} />
             <Route path="/evenements" element={<Events />} />
             <Route path="/evenements/:id" element={<EventDetail />} />
+            <Route path="/evenements/nouveau" element={<CreateEvent />} />
             <Route path="/mes-evenements/:id" element={<EventDetail />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/messages-pro" element={<ProfessionalMessages />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
