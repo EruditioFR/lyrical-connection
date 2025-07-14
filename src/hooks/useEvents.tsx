@@ -402,12 +402,7 @@ export const useEventApplications = (eventId: string | undefined) => {
           created_at,
           motivation,
           experience_level,
-          special_requirements,
-          artist_profiles!inner (
-            id,
-            stage_name,
-            user_id
-          )
+          special_requirements
         `)
         .eq('event_id', eventId)
         .order('created_at', { ascending: false });
@@ -417,17 +412,38 @@ export const useEventApplications = (eventId: string | undefined) => {
         throw error;
       }
 
-      return data?.map(app => ({
-        id: app.id,
-        event_id: app.event_id,
-        artist_profile_id: app.artist_profile_id,
-        status: app.status as 'pending' | 'accepted' | 'rejected',
-        created_at: app.created_at,
-        user_profiles: {
-          first_name: app.artist_profiles?.stage_name?.split(' ')[0] || '',
-          last_name: app.artist_profiles?.stage_name?.split(' ').slice(1).join(' ') || ''
-        }
-      })) as EventApplication[] || [];
+      // Fetch artist profiles separately to get stage names
+      if (!data || data.length === 0) return [];
+
+      const artistProfileIds = data.map(app => app.artist_profile_id);
+      
+      const { data: artistProfiles, error: profilesError } = await supabase
+        .from('artist_profiles')
+        .select('id, stage_name')
+        .in('id', artistProfileIds);
+
+      if (profilesError) {
+        console.error('Error fetching artist profiles:', profilesError);
+        throw profilesError;
+      }
+
+      // Combine the data
+      return data.map(app => {
+        const artistProfile = artistProfiles?.find(profile => profile.id === app.artist_profile_id);
+        const stageName = artistProfile?.stage_name || '';
+        
+        return {
+          id: app.id,
+          event_id: app.event_id,
+          artist_profile_id: app.artist_profile_id,
+          status: app.status as 'pending' | 'accepted' | 'rejected',
+          created_at: app.created_at,
+          user_profiles: {
+            first_name: stageName.split(' ')[0] || '',
+            last_name: stageName.split(' ').slice(1).join(' ') || ''
+          }
+        };
+      }) as EventApplication[];
     },
     enabled: !!eventId,
   });
