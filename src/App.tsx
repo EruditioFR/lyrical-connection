@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/hooks/useAuth';
 import Index from '@/pages/Index';
 import Auth from '@/pages/Auth';
+import ChangePassword from '@/pages/ChangePassword';
 import Dashboard from '@/pages/Dashboard';
 import Profile from '@/pages/Profile';
 import Events from '@/pages/Events';
@@ -42,6 +43,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/change-password" element={<ChangePassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profil" element={<Profile />} />
             <Route path="/artistes" element={<ArtistsList />} />
