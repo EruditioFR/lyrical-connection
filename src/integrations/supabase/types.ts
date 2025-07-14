@@ -1429,6 +1429,121 @@ export type Database = {
           },
         ]
       }
+      translation_keys: {
+        Row: {
+          context: string | null
+          created_at: string
+          french_text: string
+          id: string
+          key_path: string
+          section: string
+          updated_at: string
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          french_text: string
+          id?: string
+          key_path: string
+          section: string
+          updated_at?: string
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          french_text?: string
+          id?: string
+          key_path?: string
+          section?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      translation_suggestions: {
+        Row: {
+          ai_confidence: number | null
+          context_used: string | null
+          created_at: string
+          id: string
+          key_id: string
+          language_code: string
+          status: string | null
+          suggested_text: string
+        }
+        Insert: {
+          ai_confidence?: number | null
+          context_used?: string | null
+          created_at?: string
+          id?: string
+          key_id: string
+          language_code: string
+          status?: string | null
+          suggested_text: string
+        }
+        Update: {
+          ai_confidence?: number | null
+          context_used?: string | null
+          created_at?: string
+          id?: string
+          key_id?: string
+          language_code?: string
+          status?: string | null
+          suggested_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "translation_suggestions_key_id_fkey"
+            columns: ["key_id"]
+            isOneToOne: false
+            referencedRelation: "translation_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      translations: {
+        Row: {
+          created_at: string
+          id: string
+          is_ai_generated: boolean | null
+          is_reviewed: boolean | null
+          key_id: string
+          language_code: string
+          translated_by: string | null
+          translated_text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_ai_generated?: boolean | null
+          is_reviewed?: boolean | null
+          key_id: string
+          language_code: string
+          translated_by?: string | null
+          translated_text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_ai_generated?: boolean | null
+          is_reviewed?: boolean | null
+          key_id?: string
+          language_code?: string
+          translated_by?: string | null
+          translated_text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "translations_key_id_fkey"
+            columns: ["key_id"]
+            isOneToOne: false
+            referencedRelation: "translation_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       upgrade_requests: {
         Row: {
           created_at: string
