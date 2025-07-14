@@ -44,6 +44,7 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/auth/change-password" element={<ChangePassword />} />
+            <Route path="/auth/update-password" element={<ChangePassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profil" element={<Profile />} />
             <Route path="/artistes" element={<ArtistsList />} />
