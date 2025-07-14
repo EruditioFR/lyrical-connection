@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Music, Trash2, Edit } from 'lucide-react';
+import { Plus, Search, Filter, Music, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useArtistRepertoire } from '@/hooks/useArtistRepertoire';
 import { useLyricalWorks } from '@/hooks/useLyricalWorks';
-import { RepertoireAddForm } from './repertoire/RepertoireAddForm';
+import RepertoireAddForm from './repertoire/RepertoireAddForm';
 
 interface RepertoireManagerProps {
   artistProfileId: string;
@@ -21,8 +21,8 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
 
-  const { data: repertoire = [], isLoading } = useArtistRepertoire(artistProfileId);
-  const { data: works = [] } = useLyricalWorks();
+  const { repertoire = [], isLoading } = useArtistRepertoire(artistProfileId);
+  const { works = [] } = useLyricalWorks();
 
   const categories = Array.from(new Set(works.map(work => work.category)));
 
@@ -116,7 +116,7 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes les catégories</SelectItem>
-            {categories.map(category => (
+            {categories.map((category: string) => (
               <SelectItem key={category} value={category}>
                 {category}
               </SelectItem>
@@ -183,7 +183,7 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
                     <Badge variant="outline" className="text-xs">
                       {item.lyrical_works?.category}
                     </Badge>
-                    <Badge className={`text-xs ${getMasteryColor(item.mastery_level)}`}>
+                    <Badge className={`text-xs ${getMasteryColor(item.mastery_level || 'intermediate')}`}>
                       {item.mastery_level}
                     </Badge>
                   </div>
@@ -220,3 +220,5 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
     </div>
   );
 };
+
+export default RepertoireManager;

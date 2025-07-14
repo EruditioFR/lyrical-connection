@@ -16,7 +16,7 @@ const Events = () => {
     search: ''
   });
 
-  const { data: events = [], isLoading: eventsLoading, error: eventsError } = usePublicEvents(filters);
+  const { data: events = [], isLoading: eventsLoading, error: eventsError } = usePublicEvents();
   const { data: categories = [], error: categoriesError } = useEventCategories();
 
   if (loading) {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,6 +29,7 @@ export interface ProfessionalEvent {
   program: string | null;
   contact_info: string | null;
   image_url: string | null;
+  is_featured: boolean | null;
   created_at: string;
   updated_at: string;
   applications_count?: number;
@@ -63,6 +65,7 @@ export interface PublicEvent {
   program: string | null;
   contact_info: string | null;
   image_url: string | null;
+  is_featured: boolean | null;
   created_at: string;
   updated_at: string;
   professional_profiles: {
@@ -78,8 +81,8 @@ export interface PublicEvent {
 
 export interface EventApplication {
   id: string;
-  user_id: string;
   event_id: string;
+  artist_profile_id: string;
   status: 'pending' | 'accepted' | 'rejected';
   created_at: string;
   user_profiles: {
@@ -93,7 +96,7 @@ export interface CreateEventData {
   professional_profile_id: string;
   title: string;
   description?: string;
-  event_type: string;
+  event_type: 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference';
   status: 'draft' | 'published';
   category_id?: string;
   start_date: string;
@@ -111,10 +114,19 @@ export interface CreateEventData {
   program?: string;
   contact_info?: string;
   image_url?: string;
+  is_featured?: boolean;
   participation_rules?: string;
   code_of_conduct?: string;
   cancellation_policy?: string;
   liability_waiver?: string;
+}
+
+export interface CreateApplicationData {
+  event_id: string;
+  artist_profile_id: string;
+  motivation: string;
+  experience_level: string;
+  special_requirements?: string;
 }
 
 export interface EventWithRules extends ProfessionalEvent {
@@ -283,7 +295,10 @@ export const useCreateEvent = () => {
     mutationFn: async (eventData: CreateEventData) => {
       const { data, error } = await supabase
         .from('professional_events')
-        .upsert(eventData)
+        .upsert({
+          ...eventData,
+          event_type: eventData.event_type as any
+        })
         .select()
         .single();
 
@@ -307,6 +322,43 @@ export const useCreateEvent = () => {
       toast({
         title: 'Erreur',
         description: 'Impossible de sauvegarder l\'événement',
+        variant: 'destructive',
+      });
+    }
+  });
+};
+
+export const useApplyToEvent = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (applicationData: CreateApplicationData) => {
+      const { data, error } = await supabase
+        .from('event_applications')
+        .insert(applicationData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error applying to event:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['eventApplications'] });
+      toast({
+        title: 'Succès',
+        description: 'Votre candidature a été envoyée avec succès',
+      });
+    },
+    onError: (error) => {
+      console.error('Error in applyToEvent mutation:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible d\'envoyer votre candidature',
         variant: 'destructive',
       });
     }
@@ -343,10 +395,16 @@ export const useEventApplications = (eventId: string | undefined) => {
       const { data, error } = await supabase
         .from('event_applications')
         .select(`
-          *,
-          user_profiles (
-            first_name,
-            last_name
+          id,
+          event_id,
+          artist_profile_id,
+          status,
+          created_at,
+          artist_profiles!inner (
+            user_profiles (
+              first_name,
+              last_name
+            )
           )
         `)
         .eq('event_id', eventId)
@@ -357,7 +415,14 @@ export const useEventApplications = (eventId: string | undefined) => {
         throw error;
       }
 
-      return data as EventApplication[];
+      return data?.map(app => ({
+        id: app.id,
+        event_id: app.event_id,
+        artist_profile_id: app.artist_profile_id,
+        status: app.status,
+        created_at: app.created_at,
+        user_profiles: app.artist_profiles?.user_profiles || { first_name: '', last_name: '' }
+      })) as EventApplication[] || [];
     },
     enabled: !!eventId,
   });
