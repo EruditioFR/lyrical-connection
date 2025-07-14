@@ -185,12 +185,16 @@ const ArtistProfile = () => {
                     )}
                     
                     {!isOwnProfile && isProfessional && (
-                      <ContactArtistDialog artistProfile={profile}>
-                        <Button>
-                          <MessageCircle className="w-4 h-4 mr-2" />
-                          Contacter
-                        </Button>
-                      </ContactArtistDialog>
+                      <ContactArtistDialog 
+                        artistId={profile.id}
+                        artistName={profile.stage_name}
+                        trigger={
+                          <Button>
+                            <MessageCircle className="w-4 h-4 mr-2" />
+                            Contacter
+                          </Button>
+                        }
+                      />
                     )}
                   </div>
                 </div>
@@ -242,15 +246,15 @@ const ArtistProfile = () => {
             </TabsList>
 
             <TabsContent value="repertoire" className="mt-6">
-              <RepertoireTab artistProfile={profile} />
+              <RepertoireTab artistProfileId={profile.id} />
             </TabsContent>
 
             <TabsContent value="photos" className="mt-6">
-              <PhotosTab artistProfile={profile} />
+              <PhotosTab artistProfileId={profile.id} />
             </TabsContent>
 
             <TabsContent value="audio" className="mt-6">
-              <AudioTab artistProfile={profile} />
+              <AudioTab artistProfileId={profile.id} />
             </TabsContent>
           </Tabs>
 
