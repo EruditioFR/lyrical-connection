@@ -19,7 +19,6 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
 
   const { repertoire = [], isLoading } = useArtistRepertoire(artistProfileId);
   const { works = [] } = useLyricalWorks();
@@ -43,14 +42,8 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
     }
   };
 
-  const handleEdit = (item: any) => {
-    setEditingItem(item);
-    setShowAddForm(true);
-  };
-
   const handleCloseForm = () => {
     setShowAddForm(false);
-    setEditingItem(null);
   };
 
   if (isLoading) {
@@ -85,12 +78,11 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>
-                {editingItem ? 'Modifier' : 'Ajouter'} une œuvre au répertoire
+                Ajouter une œuvre au répertoire
               </DialogTitle>
             </DialogHeader>
             <RepertoireAddForm 
               artistProfileId={artistProfileId}
-              editingItem={editingItem}
               onClose={handleCloseForm}
             />
           </DialogContent>
@@ -163,16 +155,6 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
                     <p className="text-sm text-muted-foreground">
                       {item.lyrical_works?.composer}
                     </p>
-                  </div>
-                  <div className="flex gap-1 ml-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(item)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </CardHeader>

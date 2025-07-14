@@ -9,21 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Music } from 'lucide-react';
 import { useLyricalWorks } from '@/hooks/useLyricalWorks';
 import { useSearchVenues } from '@/hooks/useVenues';
+import { useArtistRepertoire } from '@/hooks/useArtistRepertoire';
 
 interface RepertoireAddFormProps {
   artistProfileId: string;
-  onAdd: (data: {
-    artist_profile_id: string;
-    work_id: string;
-    role_id: string;
-    performance_year: number | null;
-    venue: string | null;
-    notes: string | null;
-  }) => void;
-  isAdding: boolean;
+  onClose: () => void;
 }
 
-const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, onAdd, isAdding }) => {
+const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedWork, setSelectedWork] = useState<string>('');
   const [selectedRole, setSelectedRole] = useState<string>('');
@@ -31,10 +24,10 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
   const [venue, setVenue] = useState<string>('');
   const [venueSearch, setVenueSearch] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
-  const [showForm, setShowForm] = useState(false);
 
   const { works } = useLyricalWorks(searchTerm);
   const { data: venues = [] } = useSearchVenues(venueSearch);
+  const { addToRepertoire, isAdding } = useArtistRepertoire(artistProfileId);
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -84,40 +77,32 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
     setVenueSearch(venueText);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!selectedWork || !selectedRole) return;
 
-    onAdd({
-      artist_profile_id: artistProfileId,
-      work_id: selectedWork,
-      role_id: selectedRole,
-      performance_year: performanceYear,
-      venue: venue || null,
-      notes: notes || null,
-    });
+    try {
+      await addToRepertoire({
+        artist_profile_id: artistProfileId,
+        work_id: selectedWork,
+        role_id: selectedRole,
+        performance_year: performanceYear,
+        venue: venue || null,
+        notes: notes || null,
+      });
 
-    // Reset form
-    setSelectedWork('');
-    setSelectedRole('');
-    setPerformanceYear(null);
-    setVenue('');
-    setVenueSearch('');
-    setNotes('');
-    setSearchTerm('');
-    setShowForm(false);
+      // Reset form
+      setSelectedWork('');
+      setSelectedRole('');
+      setPerformanceYear(null);
+      setVenue('');
+      setVenueSearch('');
+      setNotes('');
+      setSearchTerm('');
+      onClose();
+    } catch (error) {
+      console.error('Error adding to repertoire:', error);
+    }
   };
-
-  if (!showForm) {
-    return (
-      <Button
-        onClick={() => setShowForm(true)}
-        className="flex items-center gap-2"
-      >
-        <Plus className="h-4 w-4" />
-        Ajouter un air
-      </Button>
-    );
-  }
 
   return (
     <Card className="border-2 border-dashed border-gray-300">
@@ -238,7 +223,7 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
           </Button>
           <Button
             variant="outline"
-            onClick={() => setShowForm(false)}
+            onClick={onClose}
           >
             Annuler
           </Button>

@@ -401,10 +401,9 @@ export const useEventApplications = (eventId: string | undefined) => {
           status,
           created_at,
           artist_profiles!inner (
-            user_profiles (
-              first_name,
-              last_name
-            )
+            id,
+            user_id,
+            stage_name
           )
         `)
         .eq('event_id', eventId)
@@ -421,7 +420,10 @@ export const useEventApplications = (eventId: string | undefined) => {
         artist_profile_id: app.artist_profile_id,
         status: app.status,
         created_at: app.created_at,
-        user_profiles: app.artist_profiles?.user_profiles || { first_name: '', last_name: '' }
+        user_profiles: {
+          first_name: app.artist_profiles?.stage_name?.split(' ')[0] || '',
+          last_name: app.artist_profiles?.stage_name?.split(' ').slice(1).join(' ') || ''
+        }
       })) as EventApplication[] || [];
     },
     enabled: !!eventId,
