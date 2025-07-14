@@ -1,12 +1,12 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Check, X, Edit, Sparkles, Copy } from 'lucide-react';
+import { Check, X, Edit, Sparkles, Copy, Loader2 } from 'lucide-react';
 import { TranslationKey, Translation, useUpdateTranslation } from '@/hooks/useTranslations';
+import { useAITranslation } from '@/hooks/useAITranslation';
 import { useToast } from '@/hooks/use-toast';
 
 interface TranslationTableProps {
@@ -26,11 +26,12 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
 }) => {
   const [editingCell, setEditingCell] = useState<{ keyId: string; language: string } | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [loadingAI, setLoadingAI] = useState<{ keyId: string; language: string } | null>(null);
   const { toast } = useToast();
 
   const updateTranslation = useUpdateTranslation();
+  const aiTranslation = useAITranslation();
 
-  // Obtenir la traduction pour une clé et une langue donnée
   const getTranslation = (keyId: string, languageCode: string): Translation | undefined => {
     return translations.find(t => t.key_id === keyId && t.language_code === languageCode);
   };
@@ -72,15 +73,38 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
   };
 
   const handleAITranslate = async (keyId: string, language: string) => {
-    // TODO: Implémenter l'appel à l'API IA
-    toast({
-      title: "Fonctionnalité en cours de développement",
-      description: "La traduction automatique par IA sera bientôt disponible.",
-    });
+    const key = translationKeys.find(k => k.id === keyId);
+    if (!key) {
+      toast({
+        title: "Erreur",
+        description: "Clé de traduction introuvable",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoadingAI({ keyId, language });
+
+    try {
+      await aiTranslation.mutateAsync({
+        keyId,
+        languageCode: language,
+        frenchText: key.french_text,
+        context: key.context
+      });
+    } catch (error) {
+      console.error('AI translation error:', error);
+    } finally {
+      setLoadingAI(null);
+    }
   };
 
   const isEditing = (keyId: string, language: string) => {
     return editingCell?.keyId === keyId && editingCell?.language === language;
+  };
+
+  const isLoadingAI = (keyId: string, language: string) => {
+    return loadingAI?.keyId === keyId && loadingAI?.language === language;
   };
 
   return (
@@ -118,6 +142,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
               {supportedLanguages.map((lang) => {
                 const translation = getTranslation(key.id, lang.code);
                 const editing = isEditing(key.id, lang.code);
+                const loadingTranslation = isLoadingAI(key.id, lang.code);
 
                 return (
                   <div key={lang.code} className="border rounded-lg p-3">
@@ -149,6 +174,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
                           variant="ghost"
                           onClick={() => handleCopyFromFrench(key.id, lang.code)}
                           title="Copier depuis le français"
+                          disabled={loadingTranslation}
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
@@ -157,10 +183,15 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
                           variant="ghost"
                           onClick={() => handleAITranslate(key.id, lang.code)}
                           title="Traduire avec l'IA"
+                          disabled={loadingTranslation || aiTranslation.isPending}
                         >
-                          <Sparkles className="h-3 w-3" />
+                          {loadingTranslation ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Sparkles className="h-3 w-3" />
+                          )}
                         </Button>
-                        {!editing && (
+                        {!editing && !loadingTranslation && (
                           <Button
                             size="sm"
                             variant="ghost"
@@ -201,7 +232,12 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
                       </div>
                     ) : (
                       <div className="min-h-[60px] flex items-center">
-                        {translation ? (
+                        {loadingTranslation ? (
+                          <div className="flex items-center gap-2 text-sm text-blue-600">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Génération de la traduction...
+                          </div>
+                        ) : translation ? (
                           <p className="text-sm">{translation.translated_text}</p>
                         ) : (
                           <p className="text-sm text-gray-400 italic">
