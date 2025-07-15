@@ -305,19 +305,21 @@ const ProfessionalEventApplications = () => {
                         >
                           Voir le profil complet
                         </Button>
-                        {application.status === 'pending' && (
+                        {(application.status === 'pending' || application.status === 'waitlisted') && (
                           <>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => updateApplication.mutate({ 
-                                applicationId: application.id, 
-                                status: 'waitlisted' 
-                              })}
-                              disabled={updateApplication.isPending}
-                            >
-                              Présélectionner
-                            </Button>
+                            {application.status === 'pending' && (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => updateApplication.mutate({ 
+                                  applicationId: application.id, 
+                                  status: 'waitlisted' 
+                                })}
+                                disabled={updateApplication.isPending}
+                              >
+                                Présélectionner
+                              </Button>
+                            )}
                             <Button 
                               variant="default" 
                               size="sm"
@@ -327,7 +329,7 @@ const ProfessionalEventApplications = () => {
                               })}
                               disabled={updateApplication.isPending}
                             >
-                              Accepter
+                              {application.status === 'waitlisted' ? 'Sélectionner' : 'Accepter'}
                             </Button>
                             <Button 
                               variant="destructive" 
