@@ -123,10 +123,28 @@ export const useProfessionalEvents = () => {
     queryFn: async () => {
       if (!user?.id) return [];
 
+      // D'abord, récupérer l'ID du profil professionnel
+      const { data: profile, error: profileError } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching professional profile:', profileError);
+        throw profileError;
+      }
+
+      if (!profile) {
+        console.log('No professional profile found for user:', user.id);
+        return [];
+      }
+
+      // Ensuite, récupérer les événements avec l'ID du profil professionnel
       const { data, error } = await supabase
         .from('professional_events')
         .select('*')
-        .eq('professional_profile_id', user.id)
+        .eq('professional_profile_id', profile.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -174,9 +192,25 @@ export const useCreateEvent = () => {
     mutationFn: async (newEvent: CreateEventData) => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      // D'abord, récupérer l'ID du profil professionnel
+      const { data: profile, error: profileError } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching professional profile:', profileError);
+        throw profileError;
+      }
+
+      if (!profile) {
+        throw new Error('No professional profile found for user');
+      }
+
       const eventData = {
         ...newEvent,
-        professional_profile_id: user.id,
+        professional_profile_id: profile.id,
         status: newEvent.status || 'draft' as EventStatus,
         currency: newEvent.currency || 'EUR',
         is_featured: newEvent.is_featured || false,
