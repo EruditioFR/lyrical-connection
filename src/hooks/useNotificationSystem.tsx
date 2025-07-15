@@ -180,15 +180,30 @@ export const useNotificationSystem = () => {
         // Récupérer les inscriptions à l'événement
         const { data: eventData, error: eventError } = await supabase
           .from('event_applications')
-          .select(`
-            *,
-            artist_profiles(user_id)
-          `)
+          .select('*')
           .eq('event_id', eventId);
 
         if (eventError) throw eventError;
         
-        applications = eventData || [];
+        // Récupérer les user_id pour chaque artist_profile_id
+        if (eventData && eventData.length > 0) {
+          const artistProfileIds = eventData.map(app => app.artist_profile_id);
+          const { data: artistProfiles, error: profilesError } = await supabase
+            .from('artist_profiles')
+            .select('id, user_id')
+            .in('id', artistProfileIds);
+
+          if (profilesError) throw profilesError;
+
+          // Enrichir les applications avec les user_id
+          applications = eventData.map(app => ({
+            ...app,
+            artist_profiles: { user_id: artistProfiles?.find(p => p.id === app.artist_profile_id)?.user_id }
+          }));
+        } else {
+          applications = [];
+        }
+        
         entityName = event?.title || 'Événement';
         entityType = 'event';
       }
