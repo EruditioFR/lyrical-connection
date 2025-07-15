@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -73,7 +72,7 @@ export interface EventApplication {
     user_profiles?: {
       first_name: string;
       last_name: string;
-    };
+    } | null;
   };
 }
 
@@ -364,7 +363,7 @@ export const useEventApplications = (eventId?: string) => {
             birth_date,
             contact_email,
             phone,
-            user_profiles!inner(
+            user_profiles(
               first_name,
               last_name
             )

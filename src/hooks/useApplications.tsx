@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,11 +11,23 @@ type ApplicationUpdate = TablesUpdate<'applications'>;
 // Application avec les données liées incluant le profil artiste complet
 type ApplicationWithDetails = Application & {
   castings?: Tables<'castings'>;
-  artist_profiles?: Tables<'artist_profiles'> & {
+  artist_profiles?: {
+    id: string;
+    stage_name: string;
+    voice_type: string | null;
+    location: string | null;
+    profile_image_url: string | null;
+    bio: string | null;
+    birth_date: string | null;
+    gender: string | null;
+    nationality: string | null;
+    experience_years: number | null;
+    contact_email: string | null;
+    phone: string | null;
     user_profiles?: {
       first_name: string;
       last_name: string;
-    };
+    } | null;
   };
 };
 
