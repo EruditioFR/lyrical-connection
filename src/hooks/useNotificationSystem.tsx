@@ -144,36 +144,52 @@ export const useNotificationSystem = () => {
       let entityType = '';
 
       if (castingId) {
-        // Récupérer les candidatures du casting avec le nom du casting
+        // Récupérer le nom du casting
+        const { data: casting, error: castingInfoError } = await supabase
+          .from('castings')
+          .select('title')
+          .eq('id', castingId)
+          .single();
+
+        if (castingInfoError) throw castingInfoError;
+        
+        // Récupérer les candidatures du casting
         const { data: castingData, error: castingError } = await supabase
           .from('applications')
           .select(`
             *,
-            artist_profiles!inner(user_id),
-            castings!inner(title)
+            artist_profiles(user_id)
           `)
           .eq('casting_id', castingId);
 
         if (castingError) throw castingError;
         
         applications = castingData || [];
-        entityName = applications[0]?.castings?.title || 'Casting';
+        entityName = casting?.title || 'Casting';
         entityType = 'casting';
       } else if (eventId) {
-        // Récupérer les inscriptions à l'événement avec le nom de l'événement
+        // Récupérer le nom de l'événement
+        const { data: event, error: eventInfoError } = await supabase
+          .from('professional_events')
+          .select('title')
+          .eq('id', eventId)
+          .single();
+
+        if (eventInfoError) throw eventInfoError;
+        
+        // Récupérer les inscriptions à l'événement
         const { data: eventData, error: eventError } = await supabase
           .from('event_applications')
           .select(`
             *,
-            artist_profiles!inner(user_id),
-            professional_events!inner(title)
+            artist_profiles(user_id)
           `)
           .eq('event_id', eventId);
 
         if (eventError) throw eventError;
         
         applications = eventData || [];
-        entityName = applications[0]?.professional_events?.title || 'Événement';
+        entityName = event?.title || 'Événement';
         entityType = 'event';
       }
 
