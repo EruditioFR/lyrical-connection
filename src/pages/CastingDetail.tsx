@@ -6,16 +6,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCasting } from '@/hooks/useCastings';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserType } from '@/hooks/useUserType';
+import { useArtistCastingApplication } from '@/hooks/useEvents';
 import { 
   Calendar, MapPin, Users, Euro, Clock, 
   ArrowLeft, Send, Loader2, Eye 
 } from 'lucide-react';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const CastingDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isArtist } = useUserType();
   const { casting, isLoading } = useCasting(id!);
+  const { data: application } = useArtistCastingApplication(id!);
 
   if (isLoading) {
     return (
@@ -114,7 +120,33 @@ const CastingDetail = () => {
             </div>
             
             <div className="flex gap-2">
-              {user && (
+              {/* Si c'est un artiste et qu'il a postulé, afficher les infos */}
+              {isArtist && user && application ? (
+                <Card className="bg-muted/50 p-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm">Ma candidature</h4>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      Candidature envoyée le {format(new Date(application.created_at), 'dd MMMM yyyy', { locale: fr })}
+                    </div>
+                    {casting.results_published ? (
+                      <Badge className={
+                        application.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        application.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                        application.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }>
+                        {application.status === 'accepted' ? 'Accepté(e)' :
+                         application.status === 'rejected' ? 'Refusé(e)' :
+                         application.status === 'waitlisted' ? 'Présélectionné(e)' :
+                         'En attente'}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">En attente</Badge>
+                    )}
+                  </div>
+                </Card>
+              ) : isArtist && user ? (
                 <Button 
                   className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
                   onClick={() => navigate(`/castings/${casting.id}/postuler`)}
@@ -122,9 +154,9 @@ const CastingDetail = () => {
                   <Send className="h-4 w-4 mr-2" />
                   Postuler
                 </Button>
-              )}
+              ) : null}
               
-              {user && (
+              {!isArtist && user && (
                 <Button
                   variant="outline"
                   onClick={() => navigate(`/professional/casting-applications?castingId=${casting.id}`)}
@@ -321,7 +353,34 @@ const CastingDetail = () => {
             )}
 
             {/* Action */}
-            {user && (
+            {isArtist && user && application ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+                    <h4 className="font-medium">Ma candidature</h4>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      Candidature envoyée le {format(new Date(application.created_at), 'dd MMMM yyyy', { locale: fr })}
+                    </div>
+                    {casting.results_published ? (
+                      <Badge className={
+                        application.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                        application.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                        application.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }>
+                        {application.status === 'accepted' ? 'Accepté(e)' :
+                         application.status === 'rejected' ? 'Refusé(e)' :
+                         application.status === 'waitlisted' ? 'Présélectionné(e)' :
+                         'En attente'}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary">En attente</Badge>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : isArtist && user ? (
               <Card>
                 <CardContent className="pt-6 space-y-3">
                   <Button 
@@ -331,7 +390,11 @@ const CastingDetail = () => {
                     <Send className="h-4 w-4 mr-2" />
                     Postuler à ce casting
                   </Button>
-                  
+                </CardContent>
+              </Card>
+            ) : !isArtist && user ? (
+              <Card>
+                <CardContent className="pt-6">
                   <Button
                     variant="outline"
                     className="w-full"
@@ -342,7 +405,7 @@ const CastingDetail = () => {
                   </Button>
                 </CardContent>
               </Card>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

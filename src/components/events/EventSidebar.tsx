@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Users, Share2, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Users, Share2, FileText, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -13,13 +14,17 @@ interface EventSidebarProps {
   applicationsCount: number;
   getCurrencySymbol: (currency: string) => string;
   onRulesClick?: () => void;
+  isArtist?: boolean;
+  artistApplication?: any;
 }
 
 const EventSidebar: React.FC<EventSidebarProps> = ({
   event,
   applicationsCount,
   getCurrencySymbol,
-  onRulesClick
+  onRulesClick,
+  isArtist,
+  artistApplication
 }) => {
   const hasRules = event?.participation_rules || event?.code_of_conduct || 
                    event?.cancellation_policy || event?.liability_waiver;
@@ -67,12 +72,41 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
         </div>
         
         <div className="space-y-3">
-          <Button className="w-full" asChild>
-            <Link to={`/evenements/${event.id}/inscriptions`}>
-              <Users className="w-4 h-4 mr-2" />
-              Voir les inscriptions
-            </Link>
-          </Button>
+          {/* Si c'est un artiste et qu'il a postulé, afficher les infos de candidature */}
+          {isArtist && artistApplication ? (
+            <Card className="bg-muted/50">
+              <CardContent className="p-4 space-y-3">
+                <h4 className="font-medium text-sm">Mon inscription</h4>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="w-4 h-4" />
+                  Inscrit le {format(new Date(artistApplication.applied_at), 'dd MMMM yyyy', { locale: fr })}
+                </div>
+                {event.results_published && (
+                  <Badge className={
+                    artistApplication.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                    artistApplication.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                    artistApplication.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }>
+                    {artistApplication.status === 'accepted' ? 'Accepté(e)' :
+                     artistApplication.status === 'rejected' ? 'Refusé(e)' :
+                     artistApplication.status === 'waitlisted' ? 'Présélectionné(e)' :
+                     'En attente'}
+                  </Badge>
+                )}
+                {!event.results_published && (
+                  <Badge variant="secondary">En attente</Badge>
+                )}
+              </CardContent>
+            </Card>
+          ) : !isArtist && (
+            <Button className="w-full" asChild>
+              <Link to={`/evenements/${event.id}/inscriptions`}>
+                <Users className="w-4 h-4 mr-2" />
+                Voir les inscriptions
+              </Link>
+            </Button>
+          )}
           
           {hasRules && onRulesClick && (
             <Button 

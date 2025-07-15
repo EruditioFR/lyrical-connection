@@ -12,14 +12,17 @@ import EventDetailError from '@/components/events/EventDetailError';
 import { Button } from '@/components/ui/button';
 import { Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserType } from '@/hooks/useUserType';
 import { useProfessionalMedia } from '@/hooks/useProfessionalMedia';
 import { useEventDetail, useEventApplicationsCount } from '@/hooks/useEventDetail';
+import { useArtistEventApplication } from '@/hooks/useEvents';
 import { getEventTypeLabel, getStatusLabel, getStatusColor, getCurrencySymbol } from '@/utils/eventHelpers';
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isArtist } = useUserType();
   const [selectedVideo, setSelectedVideo] = useState<{src: string, title: string, description?: string} | null>(null);
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
 
@@ -28,6 +31,7 @@ const EventDetail = () => {
 
   const { data: event, isLoading, error } = useEventDetail(id);
   const { data: applicationsCount } = useEventApplicationsCount(id);
+  const { data: artistApplication } = useArtistEventApplication(id);
   const { media, getMediaUrl } = useProfessionalMedia(event?.professional_profile_id);
 
   const handleVideoClick = (videoSrc: string, title: string, description?: string) => {
@@ -95,12 +99,14 @@ const EventDetail = () => {
 
         {/* Barre latérale */}
         <div className="space-y-6">
-          <EventSidebar
-            event={event}
-            applicationsCount={applicationsCount || 0}
-            getCurrencySymbol={getCurrencySymbol}
-            onRulesClick={handleRulesClick}
-          />
+        <EventSidebar
+          event={event}
+          applicationsCount={applicationsCount || 0}
+          getCurrencySymbol={getCurrencySymbol}
+          onRulesClick={handleRulesClick}
+          isArtist={isArtist}
+          artistApplication={artistApplication}
+        />
         </div>
       </div>
 
