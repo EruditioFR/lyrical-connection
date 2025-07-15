@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,704 +8,292 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useCreateEvent, useEventCategories, CreateEventData, ProfessionalEvent } from '@/hooks/useEvents';
-import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import { AddressAutocomplete } from './AddressAutocomplete';
-import { EventMediaSection } from './EventMediaSection';
-import { supabase } from '@/integrations/supabase/client';
+import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { CalendarIcon, Loader2, AlertCircle, Upload, Link as LinkIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useCreateEvent, useUpdateEvent, useEventDetail, CreateEventData, Event } from '@/hooks/useEvents';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
-interface EventFormProps {
-  event?: ProfessionalEvent | null;
-  onClose: () => void;
-}
-
-type EventFormData = {
-  title: string;
-  description: string;
-  event_type: 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference';
-  status: 'draft' | 'published';
-  category_id: string;
-  start_date: string;
-  end_date: string;
-  registration_deadline: string;
-  address: string;
-  latitude: string;
-  longitude: string;
-  max_participants: string;
-  price: string;
-  currency: string;
-  requirements: string;
-  program: string;
-  contact_info: string;
-  image_url: string;
-};
-
-export const EventForm: React.FC<EventFormProps> = ({ event, onClose }) => {
-  const [formData, setFormData] = useState<EventFormData>({
-    title: '',
-    description: '',
-    event_type: 'masterclass',
-    status: 'draft',
-    category_id: '',
-    start_date: '',
-    end_date: '',
-    registration_deadline: '',
-    address: '',
-    latitude: '',
-    longitude: '',
-    max_participants: '',
-    price: '',
-    currency: 'EUR',
-    requirements: '',
-    program: '',
-    contact_info: '',
-    image_url: '',
-  });
-
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
-  const [registrationDeadline, setRegistrationDeadline] = useState<Date>();
-  const [dateErrors, setDateErrors] = useState<{
-    endDate?: string;
-    registrationDeadline?: string;
-  }>({});
-  const [logoUploadType, setLogoUploadType] = useState<'url' | 'upload'>('url');
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
-
-  const { data: categories = [] } = useEventCategories();
-  const { profile: professionalProfile } = useProfessionalProfile();
-  const createEventMutation = useCreateEvent();
+const EventForm = () => {
+  const { eventId } = useParams();
+  const navigate = useNavigate();
   const { toast } = useToast();
+  const isEditing = !!eventId;
+
+  const { data: existingEvent, isLoading: eventLoading } = useEventDetail(eventId);
+  const { mutate: createEvent, isPending: isCreating } = useCreateEvent();
+  const { mutate: updateEvent, isPending: isUpdating } = useUpdateEvent();
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [eventType, setEventType] = useState('concert');
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [location, setLocation] = useState('');
+  const [venue, setVenue] = useState('');
+  const [price, setPrice] = useState('');
+  const [maxParticipants, setMaxParticipants] = useState('');
+  const [requirements, setRequirements] = useState('');
+  const [program, setProgram] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
 
   useEffect(() => {
-    if (event) {
-      setFormData({
-        title: event.title,
-        description: event.description || '',
-        event_type: event.event_type as 'masterclass' | 'stage' | 'concours' | 'atelier' | 'conference',
-        status: event.status === 'draft' || event.status === 'published' ? event.status : 'draft',
-        category_id: event.category_id || '',
-        start_date: event.start_date,
-        end_date: event.end_date,
-        registration_deadline: event.registration_deadline || '',
-        address: (event as any).address || '',
-        latitude: (event as any).latitude?.toString() || '',
-        longitude: (event as any).longitude?.toString() || '',
-        max_participants: event.max_participants?.toString() || '',
-        price: event.price?.toString() || '',
-        currency: event.currency,
-        requirements: event.requirements || '',
-        program: event.program || '',
-        contact_info: event.contact_info || '',
-        image_url: event.image_url || '',
-      });
-      
-      setStartDate(new Date(event.start_date));
-      setEndDate(new Date(event.end_date));
-      if (event.registration_deadline) {
-        setRegistrationDeadline(new Date(event.registration_deadline));
-      }
+    if (existingEvent) {
+      setTitle(existingEvent.title);
+      setDescription(existingEvent.description || '');
+      setEventType(existingEvent.event_type);
+      setStartDate(existingEvent.start_date ? new Date(existingEvent.start_date) : null);
+      setEndDate(existingEvent.end_date ? new Date(existingEvent.end_date) : null);
+      setLocation(existingEvent.location || '');
+      setVenue(existingEvent.venue || '');
+      setPrice(existingEvent.price ? existingEvent.price.toString() : '');
+      setMaxParticipants(existingEvent.max_participants ? existingEvent.max_participants.toString() : '');
+      setRequirements(existingEvent.requirements || '');
+      setProgram(existingEvent.program || '');
+      setContactInfo(existingEvent.contact_info || '');
     }
-  }, [event]);
+  }, [existingEvent]);
 
-  const handleInputChange = (field: keyof EventFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const validateDates = (start: Date | undefined, end: Date | undefined, registration: Date | undefined) => {
-    const errors: { endDate?: string; registrationDeadline?: string } = {};
-    
-    if (start && end && end < start) {
-      errors.endDate = 'La date de fin doit être après la date de début';
-    }
-    
-    if (start && registration && registration >= start) {
-      errors.registrationDeadline = 'La date limite d\'inscription doit être avant la date de début';
-    }
-    
-    setDateErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleDateChange = (field: string, date: Date | undefined) => {
-    if (date) {
-      const isoString = date.toISOString();
-      setFormData(prev => ({ ...prev, [field]: isoString }));
-      
-      let newStartDate = startDate;
-      let newEndDate = endDate;
-      let newRegistrationDeadline = registrationDeadline;
-      
-      if (field === 'start_date') {
-        setStartDate(date);
-        newStartDate = date;
-      }
-      if (field === 'end_date') {
-        setEndDate(date);
-        newEndDate = date;
-      }
-      if (field === 'registration_deadline') {
-        setRegistrationDeadline(date);
-        newRegistrationDeadline = date;
-      }
-      
-      validateDates(newStartDate, newEndDate, newRegistrationDeadline);
-    }
-  };
-
-  const handleLocationSelect = (latitude: number, longitude: number) => {
-    console.log('Location selected:', { latitude, longitude });
-    setFormData(prev => ({
-      ...prev,
-      latitude: latitude.toString(),
-      longitude: longitude.toString()
-    }));
-  };
-
-  const uploadLogoToStorage = async (file: File): Promise<string | null> => {
-    if (!professionalProfile?.id) return null;
-
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${professionalProfile.id}/${Date.now()}.${fileExt}`;
-
-    try {
-      const { data, error } = await supabase.storage
-        .from('professional-media')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (error) {
-        console.error('Error uploading logo:', error);
-        toast({
-          title: 'Erreur',
-          description: 'Impossible d\'uploader le logo',
-          variant: 'destructive',
-        });
-        return null;
-      }
-
-      // Get the public URL
-      const { data: publicUrlData } = supabase.storage
-        .from('professional-media')
-        .getPublicUrl(data.path);
-
-      return publicUrlData.publicUrl;
-    } catch (error) {
-      console.error('Error uploading logo:', error);
-      toast({
-        title: 'Erreur',
-        description: 'Impossible d\'uploader le logo',
-        variant: 'destructive',
-      });
-      return null;
-    }
-  };
-
-  const handleLogoFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setLogoFile(file);
-    setIsUploadingLogo(true);
-
-    // Upload to Supabase Storage
-    const uploadedUrl = await uploadLogoToStorage(file);
-    
-    if (uploadedUrl) {
-      setFormData(prev => ({ ...prev, image_url: uploadedUrl }));
-      toast({
-        title: 'Succès',
-        description: 'Logo uploadé avec succès',
-      });
-    }
-
-    setIsUploadingLogo(false);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    console.log('HandleSubmit called');
-    console.log('Professional profile:', professionalProfile);
-    console.log('Form data:', formData);
-    
-    if (!professionalProfile) {
-      console.error('No professional profile found');
+    if (!title || !startDate || !endDate) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires.",
+        variant: "destructive"
+      });
       return;
     }
 
-    if (!formData.title || !formData.event_type || !formData.start_date || !formData.end_date) {
-      console.error('Missing required fields');
-      return;
-    }
+    const eventData: CreateEventData = {
+      title,
+      description: description || null,
+      event_type: eventType as any,
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
+      location: location || null,
+      venue: venue || null,
+      price: price ? parseFloat(price) : null,
+      max_participants: maxParticipants ? parseInt(maxParticipants) : null,
+      requirements: requirements || null,
+      program: program || null,
+      contact_info: contactInfo || null,
+      status: 'draft',
+      currency: 'EUR',
+      is_featured: false
+    };
 
-    // Valider les dates avant soumission
-    if (!validateDates(startDate, endDate, registrationDeadline)) {
-      console.error('Date validation failed');
-      return;
-    }
-
-    try {
-      const eventData: CreateEventData & { id?: string } = {
-        professional_profile_id: professionalProfile.id,
-        title: formData.title,
-        description: formData.description || undefined,
-        event_type: formData.event_type,
-        status: formData.status,
-        category_id: formData.category_id || undefined,
-        start_date: formData.start_date,
-        end_date: formData.end_date,
-        registration_deadline: formData.registration_deadline || undefined,
-        location: undefined, // Removed location field
-        venue: undefined, // Removed venue field
-        address: formData.address || undefined,
-        latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
-        longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
-        max_participants: formData.max_participants ? parseInt(formData.max_participants) : undefined,
-        price: formData.price ? parseFloat(formData.price) : undefined,
-        currency: formData.currency,
-        requirements: formData.requirements || undefined,
-        program: formData.program || undefined,
-        contact_info: formData.contact_info || undefined,
-        image_url: formData.image_url || undefined,
+    if (isEditing && existingEvent) {
+      const updateData: Event = {
+        ...existingEvent,
+        ...eventData,
+        professional_profile_id: existingEvent.professional_profile_id
       };
-
-      if (event) {
-        eventData.id = event.id;
-      }
-
-      console.log('Submitting event data:', eventData);
-
-      await createEventMutation.mutateAsync(eventData);
-      onClose();
-    } catch (error) {
-      console.error('Error in handleSubmit:', error);
+      updateEvent(updateData, {
+        onSuccess: () => {
+          toast({
+            title: "Succès",
+            description: "Événement mis à jour avec succès."
+          });
+          navigate('/professional/events');
+        }
+      });
+    } else {
+      createEvent(eventData, {
+        onSuccess: () => {
+          toast({
+            title: "Succès", 
+            description: "Événement créé avec succès."
+          });
+          navigate('/professional/events');
+        }
+      });
     }
   };
 
-  const eventTypes = [
-    { value: 'masterclass', label: 'Masterclass' },
-    { value: 'stage', label: 'Stage' },
-    { value: 'concours', label: 'Concours' },
-    { value: 'atelier', label: 'Atelier' },
-    { value: 'conference', label: 'Conférence' },
-  ] as const;
-
-  const currencies = [
-    // Top currencies
-    { value: 'EUR', label: 'EUR (€)', symbol: '€' },
-    { value: 'USD', label: 'USD ($)', symbol: '$' },
-    { value: 'GBP', label: 'GBP (£)', symbol: '£' },
-    // Other major currencies alphabetically
-    { value: 'AED', label: 'AED (د.إ)', symbol: 'د.إ' },
-    { value: 'AUD', label: 'AUD (A$)', symbol: 'A$' },
-    { value: 'BRL', label: 'BRL (R$)', symbol: 'R$' },
-    { value: 'CAD', label: 'CAD (C$)', symbol: 'C$' },
-    { value: 'CHF', label: 'CHF (Fr)', symbol: 'Fr' },
-    { value: 'CNY', label: 'CNY (¥)', symbol: '¥' },
-    { value: 'CZK', label: 'CZK (Kč)', symbol: 'Kč' },
-    { value: 'DKK', label: 'DKK (kr)', symbol: 'kr' },
-    { value: 'EGP', label: 'EGP (E£)', symbol: 'E£' },
-    { value: 'HKD', label: 'HKD (HK$)', symbol: 'HK$' },
-    { value: 'HUF', label: 'HUF (Ft)', symbol: 'Ft' },
-    { value: 'IDR', label: 'IDR (Rp)', symbol: 'Rp' },
-    { value: 'ILS', label: 'ILS (₪)', symbol: '₪' },
-    { value: 'INR', label: 'INR (₹)', symbol: '₹' },
-    { value: 'JPY', label: 'JPY (¥)', symbol: '¥' },
-    { value: 'KRW', label: 'KRW (₩)', symbol: '₩' },
-    { value: 'MAD', label: 'MAD (د.م.)', symbol: 'د.م.' },
-    { value: 'MXN', label: 'MXN (Mex$)', symbol: 'Mex$' },
-    { value: 'NOK', label: 'NOK (kr)', symbol: 'kr' },
-    { value: 'NZD', label: 'NZD (NZ$)', symbol: 'NZ$' },
-    { value: 'PLN', label: 'PLN (zł)', symbol: 'zł' },
-    { value: 'RON', label: 'RON (lei)', symbol: 'lei' },
-    { value: 'RUB', label: 'RUB (₽)', symbol: '₽' },
-    { value: 'SAR', label: 'SAR (﷼)', symbol: '﷼' },
-    { value: 'SEK', label: 'SEK (kr)', symbol: 'kr' },
-    { value: 'SGD', label: 'SGD (S$)', symbol: 'S$' },
-    { value: 'THB', label: 'THB (฿)', symbol: '฿' },
-    { value: 'TRY', label: 'TRY (₺)', symbol: '₺' },
-    { value: 'ZAR', label: 'ZAR (R)', symbol: 'R' },
-  ];
-
-  const DatePicker = ({ 
-    value, 
-    onChange, 
-    label, 
-    placeholder = "Sélectionner", 
-    error,
-    minDate,
-    maxDate 
-  }: {
-    value?: Date;
-    onChange: (date: Date | undefined) => void;
-    label: string;
-    placeholder?: string;
-    error?: string;
-    minDate?: Date;
-    maxDate?: Date;
-  }) => (
-    <div className="space-y-2">
-      <Label className={error ? "text-red-500" : ""}>{label}</Label>
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !value && "text-muted-foreground",
-              error && "border-red-500 focus:border-red-500"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {value ? format(value, "EEEE d MMMM yyyy", { locale: fr }) : placeholder}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0 z-50">
-          <Calendar
-            mode="single"
-            selected={value}
-            onSelect={onChange}
-            initialFocus
-            locale={fr}
-            className="pointer-events-auto"
-            disabled={(date) => {
-              if (minDate && date < minDate) return true;
-              if (maxDate && date > maxDate) return true;
-              return false;
-            }}
-          />
-        </PopoverContent>
-      </Popover>
-      {error && (
-        <div className="flex items-center gap-1 text-sm text-red-500">
-          <AlertCircle className="h-3 w-3" />
-          {error}
-        </div>
-      )}
-    </div>
-  );
-
-  const isFormValid = formData.title && 
-                     formData.event_type && 
-                     formData.start_date && 
-                     formData.end_date && 
-                     Object.keys(dateErrors).length === 0;
+  if (eventLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center p-6">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {event ? 'Modifier l\'événement' : 'Créer un nouvel événement'}
-          </DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Titre *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="event_type">Type d'événement *</Label>
-              <Select
-                value={formData.event_type}
-                onValueChange={(value) => handleInputChange('event_type', value)}
-                required
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez un type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {eventTypes.map(type => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>{isEditing ? 'Modifier un événement' : 'Créer un événement'}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="title">Titre</Label>
+            <Input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
           </div>
-
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Catégorie</Label>
-              <Select
-                value={formData.category_id}
-                onValueChange={(value) => handleInputChange('category_id', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez une catégorie" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map(category => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div>
+            <Label htmlFor="eventType">Type d'événement</Label>
+            <Select value={eventType} onValueChange={setEventType}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sélectionnez un type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="concert">Concert</SelectItem>
+                <SelectItem value="masterclass">Masterclass</SelectItem>
+                {/* Add other event types as needed */}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Date de début</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !startDate && 'text-muted-foreground'
+                    )}
+                  >
+                    {startDate ? format(startDate, 'PPP', { locale: fr }) : <span>Choisir une date</span>}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="center" side="bottom">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    disabled={date =>
+                      date < new Date()
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="status">Statut</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value) => handleInputChange('status', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Brouillon</SelectItem>
-                  <SelectItem value="published">Publié</SelectItem>
-                </SelectContent>
-              </Select>
+            <div>
+              <Label>Date de fin</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={'outline'}
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !endDate && 'text-muted-foreground'
+                    )}
+                  >
+                    {endDate ? format(endDate, 'PPP', { locale: fr }) : <span>Choisir une date</span>}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="center" side="bottom">
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    disabled={date =>
+                      date < new Date()
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
-
-          <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
-            <h3 className="font-medium text-blue-900 mb-4 flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4" />
-              Programmation de l'événement
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <DatePicker
-                value={startDate}
-                onChange={(date) => handleDateChange('start_date', date)}
-                label="Date de début *"
-                placeholder="Quand commence l'événement ?"
-                minDate={new Date()}
-              />
-
-              <DatePicker
-                value={endDate}
-                onChange={(date) => handleDateChange('end_date', date)}
-                label="Date de fin *"
-                placeholder="Quand se termine l'événement ?"
-                error={dateErrors.endDate}
-                minDate={startDate || new Date()}
-              />
-            </div>
-
-            <div className="mt-4">
-              <DatePicker
-                value={registrationDeadline}
-                onChange={(date) => handleDateChange('registration_deadline', date)}
-                label="Date limite d'inscription"
-                placeholder="Jusqu'à quand peut-on s'inscrire ?"
-                error={dateErrors.registrationDeadline}
-                minDate={new Date()}
-                maxDate={startDate ? new Date(startDate.getTime() - 24 * 60 * 60 * 1000) : undefined}
-              />
-            </div>
-
-            {startDate && endDate && !dateErrors.endDate && (
-              <div className="mt-3 p-2 bg-green-50 rounded text-sm text-green-700">
-                Durée de l'événement : {Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))} jour(s)
-              </div>
-            )}
+          <div>
+            <Label htmlFor="location">Lieu</Label>
+            <Input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
           </div>
-
-          <div className="grid grid-cols-1 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="max_participants">Participants max</Label>
+          <div>
+            <Label htmlFor="venue">Salle</Label>
+            <Input
+              type="text"
+              id="venue"
+              value={venue}
+              onChange={(e) => setVenue(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="price">Prix (€)</Label>
               <Input
-                id="max_participants"
                 type="number"
-                value={formData.max_participants}
-                onChange={(e) => handleInputChange('max_participants', e.target.value)}
-                placeholder="20"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="address">Adresse complète</Label>
-            <AddressAutocomplete
-              value={formData.address}
-              onChange={(value) => handleInputChange('address', value)}
-              onLocationSelect={handleLocationSelect}
-              placeholder="Tapez une adresse..."
-            />
-            {formData.latitude && formData.longitude && (
-              <p className="text-sm text-muted-foreground">
-                Coordonnées: {parseFloat(formData.latitude).toFixed(6)}, {parseFloat(formData.longitude).toFixed(6)}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Prix</Label>
-              <Input
                 id="price"
-                type="number"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) => handleInputChange('price', e.target.value)}
-                placeholder="0.00"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="currency">Devise</Label>
-              <Select
-                value={formData.currency}
-                onValueChange={(value) => handleInputChange('currency', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencies.map(currency => (
-                    <SelectItem key={currency.value} value={currency.value}>
-                      {currency.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div>
+              <Label htmlFor="maxParticipants">Nombre maximum de participants</Label>
+              <Input
+                type="number"
+                id="maxParticipants"
+                value={maxParticipants}
+                onChange={(e) => setMaxParticipants(e.target.value)}
+              />
             </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="requirements">Prérequis</Label>
+          <div>
+            <Label htmlFor="requirements">Exigences</Label>
             <Textarea
               id="requirements"
-              value={formData.requirements}
-              onChange={(e) => handleInputChange('requirements', e.target.value)}
-              placeholder="Niveau requis, matériel à apporter..."
-              rows={2}
+              value={requirements}
+              onChange={(e) => setRequirements(e.target.value)}
             />
           </div>
-
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="program">Programme</Label>
             <Textarea
               id="program"
-              value={formData.program}
-              onChange={(e) => handleInputChange('program', e.target.value)}
-              placeholder="Détail du programme, horaires..."
-              rows={3}
+              value={program}
+              onChange={(e) => setProgram(e.target.value)}
             />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="contact_info">Informations de contact</Label>
+          <div>
+            <Label htmlFor="contactInfo">Informations de contact</Label>
             <Textarea
-              id="contact_info"
-              value={formData.contact_info}
-              onChange={(e) => handleInputChange('contact_info', e.target.value)}
-              placeholder="Email, téléphone..."
-              rows={2}
+              id="contactInfo"
+              value={contactInfo}
+              onChange={(e) => setContactInfo(e.target.value)}
             />
           </div>
-
-          {/* Logo de l'événement */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Logo de l'événement</Label>
-            <Tabs value={logoUploadType} onValueChange={(value) => setLogoUploadType(value as 'url' | 'upload')}>
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="url">
-                  <LinkIcon className="h-4 w-4 mr-2" />
-                  URL du logo
-                </TabsTrigger>
-                <TabsTrigger value="upload">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload fichier
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="url" className="space-y-2">
-                <Input
-                  value={formData.image_url}
-                  onChange={(e) => handleInputChange('image_url', e.target.value)}
-                  placeholder="https://exemple.com/logo.jpg"
-                />
-              </TabsContent>
-
-              <TabsContent value="upload" className="space-y-2">
-                <Input
-                  type="file"
-                  onChange={handleLogoFileUpload}
-                  accept="image/*"
-                  disabled={isUploadingLogo}
-                />
-                {isUploadingLogo && (
-                  <div className="flex items-center gap-2 text-sm text-blue-600">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Upload en cours...
-                  </div>
-                )}
-                {formData.image_url && logoUploadType === 'upload' && !isUploadingLogo && (
-                  <div className="mt-2">
-                    <img
-                      src={formData.image_url}
-                      alt="Aperçu du logo"
-                      className="h-20 w-20 object-cover rounded border"
-                    />
-                  </div>
-                )}
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Galerie médias */}
-          <EventMediaSection professionalProfileId={professionalProfile?.id} />
-
-          <div className="flex gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1"
-            >
-              Annuler
-            </Button>
-            <Button
-              type="submit"
-              disabled={createEventMutation.isPending || !isFormValid || isUploadingLogo}
-              className="flex-1"
-            >
-              {createEventMutation.isPending || isUploadingLogo ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  {isUploadingLogo ? 'Upload...' : 'Sauvegarde...'}
-                </>
-              ) : (
-                event ? 'Modifier' : 'Créer'
-              )}
-            </Button>
-          </div>
+          <Button type="submit" disabled={isCreating || isUpdating}>
+            {isCreating || isUpdating ? (
+              <>
+                Enregistrement...
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              </>
+            ) : (
+              'Enregistrer'
+            )}
+          </Button>
         </form>
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 };
+
+export default EventForm;

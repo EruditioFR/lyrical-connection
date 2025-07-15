@@ -9,10 +9,15 @@ type Application = Tables<'applications'>;
 type ApplicationInsert = TablesInsert<'applications'>;
 type ApplicationUpdate = TablesUpdate<'applications'>;
 
-// Application avec les données liées
+// Application avec les données liées incluant le profil artiste complet
 type ApplicationWithDetails = Application & {
   castings?: Tables<'castings'>;
-  artist_profiles?: Tables<'artist_profiles'>;
+  artist_profiles?: Tables<'artist_profiles'> & {
+    user_profiles?: {
+      first_name: string;
+      last_name: string;
+    };
+  };
 };
 
 export const useMyApplications = () => {
@@ -60,12 +65,23 @@ export const useCastingApplications = (castingId: string) => {
         .from('applications')
         .select(`
           *,
-          artist_profiles (
+          artist_profiles!inner (
             id,
             stage_name,
             voice_type,
             location,
-            profile_image_url
+            profile_image_url,
+            bio,
+            birth_date,
+            gender,
+            nationality,
+            experience_years,
+            contact_email,
+            phone,
+            user_profiles!inner(
+              first_name,
+              last_name
+            )
           )
         `)
         .eq('casting_id', castingId)
