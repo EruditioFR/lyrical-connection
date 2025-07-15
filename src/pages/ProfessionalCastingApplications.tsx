@@ -220,12 +220,13 @@ const ProfessionalCastingApplications = () => {
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div className="flex items-start space-x-4">
-                          <Avatar className="w-16 h-16">
+                          <Avatar className="w-20 h-20 border-2 border-gray-200">
                             <AvatarImage 
                               src={application.artist_profiles?.profile_image_url || ''} 
-                              alt={application.artist_profiles?.stage_name} 
+                              alt={application.artist_profiles?.stage_name}
+                              className="object-cover"
                             />
-                            <AvatarFallback>
+                            <AvatarFallback className="text-lg font-semibold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                               {application.artist_profiles?.stage_name?.charAt(0) || 'A'}
                             </AvatarFallback>
                           </Avatar>
