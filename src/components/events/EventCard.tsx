@@ -157,9 +157,11 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
               <div className="text-sm text-gray-600">
                 Inscrit le {format(new Date(application.applied_at), 'dd MMMM yyyy', { locale: fr })}
               </div>
-              <Badge className={getStatusColor(application.status)}>
-                {getStatusLabel(application.status)}
-              </Badge>
+              {event.results_published && (
+                <Badge className={getStatusColor(application.status)}>
+                  {getStatusLabel(application.status)}
+                </Badge>
+              )}
             </div>
           ) : (
             <EventApplicationDialog event={event}>
