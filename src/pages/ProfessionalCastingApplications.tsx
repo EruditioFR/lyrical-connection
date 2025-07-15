@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User, CheckCheck, XCircle } from 'lucide-react';
+import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User, CheckCheck, XCircle, RotateCcw } from 'lucide-react';
 
 const ProfessionalCastingApplications = () => {
   const { user, loading } = useAuth();
@@ -34,13 +34,11 @@ const ProfessionalCastingApplications = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Filtrer les candidatures par statut
   const filteredApplications = applications?.filter(app => {
     if (statusFilter === 'all') return true;
     return app.status === statusFilter;
   }) || [];
 
-  // Calculer les statistiques
   const getStatistics = () => {
     if (!applications?.length) return null;
 
@@ -123,7 +121,6 @@ const ProfessionalCastingApplications = () => {
     rejected: applications?.filter(app => app.status === 'rejected').length || 0,
   };
 
-  // Récupérer les informations du casting sélectionné
   const selectedCastingInfo = myCastings.find(c => c.id === selectedCasting);
 
   const handlePublishResults = () => {
@@ -136,6 +133,13 @@ const ProfessionalCastingApplications = () => {
     if (selectedCasting) {
       unpublishResults.mutate(selectedCasting);
     }
+  };
+
+  const handleCancelStatus = (applicationId: string) => {
+    updateApplication.mutate({ 
+      id: applicationId, 
+      updates: { status: 'pending' }
+    });
   };
 
   return (
@@ -203,7 +207,6 @@ const ProfessionalCastingApplications = () => {
 
             <TabsContent value="candidates">
               <div className="space-y-4">
-                {/* Filtres par statut */}
                 <div className="flex gap-2 flex-wrap">
                   <Button
                     variant={statusFilter === 'all' ? 'default' : 'outline'}
@@ -352,7 +355,7 @@ const ProfessionalCastingApplications = () => {
                           </div>
                         )}
 
-                        <div className="flex gap-2 mt-4">
+                        <div className="flex gap-2 mt-4 flex-wrap">
                           <Button 
                             variant="outline" 
                             size="sm"
@@ -360,6 +363,7 @@ const ProfessionalCastingApplications = () => {
                           >
                             Voir le profil complet
                           </Button>
+                          
                           {application.status === 'pending' && (
                             <>
                               <Button 
@@ -396,6 +400,19 @@ const ProfessionalCastingApplications = () => {
                                 Refuser
                               </Button>
                             </>
+                          )}
+                          
+                          {application.status !== 'pending' && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => handleCancelStatus(application.id)}
+                              disabled={updateApplication.isPending}
+                              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                            >
+                              <RotateCcw className="h-4 w-4 mr-1" />
+                              Annuler
+                            </Button>
                           )}
                         </div>
                       </CardContent>
