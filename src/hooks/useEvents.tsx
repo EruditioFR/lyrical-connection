@@ -143,8 +143,8 @@ export const useProfessionalEvents = () => {
         return [];
       }
 
-      // Ensuite, récupérer les événements avec l'ID du profil professionnel
-      const { data, error } = await supabase
+      // Récupérer les événements
+      const { data: events, error } = await supabase
         .from('professional_events')
         .select('*')
         .eq('professional_profile_id', profile.id)
@@ -155,7 +155,28 @@ export const useProfessionalEvents = () => {
         throw error;
       }
 
-      return data as Event[];
+      if (!events) return [];
+
+      // Pour chaque événement, récupérer le nombre d'inscriptions
+      const eventsWithApplicationsCount = await Promise.all(
+        events.map(async (event) => {
+          const { count, error: countError } = await supabase
+            .from('event_applications')
+            .select('*', { count: 'exact', head: true })
+            .eq('event_id', event.id);
+
+          if (countError) {
+            console.error('Error counting applications for event:', event.id, countError);
+          }
+
+          return {
+            ...event,
+            applications_count: count || 0
+          };
+        })
+      );
+
+      return eventsWithApplicationsCount as Event[];
     },
     enabled: !!user?.id,
   });
