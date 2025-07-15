@@ -216,7 +216,7 @@ const ProfessionalEventApplications = () => {
                         <div className="flex items-start space-x-4">
                           <Avatar className="w-16 h-16">
                             <AvatarImage 
-                              src={application.artist_profiles?.profile_image_url || ''} 
+                              src={application.artist_profiles?.profile_photo_url || application.artist_profiles?.profile_image_url || ''} 
                               alt={application.artist_profiles?.stage_name} 
                             />
                             <AvatarFallback>

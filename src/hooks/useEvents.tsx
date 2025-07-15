@@ -66,6 +66,7 @@ export interface EventApplication {
     bio: string | null;
     location: string | null;
     profile_image_url: string | null;
+    profile_photo_url?: string | null;
     experience_years: number | null;
     gender: string | null;
     nationality: string | null;
@@ -428,11 +429,31 @@ export const useEventApplications = (eventId?: string) => {
         throw profilesError;
       }
 
+      // Get profile photos for these artist profiles
+      const { data: profilePhotos, error: photosError } = await supabase
+        .from('artist_photos')
+        .select('artist_profile_id, file_path')
+        .in('artist_profile_id', artistProfileIds)
+        .eq('is_profile_photo', true);
+
+      if (photosError) {
+        console.error('Error fetching profile photos:', photosError);
+        // Don't throw error, just continue without photos
+      }
+
       // Combine the data
-      const enrichedApplications = applications.map(app => ({
-        ...app,
-        artist_profiles: profiles?.find(p => p.id === app.artist_profile_id) || null
-      }));
+      const enrichedApplications = applications.map(app => {
+        const profile = profiles?.find(p => p.id === app.artist_profile_id) || null;
+        const profilePhoto = profilePhotos?.find(p => p.artist_profile_id === app.artist_profile_id);
+        
+        return {
+          ...app,
+          artist_profiles: profile ? {
+            ...profile,
+            profile_photo_url: profilePhoto?.file_path || profile.profile_image_url
+          } : null
+        };
+      });
 
       return enrichedApplications as EventApplication[];
     },
