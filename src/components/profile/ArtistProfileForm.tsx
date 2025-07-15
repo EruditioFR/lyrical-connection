@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Phone, Music, Image as ImageIcon, Mic } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { User, Phone, Music, Image as ImageIcon, Mic, Save } from 'lucide-react';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import ProfileBasicInfo from './ProfileBasicInfo';
 import ContactInfo from './ContactInfo';
@@ -95,7 +96,15 @@ const ArtistProfileForm = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             {profile.stage_name}
           </h1>
-          <p className="text-gray-600">Édition du profil artiste</p>
+          <p className="text-gray-600 mb-4">Édition du profil artiste</p>
+          <Button 
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="bg-primary hover:bg-primary/90"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {isLoading ? "Mise à jour..." : "Mettre à jour le profil"}
+          </Button>
         </div>
       )}
       
