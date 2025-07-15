@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, User, MessageSquare, UserPlus } from 'lucide-react';
 import ContactArtistDialog from './ContactArtistDialog';
 import InviteArtistDialog from './InviteArtistDialog';
+import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 
 interface ArtistCardProps {
   artist: any; // Replace 'any' with a more specific type if possible
@@ -13,15 +15,21 @@ interface ArtistCardProps {
 }
 
 const ArtistCard: React.FC<ArtistCardProps> = ({ artist, showContactButton = false }) => {
+  const { photos, getPhotoUrl } = useArtistPhotos(artist.id);
+  const profilePhoto = photos?.find(photo => photo.is_profile_photo);
+  
+  // Utiliser la photo de profil de la galerie ou l'ancienne URL en fallback
+  const imageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
+
   return (
     <Card className="hover:shadow-lg transition-all duration-300 group">
       <div className="relative">
         
         {/* Photo ou placeholder */}
         <div className="aspect-[4/3] overflow-hidden rounded-t-lg bg-gray-100">
-          {artist.profile_image_url ? (
+          {imageUrl ? (
             <img
-              src={artist.profile_image_url}
+              src={imageUrl}
               alt={artist.stage_name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -26,6 +27,7 @@ import PhotosTab from '@/components/profile/PhotosTab';
 import AudioTab from '@/components/profile/AudioTab';
 import RepertoireTab from '@/components/profile/RepertoireTab';
 import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
+import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,6 +51,10 @@ const ArtistProfile = () => {
     },
     enabled: !!id,
   });
+
+  // Récupérer les photos pour obtenir la photo de profil
+  const { photos, getPhotoUrl } = useArtistPhotos(id);
+  const profilePhoto = photos?.find(photo => photo.is_profile_photo);
 
   // Si l'utilisateur connecté est un artiste et qu'il consulte son propre profil
   const isOwnProfile = user && currentUserProfile?.id === id;
@@ -110,6 +116,9 @@ const ArtistProfile = () => {
     return age;
   };
 
+  // Utiliser la photo de profil de la galerie ou l'ancienne URL en fallback
+  const avatarImageSrc = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : profile.profile_image_url;
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
@@ -130,7 +139,7 @@ const ArtistProfile = () => {
             <div className="flex items-start gap-6">
               {/* Avatar */}
               <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-                <AvatarImage src={profile.profile_image_url || undefined} />
+                <AvatarImage src={avatarImageSrc || undefined} />
                 <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
                   {getInitials(profile.stage_name)}
                 </AvatarFallback>
