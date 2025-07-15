@@ -39,6 +39,7 @@ export interface Event {
   longitude: number | null;
   venue_id: string | null;
   category_id: string | null;
+  results_published: boolean | null;
   applications_count?: number;
 }
 
@@ -501,6 +502,48 @@ export const useUpdateEventApplication = () => {
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour la candidature.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const usePublishEventResults = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (eventId: string) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('professional_events')
+        .update({ results_published: true })
+        .eq('id', eventId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error publishing results:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['professional-events'] });
+      queryClient.invalidateQueries({ queryKey: ['event-applications'] });
+      toast({
+        title: "Résultats publiés",
+        description: "Les résultats de l'événement ont été publiés avec succès.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error publishing results:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de publier les résultats.",
         variant: "destructive",
       });
     },

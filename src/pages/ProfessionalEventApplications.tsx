@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
-import { useProfessionalEvents, useEventApplications, useUpdateEventApplication } from '@/hooks/useEvents';
+import { useProfessionalEvents, useEventApplications, useUpdateEventApplication, usePublishEventResults } from '@/hooks/useEvents';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -22,6 +22,7 @@ const ProfessionalEventApplications = () => {
   const { data: events, isLoading: eventsLoading } = useProfessionalEvents();
   const { data: applications, isLoading: applicationsLoading } = useEventApplications(selectedEvent);
   const updateApplication = useUpdateEventApplication();
+  const publishResults = usePublishEventResults();
 
   if (loading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -102,6 +103,8 @@ const ProfessionalEventApplications = () => {
     return `${age} ans`;
   };
 
+  const selectedEventData = events?.find(event => event.id === selectedEvent);
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -112,7 +115,7 @@ const ProfessionalEventApplications = () => {
           </p>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 flex items-center gap-4">
           <Select value={selectedEvent} onValueChange={setSelectedEvent}>
             <SelectTrigger className="w-full max-w-md">
               <SelectValue placeholder="Sélectionnez un événement" />
@@ -125,6 +128,22 @@ const ProfessionalEventApplications = () => {
               ))}
             </SelectContent>
           </Select>
+          
+          {selectedEvent && selectedEventData && !selectedEventData.results_published && (
+            <Button
+              onClick={() => publishResults.mutate(selectedEvent)}
+              disabled={publishResults.isPending}
+              className="shrink-0"
+            >
+              {publishResults.isPending ? 'Publication...' : 'Publier les résultats'}
+            </Button>
+          )}
+          
+          {selectedEvent && selectedEventData?.results_published && (
+            <Badge variant="outline" className="shrink-0">
+              Résultats publiés
+            </Badge>
+          )}
         </div>
 
         {selectedEvent && (

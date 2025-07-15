@@ -1002,6 +1002,7 @@ export type Database = {
           program: string | null
           registration_deadline: string | null
           requirements: string | null
+          results_published: boolean | null
           start_date: string
           status: Database["public"]["Enums"]["event_status"]
           title: string
@@ -1034,6 +1035,7 @@ export type Database = {
           program?: string | null
           registration_deadline?: string | null
           requirements?: string | null
+          results_published?: boolean | null
           start_date: string
           status?: Database["public"]["Enums"]["event_status"]
           title: string
@@ -1066,6 +1068,7 @@ export type Database = {
           program?: string | null
           registration_deadline?: string | null
           requirements?: string | null
+          results_published?: boolean | null
           start_date?: string
           status?: Database["public"]["Enums"]["event_status"]
           title?: string
