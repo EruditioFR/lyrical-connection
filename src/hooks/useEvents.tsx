@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useToast } from './use-toast';
+import { useNotificationSystem } from './useNotificationSystem';
 import { Database } from '@/integrations/supabase/types';
 
 type EventStatus = Database['public']['Enums']['event_status'];
@@ -556,6 +557,7 @@ export const usePublishEventResults = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { createResultsNotifications } = useNotificationSystem();
 
   return useMutation({
     mutationFn: async (eventId: string) => {
@@ -575,9 +577,13 @@ export const usePublishEventResults = () => {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['professional-events'] });
       queryClient.invalidateQueries({ queryKey: ['event-detail'] });
+      
+      // Créer des notifications pour tous les participants
+      createResultsNotifications({ eventId: data.id });
+      
       toast({
         title: "Résultats publiés",
         description: "Les résultats de l'événement ont été publiés avec succès.",

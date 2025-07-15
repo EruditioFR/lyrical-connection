@@ -17,6 +17,7 @@ import { LogOut, User, Settings, CreditCard, Shield, ChevronDown } from 'lucide-
 import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { MegaMenu } from './MegaMenu';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 const Navbar = () => {
   const { t } = useTranslation(['navigation', 'common']);
@@ -164,9 +165,10 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Actions : Language + Authentification / Profil */}
+        {/* Actions : Notifications + Language + Authentification / Profil */}
         <div className="flex items-center space-x-4">
           <LanguageSelector />
+          {user && isArtist && <NotificationBell />}
           {user ? (
             <div className="flex items-center space-x-3">
               <span className="text-sm font-medium text-gray-700">

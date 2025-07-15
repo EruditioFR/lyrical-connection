@@ -136,14 +136,130 @@ export const useNotificationSystem = () => {
     },
   });
 
+  // Hook pour créer des notifications en masse lors de la publication des résultats
+  const createResultsNotifications = useMutation({
+    mutationFn: async ({ castingId, eventId }: { castingId?: string; eventId?: string }) => {
+      let applications: any[] = [];
+      let entityName = '';
+      let entityType = '';
+
+      if (castingId) {
+        // Récupérer les candidatures du casting avec le nom du casting
+        const { data: castingData, error: castingError } = await supabase
+          .from('applications')
+          .select(`
+            *,
+            artist_profiles!inner(user_id),
+            castings!inner(title)
+          `)
+          .eq('casting_id', castingId);
+
+        if (castingError) throw castingError;
+        
+        applications = castingData || [];
+        entityName = applications[0]?.castings?.title || 'Casting';
+        entityType = 'casting';
+      } else if (eventId) {
+        // Récupérer les inscriptions à l'événement avec le nom de l'événement
+        const { data: eventData, error: eventError } = await supabase
+          .from('event_applications')
+          .select(`
+            *,
+            artist_profiles!inner(user_id),
+            professional_events!inner(title)
+          `)
+          .eq('event_id', eventId);
+
+        if (eventError) throw eventError;
+        
+        applications = eventData || [];
+        entityName = applications[0]?.professional_events?.title || 'Événement';
+        entityType = 'event';
+      }
+
+      // Créer une notification pour chaque candidat
+      const notifications = applications.map(app => {
+        const statusText = getStatusText(app.status);
+        const now = new Date();
+        
+        return {
+          user_id: app.artist_profiles.user_id,
+          type: (entityType === 'casting' ? 'casting_application' : 'event_registration') as 'casting_application' | 'event_registration',
+          title: `Résultats publiés pour ${entityName}`,
+          content: `[${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}] Vous avez été ${statusText} pour ${entityName}.`,
+          data: {
+            status: app.status,
+            [entityType === 'casting' ? 'casting_id' : 'event_id']: entityType === 'casting' ? castingId : eventId,
+            entity_name: entityName,
+            entity_type: entityType
+          },
+          is_read: false,
+          created_at: now.toISOString()
+        };
+      });
+
+      // Insérer toutes les notifications en une fois
+      if (notifications.length > 0) {
+        const { data, error } = await supabase
+          .from('notifications')
+          .insert(notifications)
+          .select();
+
+        if (error) {
+          console.error('Error creating notifications:', error);
+          throw error;
+        }
+
+        return data;
+      }
+
+      return [];
+    },
+    onSuccess: (data) => {
+      if (data && data.length > 0) {
+        toast({
+          title: "Notifications envoyées",
+          description: `${data.length} notification(s) envoyée(s) aux candidats.`,
+        });
+      }
+    },
+    onError: (error) => {
+      console.error('Create results notifications error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'envoyer les notifications.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
     adminNotifications,
     isLoadingNotifications,
     createNotification: createNotification.mutate,
     markAsRead: markAsRead.mutate,
     checkInactiveAccounts: checkInactiveAccounts.mutate,
+    createResultsNotifications: createResultsNotifications.mutate,
     isCreatingNotification: createNotification.isPending,
     isMarkingAsRead: markAsRead.isPending,
     isCheckingInactiveAccounts: checkInactiveAccounts.isPending,
+    isCreatingResultsNotifications: createResultsNotifications.isPending,
   };
+};
+
+// Fonction utilitaire pour obtenir le texte du statut
+const getStatusText = (status: string): string => {
+  switch (status) {
+    case 'accepted':
+      return 'accepté(e)';
+    case 'rejected':
+      return 'refusé(e)';
+    case 'waitlisted':
+      return 'mis(e) en liste d\'attente';
+    case 'shortlisted':
+      return 'présélectionné(e)';
+    case 'pending':
+    default:
+      return 'en attente';
+  }
 };

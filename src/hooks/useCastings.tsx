@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useNotificationSystem } from '@/hooks/useNotificationSystem';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 
 type Casting = Tables<'castings'>;
@@ -257,6 +258,7 @@ export const useMyCastings = () => {
 export const usePublishCastingResults = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { createResultsNotifications } = useNotificationSystem();
 
   return useMutation({
     mutationFn: async (castingId: string) => {
@@ -274,11 +276,15 @@ export const usePublishCastingResults = () => {
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['castings'] });
       queryClient.invalidateQueries({ queryKey: ['my-castings'] });
       queryClient.invalidateQueries({ queryKey: ['casting'] });
       queryClient.invalidateQueries({ queryKey: ['casting-applications'] });
+      
+      // Créer des notifications pour tous les candidats
+      createResultsNotifications({ castingId: data.id });
+      
       toast({
         title: "Résultats publiés",
         description: "Les candidats peuvent maintenant consulter les résultats.",
