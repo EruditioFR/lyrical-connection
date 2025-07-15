@@ -294,3 +294,45 @@ export const usePublishCastingResults = () => {
     },
   });
 };
+
+// Hook pour annuler la publication des résultats d'un casting
+export const useUnpublishCastingResults = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (castingId: string) => {
+      const { data, error } = await supabase
+        .from('castings')
+        .update({ results_published: false })
+        .eq('id', castingId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error unpublishing casting results:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['castings'] });
+      queryClient.invalidateQueries({ queryKey: ['my-castings'] });
+      queryClient.invalidateQueries({ queryKey: ['casting'] });
+      queryClient.invalidateQueries({ queryKey: ['casting-applications'] });
+      toast({
+        title: "Publication annulée",
+        description: "Les résultats ne sont plus visibles par les candidats.",
+      });
+    },
+    onError: (error) => {
+      console.error('Unpublish results error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'annuler la publication.",
+        variant: "destructive",
+      });
+    },
+  });
+};

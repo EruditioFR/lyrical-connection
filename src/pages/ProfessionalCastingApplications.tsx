@@ -3,14 +3,14 @@ import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCastingApplications, useUpdateApplication } from '@/hooks/useApplications';
-import { useMyCastings, usePublishCastingResults } from '@/hooks/useCastings';
+import { useMyCastings, usePublishCastingResults, useUnpublishCastingResults } from '@/hooks/useCastings';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User, CheckCheck } from 'lucide-react';
+import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User, CheckCheck, XCircle } from 'lucide-react';
 
 const ProfessionalCastingApplications = () => {
   const { user, loading } = useAuth();
@@ -24,6 +24,7 @@ const ProfessionalCastingApplications = () => {
   const { applications, isLoading: applicationsLoading } = useCastingApplications(selectedCasting);
   const updateApplication = useUpdateApplication();
   const publishResults = usePublishCastingResults();
+  const unpublishResults = useUnpublishCastingResults();
 
   if (loading || castingsLoading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -131,6 +132,12 @@ const ProfessionalCastingApplications = () => {
     }
   };
 
+  const handleUnpublishResults = () => {
+    if (selectedCasting) {
+      unpublishResults.mutate(selectedCasting);
+    }
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -164,7 +171,7 @@ const ProfessionalCastingApplications = () => {
                 Résultats : {selectedCastingInfo.results_published ? 'Publiés' : 'Non publiés'}
               </p>
             </div>
-            {!selectedCastingInfo.results_published && (
+            {!selectedCastingInfo.results_published ? (
               <Button
                 onClick={handlePublishResults}
                 disabled={publishResults.isPending}
@@ -172,6 +179,16 @@ const ProfessionalCastingApplications = () => {
               >
                 <CheckCheck className="h-4 w-4 mr-2" />
                 {publishResults.isPending ? 'Publication...' : 'Publier les résultats'}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleUnpublishResults}
+                disabled={unpublishResults.isPending}
+                variant="outline"
+                className="border-red-500 text-red-600 hover:bg-red-50"
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                {unpublishResults.isPending ? 'Annulation...' : 'Annuler la publication'}
               </Button>
             )}
           </div>
