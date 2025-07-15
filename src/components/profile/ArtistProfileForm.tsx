@@ -89,6 +89,16 @@ const ArtistProfileForm = () => {
 
   return (
     <div className="space-y-6">
+      {/* En-tête avec nom de scène */}
+      {profile?.stage_name && (
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {profile.stage_name}
+          </h1>
+          <p className="text-gray-600">Édition du profil artiste</p>
+        </div>
+      )}
+      
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle>Mon Profil Artiste</CardTitle>
