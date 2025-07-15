@@ -1,10 +1,12 @@
 
+
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -137,13 +139,24 @@ const ArtistProfile = () => {
         <div className="container mx-auto px-4 -mt-20 relative z-10">
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <div className="flex items-start gap-6">
-              {/* Avatar */}
-              <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-                <AvatarImage src={avatarImageSrc || undefined} />
-                <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
-                  {getInitials(profile.stage_name)}
-                </AvatarFallback>
-              </Avatar>
+              {/* Avatar avec AspectRatio pour éviter la déformation */}
+              <div className="w-32 h-32 border-4 border-white shadow-lg rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                {avatarImageSrc ? (
+                  <AspectRatio ratio={1}>
+                    <img 
+                      src={avatarImageSrc} 
+                      alt={profile.stage_name}
+                      className="w-full h-full object-cover"
+                    />
+                  </AspectRatio>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-primary text-primary-foreground">
+                    <span className="text-2xl font-bold">
+                      {getInitials(profile.stage_name)}
+                    </span>
+                  </div>
+                )}
+              </div>
 
               {/* Info principale */}
               <div className="flex-1">
@@ -320,3 +333,4 @@ const ArtistProfile = () => {
 };
 
 export default ArtistProfile;
+
