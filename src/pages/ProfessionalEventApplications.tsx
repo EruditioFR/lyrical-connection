@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -34,7 +33,6 @@ const ProfessionalEventApplications = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Calculer les statistiques
   const getStatistics = () => {
     if (!applications?.length) return null;
 
@@ -328,7 +326,6 @@ const ProfessionalEventApplications = () => {
                           Voir le profil complet
                         </Button>
                         
-                        {/* Boutons pour candidatures en attente ou présélectionnées */}
                         {(application.status === 'pending' || application.status === 'waitlisted') && (
                           <>
                             {application.status === 'pending' && (
@@ -369,17 +366,29 @@ const ProfessionalEventApplications = () => {
                           </>
                         )}
 
-                        {/* Bouton pour candidatures acceptées si résultats non publiés */}
-                        {application.status === 'accepted' && !selectedEventData?.results_published && (
+                        {(application.status === 'accepted' || application.status === 'rejected') && !selectedEventData?.results_published && (
                           <>
                             {!editingApplications.has(application.id) ? (
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => toggleEditingApplication(application.id)}
-                              >
-                                Modifier la sélection
-                              </Button>
+                              <>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => toggleEditingApplication(application.id)}
+                                >
+                                  Modifier la sélection
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => updateApplication.mutate({ 
+                                    applicationId: application.id, 
+                                    status: 'pending' 
+                                  })}
+                                  disabled={updateApplication.isPending}
+                                >
+                                  Annuler
+                                </Button>
+                              </>
                             ) : (
                               <>
                                 <Button 
