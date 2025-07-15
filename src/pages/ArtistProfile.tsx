@@ -26,7 +26,6 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
 import PhotosTab from '@/components/profile/PhotosTab';
-import AudioTab from '@/components/profile/AudioTab';
 import RepertoireTab from '@/components/profile/RepertoireTab';
 import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
@@ -283,21 +282,6 @@ const ArtistProfile = () => {
               </CardHeader>
               <CardContent>
                 <PhotosTab artistProfileId={profile.id} />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Fichiers audio */}
-          <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Fichiers audio
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AudioTab artistProfileId={profile.id} />
               </CardContent>
             </Card>
           </div>
