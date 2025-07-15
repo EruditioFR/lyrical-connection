@@ -229,19 +229,25 @@ export const useNotificationSystem = () => {
         };
       });
 
-      // Insérer toutes les notifications en une fois
+      // Créer les notifications une par une pour éviter les problèmes RLS
       if (notifications.length > 0) {
-        const { data, error } = await supabase
-          .from('notifications')
-          .insert(notifications)
-          .select();
+        const promises = notifications.map(async (notification) => {
+          const { data, error } = await supabase
+            .from('notifications')
+            .insert(notification)
+            .select()
+            .single();
 
-        if (error) {
-          console.error('Error creating notifications:', error);
-          throw error;
-        }
+          if (error) {
+            console.error('Error creating single notification:', error);
+            throw error;
+          }
 
-        return data;
+          return data;
+        });
+
+        const results = await Promise.all(promises);
+        return results;
       }
 
       return [];
