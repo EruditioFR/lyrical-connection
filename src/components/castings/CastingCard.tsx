@@ -5,6 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Euro, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { useArtistCastingApplication } from '@/hooks/useEvents';
+import { useAuth } from '@/hooks/useAuth';
+import { useUserType } from '@/hooks/useUserType';
 import type { Tables } from '@/integrations/supabase/types';
 
 type Casting = Tables<'castings'>;
@@ -15,6 +20,9 @@ interface CastingCardProps {
 
 const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isArtist } = useUserType();
+  const { data: application } = useArtistCastingApplication(casting.id);
 
   const formatDate = (date: string | null) => {
     if (!date) return 'Non précisée';
@@ -42,6 +50,26 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
       accommodation_covered: 'Hébergement couvert'
     };
     return labels[type] || type;
+  };
+
+  const getStatusLabel = (status: string) => {
+    const labels = {
+      pending: 'En attente',
+      waitlisted: 'Présélectionné(e)',
+      accepted: 'Accepté(e)',
+      rejected: 'Refusé(e)'
+    };
+    return labels[status as keyof typeof labels] || status;
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      waitlisted: 'bg-blue-100 text-blue-800',
+      accepted: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800'
+    };
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -123,6 +151,20 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
           </div>
         )}
 
+        {/* Affichage du statut de candidature pour les artistes */}
+        {isArtist && user && application && (
+          <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+            <div className="text-sm text-gray-600">
+              Candidature envoyée le {format(new Date(application.created_at), 'dd MMMM yyyy', { locale: fr })}
+            </div>
+            {casting.results_published && (
+              <Badge className={getStatusColor(application.status)}>
+                {getStatusLabel(application.status)}
+              </Badge>
+            )}
+          </div>
+        )}
+
         <div className="pt-2">
           <Button 
             className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
@@ -131,7 +173,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
               navigate(`/castings/${casting.id}`);
             }}
           >
-            Voir les détails
+            {isArtist && user && application ? 'Voir ma candidature' : 'Voir les détails'}
           </Button>
         </div>
       </CardContent>
