@@ -130,10 +130,19 @@ const MyApplications = () => {
     return app.type === typeFilter;
   });
 
+  // Fonction pour obtenir le statut effectif (comptabilisé dans les onglets)
+  const getEffectiveStatus = (app: any) => {
+    // Si les résultats ne sont pas publiés et que ce n'est pas pending, c'est considéré comme "pending"
+    if (!app.resultsPublished && app.status !== 'pending') {
+      return 'pending';
+    }
+    return app.status;
+  };
+
   // Filtrer par statut
   const filteredApplications = typeFilteredApplications.filter(app => {
     if (activeTab === 'all') return true;
-    return app.status === activeTab;
+    return getEffectiveStatus(app) === activeTab;
   });
 
   const isLoading = castingLoading || eventLoading;
@@ -185,16 +194,16 @@ const MyApplications = () => {
               Toutes ({typeFilteredApplications.length})
             </TabsTrigger>
             <TabsTrigger value="pending">
-              En attente ({typeFilteredApplications.filter(a => a.status === 'pending').length})
+              En attente ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'pending').length})
             </TabsTrigger>
             <TabsTrigger value="accepted">
-              Acceptées ({typeFilteredApplications.filter(a => a.status === 'accepted').length})
+              Acceptées ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'accepted').length})
             </TabsTrigger>
             <TabsTrigger value="rejected">
-              Refusées ({typeFilteredApplications.filter(a => a.status === 'rejected').length})
+              Refusées ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'rejected').length})
             </TabsTrigger>
             <TabsTrigger value="waitlisted">
-              En attente ({typeFilteredApplications.filter(a => a.status === 'waitlisted').length})
+              En attente ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'waitlisted').length})
             </TabsTrigger>
           </TabsList>
 
