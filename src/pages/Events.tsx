@@ -15,11 +15,13 @@ const Events = () => {
     category_id: '',
     search: ''
   });
+  
   const {
     data: events = [],
     isLoading: eventsLoading,
     error: eventsError
-  } = usePublicEvents();
+  } = usePublicEvents(filters);
+  
   const {
     data: categories = [],
     error: categoriesError

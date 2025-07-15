@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -222,11 +221,15 @@ export const useProfessionalEvent = (eventId: string) => {
   });
 };
 
-export const usePublicEvents = () => {
+export const usePublicEvents = (filters?: {
+  event_type?: string;
+  category_id?: string;
+  search?: string;
+}) => {
   return useQuery({
-    queryKey: ['publicEvents'],
+    queryKey: ['publicEvents', filters],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('professional_events')
         .select(`
           *,
@@ -242,6 +245,21 @@ export const usePublicEvents = () => {
         `)
         .eq('status', 'published')
         .order('created_at', { ascending: false });
+
+      // Apply filters
+      if (filters?.event_type) {
+        query = query.eq('event_type', filters.event_type);
+      }
+
+      if (filters?.category_id) {
+        query = query.eq('category_id', filters.category_id);
+      }
+
+      if (filters?.search) {
+        query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching public events:', error);
