@@ -247,15 +247,19 @@ export const usePublicEvents = (filters?: {
         .order('created_at', { ascending: false });
 
       // Apply filters
-      if (filters?.event_type) {
-        query = query.eq('event_type', filters.event_type);
+      if (filters?.event_type && filters.event_type !== '') {
+        // Vérifier que le type d'événement est valide
+        const validEventTypes = ['masterclass', 'stage', 'concours', 'atelier', 'conference'];
+        if (validEventTypes.includes(filters.event_type)) {
+          query = query.eq('event_type', filters.event_type);
+        }
       }
 
-      if (filters?.category_id) {
+      if (filters?.category_id && filters.category_id !== '') {
         query = query.eq('category_id', filters.category_id);
       }
 
-      if (filters?.search) {
+      if (filters?.search && filters.search !== '') {
         query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
       }
 
