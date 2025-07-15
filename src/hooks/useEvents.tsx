@@ -461,6 +461,7 @@ export const useEventApplications = (eventId?: string) => {
   });
 };
 
+
 export const useApplyToEvent = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -498,6 +499,7 @@ export const useApplyToEvent = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['event-applications', variables.event_id] });
+      queryClient.invalidateQueries({ queryKey: ['artist-applications'] });
       queryClient.invalidateQueries({ queryKey: ['event-applications-count', variables.event_id] });
     },
   });
