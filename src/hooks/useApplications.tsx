@@ -24,10 +24,6 @@ type ApplicationWithDetails = Application & {
     experience_years: number | null;
     contact_email: string | null;
     phone: string | null;
-    user_profiles?: {
-      first_name: string;
-      last_name: string;
-    } | null;
   };
 };
 
@@ -88,11 +84,7 @@ export const useCastingApplications = (castingId: string) => {
             nationality,
             experience_years,
             contact_email,
-            phone,
-            user_profiles!inner(
-              first_name,
-              last_name
-            )
+            phone
           )
         `)
         .eq('casting_id', castingId)

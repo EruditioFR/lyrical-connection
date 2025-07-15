@@ -69,10 +69,6 @@ export interface EventApplication {
     birth_date: string | null;
     contact_email: string | null;
     phone: string | null;
-    user_profiles?: {
-      first_name: string;
-      last_name: string;
-    } | null;
   };
 }
 
@@ -362,11 +358,7 @@ export const useEventApplications = (eventId?: string) => {
             nationality,
             birth_date,
             contact_email,
-            phone,
-            user_profiles(
-              first_name,
-              last_name
-            )
+            phone
           )
         `)
         .eq('event_id', eventId)
