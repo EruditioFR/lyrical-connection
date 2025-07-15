@@ -575,7 +575,7 @@ export const usePublishEventResults = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['professional-events'] });
-      queryClient.invalidateQueries({ queryKey: ['event-applications'] });
+      queryClient.invalidateQueries({ queryKey: ['event-detail'] });
       toast({
         title: "Résultats publiés",
         description: "Les résultats de l'événement ont été publiés avec succès.",
@@ -586,6 +586,48 @@ export const usePublishEventResults = () => {
       toast({
         title: "Erreur",
         description: "Impossible de publier les résultats.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useUnpublishEventResults = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (eventId: string) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('professional_events')
+        .update({ results_published: false })
+        .eq('id', eventId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error unpublishing results:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['professional-events'] });
+      queryClient.invalidateQueries({ queryKey: ['event-detail'] });
+      toast({
+        title: "Publication annulée",
+        description: "La publication des résultats a été annulée avec succès.",
+      });
+    },
+    onError: (error) => {
+      console.error('Error unpublishing results:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible d'annuler la publication des résultats.",
         variant: "destructive",
       });
     },

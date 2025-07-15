@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
-import { useProfessionalEvents, useEventApplications, useUpdateEventApplication, usePublishEventResults } from '@/hooks/useEvents';
+import { useProfessionalEvents, useEventApplications, useUpdateEventApplication, usePublishEventResults, useUnpublishEventResults } from '@/hooks/useEvents';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,6 +24,7 @@ const ProfessionalEventApplications = () => {
   const { data: applications, isLoading: applicationsLoading } = useEventApplications(selectedEvent);
   const updateApplication = useUpdateEventApplication();
   const publishResults = usePublishEventResults();
+  const unpublishResults = useUnpublishEventResults();
 
   if (loading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -151,9 +152,19 @@ const ProfessionalEventApplications = () => {
           )}
           
           {selectedEvent && selectedEventData?.results_published && (
-            <Badge variant="outline" className="shrink-0">
-              Résultats publiés
-            </Badge>
+            <div className="flex items-center gap-2 shrink-0">
+              <Badge variant="outline">
+                Résultats publiés
+              </Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => unpublishResults.mutate(selectedEvent)}
+                disabled={unpublishResults.isPending}
+              >
+                {unpublishResults.isPending ? 'Annulation...' : 'Annuler la publication des résultats'}
+              </Button>
+            </div>
           )}
         </div>
 
