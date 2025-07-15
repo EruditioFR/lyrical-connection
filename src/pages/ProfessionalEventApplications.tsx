@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
-import { useProfessionalEvents, useEventApplications } from '@/hooks/useEvents';
+import { useProfessionalEvents, useEventApplications, useUpdateEventApplication } from '@/hooks/useEvents';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -21,6 +21,7 @@ const ProfessionalEventApplications = () => {
   
   const { data: events, isLoading: eventsLoading } = useProfessionalEvents();
   const { data: applications, isLoading: applicationsLoading } = useEventApplications(selectedEvent);
+  const updateApplication = useUpdateEventApplication();
 
   if (loading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -87,6 +88,7 @@ const ProfessionalEventApplications = () => {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending: { label: 'En attente', variant: 'secondary' as const },
+      waitlisted: { label: 'Présélectionné', variant: 'outline' as const },
       accepted: { label: 'Accepté', variant: 'default' as const },
       rejected: { label: 'Refusé', variant: 'destructive' as const },
     };
@@ -150,6 +152,7 @@ const ProfessionalEventApplications = () => {
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">
                         {status === 'pending' ? 'En attente' : 
+                         status === 'waitlisted' ? 'Présélectionnés' : 
                          status === 'accepted' ? 'Acceptés' : 'Refusés'}
                       </CardTitle>
                       <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -285,10 +288,37 @@ const ProfessionalEventApplications = () => {
                         </Button>
                         {application.status === 'pending' && (
                           <>
-                            <Button variant="default" size="sm">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => updateApplication.mutate({ 
+                                applicationId: application.id, 
+                                status: 'waitlisted' 
+                              })}
+                              disabled={updateApplication.isPending}
+                            >
+                              Présélectionner
+                            </Button>
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              onClick={() => updateApplication.mutate({ 
+                                applicationId: application.id, 
+                                status: 'accepted' 
+                              })}
+                              disabled={updateApplication.isPending}
+                            >
                               Accepter
                             </Button>
-                            <Button variant="destructive" size="sm">
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => updateApplication.mutate({ 
+                                applicationId: application.id, 
+                                status: 'rejected' 
+                              })}
+                              disabled={updateApplication.isPending}
+                            >
                               Refuser
                             </Button>
                           </>

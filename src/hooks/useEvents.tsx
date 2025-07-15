@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useToast } from './use-toast';
 import { Database } from '@/integrations/supabase/types';
 
 type EventStatus = Database['public']['Enums']['event_status'];
 type EventType = Database['public']['Enums']['event_type'];
+type EventApplicationStatus = Database['public']['Enums']['application_status'];
 
 export interface Event {
   id: string;
@@ -47,7 +49,7 @@ export interface EventApplication {
   id: string;
   event_id: string;
   artist_profile_id: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: EventApplicationStatus;
   applied_at: string;
   created_at: string;
   updated_at: string;
@@ -454,6 +456,53 @@ export const useApplyToEvent = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['event-applications', variables.event_id] });
       queryClient.invalidateQueries({ queryKey: ['event-applications-count', variables.event_id] });
+    },
+  });
+};
+
+export const useUpdateEventApplication = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ applicationId, status }: { applicationId: string; status: EventApplicationStatus }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('event_applications')
+        .update({ status })
+        .eq('id', applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating application:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['event-applications'] });
+      const statusLabels = {
+        pending: 'en attente',
+        waitlisted: 'présélectionnée',
+        accepted: 'acceptée',
+        rejected: 'refusée'
+      };
+      toast({
+        title: "Candidature mise à jour",
+        description: `La candidature a été ${statusLabels[variables.status]}.`,
+      });
+    },
+    onError: (error) => {
+      console.error('Error updating application:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour la candidature.",
+        variant: "destructive",
+      });
     },
   });
 };
