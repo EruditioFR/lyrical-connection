@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCastings } from '@/hooks/useCastings';
@@ -15,6 +15,7 @@ import { Users, TrendingUp, BarChart3, Globe, Calendar, Mail, Phone, MapPin, Use
 
 const ProfessionalCastingApplications = () => {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const castingIdFromUrl = searchParams.get('castingId');
   const [selectedCasting, setSelectedCasting] = useState<string>(castingIdFromUrl || '');
@@ -258,7 +259,11 @@ const ProfessionalCastingApplications = () => {
                       )}
 
                       <div className="flex gap-2 mt-4">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/artist/${application.artist_profiles?.id}`)}
+                        >
                           Voir le profil complet
                         </Button>
                         {application.status === 'pending' && (

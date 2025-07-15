@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfessionalEvents, useEventApplications } from '@/hooks/useEvents';
@@ -14,6 +14,7 @@ import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, Use
 
 const ProfessionalEventApplications = () => {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const eventIdFromUrl = searchParams.get('eventId');
   const [selectedEvent, setSelectedEvent] = useState<string>(eventIdFromUrl || '');
@@ -275,7 +276,11 @@ const ProfessionalEventApplications = () => {
                       )}
 
                       <div className="flex gap-2 mt-4">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate(`/artist/${application.artist_profiles?.id}`)}
+                        >
                           Voir le profil complet
                         </Button>
                         {application.status === 'pending' && (
