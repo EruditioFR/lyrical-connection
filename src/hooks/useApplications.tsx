@@ -69,6 +69,34 @@ export const useCastingApplications = (castingId: string) => {
   const { data: applications = [], isLoading, error } = useQuery({
     queryKey: ['casting-applications', castingId],
     queryFn: async () => {
+      if (!castingId) return [];
+
+      // Vérifier que le casting appartient au professionnel connecté
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Utilisateur non connecté');
+
+      const { data: profile } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!profile) {
+        throw new Error('Profil professionnel requis');
+      }
+
+      // Vérifier que le casting appartient à ce professionnel
+      const { data: casting } = await supabase
+        .from('castings')
+        .select('professional_profile_id')
+        .eq('id', castingId)
+        .eq('professional_profile_id', profile.id)
+        .single();
+
+      if (!casting) {
+        throw new Error('Casting non trouvé ou non autorisé');
+      }
+
       const { data, error } = await supabase
         .from('applications')
         .select(`

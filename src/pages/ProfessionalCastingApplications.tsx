@@ -3,6 +3,7 @@ import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCastingApplications, useUpdateApplication } from '@/hooks/useApplications';
+import { useMyCastings } from '@/hooks/useCastings';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -19,10 +20,11 @@ const ProfessionalCastingApplications = () => {
   const [selectedCasting, setSelectedCasting] = useState<string>(castingIdFromUrl || '');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   
+  const { castings: myCastings, isLoading: castingsLoading } = useMyCastings();
   const { applications, isLoading: applicationsLoading } = useCastingApplications(selectedCasting);
   const updateApplication = useUpdateApplication();
 
-  if (loading) {
+  if (loading || castingsLoading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
   }
 
@@ -119,9 +121,6 @@ const ProfessionalCastingApplications = () => {
     rejected: applications?.filter(app => app.status === 'rejected').length || 0,
   };
 
-  // Pour l'instant, on affiche juste un message si aucun casting sélectionné
-  // TODO: Récupérer les castings de l'utilisateur connecté
-
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -133,9 +132,18 @@ const ProfessionalCastingApplications = () => {
         </div>
 
         <div className="mb-6">
-          <p className="text-sm text-gray-600">
-            Casting sélectionné : {selectedCasting || 'Aucun'}
-          </p>
+          <Select value={selectedCasting} onValueChange={setSelectedCasting}>
+            <SelectTrigger className="w-full max-w-md">
+              <SelectValue placeholder="Sélectionnez un casting" />
+            </SelectTrigger>
+            <SelectContent>
+              {myCastings.map((casting) => (
+                <SelectItem key={casting.id} value={casting.id}>
+                  {casting.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {selectedCasting && (

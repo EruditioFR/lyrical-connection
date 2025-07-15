@@ -5,27 +5,41 @@ import Layout from '@/components/layout/Layout';
 import CastingCard from '@/components/castings/CastingCard';
 import CastingFilters from '@/components/castings/CastingFilters';
 import { Button } from '@/components/ui/button';
-import { useCastings } from '@/hooks/useCastings';
+import { useCastings, useMyCastings } from '@/hooks/useCastings';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserType } from '@/hooks/useUserType';
 import { Plus, Loader2 } from 'lucide-react';
 
 const Castings = () => {
   console.log('Castings component rendered');
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { userType } = useUserType();
   const [filters, setFilters] = useState({});
-  const { castings, isLoading } = useCastings(filters);
   
-  console.log('Castings data:', { castings, isLoading, user });
+  // Utiliser le bon hook selon le type d'utilisateur
+  const { castings: allCastings, isLoading: allCastingsLoading } = useCastings(filters);
+  const { castings: myCastings, isLoading: myCastingsLoading } = useMyCastings();
+  
+  const isProfessional = userType === 'professional';
+  const castings = isProfessional ? myCastings : allCastings;
+  const isLoading = isProfessional ? myCastingsLoading : allCastingsLoading;
+  
+  console.log('Castings data:', { castings, isLoading, user, userType, isProfessional });
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Castings</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {isProfessional ? 'Mes Castings' : 'Castings'}
+            </h1>
             <p className="text-gray-600 mt-2">
-              Découvrez les opportunités d'auditions et de castings
+              {isProfessional 
+                ? 'Gérez vos castings et consultez les candidatures reçues'
+                : 'Découvrez les opportunités d\'auditions et de castings'
+              }
             </p>
           </div>
           
@@ -41,16 +55,18 @@ const Castings = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Filtres */}
-          <div className="lg:col-span-1">
-            <CastingFilters 
-              filters={filters}
-              onFiltersChange={setFilters}
-            />
-          </div>
+          {/* Filtres - masqués pour les professionnels car ils voient uniquement leurs castings */}
+          {!isProfessional && (
+            <div className="lg:col-span-1">
+              <CastingFilters 
+                filters={filters}
+                onFiltersChange={setFilters}
+              />
+            </div>
+          )}
 
           {/* Liste des castings */}
-          <div className="lg:col-span-3">
+          <div className={isProfessional ? "lg:col-span-4" : "lg:col-span-3"}>
             {isLoading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-lyrical-600" />

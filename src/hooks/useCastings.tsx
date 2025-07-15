@@ -191,6 +191,7 @@ export const useUpdateCasting = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['castings'] });
       queryClient.invalidateQueries({ queryKey: ['casting'] });
+      queryClient.invalidateQueries({ queryKey: ['my-castings'] });
       toast({
         title: "Casting mis à jour",
         description: "Les modifications ont été sauvegardées.",
@@ -205,4 +206,47 @@ export const useUpdateCasting = () => {
       });
     },
   });
+};
+
+// Hook pour récupérer uniquement les castings du professionnel connecté
+export const useMyCastings = () => {
+  const { toast } = useToast();
+
+  const { data: castings = [], isLoading, error } = useQuery({
+    queryKey: ['my-castings'],
+    queryFn: async () => {
+      // Récupérer le profil professionnel de l'utilisateur connecté
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Utilisateur non connecté');
+
+      const { data: profile } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!profile) {
+        throw new Error('Profil professionnel requis');
+      }
+
+      const { data, error } = await supabase
+        .from('castings')
+        .select('*')
+        .eq('professional_profile_id', profile.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching my castings:', error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
+
+  return {
+    castings,
+    isLoading,
+    error,
+  };
 };
