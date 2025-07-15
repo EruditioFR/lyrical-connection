@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -21,7 +20,8 @@ import {
   Music,
   Camera,
   MessageCircle,
-  Edit
+  Edit,
+  Play
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
@@ -30,6 +30,7 @@ import AudioTab from '@/components/profile/AudioTab';
 import RepertoireTab from '@/components/profile/RepertoireTab';
 import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
+import AirPlayer from '@/components/profile/AirPlayer';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -249,6 +250,13 @@ const ArtistProfile = () => {
             </div>
           </div>
 
+          {/* Médias de l'artiste */}
+          {id && (
+            <div className="mb-8">
+              <AirPlayer artistProfileId={id} />
+            </div>
+          )}
+
           {/* Contenu en onglets */}
           <Tabs defaultValue="repertoire" className="mb-8">
             <TabsList className="grid w-full grid-cols-3">
@@ -333,4 +341,3 @@ const ArtistProfile = () => {
 };
 
 export default ArtistProfile;
-
