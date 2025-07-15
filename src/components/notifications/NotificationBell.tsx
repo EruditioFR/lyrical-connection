@@ -51,11 +51,15 @@ const NotificationBell = () => {
     }
   };
 
-  const handleNotificationClick = (notification: any) => {
+  const handleNotificationClick = (notification: any, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
     if (!notification.is_read) {
       markAsRead(notification.id);
     }
-    // Rediriger vers la page des notifications
+    
+    // Force navigation to notifications page
     navigate('/notifications');
   };
 
@@ -111,7 +115,7 @@ const NotificationBell = () => {
               <DropdownMenuItem
                 key={notification.id}
                 className={`p-3 cursor-pointer ${!notification.is_read ? 'bg-blue-50' : ''}`}
-                onClick={() => handleNotificationClick(notification)}
+                onClick={(event) => handleNotificationClick(notification, event)}
               >
                 <div className="flex items-start space-x-3 w-full">
                   <div className="flex-shrink-0 mt-0.5">
