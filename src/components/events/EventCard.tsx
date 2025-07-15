@@ -6,7 +6,7 @@ import { Calendar, MapPin, Users, Euro, Clock } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Event } from '@/hooks/useEvents';
+import { Event, useArtistEventApplication } from '@/hooks/useEvents';
 import { EventApplicationDialog } from './EventApplicationDialog';
 
 interface EventCardProps {
@@ -15,6 +15,8 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = false }) => {
+  const { data: application } = useArtistEventApplication(event.id);
+  
   const getEventTypeLabel = (type: string) => {
     const labels = {
       masterclass: 'Masterclass',
@@ -45,6 +47,26 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
   const isFull = () => {
     if (!event.max_participants) return false;
     return (event.applications_count || 0) >= event.max_participants;
+  };
+
+  const getStatusLabel = (status: string) => {
+    const labels = {
+      pending: 'En attente',
+      waitlisted: 'Présélectionné(e)',
+      accepted: 'Accepté(e)',
+      rejected: 'Refusé(e)'
+    };
+    return labels[status as keyof typeof labels] || status;
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      waitlisted: 'bg-blue-100 text-blue-800',
+      accepted: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800'
+    };
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
   };
 
   return (
@@ -130,15 +152,26 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
 
       {showApplyButton && (
         <CardFooter className="flex-shrink-0">
-          <EventApplicationDialog event={event}>
-            <Button 
-              className="w-full" 
-              disabled={!isRegistrationOpen() || isFull()}
-            >
-              {!isRegistrationOpen() ? 'Inscriptions fermées' : 
-               isFull() ? 'Complet' : 'S\'inscrire'}
-            </Button>
-          </EventApplicationDialog>
+          {application ? (
+            <div className="w-full space-y-2">
+              <div className="text-sm text-gray-600">
+                Inscrit le {format(new Date(application.applied_at), 'dd MMMM yyyy', { locale: fr })}
+              </div>
+              <Badge className={getStatusColor(application.status)}>
+                {getStatusLabel(application.status)}
+              </Badge>
+            </div>
+          ) : (
+            <EventApplicationDialog event={event}>
+              <Button 
+                className="w-full" 
+                disabled={!isRegistrationOpen() || isFull()}
+              >
+                {!isRegistrationOpen() ? 'Inscriptions fermées' : 
+                 isFull() ? 'Complet' : 'S\'inscrire'}
+              </Button>
+            </EventApplicationDialog>
+          )}
         </CardFooter>
       )}
     </Card>

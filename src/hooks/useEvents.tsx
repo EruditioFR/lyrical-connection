@@ -633,3 +633,39 @@ export const useUnpublishEventResults = () => {
     },
   });
 };
+
+export const useArtistEventApplication = (eventId: string) => {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ['artist-event-application', eventId, user?.id],
+    queryFn: async () => {
+      if (!user?.id || !eventId) return null;
+      
+      // Récupérer le profil artiste de l'utilisateur
+      const { data: artistProfile, error: profileError } = await supabase
+        .from('artist_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+        
+      if (profileError || !artistProfile) return null;
+      
+      // Récupérer la candidature de l'artiste pour cet événement
+      const { data: application, error } = await supabase
+        .from('event_applications')
+        .select('*')
+        .eq('event_id', eventId)
+        .eq('artist_profile_id', artistProfile.id)
+        .maybeSingle();
+        
+      if (error) {
+        console.error('Error fetching artist application:', error);
+        return null;
+      }
+      
+      return application;
+    },
+    enabled: !!user?.id && !!eventId,
+  });
+};
