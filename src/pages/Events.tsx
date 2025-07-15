@@ -2,14 +2,21 @@
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
-import { usePublicEvents, useEventCategories } from '@/hooks/useEvents';
+import { useUserType } from '@/hooks/useUserType';
+import { usePublicEvents, useEventCategories, useArtistApplications } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
 import { EventFilters } from '@/components/events/EventFilters';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const Events = () => {
   const { user, loading } = useAuth();
+  const { isArtist } = useUserType();
   const [filters, setFilters] = useState({
     event_type: '',
     category_id: '',
@@ -26,6 +33,31 @@ const Events = () => {
     data: categories = [],
     error: categoriesError
   } = useEventCategories();
+  
+  const {
+    data: artistApplications = [],
+    isLoading: applicationsLoading
+  } = useArtistApplications();
+
+  const getStatusLabel = (status: string) => {
+    const labels = {
+      pending: 'En attente',
+      waitlisted: 'Présélectionné(e)',
+      accepted: 'Accepté(e)',
+      rejected: 'Refusé(e)'
+    };
+    return labels[status as keyof typeof labels] || status;
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      waitlisted: 'bg-blue-100 text-blue-800',
+      accepted: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800'
+    };
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+  };
 
   if (loading) {
     return (
@@ -50,7 +82,59 @@ const Events = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          <div className="max-w-7xl mx-auto space-y-8">
+            
+            {/* Tableau des inscriptions pour les artistes */}
+            {isArtist && artistApplications.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mes inscriptions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Événement</TableHead>
+                        <TableHead>Dates</TableHead>
+                        <TableHead>Statut</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {artistApplications.map((application: any) => {
+                        const event = application.professional_events;
+                        const displayStatus = event.results_published 
+                          ? getStatusLabel(application.status)
+                          : 'En attente';
+                        const statusColor = event.results_published 
+                          ? getStatusColor(application.status)
+                          : 'bg-yellow-100 text-yellow-800';
+                        
+                        return (
+                          <TableRow key={application.id}>
+                            <TableCell className="font-medium">
+                              {event.title}
+                            </TableCell>
+                            <TableCell>
+                              {format(new Date(event.start_date), 'dd MMM yyyy', { locale: fr })}
+                              {event.start_date !== event.end_date && (
+                                <> - {format(new Date(event.end_date), 'dd MMM yyyy', { locale: fr })}</>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={statusColor}>
+                                {displayStatus}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filtres */}
             <div className="lg:col-span-1">
               <EventFilters 
@@ -91,6 +175,7 @@ const Events = () => {
                   ))}
                 </div>
               )}
+            </div>
             </div>
           </div>
         </div>

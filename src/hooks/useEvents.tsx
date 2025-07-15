@@ -669,3 +669,50 @@ export const useArtistEventApplication = (eventId: string) => {
     enabled: !!user?.id && !!eventId,
   });
 };
+
+export const useArtistApplications = () => {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ['artist-applications', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      // Récupérer le profil artiste de l'utilisateur
+      const { data: artistProfile, error: profileError } = await supabase
+        .from('artist_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+        
+      if (profileError || !artistProfile) return [];
+      
+      // Récupérer toutes les candidatures de l'artiste avec les événements associés
+      const { data: applications, error } = await supabase
+        .from('event_applications')
+        .select(`
+          *,
+          professional_events!inner(
+            id,
+            title,
+            start_date,
+            end_date,
+            results_published,
+            event_type,
+            location,
+            venue
+          )
+        `)
+        .eq('artist_profile_id', artistProfile.id)
+        .order('applied_at', { ascending: false });
+        
+      if (error) {
+        console.error('Error fetching artist applications:', error);
+        throw error;
+      }
+      
+      return applications || [];
+    },
+    enabled: !!user?.id,
+  });
+};
