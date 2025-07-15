@@ -224,19 +224,6 @@ const Notifications = () => {
                         {notification.content}
                       </p>
                     </div>
-
-                    {notification.data && (
-                      <div className="mt-3 text-xs text-muted-foreground">
-                        <details className="cursor-pointer">
-                          <summary className="hover:text-foreground">
-                            Informations additionnelles
-                          </summary>
-                          <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-auto">
-                            {JSON.stringify(notification.data, null, 2)}
-                          </pre>
-                        </details>
-                      </div>
-                    )}
                   </CardContent>
                 )}
 
