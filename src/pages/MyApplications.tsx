@@ -42,12 +42,12 @@ const MyApplications = () => {
   }
 
   const getStatusBadge = (status: string, resultsPublished: boolean) => {
-    // Si les résultats ne sont pas publiés, afficher "En cours"
-    if (!resultsPublished) {
+    // Si les résultats ne sont pas publiés, afficher "En attente de résultat"
+    if (!resultsPublished && status !== 'pending') {
       return (
         <Badge variant="secondary" className="flex items-center gap-1">
           <Clock className="h-3 w-3" />
-          En cours
+          En attente de résultat
         </Badge>
       );
     }

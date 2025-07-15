@@ -152,6 +152,8 @@ export const useCreateCasting = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['castings'] });
+      queryClient.invalidateQueries({ queryKey: ['my-castings'] });
+      queryClient.invalidateQueries({ queryKey: ['casting'] });
       toast({
         title: "Casting créé",
         description: "Votre casting a été publié avec succès.",
@@ -249,4 +251,46 @@ export const useMyCastings = () => {
     isLoading,
     error,
   };
+};
+
+// Hook pour publier les résultats d'un casting
+export const usePublishCastingResults = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (castingId: string) => {
+      const { data, error } = await supabase
+        .from('castings')
+        .update({ results_published: true })
+        .eq('id', castingId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error publishing casting results:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['castings'] });
+      queryClient.invalidateQueries({ queryKey: ['my-castings'] });
+      queryClient.invalidateQueries({ queryKey: ['casting'] });
+      queryClient.invalidateQueries({ queryKey: ['casting-applications'] });
+      toast({
+        title: "Résultats publiés",
+        description: "Les candidats peuvent maintenant consulter les résultats.",
+      });
+    },
+    onError: (error) => {
+      console.error('Publish results error:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de publier les résultats.",
+        variant: "destructive",
+      });
+    },
+  });
 };
