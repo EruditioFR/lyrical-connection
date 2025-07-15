@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfessionalEvents, useEventApplications } from '@/hooks/useEvents';
@@ -8,13 +8,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Users, TrendingUp, BarChart3, Globe, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User } from 'lucide-react';
 
 const ProfessionalEventApplications = () => {
   const { user, loading } = useAuth();
-  const [selectedEvent, setSelectedEvent] = useState<string>('');
-  const { data: events = [], isLoading: eventsLoading } = useProfessionalEvents();
-  const { data: applications = [], isLoading: applicationsLoading } = useEventApplications(selectedEvent);
+  const [searchParams] = useSearchParams();
+  const eventIdFromUrl = searchParams.get('eventId');
+  const [selectedEvent, setSelectedEvent] = useState<string>(eventIdFromUrl || '');
+  
+  const { data: events, isLoading: eventsLoading } = useProfessionalEvents();
+  const { data: applications, isLoading: applicationsLoading } = useEventApplications(selectedEvent);
 
   if (loading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -24,26 +29,56 @@ const ProfessionalEventApplications = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  // Calculer les statistiques basées sur les profils artistes
+  // Calculer les statistiques
   const getStatistics = () => {
-    if (!applications.length) return null;
+    if (!applications?.length) return null;
 
-    // Note: Pour les statistiques détaillées, nous aurions besoin d'enrichir les données d'application
-    // avec les informations des profils artistes. Pour l'instant, nous utilisons les données disponibles.
+    const totalApplications = applications.length;
     
     const statusStats = applications.reduce((acc, app) => {
       acc[app.status] = (acc[app.status] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    // Statistiques simulées basées sur les noms (à remplacer par de vraies données de profil)
     const experienceStats = applications.reduce((acc, app) => {
       const level = app.experience_level || 'Non spécifié';
       acc[level] = (acc[level] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    return { statusStats, experienceStats };
+    const genderStats = applications.reduce((acc, app) => {
+      const gender = app.artist_profiles?.gender || 'Non spécifié';
+      acc[gender] = (acc[gender] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const voiceTypeStats = applications.reduce((acc, app) => {
+      const voiceType = app.artist_profiles?.voice_type || 'Non spécifié';
+      acc[voiceType] = (acc[voiceType] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const nationalityStats = applications.reduce((acc, app) => {
+      const nationality = app.artist_profiles?.nationality || 'Non spécifiée';
+      acc[nationality] = (acc[nationality] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const ageStats = applications.reduce((acc, app) => {
+      if (app.artist_profiles?.birth_date) {
+        const age = new Date().getFullYear() - new Date(app.artist_profiles.birth_date).getFullYear();
+        if (age < 25) acc['18-24']++;
+        else if (age < 35) acc['25-34']++;
+        else if (age < 45) acc['35-44']++;
+        else if (age < 55) acc['45-54']++;
+        else acc['55+']++;
+      }
+      return acc;
+    }, { '18-24': 0, '25-34': 0, '35-44': 0, '45-54': 0, '55+': 0 });
+
+    const acceptanceRate = statusStats['accepted'] ? Math.round((statusStats['accepted'] / totalApplications) * 100) : 0;
+
+    return { statusStats, experienceStats, genderStats, voiceTypeStats, nationalityStats, ageStats, acceptanceRate };
   };
 
   const statistics = getStatistics();
@@ -58,15 +93,10 @@ const ProfessionalEventApplications = () => {
     return config ? <Badge variant={config.variant}>{config.label}</Badge> : null;
   };
 
-  const getEventTypeLabel = (type: string) => {
-    const types = {
-      masterclass: 'Masterclass',
-      stage: 'Stage',
-      concours: 'Concours',
-      atelier: 'Atelier',
-      conference: 'Conférence'
-    };
-    return types[type as keyof typeof types] || type;
+  const getAgeFromBirthDate = (birthDate: string | null) => {
+    if (!birthDate) return 'Non spécifié';
+    const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+    return `${age} ans`;
   };
 
   return (
@@ -75,7 +105,7 @@ const ProfessionalEventApplications = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Candidatures aux Événements</h1>
           <p className="text-gray-600 mt-2">
-            Analysez les inscriptions reçues pour vos événements avec des statistiques détaillées
+            Gérez les candidatures reçues pour vos événements avec des statistiques détaillées
           </p>
         </div>
 
@@ -85,9 +115,9 @@ const ProfessionalEventApplications = () => {
               <SelectValue placeholder="Sélectionnez un événement" />
             </SelectTrigger>
             <SelectContent>
-              {events.map((event) => (
+              {events?.map((event) => (
                 <SelectItem key={event.id} value={event.id}>
-                  {event.title} - {getEventTypeLabel(event.event_type)}
+                  {event.title}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -98,7 +128,7 @@ const ProfessionalEventApplications = () => {
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList>
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-              <TabsTrigger value="participants">Participants</TabsTrigger>
+              <TabsTrigger value="candidates">Candidats</TabsTrigger>
               <TabsTrigger value="statistics">Statistiques</TabsTrigger>
             </TabsList>
 
@@ -106,11 +136,11 @@ const ProfessionalEventApplications = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total inscriptions</CardTitle>
+                    <CardTitle className="text-sm font-medium">Total candidatures</CardTitle>
                     <Users className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{applications.length}</div>
+                    <div className="text-2xl font-bold">{applications?.length || 0}</div>
                   </CardContent>
                 </Card>
                 
@@ -128,52 +158,135 @@ const ProfessionalEventApplications = () => {
                     </CardContent>
                   </Card>
                 ))}
+
+                {statistics && (
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Taux d'acceptation</CardTitle>
+                      <Award className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{statistics.acceptanceRate}%</div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </TabsContent>
 
-            <TabsContent value="participants">
+            <TabsContent value="candidates">
               <div className="space-y-4">
-                {applications.map((application) => (
+                {applications?.map((application) => (
                   <Card key={application.id}>
                     <CardHeader>
                       <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">
-                            {application.user_profiles?.first_name} {application.user_profiles?.last_name}
-                          </CardTitle>
-                          <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                            <span>
-                              Inscrit le {new Date(application.created_at).toLocaleDateString('fr-FR')}
-                            </span>
-                            {application.experience_level && (
-                              <span>Niveau: {application.experience_level}</span>
-                            )}
+                        <div className="flex items-start space-x-4">
+                          <Avatar className="w-16 h-16">
+                            <AvatarImage 
+                              src={application.artist_profiles?.profile_image_url || ''} 
+                              alt={application.artist_profiles?.stage_name} 
+                            />
+                            <AvatarFallback>
+                              {application.artist_profiles?.stage_name?.charAt(0) || 'A'}
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="flex-1">
+                            <CardTitle className="text-lg">
+                              {application.artist_profiles?.stage_name}
+                            </CardTitle>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm text-gray-600">
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                <span>Type de voix: {application.artist_profiles?.voice_type || 'Non spécifié'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" />
+                                <span>Localisation: {application.artist_profiles?.location || 'Non spécifiée'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                <span>Sexe: {application.artist_profiles?.gender || 'Non spécifié'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                <span>Âge: {getAgeFromBirthDate(application.artist_profiles?.birth_date || null)}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <BarChart3 className="h-4 w-4" />
+                                <span>Expérience: {application.artist_profiles?.experience_years ? `${application.artist_profiles.experience_years} ans` : 'Non spécifiée'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <TrendingUp className="h-4 w-4" />
+                                <span>Nationalité: {application.artist_profiles?.nationality || 'Non spécifiée'}</span>
+                              </div>
+
+                              {application.artist_profiles?.contact_email && (
+                                <div className="flex items-center gap-2">
+                                  <Mail className="h-4 w-4" />
+                                  <span className="truncate">{application.artist_profiles.contact_email}</span>
+                                </div>
+                              )}
+
+                              {application.artist_profiles?.phone && (
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4" />
+                                  <span>{application.artist_profiles.phone}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        {getStatusBadge(application.status)}
+                        
+                        <div className="flex flex-col items-end gap-2">
+                          {getStatusBadge(application.status)}
+                          <span className="text-sm text-gray-500">
+                            Niveau: {application.experience_level || 'Non spécifié'}
+                          </span>
+                        </div>
                       </div>
                     </CardHeader>
+                    
                     <CardContent>
-                      <div className="space-y-3">
-                        {application.motivation && (
-                          <div className="bg-gray-50 p-3 rounded-lg">
-                            <h4 className="font-medium mb-2">Motivation</h4>
-                            <p className="text-sm text-gray-700">{application.motivation}</p>
-                          </div>
-                        )}
-                        
-                        {application.special_requirements && (
-                          <div className="bg-blue-50 p-3 rounded-lg">
-                            <h4 className="font-medium mb-2">Exigences particulières</h4>
-                            <p className="text-sm text-blue-700">{application.special_requirements}</p>
-                          </div>
-                        )}
+                      {application.artist_profiles?.bio && (
+                        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                          <h4 className="font-medium mb-2">Biographie</h4>
+                          <p className="text-sm text-gray-700">{application.artist_profiles.bio}</p>
+                        </div>
+                      )}
+                      
+                      {application.motivation && (
+                        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                          <h4 className="font-medium mb-2">Motivation</h4>
+                          <p className="text-sm text-gray-700">{application.motivation}</p>
+                        </div>
+                      )}
+                      
+                      {application.special_requirements && (
+                        <div className="mb-4 p-3 bg-yellow-50 rounded-lg">
+                          <h4 className="font-medium mb-2">Exigences particulières</h4>
+                          <p className="text-sm text-gray-700">{application.special_requirements}</p>
+                        </div>
+                      )}
 
-                        {application.professional_notes && (
-                          <div className="bg-yellow-50 p-3 rounded-lg">
-                            <h4 className="font-medium mb-2">Notes professionnelles</h4>
-                            <p className="text-sm text-yellow-700">{application.professional_notes}</p>
-                          </div>
+                      <div className="flex gap-2 mt-4">
+                        <Button variant="outline" size="sm">
+                          Voir le profil complet
+                        </Button>
+                        {application.status === 'pending' && (
+                          <>
+                            <Button variant="default" size="sm">
+                              Accepter
+                            </Button>
+                            <Button variant="destructive" size="sm">
+                              Refuser
+                            </Button>
+                          </>
                         )}
                       </div>
                     </CardContent>
@@ -189,29 +302,7 @@ const ProfessionalEventApplications = () => {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <BarChart3 className="h-5 w-5" />
-                        Statut des inscriptions
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        {Object.entries(statistics.statusStats).map(([status, count]) => (
-                          <div key={status} className="flex justify-between">
-                            <span>
-                              {status === 'pending' ? 'En attente' : 
-                               status === 'accepted' ? 'Acceptées' : 'Refusées'}
-                            </span>
-                            <span className="font-bold">{count}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5" />
-                        Niveau d'expérience
+                        Répartition par niveau d'expérience
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -229,13 +320,18 @@ const ProfessionalEventApplications = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Évolution des inscriptions
+                        <Users className="h-5 w-5" />
+                        Répartition par sexe
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-center py-8 text-gray-500">
-                        Graphique d'évolution à venir
+                      <div className="space-y-2">
+                        {Object.entries(statistics.genderStats).map(([gender, count]) => (
+                          <div key={gender} className="flex justify-between">
+                            <span>{gender}</span>
+                            <span className="font-bold">{count}</span>
+                          </div>
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
@@ -243,24 +339,56 @@ const ProfessionalEventApplications = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Globe className="h-5 w-5" />
-                        Taux de participation
+                        <TrendingUp className="h-5 w-5" />
+                        Types de voix
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span>Inscriptions totales</span>
-                          <span className="font-bold">{applications.length}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Taux d'acceptation</span>
-                          <span className="font-bold">
-                            {applications.length > 0 
-                              ? Math.round((statistics.statusStats.accepted || 0) / applications.length * 100)
-                              : 0}%
-                          </span>
-                        </div>
+                        {Object.entries(statistics.voiceTypeStats).map(([type, count]) => (
+                          <div key={type} className="flex justify-between">
+                            <span>{type}</span>
+                            <span className="font-bold">{count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <BarChart3 className="h-5 w-5" />
+                        Répartition par âge
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {Object.entries(statistics.ageStats).map(([range, count]) => (
+                          <div key={range} className="flex justify-between">
+                            <span>{range} ans</span>
+                            <span className="font-bold">{count}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="md:col-span-2">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5" />
+                        Nationalités
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {Object.entries(statistics.nationalityStats).map(([nationality, count]) => (
+                          <div key={nationality} className="flex justify-between">
+                            <span>{nationality}</span>
+                            <span className="font-bold">{count}</span>
+                          </div>
+                        ))}
                       </div>
                     </CardContent>
                   </Card>
@@ -278,7 +406,7 @@ const ProfessionalEventApplications = () => {
                 Sélectionnez un événement
               </h3>
               <p className="text-gray-600">
-                Choisissez un événement dans la liste pour voir les inscriptions et statistiques
+                Choisissez un événement dans la liste pour voir les candidatures et statistiques
               </p>
             </CardContent>
           </Card>

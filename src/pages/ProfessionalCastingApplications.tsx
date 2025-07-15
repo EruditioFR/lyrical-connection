@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCastings } from '@/hooks/useCastings';
@@ -9,11 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Users, TrendingUp, BarChart3, Globe, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Users, TrendingUp, BarChart3, Globe, Calendar, Mail, Phone, MapPin, User } from 'lucide-react';
 
 const ProfessionalCastingApplications = () => {
   const { user, loading } = useAuth();
-  const [selectedCasting, setSelectedCasting] = useState<string>('');
+  const [searchParams] = useSearchParams();
+  const castingIdFromUrl = searchParams.get('castingId');
+  const [selectedCasting, setSelectedCasting] = useState<string>(castingIdFromUrl || '');
   const { castings, isLoading: castingsLoading } = useCastings();
   const { applications, isLoading: applicationsLoading } = useCastingApplications(selectedCasting);
 
@@ -81,6 +85,12 @@ const ProfessionalCastingApplications = () => {
     };
     const config = statusConfig[status as keyof typeof statusConfig];
     return config ? <Badge variant={config.variant}>{config.label}</Badge> : null;
+  };
+
+  const getAgeFromBirthDate = (birthDate: string | null) => {
+    if (!birthDate) return 'Non spécifié';
+    const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+    return `${age} ans`;
   };
 
   return (
@@ -152,26 +162,126 @@ const ProfessionalCastingApplications = () => {
                   <Card key={application.id}>
                     <CardHeader>
                       <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-lg">
-                            {application.artist_profiles?.stage_name}
-                          </CardTitle>
-                          <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                            <span>Type de voix: {application.artist_profiles?.voice_type || 'Non spécifié'}</span>
-                            <span>Nationalité: {application.artist_profiles?.nationality || 'Non spécifiée'}</span>
-                            <span>Sexe: {application.artist_profiles?.gender || 'Non spécifié'}</span>
+                        <div className="flex items-start space-x-4">
+                          <Avatar className="w-16 h-16">
+                            <AvatarImage 
+                              src={application.artist_profiles?.profile_image_url || ''} 
+                              alt={application.artist_profiles?.stage_name} 
+                            />
+                            <AvatarFallback>
+                              {application.artist_profiles?.stage_name?.charAt(0) || 'A'}
+                            </AvatarFallback>
+                          </Avatar>
+                          
+                          <div className="flex-1">
+                            <CardTitle className="text-lg">
+                              {application.artist_profiles?.stage_name}
+                            </CardTitle>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm text-gray-600">
+                              <div className="flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                <span>Type de voix: {application.artist_profiles?.voice_type || 'Non spécifié'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4" />
+                                <span>Localisation: {application.artist_profiles?.location || 'Non spécifiée'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4" />
+                                <span>Sexe: {application.artist_profiles?.gender || 'Non spécifié'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                <span>Âge: {getAgeFromBirthDate(application.artist_profiles?.birth_date || null)}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <BarChart3 className="h-4 w-4" />
+                                <span>Expérience: {application.artist_profiles?.experience_years ? `${application.artist_profiles.experience_years} ans` : 'Non spécifiée'}</span>
+                              </div>
+                              
+                              <div className="flex items-center gap-2">
+                                <Globe className="h-4 w-4" />
+                                <span>Nationalité: {application.artist_profiles?.nationality || 'Non spécifiée'}</span>
+                              </div>
+
+                              {application.artist_profiles?.contact_email && (
+                                <div className="flex items-center gap-2">
+                                  <Mail className="h-4 w-4" />
+                                  <span className="truncate">{application.artist_profiles.contact_email}</span>
+                                </div>
+                              )}
+
+                              {application.artist_profiles?.phone && (
+                                <div className="flex items-center gap-2">
+                                  <Phone className="h-4 w-4" />
+                                  <span>{application.artist_profiles.phone}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        {getStatusBadge(application.status)}
+                        
+                        <div className="flex flex-col items-end gap-2">
+                          {getStatusBadge(application.status)}
+                          <span className="text-sm text-gray-500">
+                            Candidature du {new Date(application.created_at).toLocaleDateString('fr-FR')}
+                          </span>
+                        </div>
                       </div>
                     </CardHeader>
+                    
                     <CardContent>
+                      {application.artist_profiles?.bio && (
+                        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                          <h4 className="font-medium mb-2">Biographie</h4>
+                          <p className="text-sm text-gray-700">{application.artist_profiles.bio}</p>
+                        </div>
+                      )}
+                      
                       {application.cover_letter && (
-                        <div className="bg-gray-50 p-3 rounded-lg">
+                        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                           <h4 className="font-medium mb-2">Lettre de motivation</h4>
                           <p className="text-sm text-gray-700">{application.cover_letter}</p>
                         </div>
                       )}
+                      
+                      {application.motivation && (
+                        <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                          <h4 className="font-medium mb-2">Motivation supplémentaire</h4>
+                          <p className="text-sm text-gray-700">{application.motivation}</p>
+                        </div>
+                      )}
+
+                      <div className="flex gap-2 mt-4">
+                        <Button variant="outline" size="sm">
+                          Voir le profil complet
+                        </Button>
+                        {application.status === 'pending' && (
+                          <>
+                            <Button variant="default" size="sm">
+                              Présélectionner
+                            </Button>
+                            <Button variant="destructive" size="sm">
+                              Refuser
+                            </Button>
+                          </>
+                        )}
+                        {application.status === 'shortlisted' && (
+                          <>
+                            <Button variant="default" size="sm">
+                              Accepter
+                            </Button>
+                            <Button variant="destructive" size="sm">
+                              Refuser
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}

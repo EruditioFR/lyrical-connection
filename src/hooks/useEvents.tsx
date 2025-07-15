@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -37,6 +38,7 @@ export interface Event {
   longitude: number | null;
   venue_id: string | null;
   category_id: string | null;
+  applications_count?: number;
 }
 
 export interface EventApplication {
@@ -52,10 +54,53 @@ export interface EventApplication {
   special_requirements: string | null;
   professional_notes: string | null;
   reviewed_at: string | null;
-  user_profiles?: {
-    first_name: string;
-    last_name: string;
+  artist_profiles?: {
+    id: string;
+    stage_name: string;
+    voice_type: string | null;
+    bio: string | null;
+    location: string | null;
+    profile_image_url: string | null;
+    experience_years: number | null;
+    gender: string | null;
+    nationality: string | null;
+    birth_date: string | null;
+    contact_email: string | null;
+    phone: string | null;
+    user_profiles?: {
+      first_name: string;
+      last_name: string;
+    };
   };
+}
+
+export interface EventCategory {
+  id: string;
+  name: string;
+  description: string | null;
+  color: string | null;
+}
+
+export interface CreateEventData {
+  title: string;
+  description: string | null;
+  event_type: EventType;
+  start_date: string;
+  end_date: string;
+  location: string | null;
+  venue: string | null;
+  price: number | null;
+  max_participants: number | null;
+  requirements: string | null;
+  program: string | null;
+  contact_info: string | null;
+}
+
+export interface CreateApplicationData {
+  event_id: string;
+  motivation: string | null;
+  experience_level: string | null;
+  special_requirements: string | null;
 }
 
 export const useProfessionalEvents = () => {
@@ -110,8 +155,8 @@ export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  return useMutation(
-    async (newEvent: Omit<Event, 'id' | 'created_at' | 'updated_at'>) => {
+  return useMutation({
+    mutationFn: async (newEvent: Omit<Event, 'id' | 'created_at' | 'updated_at'>) => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
@@ -127,20 +172,18 @@ export const useCreateEvent = () => {
 
       return data as Event;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['professional-events', user?.id]);
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['professional-events', user?.id] });
+    },
+  });
 };
 
 export const useUpdateEvent = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  return useMutation(
-    async (updatedEvent: Event) => {
+  return useMutation({
+    mutationFn: async (updatedEvent: Event) => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
@@ -157,21 +200,19 @@ export const useUpdateEvent = () => {
 
       return data as Event;
     },
-    {
-      onSuccess: (_, updatedEvent) => {
-        queryClient.invalidateQueries(['professional-events', user?.id]);
-        queryClient.invalidateQueries(['event-detail', updatedEvent.id]);
-      },
-    }
-  );
+    onSuccess: (_, updatedEvent) => {
+      queryClient.invalidateQueries({ queryKey: ['professional-events', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['event-detail', updatedEvent.id] });
+    },
+  });
 };
 
 export const useDeleteEvent = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  return useMutation(
-    async (eventId: string) => {
+  return useMutation({
+    mutationFn: async (eventId: string) => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { error } = await supabase
@@ -184,12 +225,10 @@ export const useDeleteEvent = () => {
         throw error;
       }
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['professional-events', user?.id]);
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['professional-events', user?.id] });
+    },
+  });
 };
 
 export const usePublicEvents = (filters?: {
@@ -233,6 +272,25 @@ export const usePublicEvents = (filters?: {
   });
 };
 
+export const useEventCategories = () => {
+  return useQuery({
+    queryKey: ['event-categories'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('event_categories')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching event categories:', error);
+        throw error;
+      }
+
+      return data as EventCategory[];
+    },
+  });
+};
+
 export const useEventApplicationsCount = (eventId?: string) => {
   return useQuery({
     queryKey: ['event-applications-count', eventId],
@@ -265,8 +323,19 @@ export const useEventApplications = (eventId?: string) => {
         .from('event_applications')
         .select(`
           *,
-          user_profiles:artist_profiles(
-            user_profiles(first_name, last_name)
+          artist_profiles!inner(
+            id,
+            stage_name,
+            voice_type,
+            bio,
+            location,
+            profile_image_url,
+            experience_years,
+            gender,
+            nationality,
+            birth_date,
+            contact_email,
+            phone
           )
         `)
         .eq('event_id', eventId)
@@ -277,14 +346,50 @@ export const useEventApplications = (eventId?: string) => {
         throw error;
       }
 
-      // Transform the data to flatten user_profiles
-      const transformedData = data?.map(app => ({
-        ...app,
-        user_profiles: app.user_profiles?.user_profiles || null
-      })) || [];
-
-      return transformedData as EventApplication[];
+      return data as EventApplication[];
     },
     enabled: !!eventId,
+  });
+};
+
+export const useApplyToEvent = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (applicationData: CreateApplicationData) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      // Get artist profile
+      const { data: artistProfile } = await supabase
+        .from('artist_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!artistProfile) {
+        throw new Error('Artist profile not found');
+      }
+
+      const { data, error } = await supabase
+        .from('event_applications')
+        .insert([{
+          ...applicationData,
+          artist_profile_id: artistProfile.id
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error applying to event:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['event-applications', variables.event_id] });
+      queryClient.invalidateQueries({ queryKey: ['event-applications-count', variables.event_id] });
+    },
   });
 };
