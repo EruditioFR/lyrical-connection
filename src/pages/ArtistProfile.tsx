@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -235,7 +236,6 @@ const ArtistProfile = () => {
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
                   <div className="text-lg font-semibold text-gray-800 flex items-center justify-center gap-2">
                     <span className="text-2xl">{getCountryFlag(profile.nationality)}</span>
-                    {profile.nationality}
                   </div>
                   <div className="text-sm text-gray-600">Nationalité</div>
                 </div>
