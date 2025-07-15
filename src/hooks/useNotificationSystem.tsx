@@ -139,124 +139,53 @@ export const useNotificationSystem = () => {
   // Hook pour créer des notifications en masse lors de la publication des résultats
   const createResultsNotifications = useMutation({
     mutationFn: async ({ castingId, eventId }: { castingId?: string; eventId?: string }) => {
-      let applications: any[] = [];
-      let entityName = '';
-      let entityType = '';
-
       if (castingId) {
-        // Récupérer le nom du casting
-        const { data: casting, error: castingInfoError } = await supabase
-          .from('castings')
-          .select('title')
-          .eq('id', castingId)
-          .single();
-
-        if (castingInfoError) throw castingInfoError;
-        
-        // Récupérer les candidatures du casting
-        const { data: castingData, error: castingError } = await supabase
-          .from('applications')
-          .select(`
-            *,
-            artist_profiles(user_id)
-          `)
-          .eq('casting_id', castingId);
-
-        if (castingError) throw castingError;
-        
-        applications = castingData || [];
-        entityName = casting?.title || 'Casting';
-        entityType = 'casting';
-      } else if (eventId) {
-        // Récupérer le nom de l'événement
-        const { data: event, error: eventInfoError } = await supabase
-          .from('professional_events')
-          .select('title')
-          .eq('id', eventId)
-          .single();
-
-        if (eventInfoError) throw eventInfoError;
-        
-        // Récupérer les inscriptions à l'événement
-        const { data: eventData, error: eventError } = await supabase
-          .from('event_applications')
-          .select('*')
-          .eq('event_id', eventId);
-
-        if (eventError) throw eventError;
-        
-        // Récupérer les user_id pour chaque artist_profile_id
-        if (eventData && eventData.length > 0) {
-          const artistProfileIds = eventData.map(app => app.artist_profile_id);
-          const { data: artistProfiles, error: profilesError } = await supabase
-            .from('artist_profiles')
-            .select('id, user_id')
-            .in('id', artistProfileIds);
-
-          if (profilesError) throw profilesError;
-
-          // Enrichir les applications avec les user_id
-          applications = eventData.map(app => ({
-            ...app,
-            artist_profiles: { user_id: artistProfiles?.find(p => p.id === app.artist_profile_id)?.user_id }
-          }));
-        } else {
-          applications = [];
-        }
-        
-        entityName = event?.title || 'Événement';
-        entityType = 'event';
-      }
-
-      // Créer une notification pour chaque candidat
-      const notifications = applications.map(app => {
-        const statusText = getStatusText(app.status);
-        const now = new Date();
-        
-        return {
-          user_id: app.artist_profiles.user_id,
-          type: (entityType === 'casting' ? 'casting_application' : 'event_registration') as 'casting_application' | 'event_registration',
-          title: `Résultats publiés pour ${entityName}`,
-          content: `[${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}] Vous avez été ${statusText} pour ${entityName}.`,
-          data: {
-            status: app.status,
-            [entityType === 'casting' ? 'casting_id' : 'event_id']: entityType === 'casting' ? castingId : eventId,
-            entity_name: entityName,
-            entity_type: entityType
-          },
-          is_read: false,
-          created_at: now.toISOString()
-        };
-      });
-
-      // Créer les notifications une par une pour éviter les problèmes RLS
-      if (notifications.length > 0) {
-        const promises = notifications.map(async (notification) => {
-          const { data, error } = await supabase
-            .from('notifications')
-            .insert(notification)
-            .select()
-            .single();
-
-          if (error) {
-            console.error('Error creating single notification:', error);
-            throw error;
-          }
-
-          return data;
+        // Utiliser la fonction de base de données pour les castings
+        const { error } = await supabase.rpc('create_results_notifications', {
+          p_entity_id: castingId,
+          p_entity_type: 'casting'
         });
 
-        const results = await Promise.all(promises);
-        return results;
+        if (error) {
+          console.error('Error creating casting notifications:', error);
+          throw error;
+        }
+
+        // Récupérer le nombre de candidatures pour le message de succès
+        const { count } = await supabase
+          .from('applications')
+          .select('*', { count: 'exact', head: true })
+          .eq('casting_id', castingId);
+
+        return { count: count || 0 };
+      } else if (eventId) {
+        // Utiliser la fonction de base de données pour les événements
+        const { error } = await supabase.rpc('create_results_notifications', {
+          p_entity_id: eventId,
+          p_entity_type: 'event'
+        });
+
+        if (error) {
+          console.error('Error creating event notifications:', error);
+          throw error;
+        }
+
+        // Récupérer le nombre d'inscriptions pour le message de succès
+        const { count } = await supabase
+          .from('event_applications')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_id', eventId);
+
+        return { count: count || 0 };
       }
 
-      return [];
+      return { count: 0 };
     },
     onSuccess: (data) => {
-      if (data && data.length > 0) {
+      if (data && data.count > 0) {
         toast({
           title: "Notifications envoyées",
-          description: `${data.length} notification(s) envoyée(s) aux candidats.`,
+          description: `${data.count} notification(s) envoyée(s) aux candidats.`,
         });
       }
     },

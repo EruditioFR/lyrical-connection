@@ -1725,6 +1725,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_results_notifications: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _user_id: string
