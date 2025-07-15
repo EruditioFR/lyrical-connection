@@ -1,4 +1,6 @@
+
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Settings, Check, CheckCheck, X } from 'lucide-react';
 import {
   DropdownMenu,
@@ -17,6 +19,7 @@ import { fr } from 'date-fns/locale';
 import NotificationPreferencesDialog from './NotificationPreferencesDialog';
 
 const NotificationCenter = () => {
+  const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [showPreferences, setShowPreferences] = useState(false);
 
@@ -146,7 +149,7 @@ const NotificationCenter = () => {
               </div>
             ) : (
               <div>
-                {notifications.map((notification) => (
+                {notifications.slice(0, 5).map((notification) => (
                   <NotificationItem 
                     key={notification.id} 
                     notification={notification} 
@@ -159,7 +162,10 @@ const NotificationCenter = () => {
           {notifications.length > 0 && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="justify-center cursor-pointer">
+              <DropdownMenuItem 
+                className="justify-center cursor-pointer"
+                onClick={() => navigate('/notifications')}
+              >
                 Voir toutes les notifications
               </DropdownMenuItem>
             </>

@@ -34,6 +34,7 @@ import ChangePassword from '@/pages/ChangePassword';
 import About from '@/pages/About';
 import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
+import Notifications from '@/pages/Notifications';
 
 // Import nouvelles pages
 import ProfessionalCastingApplications from '@/pages/ProfessionalCastingApplications';
@@ -86,6 +87,9 @@ function App() {
               {/* Routes pour la messagerie */}
               <Route path="/messages" element={<Messages />} />
               <Route path="/professional/messages" element={<ProfessionalMessages />} />
+              
+              {/* Route pour les notifications */}
+              <Route path="/notifications" element={<Notifications />} />
               
               {/* Routes pour l'abonnement */}
               <Route path="/pricing" element={<Pricing />} />
