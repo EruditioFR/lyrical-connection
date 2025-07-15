@@ -8,8 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { 
   MapPin, 
   Calendar, 
@@ -257,35 +257,50 @@ const ArtistProfile = () => {
             </div>
           )}
 
-          {/* Contenu en onglets */}
-          <Tabs defaultValue="repertoire" className="mb-8">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="repertoire">
-                <Music className="w-4 h-4 mr-2" />
-                Répertoire
-              </TabsTrigger>
-              <TabsTrigger value="photos">
-                <Camera className="w-4 h-4 mr-2" />
-                Photos
-              </TabsTrigger>
-              <TabsTrigger value="audio">
-                <User className="w-4 h-4 mr-2" />
-                Audio
-              </TabsTrigger>
-            </TabsList>
+          {/* Répertoire */}
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Music className="w-5 h-5" />
+                  Répertoire
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RepertoireTab artistProfileId={profile.id} />
+              </CardContent>
+            </Card>
+          </div>
 
-            <TabsContent value="repertoire" className="mt-6">
-              <RepertoireTab artistProfileId={profile.id} />
-            </TabsContent>
+          {/* Galerie photos */}
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Camera className="w-5 h-5" />
+                  Galerie photos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PhotosTab artistProfileId={profile.id} />
+              </CardContent>
+            </Card>
+          </div>
 
-            <TabsContent value="photos" className="mt-6">
-              <PhotosTab artistProfileId={profile.id} />
-            </TabsContent>
-
-            <TabsContent value="audio" className="mt-6">
-              <AudioTab artistProfileId={profile.id} />
-            </TabsContent>
-          </Tabs>
+          {/* Fichiers audio */}
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Fichiers audio
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AudioTab artistProfileId={profile.id} />
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Contact et liens */}
           {(profile.contact_email || profile.phone || profile.website) && (
