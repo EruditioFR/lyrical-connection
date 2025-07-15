@@ -262,7 +262,7 @@ const ProfessionalCastingApplications = () => {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => navigate(`/artist/${application.artist_profiles?.id}`)}
+                          onClick={() => navigate(`/artiste/${application.artist_profiles?.id}`)}
                         >
                           Voir le profil complet
                         </Button>
