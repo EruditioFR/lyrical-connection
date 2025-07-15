@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -30,6 +29,7 @@ import RepertoireTab from '@/components/profile/RepertoireTab';
 import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 import AirPlayer from '@/components/profile/AirPlayer';
+import { getCountryFlag } from '@/utils/countryFlags';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -233,7 +233,10 @@ const ArtistProfile = () => {
               
               {profile.nationality && (
                 <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-semibold text-gray-800">{profile.nationality}</div>
+                  <div className="text-lg font-semibold text-gray-800 flex items-center justify-center gap-2">
+                    <span className="text-2xl">{getCountryFlag(profile.nationality)}</span>
+                    {profile.nationality}
+                  </div>
                   <div className="text-sm text-gray-600">Nationalité</div>
                 </div>
               )}
