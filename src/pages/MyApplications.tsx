@@ -95,6 +95,9 @@ const MyApplications = () => {
     );
   };
 
+  console.log('Casting applications:', castingApplications);
+  console.log('Event applications:', eventApplications);
+
   // Combiner et traiter toutes les candidatures
   const allApplications = [
     ...castingApplications.map(app => ({
