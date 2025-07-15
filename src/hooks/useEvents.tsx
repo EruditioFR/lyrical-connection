@@ -41,6 +41,9 @@ export interface Event {
   applications_count?: number;
 }
 
+// Export alias for backwards compatibility
+export type ProfessionalEvent = Event;
+
 export interface EventApplication {
   id: string;
   event_id: string;
@@ -94,6 +97,20 @@ export interface CreateEventData {
   requirements: string | null;
   program: string | null;
   contact_info: string | null;
+  status?: EventStatus;
+  address?: string | null;
+  currency?: string | null;
+  registration_deadline?: string | null;
+  participation_rules?: string | null;
+  code_of_conduct?: string | null;
+  cancellation_policy?: string | null;
+  liability_waiver?: string | null;
+  is_featured?: boolean | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  venue_id?: string | null;
+  category_id?: string | null;
+  image_url?: string | null;
 }
 
 export interface CreateApplicationData {
@@ -151,17 +168,28 @@ export const useEventDetail = (eventId?: string) => {
   });
 };
 
+// Export alias for backwards compatibility
+export const useProfessionalEvent = useEventDetail;
+
 export const useCreateEvent = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async (newEvent: Omit<Event, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (newEvent: CreateEventData) => {
       if (!user?.id) throw new Error('User not authenticated');
+
+      const eventData = {
+        ...newEvent,
+        professional_profile_id: user.id,
+        status: newEvent.status || 'draft' as EventStatus,
+        currency: newEvent.currency || 'EUR',
+        is_featured: newEvent.is_featured || false,
+      };
 
       const { data, error } = await supabase
         .from('professional_events')
-        .insert([{ ...newEvent, professional_profile_id: user.id }])
+        .insert([eventData])
         .select()
         .single();
 
@@ -335,7 +363,11 @@ export const useEventApplications = (eventId?: string) => {
             nationality,
             birth_date,
             contact_email,
-            phone
+            phone,
+            user_profiles!inner(
+              first_name,
+              last_name
+            )
           )
         `)
         .eq('event_id', eventId)
@@ -346,7 +378,7 @@ export const useEventApplications = (eventId?: string) => {
         throw error;
       }
 
-      return data as EventApplication[];
+      return (data || []) as EventApplication[];
     },
     enabled: !!eventId,
   });

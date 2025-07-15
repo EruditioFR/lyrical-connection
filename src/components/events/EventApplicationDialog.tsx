@@ -1,15 +1,16 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useApplyToEvent, CreateApplicationData, ProfessionalEvent } from '@/hooks/useEvents';
+import { useApplyToEvent, CreateApplicationData, Event } from '@/hooks/useEvents';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import { Loader2 } from 'lucide-react';
 
 interface EventApplicationDialogProps {
-  event: ProfessionalEvent;
+  event: Event;
   children: React.ReactNode;
 }
 
@@ -32,7 +33,6 @@ export const EventApplicationDialog: React.FC<EventApplicationDialogProps> = ({
 
     const applicationData: CreateApplicationData = {
       event_id: event.id,
-      artist_profile_id: artistProfile.id,
       motivation,
       experience_level: experienceLevel,
       special_requirements: specialRequirements || undefined,

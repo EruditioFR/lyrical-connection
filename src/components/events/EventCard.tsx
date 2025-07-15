@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -5,11 +6,11 @@ import { Calendar, MapPin, Users, Euro, Clock } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ProfessionalEvent } from '@/hooks/useEvents';
+import { Event } from '@/hooks/useEvents';
 import { EventApplicationDialog } from './EventApplicationDialog';
 
 interface EventCardProps {
-  event: ProfessionalEvent;
+  event: Event;
   showApplyButton?: boolean;
 }
 
