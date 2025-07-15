@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import EventHeader from '@/components/events/EventHeader';
 import EventDetailMain from '@/components/events/EventDetailMain';
@@ -9,6 +9,8 @@ import EventRulesModal from '@/components/events/EventRulesModal';
 import VideoPlayerModal from '@/components/events/VideoPlayerModal';
 import EventDetailLoading from '@/components/events/EventDetailLoading';
 import EventDetailError from '@/components/events/EventDetailError';
+import { Button } from '@/components/ui/button';
+import { Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfessionalMedia } from '@/hooks/useProfessionalMedia';
 import { useEventDetail, useEventApplicationsCount } from '@/hooks/useEventDetail';
@@ -16,6 +18,7 @@ import { getEventTypeLabel, getStatusLabel, getStatusColor, getCurrencySymbol } 
 
 const EventDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [selectedVideo, setSelectedVideo] = useState<{src: string, title: string, description?: string} | null>(null);
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
@@ -64,6 +67,20 @@ const EventDetail = () => {
         getStatusLabel={getStatusLabel}
         getStatusColor={getStatusColor}
       />
+
+      {/* Bouton candidatures pour les professionnels */}
+      {user && event.status === 'published' && (
+        <div className="container mx-auto px-4 mb-6">
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/professional/event-applications?eventId=${event.id}`)}
+            className="flex items-center gap-2"
+          >
+            <Users className="h-4 w-4" />
+            Voir les candidatures ({applicationsCount || 0})
+          </Button>
+        </div>
+      )}
 
       {/* Contenu principal */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

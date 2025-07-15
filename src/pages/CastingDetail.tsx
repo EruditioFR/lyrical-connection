@@ -127,7 +127,7 @@ const CastingDetail = () => {
               {user && (
                 <Button
                   variant="outline"
-                  onClick={() => navigate(`/castings/${casting.id}/candidatures`)}
+                  onClick={() => navigate(`/professional/casting-applications?castingId=${casting.id}`)}
                 >
                   <Users className="h-4 w-4 mr-2" />
                   Candidatures
@@ -335,7 +335,7 @@ const CastingDetail = () => {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => navigate(`/castings/${casting.id}/candidatures`)}
+                    onClick={() => navigate(`/professional/casting-applications?castingId=${casting.id}`)}
                   >
                     <Users className="h-4 w-4 mr-2" />
                     Voir les candidatures

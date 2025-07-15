@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -59,13 +60,13 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
     if (onEdit) {
       onEdit();
     } else {
-      navigate(`/mes-evenements/${event.id}/modifier`);
+      navigate(`/evenements/${event.id}/modifier`);
     }
   };
 
   const handleViewApplications = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/applications-professionnelles?eventId=${event.id}`);
+    navigate(`/professional/event-applications?eventId=${event.id}`);
   };
 
   return (
