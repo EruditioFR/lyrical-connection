@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Megaphone, Clock, CheckCircle, XCircle, AlertCircle, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +18,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const NotificationBell = () => {
+  const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markAllAsRead, isLoading } = useNotifications();
 
   const getStatusIcon = (status: string) => {
@@ -52,6 +55,8 @@ const NotificationBell = () => {
     if (!notification.is_read) {
       markAsRead(notification.id);
     }
+    // Rediriger vers la page des notifications
+    navigate('/notifications');
   };
 
   if (isLoading) {
