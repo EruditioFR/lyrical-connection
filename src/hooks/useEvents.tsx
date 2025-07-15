@@ -342,34 +342,41 @@ export const useEventApplications = (eventId?: string) => {
     queryFn: async () => {
       if (!eventId) return [];
 
-      const { data, error } = await supabase
+      // First get event applications
+      const { data: applications, error: appsError } = await supabase
         .from('event_applications')
-        .select(`
-          *,
-          artist_profiles!inner(
-            id,
-            stage_name,
-            voice_type,
-            bio,
-            location,
-            profile_image_url,
-            experience_years,
-            gender,
-            nationality,
-            birth_date,
-            contact_email,
-            phone
-          )
-        `)
+        .select('*')
         .eq('event_id', eventId)
         .order('applied_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching event applications:', error);
-        throw error;
+      if (appsError) {
+        console.error('Error fetching event applications:', appsError);
+        throw appsError;
       }
 
-      return (data || []) as EventApplication[];
+      if (!applications || applications.length === 0) {
+        return [];
+      }
+
+      // Get artist profiles for these applications
+      const artistProfileIds = applications.map(app => app.artist_profile_id);
+      const { data: profiles, error: profilesError } = await supabase
+        .from('artist_profiles')
+        .select('id, stage_name, voice_type, bio, location, profile_image_url, experience_years, gender, nationality, birth_date, contact_email, phone')
+        .in('id', artistProfileIds);
+
+      if (profilesError) {
+        console.error('Error fetching artist profiles:', profilesError);
+        throw profilesError;
+      }
+
+      // Combine the data
+      const enrichedApplications = applications.map(app => ({
+        ...app,
+        artist_profiles: profiles?.find(p => p.id === app.artist_profile_id) || null
+      }));
+
+      return enrichedApplications as EventApplication[];
     },
     enabled: !!eventId,
   });
