@@ -59,7 +59,7 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/artiste/:id" element={<ArtistProfile />} />
+              <Route path="/artistes/:id" element={<ArtistProfile />} />
               <Route path="/professionnel/:id" element={<ProfessionalProfile />} />
               
               {/* Routes pour les castings */}
