@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -31,9 +32,11 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
   ];
 
   const handleFilterChange = (key: string, value: string) => {
+    // Convert "all" back to empty string for the filter logic
+    const filterValue = value === 'all' ? '' : value;
     onFiltersChange({
       ...filters,
-      [key]: value,
+      [key]: filterValue,
     });
   };
 
@@ -85,14 +88,14 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
         <div className="space-y-2">
           <Label>Type d'événement</Label>
           <Select
-            value={filters.event_type}
+            value={filters.event_type || 'all'}
             onValueChange={(value) => handleFilterChange('event_type', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Tous les types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Tous les types</SelectItem>
+              <SelectItem value="all">Tous les types</SelectItem>
               {eventTypes.map((type) => (
                 <SelectItem key={type.value} value={type.value}>
                   {type.label}
@@ -106,14 +109,14 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
         <div className="space-y-2">
           <Label>Catégorie</Label>
           <Select
-            value={filters.category_id}
+            value={filters.category_id || 'all'}
             onValueChange={(value) => handleFilterChange('category_id', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Toutes les catégories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Toutes les catégories</SelectItem>
+              <SelectItem value="all">Toutes les catégories</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.name}
