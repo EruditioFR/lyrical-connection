@@ -41,20 +41,17 @@ export const useNotificationSystem = () => {
       content: string;
       data?: any;
     }) => {
-      const { data: notification, error } = await supabase
-        .from('notifications')
-        .insert({
-          user_id: userId,
-          type,
-          title,
-          content,
-          data: data || {}
-        })
-        .select()
-        .single();
+      const { data: notificationId, error } = await supabase
+        .rpc('create_notification_system', {
+          p_user_id: userId,
+          p_type: type,
+          p_title: title,
+          p_content: content,
+          p_data: data || {}
+        });
 
       if (error) throw error;
-      return notification;
+      return { id: notificationId, user_id: userId, type, title, content, data: data || {} };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-notifications'] });
