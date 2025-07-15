@@ -652,33 +652,51 @@ export const useArtistApplications = () => {
         .eq('user_id', user.id)
         .single();
         
-      if (profileError || !artistProfile) return [];
+      if (profileError || !artistProfile) {
+        console.log('No artist profile found for user:', user.id);
+        return [];
+      }
       
-      // Récupérer toutes les candidatures de l'artiste avec les événements associés
-      const { data: applications, error } = await supabase
+      // Récupérer toutes les candidatures aux événements de l'artiste
+      const { data: eventApplications, error: appsError } = await supabase
         .from('event_applications')
-        .select(`
-          *,
-          professional_events!inner(
-            id,
-            title,
-            start_date,
-            end_date,
-            results_published,
-            event_type,
-            location,
-            venue
-          )
-        `)
+        .select('*')
         .eq('artist_profile_id', artistProfile.id)
         .order('applied_at', { ascending: false });
         
-      if (error) {
-        console.error('Error fetching artist applications:', error);
-        throw error;
+      if (appsError) {
+        console.error('Error fetching event applications:', appsError);
+        throw appsError;
       }
       
-      return applications || [];
+      if (!eventApplications || eventApplications.length === 0) {
+        console.log('No event applications found for artist:', artistProfile.id);
+        return [];
+      }
+      
+      // Récupérer les détails des événements pour chaque candidature
+      const eventIds = eventApplications.map(app => app.event_id);
+      const { data: events, error: eventsError } = await supabase
+        .from('professional_events')
+        .select('id, title, start_date, end_date, results_published, event_type, location, venue')
+        .in('id', eventIds);
+        
+      if (eventsError) {
+        console.error('Error fetching events for applications:', eventsError);
+        throw eventsError;
+      }
+      
+      // Combiner les candidatures avec les détails des événements
+      const applicationsWithEvents = eventApplications.map(application => {
+        const event = events?.find(e => e.id === application.event_id);
+        return {
+          ...application,
+          professional_events: event
+        };
+      });
+      
+      console.log('Found event applications:', applicationsWithEvents.length);
+      return applicationsWithEvents;
     },
     enabled: !!user?.id,
   });
