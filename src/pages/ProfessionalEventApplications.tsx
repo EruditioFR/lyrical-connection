@@ -18,6 +18,7 @@ const ProfessionalEventApplications = () => {
   const [searchParams] = useSearchParams();
   const eventIdFromUrl = searchParams.get('eventId');
   const [selectedEvent, setSelectedEvent] = useState<string>(eventIdFromUrl || '');
+  const [editingApplications, setEditingApplications] = useState<Set<string>>(new Set());
   
   const { data: events, isLoading: eventsLoading } = useProfessionalEvents();
   const { data: applications, isLoading: applicationsLoading } = useEventApplications(selectedEvent);
@@ -101,6 +102,16 @@ const ProfessionalEventApplications = () => {
     if (!birthDate) return 'Non spécifié';
     const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
     return `${age} ans`;
+  };
+
+  const toggleEditingApplication = (applicationId: string) => {
+    const newEditing = new Set(editingApplications);
+    if (newEditing.has(applicationId)) {
+      newEditing.delete(applicationId);
+    } else {
+      newEditing.add(applicationId);
+    }
+    setEditingApplications(newEditing);
   };
 
   const selectedEventData = events?.find(event => event.id === selectedEvent);
@@ -305,6 +316,8 @@ const ProfessionalEventApplications = () => {
                         >
                           Voir le profil complet
                         </Button>
+                        
+                        {/* Boutons pour candidatures en attente ou présélectionnées */}
                         {(application.status === 'pending' || application.status === 'waitlisted') && (
                           <>
                             {application.status === 'pending' && (
@@ -342,6 +355,64 @@ const ProfessionalEventApplications = () => {
                             >
                               Refuser
                             </Button>
+                          </>
+                        )}
+
+                        {/* Bouton pour candidatures acceptées si résultats non publiés */}
+                        {application.status === 'accepted' && !selectedEventData?.results_published && (
+                          <>
+                            {!editingApplications.has(application.id) ? (
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => toggleEditingApplication(application.id)}
+                              >
+                                Modifier la sélection
+                              </Button>
+                            ) : (
+                              <>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => updateApplication.mutate({ 
+                                    applicationId: application.id, 
+                                    status: 'waitlisted' 
+                                  })}
+                                  disabled={updateApplication.isPending}
+                                >
+                                  Présélectionner
+                                </Button>
+                                <Button 
+                                  variant="default" 
+                                  size="sm"
+                                  onClick={() => updateApplication.mutate({ 
+                                    applicationId: application.id, 
+                                    status: 'accepted' 
+                                  })}
+                                  disabled={updateApplication.isPending}
+                                >
+                                  Sélectionner
+                                </Button>
+                                <Button 
+                                  variant="destructive" 
+                                  size="sm"
+                                  onClick={() => updateApplication.mutate({ 
+                                    applicationId: application.id, 
+                                    status: 'rejected' 
+                                  })}
+                                  disabled={updateApplication.isPending}
+                                >
+                                  Refuser
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => toggleEditingApplication(application.id)}
+                                >
+                                  Annuler
+                                </Button>
+                              </>
+                            )}
                           </>
                         )}
                       </div>
