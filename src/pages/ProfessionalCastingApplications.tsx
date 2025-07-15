@@ -25,6 +25,7 @@ const ProfessionalCastingApplications = () => {
   const { applications, isLoading: applicationsLoading } = useCastingApplications(selectedCasting);
   const { mutate: updateApplication } = useUpdateApplication();
   const { toast } = useToast();
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   if (loading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -117,6 +118,18 @@ const ProfessionalCastingApplications = () => {
 
   // Trouver le casting sélectionné pour récupérer son nom et statut de publication
   const currentCasting = myCastings.find(c => c.id === selectedCasting);
+
+  // Filtrer les candidatures selon le statut sélectionné
+  const filteredApplications = applications.filter(app => {
+    if (statusFilter === 'all') return true;
+    return app.status === statusFilter;
+  });
+
+  // Calculer les nombres pour chaque statut
+  const statusCounts = applications.reduce((acc, app) => {
+    acc[app.status] = (acc[app.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -214,8 +227,72 @@ const ProfessionalCastingApplications = () => {
             </TabsContent>
 
             <TabsContent value="candidates">
+              {/* Filtres par statut */}
+              <div className="mb-6 flex flex-wrap gap-2">
+                <Button
+                  variant={statusFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('all')}
+                  className="flex items-center gap-2"
+                >
+                  Tous ({applications.length})
+                </Button>
+                <Button
+                  variant={statusFilter === 'pending' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('pending')}
+                  className="flex items-center gap-2"
+                >
+                  En attente ({statusCounts.pending || 0})
+                </Button>
+                <Button
+                  variant={statusFilter === 'shortlisted' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('shortlisted')}
+                  className="flex items-center gap-2"
+                >
+                  Présélectionnés ({statusCounts.shortlisted || 0})
+                </Button>
+                <Button
+                  variant={statusFilter === 'accepted' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('accepted')}
+                  className="flex items-center gap-2"
+                >
+                  Sélectionnés ({statusCounts.accepted || 0})
+                </Button>
+                <Button
+                  variant={statusFilter === 'rejected' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setStatusFilter('rejected')}
+                  className="flex items-center gap-2"
+                >
+                  Refusés ({statusCounts.rejected || 0})
+                </Button>
+              </div>
+
               <div className="space-y-4">
-                {applications.map((application) => (
+                {filteredApplications.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        Aucun candidat trouvé
+                      </h3>
+                      <p className="text-gray-600">
+                        {statusFilter === 'all' 
+                          ? 'Aucune candidature pour ce casting.'
+                          : `Aucun candidat avec le statut "${
+                              statusFilter === 'pending' ? 'En attente' :
+                              statusFilter === 'shortlisted' ? 'Présélectionné' :
+                              statusFilter === 'accepted' ? 'Sélectionné' : 'Refusé'
+                            }".`
+                        }
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  filteredApplications.map((application) => (
                   <Card key={application.id}>
                     <CardHeader>
                       <div className="flex justify-between items-start">
@@ -362,7 +439,8 @@ const ProfessionalCastingApplications = () => {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  ))
+                )}
               </div>
             </TabsContent>
 
