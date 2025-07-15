@@ -4,14 +4,16 @@ import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCastings } from '@/hooks/useCastings';
-import { useCastingApplications } from '@/hooks/useApplications';
+import { useCastingApplications, useUpdateApplication } from '@/hooks/useApplications';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, TrendingUp, BarChart3, Globe, Calendar, Mail, Phone, MapPin, User } from 'lucide-react';
+import { Users, TrendingUp, BarChart3, Globe, Calendar, Mail, Phone, MapPin, User, CheckCircle, XCircle, Send } from 'lucide-react';
 
 const ProfessionalCastingApplications = () => {
   const { user, loading } = useAuth();
@@ -21,6 +23,8 @@ const ProfessionalCastingApplications = () => {
   const [selectedCasting, setSelectedCasting] = useState<string>(castingIdFromUrl || '');
   const { castings, isLoading: castingsLoading } = useCastings();
   const { applications, isLoading: applicationsLoading } = useCastingApplications(selectedCasting);
+  const { mutate: updateApplication } = useUpdateApplication();
+  const { toast } = useToast();
 
   if (loading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -77,6 +81,43 @@ const ProfessionalCastingApplications = () => {
 
   const statistics = getStatistics();
 
+  // Fonctions de gestion du statut des candidatures
+  const handleStatusChange = (applicationId: string, newStatus: string) => {
+    updateApplication({
+      id: applicationId,
+      updates: { status: newStatus }
+    });
+  };
+
+  // Fonction pour publier les résultats du casting
+  const publishResults = async () => {
+    if (!selectedCasting) return;
+    
+    try {
+      const { error } = await supabase
+        .from('castings')
+        .update({ results_published: true })
+        .eq('id', selectedCasting);
+
+      if (error) throw error;
+
+      toast({
+        title: "Résultats publiés",
+        description: "Les candidats peuvent maintenant voir les résultats de leur candidature.",
+      });
+    } catch (error) {
+      console.error('Error publishing results:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de publier les résultats.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Trouver le casting sélectionné pour récupérer son nom et statut de publication
+  const currentCasting = myCastings.find(c => c.id === selectedCasting);
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending: { label: 'En attente', variant: 'secondary' as const },
@@ -104,7 +145,7 @@ const ProfessionalCastingApplications = () => {
           </p>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 flex flex-col md:flex-row gap-4 items-start md:items-center">
           <Select value={selectedCasting} onValueChange={setSelectedCasting}>
             <SelectTrigger className="w-full max-w-md">
               <SelectValue placeholder="Sélectionnez un casting" />
@@ -117,6 +158,21 @@ const ProfessionalCastingApplications = () => {
               ))}
             </SelectContent>
           </Select>
+          
+          {selectedCasting && currentCasting && (
+            <Button 
+              onClick={publishResults}
+              variant={currentCasting.results_published ? "secondary" : "default"}
+              disabled={currentCasting.results_published}
+              className="flex items-center gap-2"
+            >
+              <Send className="h-4 w-4" />
+              {currentCasting.results_published 
+                ? `Résultats publiés pour "${currentCasting.title}"` 
+                : `Publier les résultats du casting "${currentCasting.title}"`
+              }
+            </Button>
+          )}
         </div>
 
         {selectedCasting && (
@@ -268,20 +324,36 @@ const ProfessionalCastingApplications = () => {
                         </Button>
                         {application.status === 'pending' && (
                           <>
-                            <Button variant="default" size="sm">
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              onClick={() => handleStatusChange(application.id, 'shortlisted')}
+                            >
                               Présélectionner
                             </Button>
-                            <Button variant="destructive" size="sm">
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => handleStatusChange(application.id, 'rejected')}
+                            >
                               Refuser
                             </Button>
                           </>
                         )}
                         {application.status === 'shortlisted' && (
                           <>
-                            <Button variant="default" size="sm">
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              onClick={() => handleStatusChange(application.id, 'accepted')}
+                            >
                               Accepter
                             </Button>
-                            <Button variant="destructive" size="sm">
+                            <Button 
+                              variant="destructive" 
+                              size="sm"
+                              onClick={() => handleStatusChange(application.id, 'rejected')}
+                            >
                               Refuser
                             </Button>
                           </>

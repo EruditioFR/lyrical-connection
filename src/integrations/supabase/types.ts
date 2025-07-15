@@ -476,6 +476,7 @@ export type Database = {
           required_experience_level: string[] | null
           required_languages: string[] | null
           required_voice_types: string[] | null
+          results_published: boolean | null
           specific_requirements: string | null
           start_date: string | null
           title: string
@@ -504,6 +505,7 @@ export type Database = {
           required_experience_level?: string[] | null
           required_languages?: string[] | null
           required_voice_types?: string[] | null
+          results_published?: boolean | null
           specific_requirements?: string | null
           start_date?: string | null
           title: string
@@ -532,6 +534,7 @@ export type Database = {
           required_experience_level?: string[] | null
           required_languages?: string[] | null
           required_voice_types?: string[] | null
+          results_published?: boolean | null
           specific_requirements?: string | null
           start_date?: string | null
           title?: string

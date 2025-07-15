@@ -38,7 +38,18 @@ const MyApplications = () => {
     );
   }
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, resultsPublished: boolean) => {
+    // Si les résultats ne sont pas publiés, afficher "En cours"
+    if (!resultsPublished) {
+      return (
+        <Badge variant="secondary" className="flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          En cours
+        </Badge>
+      );
+    }
+
+    // Si les résultats sont publiés, afficher le vrai statut
     const statusConfig = {
       pending: { label: 'En attente', variant: 'secondary' as const, icon: Clock },
       shortlisted: { label: 'Présélectionné', variant: 'default' as const, icon: Eye },
@@ -143,7 +154,7 @@ const MyApplications = () => {
                             </div>
                           </div>
                         </div>
-                        {getStatusBadge(application.status)}
+                        {getStatusBadge(application.status, application.castings?.results_published || false)}
                       </div>
                     </CardHeader>
                     <CardContent>

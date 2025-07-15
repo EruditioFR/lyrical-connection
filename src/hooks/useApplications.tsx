@@ -41,7 +41,8 @@ export const useMyApplications = () => {
             id,
             title,
             location,
-            application_deadline
+            application_deadline,
+            results_published
           )
         `)
         .order('created_at', { ascending: false });
