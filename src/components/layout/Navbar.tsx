@@ -189,17 +189,7 @@ const Navbar = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {/* Lien vers le profil public pour les artistes */}
-                  {isArtist && artistProfile && (
-                    <>
-                      <DropdownMenuItem onClick={() => navigate(`/artistes/${artistProfile.id}`)}>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Voir mon profil</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem onClick={() => navigate('/profil')}>
+                  <DropdownMenuItem onClick={() => navigate(isArtist && artistProfile ? `/artistes/${artistProfile.id}` : '/profil')}>
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('navigation:profile')}</span>
                   </DropdownMenuItem>

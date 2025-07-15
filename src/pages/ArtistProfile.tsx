@@ -201,7 +201,7 @@ const ArtistProfile = () => {
                         onClick={() => window.location.href = '/profil'}
                       >
                         <Edit className="w-4 h-4 mr-2" />
-                        Modifier
+                        Editer mon profil
                       </Button>
                     )}
                     
