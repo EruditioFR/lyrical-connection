@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { RepertoireFilters } from '@/components/artists/RepertoireFilters';
@@ -6,6 +5,7 @@ import { fictionalArtists } from '@/data/fictionalArtists';
 
 export interface Artist {
   id: string;
+  user_id: string;
   stage_name: string;
   voice_type: string | null;
   bio: string | null;
@@ -15,6 +15,9 @@ export interface Artist {
   experience_years: number | null;
   repertoire: string[] | null;
   contact_email: string | null;
+  phone: string | null;
+  website: string | null;
+  nationality: string | null;
 }
 
 interface ArtistFilters {
