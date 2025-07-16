@@ -38,19 +38,19 @@ const ConversationList = ({
   // Séparer les conversations par statut
   const activeConversations = conversations.filter(conv => 
     !conv.is_archived && !conv.user_left_at &&
-    (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ((conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const archivedConversations = conversations.filter(conv => 
     conv.is_archived &&
-    (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ((conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const leftConversations = conversations.filter(conv => 
     conv.user_left_at &&
-    (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ((conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
@@ -93,7 +93,7 @@ const ConversationList = ({
               <h3 className={`font-medium text-sm truncate ${
                 hasUnreadMessages ? 'font-semibold' : ''
               }`}>
-                {conversation.title || 'Conversation sans titre'}
+                {(conversation as any).displayTitle || conversation.title || 'Conversation sans titre'}
               </h3>
               
               {conversation.last_message_at && (

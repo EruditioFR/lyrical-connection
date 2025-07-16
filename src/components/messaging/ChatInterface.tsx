@@ -241,7 +241,7 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">
-            {title || 'Conversation'}
+            {(conversation as any)?.displayTitle || title || 'Conversation'}
           </CardTitle>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -71,14 +71,64 @@ export const useConversations = () => {
         throw error;
       }
 
-      return data.map(conv => {
-        const userParticipant = conv.participants.find(p => p.user_id === user.id);
-        return {
-          ...conv,
-          last_message: conv.messages?.[conv.messages.length - 1],
-          user_left_at: userParticipant?.left_at
-        };
-      }) as Conversation[];
+      // Récupérer les profils des participants
+      const conversationsWithProfiles = await Promise.all(
+        data.map(async (conv) => {
+          const userParticipant = conv.participants.find(p => p.user_id === user.id);
+          const otherParticipants = conv.participants.filter(p => p.user_id !== user.id);
+          
+          // Pour chaque autre participant, récupérer son profil
+          const participantsWithProfiles = await Promise.all(
+            otherParticipants.map(async (participant) => {
+              // Essayer de récupérer le profil artiste
+              const { data: artistProfile } = await supabase
+                .from('artist_profiles')
+                .select('stage_name, profile_image_url')
+                .eq('user_id', participant.user_id)
+                .maybeSingle();
+
+              // Essayer de récupérer le profil professionnel
+              const { data: professionalProfile } = await supabase
+                .from('professional_profiles')
+                .select('company_name, logo_url')
+                .eq('user_id', participant.user_id)
+                .maybeSingle();
+
+              return {
+                ...participant,
+                artistProfile,
+                professionalProfile
+              };
+            })
+          );
+          
+          // Générer un titre basé sur l'interlocuteur
+          let displayTitle = conv.title;
+          if (!displayTitle && participantsWithProfiles.length > 0) {
+            const firstOther = participantsWithProfiles[0];
+            if (firstOther.artistProfile) {
+              displayTitle = firstOther.artistProfile.stage_name;
+            } else if (firstOther.professionalProfile) {
+              displayTitle = firstOther.professionalProfile.company_name;
+            } else {
+              displayTitle = 'Utilisateur';
+            }
+          }
+          
+          return {
+            ...conv,
+            displayTitle,
+            participantsWithProfiles,
+            last_message: conv.messages?.[conv.messages.length - 1],
+            user_left_at: userParticipant?.left_at
+          };
+        })
+      );
+
+      return conversationsWithProfiles as (Conversation & { 
+        displayTitle: string; 
+        participantsWithProfiles?: any[]; 
+      })[];
     },
     enabled: !!user
   });
