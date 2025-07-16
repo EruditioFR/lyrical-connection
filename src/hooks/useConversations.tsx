@@ -65,7 +65,10 @@ export const useConversations = () => {
         `)
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching conversations:', error);
+        throw error;
+      }
 
       return data.map(conv => ({
         ...conv,
@@ -87,6 +90,8 @@ export const useConversations = () => {
     }) => {
       if (!user) throw new Error('User not authenticated');
 
+      console.log('Creating conversation with participants:', participantIds);
+
       // Create conversation
       const { data: conversation, error: convError } = await supabase
         .from('conversations')
@@ -98,25 +103,36 @@ export const useConversations = () => {
         .select()
         .single();
 
-      if (convError) throw convError;
+      if (convError) {
+        console.error('Error creating conversation:', convError);
+        throw convError;
+      }
+
+      console.log('Conversation created:', conversation);
 
       // Add participants including current user
       const allParticipantIds = [user.id, ...participantIds.filter(id => id !== user.id)];
-      const participants = allParticipantIds.map((userId, index) => ({
+      const participants = allParticipantIds.map(userId => ({
         conversation_id: conversation.id,
         user_id: userId,
         role: userId === user.id ? 'admin' : 'member'
       }));
 
+      console.log('Adding participants:', participants);
+
       const { error: participantsError } = await supabase
         .from('conversation_participants')
         .insert(participants);
 
-      if (participantsError) throw participantsError;
+      if (participantsError) {
+        console.error('Error adding participants:', participantsError);
+        throw participantsError;
+      }
 
       return conversation;
     },
-    onSuccess: () => {
+    onSuccess: (conversation) => {
+      console.log('Conversation created successfully:', conversation);
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       toast({
         title: "Conversation créée",
@@ -124,6 +140,7 @@ export const useConversations = () => {
       });
     },
     onError: (error) => {
+      console.error('Error in createConversation mutation:', error);
       toast({
         title: "Erreur",
         description: "Impossible de créer la conversation",

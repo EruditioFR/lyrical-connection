@@ -1,124 +1,152 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Clock, User, MessageSquare, UserPlus } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MapPin, User, Calendar, Globe, Mail, Phone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Artist } from '@/hooks/useArtists';
 import ChatButton from '@/components/messaging/ChatButton';
-import ContactArtistDialog from './ContactArtistDialog';
-import InviteArtistDialog from './InviteArtistDialog';
-import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 
 interface ArtistCardProps {
-  artist: any; // Replace 'any' with a more specific type if possible
-  showContactButton?: boolean;
+  artist: Artist;
+  onClick?: () => void;
+  showContactInfo?: boolean;
 }
 
-const ArtistCard: React.FC<ArtistCardProps> = ({ artist, showContactButton = false }) => {
-  const { photos, getPhotoUrl } = useArtistPhotos(artist.id);
-  const profilePhoto = photos?.find(photo => photo.is_profile_photo);
-  
-  // Utiliser la photo de profil de la galerie ou l'ancienne URL en fallback
-  const imageUrl = profilePhoto ? getPhotoUrl(profilePhoto.file_path) : artist.profile_image_url;
+const ArtistCard: React.FC<ArtistCardProps> = ({ 
+  artist, 
+  onClick, 
+  showContactInfo = false 
+}) => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (onClick && !e.defaultPrevented) {
+      onClick();
+    }
+  };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 group">
-      <div className="relative">
-        
-        {/* Photo ou placeholder */}
-        <div className="aspect-[4/3] overflow-hidden rounded-t-lg bg-gray-100">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={artist.stage_name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-accent/20">
-              <User className="h-16 w-16 text-muted-foreground" />
-            </div>
-          )}
-        </div>
-        
-        {/* Badge type de voix */}
-        {artist.voice_type && (
-          <Badge className="absolute top-3 left-3 bg-white/90 text-gray-700 hover:bg-white">
-            {artist.voice_type}
-          </Badge>
-        )}
-      </div>
-
-      <CardContent className="p-4">
-        <div className="space-y-3">
-          {/* Nom et localisation */}
-          <div>
-            <h3 className="font-semibold text-lg text-gray-900 mb-1">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleCardClick}
+    >
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
               {artist.stage_name}
             </h3>
-            {artist.location && (
-              <p className="text-sm text-gray-600 flex items-center gap-1">
-                <MapPin className="h-3 w-3" />
-                {artist.location}
-              </p>
+            
+            {artist.voice_type && (
+              <Badge variant="secondary" className="mb-2">
+                {artist.voice_type}
+              </Badge>
             )}
+            
+            <div className="flex items-center text-gray-600 text-sm mb-2">
+              <MapPin className="w-4 h-4 mr-1" />
+              {artist.location || 'Lieu non spécifié'}
+            </div>
           </div>
 
-          {/* Bio (tronquée) */}
-          {artist.bio && (
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {artist.bio}
-            </p>
-          )}
+          <div className="ml-4">
+            {artist.profile_image_url ? (
+              <img
+                src={artist.profile_image_url}
+                alt={artist.stage_name}
+                className="w-20 h-20 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
+                <User className="w-8 h-8 text-gray-400" />
+              </div>
+            )}
+          </div>
+        </div>
 
-          {/* Expérience */}
-          {artist.experience_years !== null && artist.experience_years > 0 && (
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <Clock className="h-3 w-3" />
+        {artist.bio && (
+          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            {artist.bio}
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {artist.experience_years && (
+            <div className="flex items-center text-gray-600 text-sm">
+              <Calendar className="w-4 h-4 mr-1" />
               {artist.experience_years} ans d'expérience
             </div>
           )}
+          
+          {artist.nationality && (
+            <Badge variant="outline" className="text-xs">
+              {artist.nationality}
+            </Badge>
+          )}
+        </div>
 
-          {/* Actions */}
-          <div className="flex gap-2 pt-2">
-            <Button asChild className="flex-1">
-              <Link to={`/artistes/${artist.id}`}>
-                Voir le profil
-              </Link>
-            </Button>
+        {showContactInfo && (
+          <div className="space-y-2 mb-4 p-3 bg-gray-50 rounded-lg">
+            {artist.contact_email && (
+              <div className="flex items-center text-sm text-gray-600">
+                <Mail className="w-4 h-4 mr-2" />
+                <a 
+                  href={`mailto:${artist.contact_email}`}
+                  className="hover:text-blue-600 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {artist.contact_email}
+                </a>
+              </div>
+            )}
             
-            <div className="flex gap-1">
-              <ChatButton
-                targetUserId={artist.user_id}
-                targetName={artist.stage_name}
-                variant="outline"
-                size="sm"
-              />
-              
-              {showContactButton && (
-                <>
-                  <ContactArtistDialog
-                    artistId={artist.id}
-                    artistName={artist.stage_name}
-                    trigger={
-                      <Button variant="outline" size="sm">
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                    }
-                  />
-                  <InviteArtistDialog
-                    artistId={artist.id}
-                    artistName={artist.stage_name}
-                    trigger={
-                      <Button variant="outline" size="sm">
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                    }
-                  />
-                </>
-              )}
-            </div>
+            {artist.phone && (
+              <div className="flex items-center text-sm text-gray-600">
+                <Phone className="w-4 h-4 mr-2" />
+                <a 
+                  href={`tel:${artist.phone}`}
+                  className="hover:text-blue-600 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {artist.phone}
+                </a>
+              </div>
+            )}
+            
+            {artist.website && (
+              <div className="flex items-center text-sm text-gray-600">
+                <Globe className="w-4 h-4 mr-2" />
+                <a 
+                  href={artist.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-600 transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Site web
+                </a>
+              </div>
+            )}
           </div>
+        )}
+
+        <div className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onClick) onClick();
+            }}
+          >
+            Voir le profil
+          </Button>
+
+          <ChatButton
+            targetUserId={artist.user_id}
+            targetName={artist.stage_name}
+            variant="outline"
+            size="sm"
+          />
         </div>
       </CardContent>
     </Card>

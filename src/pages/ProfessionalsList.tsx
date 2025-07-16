@@ -1,323 +1,168 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Layout } from '@/components/layout';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building, MapPin, Globe, Phone, Mail, ExternalLink } from 'lucide-react';
+import { MapPin, Target, Building, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import ChatButton from '@/components/messaging/ChatButton';
 
-interface ProfessionalProfile {
+interface Professional {
   id: string;
   user_id: string;
-  company_name: string | null;
-  bio: string | null;
+  company_name: string;
   professional_role: string;
-  location: string | null;
-  contact_email: string | null;
-  phone: string | null;
-  website: string | null;
-  logo_url: string | null;
+  location: string;
+  intervention_radius: number;
+  bio: string;
+  logo_url: string;
   is_verified: boolean;
 }
 
 const ProfessionalsList = () => {
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({
-    role: '',
-    company: '',
-    country: '',
-    city: ''
-  });
 
-  const { data: professionals, isLoading } = useQuery({
-    queryKey: ['professionals', filters],
+  const { data: professionals = [], isLoading, error } = useQuery({
+    queryKey: ['professionals'],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from('professional_profiles')
-        .select('*')
-        .eq('is_active', true);
+        .select('*');
 
-      if (filters.role && filters.role !== 'all') {
-        query = query.eq('professional_role', filters.role as 'casting_director' | 'vocal_coach' | 'conductor' | 'opera_house_manager' | 'voice_teacher' | 'artistic_agent' | 'producer' | 'competition_director');
+      if (error) {
+        console.error('Error fetching professionals:', error);
+        throw error;
       }
 
-      if (filters.company) {
-        query = query.ilike('company_name', `%${filters.company}%`);
-      }
-
-      if (filters.country || filters.city) {
-        let locationFilter = '';
-        if (filters.city && filters.country) {
-          locationFilter = `%${filters.city}%${filters.country}%`;
-        } else if (filters.city) {
-          locationFilter = `%${filters.city}%`;
-        } else if (filters.country) {
-          locationFilter = `%${filters.country}%`;
-        }
-        query = query.ilike('location', locationFilter);
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data as ProfessionalProfile[];
-    }
+      return data as Professional[];
+    },
   });
 
-  const getRoleLabel = (role: string) => {
-    const roleLabels: Record<string, string> = {
-      'casting_director': 'Directeur de casting',
-      'vocal_coach': 'Coach vocal',
-      'conductor': 'Chef d\'orchestre',
-      'opera_house_manager': 'Directeur d\'opéra',
-      'voice_teacher': 'Professeur de chant',
-      'artistic_agent': 'Agent artistique',
-      'producer': 'Producteur',
-      'competition_director': 'Directeur de concours'
+  const filteredProfessionals = professionals.filter(professional =>
+    professional.company_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  if (isLoading) {
+    return <Layout><div>Loading professionals...</div></Layout>;
+  }
+
+  if (error) {
+    return <Layout><div>Error: {error.message}</div></Layout>;
+  }
+
+  const ProfessionalCard = ({ professional }: { professional: Professional }) => {
+    const navigate = useNavigate();
+
+    const handleViewProfile = () => {
+      navigate(`/professional/${professional.id}`);
     };
-    return roleLabels[role] || role;
-  };
 
-  const clearFilters = () => {
-    setFilters({
-      role: '',
-      company: '',
-      country: '',
-      city: ''
-    });
-  };
+    return (
+      <Card className="hover:shadow-lg transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {professional.company_name}
+              </h3>
+              
+              <Badge variant="secondary" className="mb-2">
+                {professional.professional_role === 'vocal_coach' && 'Coach vocal'}
+                {professional.professional_role === 'opera_director' && 'Directeur d\'opéra'}
+                {professional.professional_role === 'casting_director' && 'Directeur de casting'}
+                {professional.professional_role === 'accompanist' && 'Accompagnateur'}
+                {professional.professional_role === 'agent' && 'Agent'}
+                {professional.professional_role === 'producer' && 'Producteur'}
+              </Badge>
+              
+              <div className="flex items-center text-gray-600 text-sm mb-2">
+                <MapPin className="w-4 h-4 mr-1" />
+                {professional.location || 'Lieu non spécifié'}
+              </div>
+              
+              <div className="flex items-center text-gray-600 text-sm">
+                <Target className="w-4 h-4 mr-1" />
+                Rayon: {professional.intervention_radius || 50} km
+              </div>
+            </div>
 
-  const handleProfessionalClick = (professionalId: string) => {
-    navigate(`/professionnels/${professionalId}`);
+            <div className="ml-4">
+              {professional.logo_url ? (
+                <img
+                  src={professional.logo_url}
+                  alt={professional.company_name}
+                  className="w-20 h-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
+                  <Building className="w-8 h-8 text-gray-400" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {professional.bio && (
+            <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+              {professional.bio}
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-2 mb-4">
+            {professional.is_verified && (
+              <Badge variant="default" className="bg-green-100 text-green-800">
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Vérifié
+              </Badge>
+            )}
+          </div>
+
+          <div className="flex justify-between items-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleViewProfile}
+            >
+              Voir le profil
+            </Button>
+
+            <ChatButton
+              targetUserId={professional.user_id}
+              targetName={professional.company_name}
+              variant="outline"
+              size="sm"
+            />
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Les Professionnels du Secteur
-          </h1>
-          <p className="text-gray-600">
-            Découvrez les professionnels de l'opéra et du chant lyrique
-          </p>
+      <div className="container mx-auto py-8">
+        <h1 className="text-2xl font-bold mb-4">Liste des professionnels</h1>
+
+        <div className="mb-4">
+          <Input
+            type="text"
+            placeholder="Rechercher un professionnel..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
 
-        {/* Filtres */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building className="h-5 w-5" />
-              Filtres de recherche
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Métier</label>
-                <Select value={filters.role || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value === 'all' ? '' : value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tous les métiers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tous les métiers</SelectItem>
-                    <SelectItem value="casting_director">Directeur de casting</SelectItem>
-                    <SelectItem value="vocal_coach">Coach vocal</SelectItem>
-                    <SelectItem value="conductor">Chef d'orchestre</SelectItem>
-                    <SelectItem value="opera_house_manager">Directeur d'opéra</SelectItem>
-                    <SelectItem value="voice_teacher">Professeur de chant</SelectItem>
-                    <SelectItem value="artistic_agent">Agent artistique</SelectItem>
-                    <SelectItem value="producer">Producteur</SelectItem>
-                    <SelectItem value="competition_director">Directeur de concours</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Entreprise</label>
-                <Input
-                  placeholder="Nom de l'entreprise"
-                  value={filters.company}
-                  onChange={(e) => setFilters(prev => ({ ...prev, company: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Pays</label>
-                <Input
-                  placeholder="Pays"
-                  value={filters.country}
-                  onChange={(e) => setFilters(prev => ({ ...prev, country: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Ville</label>
-                <Input
-                  placeholder="Ville"
-                  value={filters.city}
-                  onChange={(e) => setFilters(prev => ({ ...prev, city: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <Button variant="outline" onClick={clearFilters}>
-              Effacer les filtres
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Liste des professionnels */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                </CardContent>
-              </Card>
+        <ScrollArea className="rounded-md border">
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
+            {filteredProfessionals.map(professional => (
+              <ProfessionalCard key={professional.id} professional={professional} />
             ))}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {professionals?.map((professional) => (
-              <Card 
-                key={professional.id} 
-                className="hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => handleProfessionalClick(professional.id)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      {professional.logo_url ? (
-                        <img
-                          src={professional.logo_url}
-                          alt={professional.company_name || 'Logo'}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                          <Building className="h-6 w-6 text-gray-400" />
-                        </div>
-                      )}
-                      <div>
-                        <h3 
-                          className="font-semibold text-lg hover:text-blue-600 transition-colors cursor-pointer"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleProfessionalClick(professional.id);
-                          }}
-                        >
-                          {professional.company_name || 'Professionnel'}
-                        </h3>
-                        {professional.is_verified && (
-                          <Badge variant="secondary" className="text-xs">
-                            Vérifié
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Badge variant="outline">
-                        {getRoleLabel(professional.professional_role)}
-                      </Badge>
-                    </div>
-
-                    {professional.location && (
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin className="h-4 w-4" />
-                        <span>{professional.location}</span>
-                      </div>
-                    )}
-
-                    {professional.bio && (
-                      <p className="text-sm text-gray-700 line-clamp-3">
-                        {professional.bio}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      <ChatButton
-                        targetUserId={professional.user_id}
-                        targetName={professional.company_name || 'Professionnel'}
-                        variant="outline"
-                        size="sm"
-                      />
-
-                      {professional.contact_email && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(`mailto:${professional.contact_email}`);
-                          }}
-                        >
-                          <Mail className="h-3 w-3 mr-1" />
-                          Contact
-                        </Button>
-                      )}
-
-                      {professional.website && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(professional.website, '_blank');
-                          }}
-                        >
-                          <ExternalLink className="h-3 w-3 mr-1" />
-                          Site web
-                        </Button>
-                      )}
-
-                      {professional.phone && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            window.open(`tel:${professional.phone}`);
-                          }}
-                        >
-                          <Phone className="h-3 w-3 mr-1" />
-                          Appeler
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
-        {professionals && professionals.length === 0 && (
-          <div className="text-center py-12">
-            <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Aucun professionnel trouvé
-            </h3>
-            <p className="text-gray-600">
-              Essayez de modifier vos critères de recherche
-            </p>
-          </div>
-        )}
+        </ScrollArea>
       </div>
     </Layout>
   );

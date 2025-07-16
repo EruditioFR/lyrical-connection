@@ -24,7 +24,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { createConversation, conversations } = useConversations();
+  const { createConversation, conversations, isCreating } = useConversations();
 
   const handleChatClick = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,17 +49,23 @@ const ChatButton: React.FC<ChatButtonProps> = ({
     }
 
     try {
+      console.log('Looking for existing conversation between:', user.id, 'and:', targetUserId);
+      console.log('Available conversations:', conversations);
+      
       // Check if conversation already exists
       const existingConversation = conversations.find(conv => 
+        conv.type === 'direct' &&
         conv.participants.length === 2 &&
         conv.participants.some(p => p.user_id === user.id) &&
         conv.participants.some(p => p.user_id === targetUserId)
       );
 
       if (existingConversation) {
+        console.log('Found existing conversation:', existingConversation.id);
         // Navigate to existing conversation
         navigate(`/messages?conversation=${existingConversation.id}`);
       } else {
+        console.log('Creating new conversation with user:', targetUserId);
         // Create new conversation
         createConversation({
           participantIds: [targetUserId],
@@ -70,7 +76,7 @@ const ChatButton: React.FC<ChatButtonProps> = ({
         // Navigate to messages page - the new conversation will be auto-selected
         setTimeout(() => {
           navigate('/messages');
-        }, 500);
+        }, 1000);
       }
     } catch (error) {
       console.error('Error creating conversation:', error);
@@ -91,10 +97,11 @@ const ChatButton: React.FC<ChatButtonProps> = ({
       variant={variant}
       size={size}
       onClick={handleChatClick}
+      disabled={isCreating}
       className={className}
     >
       <MessageSquare className="h-4 w-4" />
-      {size !== 'icon' && <span className="ml-1">Chat</span>}
+      {size !== 'icon' && <span className="ml-1">{isCreating ? 'Création...' : 'Chat'}</span>}
     </Button>
   );
 };
