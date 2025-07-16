@@ -264,9 +264,9 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
   };
 
   return (
-    <Card className="h-full max-h-screen flex flex-col">
+    <Card className="h-full flex flex-col max-h-[calc(100vh-2rem)]">
       {/* Header */}
-      <CardHeader className="border-b">
+      <CardHeader className="border-b flex-shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">
             {(conversation as any)?.displayTitle || title || 'Conversation'}
@@ -299,8 +299,8 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 p-0 overflow-hidden min-h-0 flex flex-col">
-        <ScrollArea ref={scrollAreaRef} className="flex-1 min-h-0">
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea ref={scrollAreaRef} className="h-full">
           <div className="p-4 space-y-4">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground min-h-[200px]">
@@ -316,10 +316,10 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
             )}
           </div>
         </ScrollArea>
-      </CardContent>
+      </div>
 
       {/* Message Input */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 flex-shrink-0">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           {isArtist && (
             <Button
