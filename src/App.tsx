@@ -35,6 +35,7 @@ import About from '@/pages/About';
 import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
 import Notifications from '@/pages/Notifications';
+import ProfessionalsList from '@/pages/ProfessionalsList';
 
 // Import nouvelles pages
 import ProfessionalCastingApplications from '@/pages/ProfessionalCastingApplications';
@@ -53,8 +54,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Router>
-          <div className="min-h-screen">
+        <div className="min-h-screen w-full">
+          <Router>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
@@ -84,6 +85,9 @@ function App() {
               <Route path="/artistes" element={<ArtistsList />} />
               <Route path="/recherche-artistes" element={<ArtistSearch />} />
               
+              {/* Route pour les professionnels */}
+              <Route path="/professionnels" element={<ProfessionalsList />} />
+              
               {/* Routes pour la messagerie */}
               <Route path="/messages" element={<Messages />} />
               <Route path="/professional/messages" element={<ProfessionalMessages />} />
@@ -102,9 +106,9 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </div>
-          <Toaster />
-        </Router>
+            <Toaster />
+          </Router>
+        </div>
       </ThemeProvider>
     </QueryClientProvider>
   );

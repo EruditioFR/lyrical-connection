@@ -14,7 +14,8 @@ import {
   Settings,
   BookOpen,
   Star,
-  Zap
+  Zap,
+  Building
 } from 'lucide-react';
 
 interface MenuItem {
@@ -67,6 +68,12 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
           href: "/artistes",
           icon: Users,
           description: "Découvrez d'autres artistes"
+        },
+        {
+          label: "Professionnels",
+          href: "/professionnels",
+          icon: Building,
+          description: "Les professionnels du secteur"
         }
       ]
     },
@@ -178,6 +185,12 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
           href: "/artistes",
           icon: Users,
           description: "Découvrez les talents"
+        },
+        {
+          label: "Professionnels",
+          href: "/professionnels",
+          icon: Building,
+          description: "Les professionnels du secteur"
         }
       ]
     },
