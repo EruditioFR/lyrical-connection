@@ -552,77 +552,6 @@ export type Database = {
           },
         ]
       }
-      conversation_participants: {
-        Row: {
-          conversation_id: string
-          id: string
-          joined_at: string
-          last_read_at: string | null
-          left_at: string | null
-          role: string | null
-          user_id: string
-        }
-        Insert: {
-          conversation_id: string
-          id?: string
-          joined_at?: string
-          last_read_at?: string | null
-          left_at?: string | null
-          role?: string | null
-          user_id: string
-        }
-        Update: {
-          conversation_id?: string
-          id?: string
-          joined_at?: string
-          last_read_at?: string | null
-          left_at?: string | null
-          role?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "conversation_participants_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      conversations: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          id: string
-          is_archived: boolean | null
-          last_message_at: string | null
-          title: string | null
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_archived?: boolean | null
-          last_message_at?: string | null
-          title?: string | null
-          type?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          is_archived?: boolean | null
-          last_message_at?: string | null
-          title?: string | null
-          type?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       event_applications: {
         Row: {
           applied_at: string
@@ -734,65 +663,94 @@ export type Database = {
         }
         Relationships: []
       }
-      messages: {
+      mail_drafts: {
         Row: {
-          content: string
-          conversation_id: string
+          attachment_urls: string[] | null
+          content: string | null
           created_at: string
-          file_name: string | null
-          file_size: number | null
-          file_url: string | null
           id: string
-          is_deleted: boolean | null
-          is_edited: boolean | null
-          message_type: string | null
+          recipient_id: string | null
+          subject: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attachment_urls?: string[] | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          recipient_id?: string | null
+          subject?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attachment_urls?: string[] | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          recipient_id?: string | null
+          subject?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      mail_messages: {
+        Row: {
+          attachment_urls: string[] | null
+          content: string
+          created_at: string
+          id: string
+          is_deleted_by_recipient: boolean
+          is_deleted_by_sender: boolean
+          is_read: boolean
+          is_starred: boolean
+          read_at: string | null
+          recipient_id: string
           reply_to_id: string | null
           sender_id: string
+          subject: string
           updated_at: string
         }
         Insert: {
+          attachment_urls?: string[] | null
           content: string
-          conversation_id: string
           created_at?: string
-          file_name?: string | null
-          file_size?: number | null
-          file_url?: string | null
           id?: string
-          is_deleted?: boolean | null
-          is_edited?: boolean | null
-          message_type?: string | null
+          is_deleted_by_recipient?: boolean
+          is_deleted_by_sender?: boolean
+          is_read?: boolean
+          is_starred?: boolean
+          read_at?: string | null
+          recipient_id: string
           reply_to_id?: string | null
           sender_id: string
+          subject: string
           updated_at?: string
         }
         Update: {
+          attachment_urls?: string[] | null
           content?: string
-          conversation_id?: string
           created_at?: string
-          file_name?: string | null
-          file_size?: number | null
-          file_url?: string | null
           id?: string
-          is_deleted?: boolean | null
-          is_edited?: boolean | null
-          message_type?: string | null
+          is_deleted_by_recipient?: boolean
+          is_deleted_by_sender?: boolean
+          is_read?: boolean
+          is_starred?: boolean
+          read_at?: string | null
+          recipient_id?: string
           reply_to_id?: string | null
           sender_id?: string
+          subject?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "conversations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_reply_to_id_fkey"
+            foreignKeyName: "mail_messages_reply_to_id_fkey"
             columns: ["reply_to_id"]
             isOneToOne: false
-            referencedRelation: "messages"
+            referencedRelation: "mail_messages"
             referencedColumns: ["id"]
           },
         ]

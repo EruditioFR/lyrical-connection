@@ -6,11 +6,11 @@ import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Target, Building, CheckCircle } from 'lucide-react';
+import { MapPin, Target, Building, CheckCircle, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import ChatButton from '@/components/messaging/ChatButton';
+
 
 interface Professional {
   id: string;
@@ -131,12 +131,14 @@ const ProfessionalsList = () => {
               Voir le profil
             </Button>
 
-            <ChatButton
-              targetUserId={professional.user_id}
-              targetName={professional.company_name}
+            <Button
               variant="outline"
               size="sm"
-            />
+              onClick={() => console.log('Contact professional:', professional.company_name)}
+            >
+              <MessageCircle className="w-4 h-4 mr-1" />
+              Contacter
+            </Button>
           </div>
         </CardContent>
       </Card>

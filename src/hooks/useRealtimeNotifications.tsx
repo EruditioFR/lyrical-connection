@@ -21,43 +21,33 @@ export const useRealtimeNotifications = () => {
   useEffect(() => {
     if (!user) return;
 
-    // Subscribe to new messages
+    // Subscribe to new mail messages
     const messagesChannel = supabase
-      .channel('new-messages')
+      .channel('new-mail-messages')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `sender_id.neq.${user.id}` // Don't notify for own messages
+          table: 'mail_messages',
+          filter: `recipient_id.eq.${user.id}`
         },
-        async (payload) => {
-          // Check if user is participant in the conversation
-          const { data: participant } = await supabase
-            .from('conversation_participants')
-            .select('*')
-            .eq('conversation_id', payload.new.conversation_id)
-            .eq('user_id', user.id)
-            .single();
+        (payload) => {
+          const notification: RealtimeNotification = {
+            id: payload.new.id,
+            type: 'message',
+            title: 'Nouveau message',
+            content: `${payload.new.subject}: ${payload.new.content.substring(0, 100)}${payload.new.content.length > 100 ? '...' : ''}`,
+            data: { messageId: payload.new.id },
+            created_at: payload.new.created_at
+          };
 
-          if (participant) {
-            const notification: RealtimeNotification = {
-              id: payload.new.id,
-              type: 'message',
-              title: 'Nouveau message',
-              content: payload.new.content.substring(0, 100) + (payload.new.content.length > 100 ? '...' : ''),
-              data: { conversationId: payload.new.conversation_id },
-              created_at: payload.new.created_at
-            };
-
-            setNotifications(prev => [notification, ...prev.slice(0, 9)]); // Keep only 10 most recent
-            
-            toast({
-              title: notification.title,
-              description: notification.content,
-            });
-          }
+          setNotifications(prev => [notification, ...prev.slice(0, 9)]); // Keep only 10 most recent
+          
+          toast({
+            title: notification.title,
+            description: `Nouveau message: ${payload.new.subject}`,
+          });
         }
       )
       .subscribe();

@@ -2,10 +2,10 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, User, Calendar, Globe, Mail, Phone } from 'lucide-react';
+import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
-import ChatButton from '@/components/messaging/ChatButton';
+
 
 interface ArtistCardProps {
   artist: Artist;
@@ -141,12 +141,17 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
             Voir le profil
           </Button>
 
-          <ChatButton
-            targetUserId={artist.user_id}
-            targetName={artist.stage_name}
+          <Button
             variant="outline"
             size="sm"
-          />
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log('Contact artist:', artist.stage_name);
+            }}
+          >
+            <MessageCircle className="w-4 h-4 mr-1" />
+            Contacter
+          </Button>
         </div>
       </CardContent>
     </Card>
