@@ -65,7 +65,7 @@ const ArtistsList = () => {
   }
   return <Layout>
       {/* En-tête de la page */}
-      <section className="bg-gradient-to-b from-muted to-background py-12 md:py-20">
+      <section className="bg-gradient-to-b from-muted to-background py-12 md:py-[30px]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
