@@ -15,10 +15,14 @@ import FreeAccountAnalytics from './FreeAccountAnalytics';
 import PaymentManager from './PaymentManager';
 import UpgradeRequestManager from './UpgradeRequestManager';
 
-const FreeAccountsPanel = () => {
+interface FreeAccountsPanelProps {
+  accountType?: 'artist' | 'professional';
+}
+
+const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [accountTypeFilter, setAccountTypeFilter] = useState('all');
+  const [accountTypeFilter, setAccountTypeFilter] = useState(accountType || 'all');
   const [dateFilter, setDateFilter] = useState('all');
   
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
@@ -28,7 +32,7 @@ const FreeAccountsPanel = () => {
     const accounts = [];
     
     // Add artists
-    if (freeAccounts?.artists) {
+    if (freeAccounts?.artists && (!accountType || accountType === 'artist')) {
       accounts.push(...freeAccounts.artists.map(artist => ({
         id: artist.id,
         user_id: artist.user_id,
@@ -40,7 +44,7 @@ const FreeAccountsPanel = () => {
     }
     
     // Add professionals
-    if (freeAccounts?.professionals) {
+    if (freeAccounts?.professionals && (!accountType || accountType === 'professional')) {
       accounts.push(...freeAccounts.professionals.map(professional => ({
         id: professional.id,
         user_id: professional.user_id,
@@ -52,7 +56,7 @@ const FreeAccountsPanel = () => {
     }
     
     return accounts;
-  }, [freeAccounts]);
+  }, [freeAccounts, accountType]);
 
   // Filter accounts based on search and filters
   const filteredAccounts = useMemo(() => {
@@ -68,8 +72,8 @@ const FreeAccountsPanel = () => {
       });
     }
 
-    // Account type filter
-    if (accountTypeFilter !== 'all') {
+    // Account type filter (only apply if not already filtered by accountType prop)
+    if (!accountType && accountTypeFilter !== 'all') {
       filtered = filtered.filter(account => account.type === accountTypeFilter);
     }
 
@@ -98,14 +102,16 @@ const FreeAccountsPanel = () => {
     }
 
     return filtered;
-  }, [allAccounts, searchTerm, accountTypeFilter, dateFilter]);
+  }, [allAccounts, searchTerm, accountTypeFilter, dateFilter, accountType]);
 
-  const activeFiltersCount = [searchTerm, accountTypeFilter !== 'all', dateFilter !== 'all']
+  const activeFiltersCount = [searchTerm, !accountType && accountTypeFilter !== 'all', dateFilter !== 'all']
     .filter(Boolean).length;
 
   const handleClearFilters = () => {
     setSearchTerm('');
-    setAccountTypeFilter('all');
+    if (!accountType) {
+      setAccountTypeFilter('all');
+    }
     setDateFilter('all');
   };
 
@@ -114,7 +120,9 @@ const FreeAccountsPanel = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Gestion des comptes gratuits</h2>
+            <h2 className="text-2xl font-bold">
+              Gestion des comptes {accountType === 'artist' ? 'artistes' : accountType === 'professional' ? 'professionnels' : ''} gratuits
+            </h2>
             <Skeleton className="h-4 w-64 mt-1" />
           </div>
           <Skeleton className="h-10 w-48" />
@@ -132,18 +140,35 @@ const FreeAccountsPanel = () => {
     );
   }
 
+  const getTitle = () => {
+    if (accountType === 'artist') return 'Gestion des comptes artistes';
+    if (accountType === 'professional') return 'Gestion des comptes professionnels';
+    return 'Gestion des comptes gratuits';
+  };
+
+  const getDescription = () => {
+    const total = filteredAccounts.length;
+    if (accountType === 'artist') return `Système de gestion des artistes (${total} comptes)`;
+    if (accountType === 'professional') return `Système de gestion des professionnels (${total} comptes)`;
+    return `Système complet de gestion, automatisation et paiements (${total} comptes)`;
+  };
+
+  const getCreateButtonText = () => {
+    if (accountType === 'artist') return 'Créer un compte artiste';
+    if (accountType === 'professional') return 'Créer un compte professionnel';
+    return 'Créer un compte gratuit';
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Gestion des comptes gratuits</h2>
-          <p className="text-muted-foreground">
-            Système complet de gestion, automatisation et paiements ({allAccounts.length} comptes)
-          </p>
+          <h2 className="text-2xl font-bold">{getTitle()}</h2>
+          <p className="text-muted-foreground">{getDescription()}</p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          Créer un compte gratuit
+          {getCreateButtonText()}
         </Button>
       </div>
 
@@ -172,7 +197,7 @@ const FreeAccountsPanel = () => {
         </TabsList>
 
         <TabsContent value="accounts" className="space-y-6">
-          <FreeAccountsStats />
+          <FreeAccountsStats accountType={accountType} />
           
           <FreeAccountsFilters
             searchTerm={searchTerm}
@@ -183,9 +208,10 @@ const FreeAccountsPanel = () => {
             onDateFilterChange={setDateFilter}
             onClearFilters={handleClearFilters}
             activeFiltersCount={activeFiltersCount}
+            hideAccountTypeFilter={!!accountType}
           />
 
-          <FreeAccountsTable filteredAccounts={filteredAccounts} />
+          <FreeAccountsTable filteredAccounts={filteredAccounts} accountType={accountType} />
         </TabsContent>
 
         <TabsContent value="payments" className="space-y-6">
@@ -214,13 +240,14 @@ const FreeAccountsPanel = () => {
         </TabsContent>
 
         <TabsContent value="analytics">
-          <FreeAccountAnalytics />
+          <FreeAccountAnalytics accountType={accountType} />
         </TabsContent>
       </Tabs>
 
       <CreateFreeAccountDialog 
         open={showCreateDialog} 
-        onOpenChange={setShowCreateDialog} 
+        onOpenChange={setShowCreateDialog}
+        defaultAccountType={accountType}
       />
     </div>
   );

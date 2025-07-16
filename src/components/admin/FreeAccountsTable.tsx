@@ -21,9 +21,10 @@ interface Account {
 
 interface FreeAccountsTableProps {
   filteredAccounts: Account[];
+  accountType?: 'artist' | 'professional';
 }
 
-const FreeAccountsTable = ({ filteredAccounts }: FreeAccountsTableProps) => {
+const FreeAccountsTable = ({ filteredAccounts, accountType }: FreeAccountsTableProps) => {
   const { sendUpgradeRequest, isSendingUpgradeRequest, isLoadingFreeAccounts } = useAdminManagement();
 
   if (isLoadingFreeAccounts) {
@@ -124,6 +125,27 @@ const FreeAccountsTable = ({ filteredAccounts }: FreeAccountsTableProps) => {
     </div>
   );
 
+  // Si accountType est spécifié, afficher seulement ce type
+  if (accountType) {
+    const accounts = accountType === 'artist' ? artistAccounts : professionalAccounts;
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">
+              Comptes {accountType === 'artist' ? 'artistes' : 'professionnels'} gratuits créés
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {accounts.length} compte(s) trouvé(s)
+            </p>
+          </div>
+        </div>
+        <AccountTable accounts={accounts} type={accountType} />
+      </div>
+    );
+  }
+
+  // Sinon, afficher les onglets comme avant
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">

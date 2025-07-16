@@ -10,6 +10,7 @@ import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
 import { TranslationManager } from '@/components/admin/TranslationManager';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
+import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
@@ -32,19 +33,48 @@ const Admin = () => {
           <p className="text-gray-600 mt-2">Gestion de la plateforme Lyrisphere</p>
         </div>
 
-        <Tabs defaultValue="free-accounts" className="space-y-6">
+        <Tabs defaultValue="artists" className="space-y-6">
           <TabsList className="grid w-full grid-cols-7">
-            <TabsTrigger value="free-accounts">Comptes Gratuits</TabsTrigger>
-            <TabsTrigger value="verification">Vérification</TabsTrigger>
-            <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
-            <TabsTrigger value="payments">Paiements</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-            <TabsTrigger value="workflows">Workflows</TabsTrigger>
-            <TabsTrigger value="translations">Traductions</TabsTrigger>
+            <TabsTrigger value="artists" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Artistes
+            </TabsTrigger>
+            <TabsTrigger value="professionals" className="flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Professionnels
+            </TabsTrigger>
+            <TabsTrigger value="verification" className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Vérification
+            </TabsTrigger>
+            <TabsTrigger value="upgrades" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Upgrades
+            </TabsTrigger>
+            <TabsTrigger value="payments" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Paiements
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              Notifications
+            </TabsTrigger>
+            <TabsTrigger value="workflows" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Workflows
+            </TabsTrigger>
+            <TabsTrigger value="translations" className="flex items-center gap-2">
+              <Languages className="h-4 w-4" />
+              Traductions
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="free-accounts" className="space-y-6">
-            <FreeAccountsPanel />
+          <TabsContent value="artists" className="space-y-6">
+            <FreeAccountsPanel accountType="artist" />
+          </TabsContent>
+
+          <TabsContent value="professionals" className="space-y-6">
+            <FreeAccountsPanel accountType="professional" />
           </TabsContent>
 
           <TabsContent value="verification" className="space-y-6">

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, X, Calendar } from 'lucide-react';
+import { Search, X, Filter } from 'lucide-react';
 
 interface FreeAccountsFiltersProps {
   searchTerm: string;
@@ -15,6 +15,7 @@ interface FreeAccountsFiltersProps {
   onDateFilterChange: (value: string) => void;
   onClearFilters: () => void;
   activeFiltersCount: number;
+  hideAccountTypeFilter?: boolean;
 }
 
 const FreeAccountsFilters = ({
@@ -25,36 +26,38 @@ const FreeAccountsFilters = ({
   dateFilter,
   onDateFilterChange,
   onClearFilters,
-  activeFiltersCount
+  activeFiltersCount,
+  hideAccountTypeFilter = false
 }: FreeAccountsFiltersProps) => {
   return (
-    <div className="space-y-4 mb-6">
+    <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher par nom, email..."
+            placeholder="Rechercher par nom ou email..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10"
           />
         </div>
-        
-        <Select value={accountTypeFilter} onValueChange={onAccountTypeChange}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Type de compte" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Tous les comptes</SelectItem>
-            <SelectItem value="artist">Artistes</SelectItem>
-            <SelectItem value="professional">Professionnels</SelectItem>
-          </SelectContent>
-        </Select>
+
+        {!hideAccountTypeFilter && (
+          <Select value={accountTypeFilter} onValueChange={onAccountTypeChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Type de compte" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous les comptes</SelectItem>
+              <SelectItem value="artist">Artistes</SelectItem>
+              <SelectItem value="professional">Professionnels</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
 
         <Select value={dateFilter} onValueChange={onDateFilterChange}>
-          <SelectTrigger className="w-48">
-            <Calendar className="h-4 w-4 mr-2" />
-            <SelectValue placeholder="Créé depuis" />
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Période" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes les dates</SelectItem>
@@ -66,49 +69,20 @@ const FreeAccountsFilters = ({
         </Select>
 
         {activeFiltersCount > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClearFilters}
-            className="gap-2"
-          >
+          <Button variant="outline" onClick={onClearFilters} className="gap-2">
             <X className="h-4 w-4" />
-            Effacer ({activeFiltersCount})
+            Effacer les filtres
+            <Badge variant="secondary" className="ml-1">
+              {activeFiltersCount}
+            </Badge>
           </Button>
         )}
       </div>
 
       {activeFiltersCount > 0 && (
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Filtres actifs :</span>
-          {searchTerm && (
-            <Badge variant="secondary" className="gap-1">
-              Recherche: "{searchTerm}"
-              <X 
-                className="h-3 w-3 cursor-pointer" 
-                onClick={() => onSearchChange('')}
-              />
-            </Badge>
-          )}
-          {accountTypeFilter !== 'all' && (
-            <Badge variant="secondary" className="gap-1">
-              Type: {accountTypeFilter === 'artist' ? 'Artistes' : 'Professionnels'}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
-                onClick={() => onAccountTypeChange('all')}
-              />
-            </Badge>
-          )}
-          {dateFilter !== 'all' && (
-            <Badge variant="secondary" className="gap-1">
-              Date: {dateFilter}
-              <X 
-                className="h-3 w-3 cursor-pointer" 
-                onClick={() => onDateFilterChange('all')}
-              />
-            </Badge>
-          )}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Filter className="h-4 w-4" />
+          <span>{activeFiltersCount} filtre(s) actif(s)</span>
         </div>
       )}
     </div>

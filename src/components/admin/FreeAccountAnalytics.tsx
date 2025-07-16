@@ -1,283 +1,175 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+import React from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { DatePickerWithRange } from '@/components/ui/date-picker';
-import { DateRange } from 'react-day-picker';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  Calendar,
-  CreditCard,
-  Target,
-  Download,
-  Filter
-} from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
+import { useAdminStats } from '@/hooks/useAdminStats';
+import { Calendar, Users, TrendingUp, PieChart as PieChartIcon } from 'lucide-react';
 
-const FreeAccountAnalytics = () => {
-  const { freeAccounts } = useAdminManagement();
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(2024, 0, 1),
-    to: new Date()
-  });
+interface FreeAccountAnalyticsProps {
+  accountType?: 'artist' | 'professional';
+}
 
-  // Données simulées pour les graphiques
-  const conversionData = [
-    { month: 'Jan', created: 12, upgraded: 2, rate: 16.7 },
-    { month: 'Fév', created: 18, upgraded: 4, rate: 22.2 },
-    { month: 'Mar', created: 15, upgraded: 3, rate: 20.0 },
-    { month: 'Avr', created: 22, upgraded: 6, rate: 27.3 },
-    { month: 'Mai', created: 28, upgraded: 8, rate: 28.6 },
-    { month: 'Jun', created: 25, upgraded: 5, rate: 20.0 },
-  ];
+const FreeAccountAnalytics = ({ accountType }: FreeAccountAnalyticsProps) => {
+  const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
+  const { data: adminStats, isLoading: isLoadingAdminStats } = useAdminStats();
 
-  const accountTypeData = [
-    { name: 'Artistes', value: freeAccounts?.artists?.length || 0, color: '#3B82F6' },
-    { name: 'Professionnels', value: freeAccounts?.professionals?.length || 0, color: '#10B981' },
-  ];
+  if (isLoadingFreeAccounts || isLoadingAdminStats) {
+    return <div>Chargement des analytics...</div>;
+  }
 
-  const usageData = [
-    { feature: 'Profil complété', usage: 85 },
-    { feature: 'Photos ajoutées', usage: 72 },
-    { feature: 'Répertoire rempli', usage: 65 },
-    { feature: 'Contact établi', usage: 45 },
-    { feature: 'Candidature envoyée', usage: 38 },
-  ];
+  // Filtrer les données selon le type de compte
+  const accountsToAnalyze = accountType 
+    ? accountType === 'artist' 
+      ? freeAccounts?.artists || []
+      : freeAccounts?.professionals || []
+    : [...(freeAccounts?.artists || []), ...(freeAccounts?.professionals || [])];
 
-  const exportData = () => {
-    // Logique d'export des données
-    console.log('Export des données analytics');
+  // Créer des données pour les graphiques
+  const monthlyData = React.useMemo(() => {
+    const monthCounts: Record<string, number> = {};
+    
+    accountsToAnalyze.forEach(account => {
+      const date = new Date(account.created_at);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+    });
+
+    return Object.entries(monthCounts)
+      .map(([month, count]) => ({
+        month,
+        count,
+        label: new Date(month + '-01').toLocaleDateString('fr-FR', { 
+          month: 'short', 
+          year: 'numeric' 
+        })
+      }))
+      .sort((a, b) => a.month.localeCompare(b.month))
+      .slice(-12); // Derniers 12 mois
+  }, [accountsToAnalyze]);
+
+  const typeDistribution = React.useMemo(() => {
+    if (accountType) {
+      return [{ name: accountType === 'artist' ? 'Artistes' : 'Professionnels', value: accountsToAnalyze.length }];
+    }
+    
+    return [
+      { name: 'Artistes', value: freeAccounts?.artists?.length || 0 },
+      { name: 'Professionnels', value: freeAccounts?.professionals?.length || 0 }
+    ];
+  }, [accountsToAnalyze, freeAccounts, accountType]);
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
+  const getTitle = () => {
+    if (accountType === 'artist') return 'Analytics des comptes artistes';
+    if (accountType === 'professional') return 'Analytics des comptes professionnels';
+    return 'Analytics des comptes gratuits';
   };
 
   return (
     <div className="space-y-6">
-      {/* Contrôles */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <DatePickerWithRange
-            date={dateRange}
-            setDate={setDateRange}
-          />
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtres
-          </Button>
-        </div>
-        <Button onClick={exportData} variant="outline" size="sm">
-          <Download className="h-4 w-4 mr-2" />
-          Exporter
-        </Button>
+      <div>
+        <h2 className="text-2xl font-bold">{getTitle()}</h2>
+        <p className="text-muted-foreground">
+          Analyse détaillée des données et tendances
+        </p>
       </div>
 
-      {/* Métriques principales */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Graphique des créations mensuelles */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taux de conversion</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Créations mensuelles
+            </CardTitle>
+            <CardDescription>
+              Évolution du nombre de comptes créés par mois
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24.5%</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              +2.3% vs mois dernier
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="label" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Durée moyenne</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">18 jours</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingDown className="h-3 w-3 mr-1 text-red-500" />
-              -1.2 jours vs mois dernier
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenus générés</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2,450€</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              +15.3% vs mois dernier
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Comptes actifs</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">67%</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              +5.1% vs mois dernier
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Tabs defaultValue="conversion" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="conversion">Conversion</TabsTrigger>
-          <TabsTrigger value="usage">Utilisation</TabsTrigger>
-          <TabsTrigger value="demographics">Démographie</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="conversion" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Évolution des conversions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={conversionData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="rate" stroke="#3B82F6" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Comptes créés vs upgradés</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={conversionData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="created" fill="#94A3B8" name="Créés" />
-                    <Bar dataKey="upgraded" fill="#3B82F6" name="Upgradés" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="usage" className="space-y-4">
+        {/* Répartition par type */}
+        {!accountType && (
           <Card>
             <CardHeader>
-              <CardTitle>Utilisation des fonctionnalités</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <PieChartIcon className="h-5 w-5" />
+                Répartition par type
+              </CardTitle>
+              <CardDescription>
+                Distribution entre artistes et professionnels
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {usageData.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{item.feature}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full"
-                          style={{ width: `${item.usage}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-muted-foreground w-12">{item.usage}%</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={typeDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {typeDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
-        </TabsContent>
+        )}
 
-        <TabsContent value="demographics" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Répartition par type</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={accountTypeData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {accountTypeData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Statistiques détaillées</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Artistes actifs</span>
-                    <Badge variant="secondary">
-                      {Math.floor((freeAccounts?.artists?.length || 0) * 0.67)}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Professionnels actifs</span>
-                    <Badge variant="secondary">
-                      {Math.floor((freeAccounts?.professionals?.length || 0) * 0.78)}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Comptes expirés</span>
-                    <Badge variant="destructive">3</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">En attente d'upgrade</span>
-                    <Badge variant="outline">8</Badge>
-                  </div>
+        {/* Statistiques additionnelles */}
+        <Card className={!accountType ? "md:col-span-2" : ""}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Métriques clés
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="text-center">
+                <div className="text-2xl font-bold">{accountsToAnalyze.length}</div>
+                <div className="text-sm text-muted-foreground">Total comptes</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {monthlyData.length > 0 ? monthlyData[monthlyData.length - 1]?.count || 0 : 0}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
+                <div className="text-sm text-muted-foreground">Créés ce mois</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {monthlyData.length > 1 
+                    ? ((monthlyData[monthlyData.length - 1]?.count || 0) / (monthlyData[monthlyData.length - 2]?.count || 1) * 100).toFixed(0)
+                    : 0}%
+                </div>
+                <div className="text-sm text-muted-foreground">Croissance mensuelle</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
