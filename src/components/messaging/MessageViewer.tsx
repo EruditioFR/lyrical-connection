@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   id: string;
@@ -96,11 +97,58 @@ export const MessageViewer = ({
     setDownloadingFiles(prev => new Set(prev).add(url));
 
     try {
-      // Créer un lien temporaire et le cliquer pour déclencher le téléchargement
+      let downloadUrl = url;
+      
+      // Vérifier si c'est une URL Supabase Storage
+      if (url.includes('supabase')) {
+        try {
+          // Extraire le chemin du fichier depuis l'URL
+          const urlParts = url.split('/');
+          const bucketIndex = urlParts.findIndex(part => part === 'object');
+          if (bucketIndex !== -1 && bucketIndex + 2 < urlParts.length) {
+            const bucket = urlParts[bucketIndex + 1];
+            const filePath = urlParts.slice(bucketIndex + 2).join('/');
+            
+            console.log('Téléchargement depuis Supabase Storage:', { bucket, filePath });
+            
+            // Utiliser l'API Supabase pour obtenir l'URL signée
+            const { data, error } = await supabase.storage
+              .from(bucket)
+              .createSignedUrl(filePath, 3600); // URL valide pendant 1 heure
+            
+            if (error) {
+              console.error('Erreur lors de la création de l\'URL signée:', error);
+              throw error;
+            }
+            
+            if (data?.signedUrl) {
+              downloadUrl = data.signedUrl;
+              console.log('URL signée créée:', downloadUrl);
+            }
+          }
+        } catch (storageError) {
+          console.error('Erreur lors du traitement Supabase Storage:', storageError);
+          // Continuer avec l'URL originale en fallback
+        }
+      }
+
+      // Télécharger le fichier
+      const response = await fetch(downloadUrl, {
+        method: 'GET',
+        mode: 'cors',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      
+      // Créer le lien de téléchargement avec le blob
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
+      link.href = blobUrl;
       link.download = fileName;
-      link.target = '_self'; // Ne pas ouvrir dans un nouvel onglet
       link.style.display = 'none';
       
       // Ajouter au DOM, cliquer, puis nettoyer
@@ -108,9 +156,12 @@ export const MessageViewer = ({
       link.click();
       document.body.removeChild(link);
       
+      // Nettoyer l'URL blob
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+      
       toast({
-        title: "Téléchargement lancé",
-        description: `Le téléchargement de ${fileName} a été lancé.`,
+        title: "Téléchargement réussi",
+        description: `Le fichier ${fileName} a été téléchargé.`,
       });
 
     } catch (error) {
@@ -118,7 +169,7 @@ export const MessageViewer = ({
       
       toast({
         title: "Erreur de téléchargement",
-        description: "Impossible de télécharger le fichier.",
+        description: "Impossible de télécharger le fichier. Vérifiez que le fichier existe.",
         variant: "destructive",
       });
     } finally {
