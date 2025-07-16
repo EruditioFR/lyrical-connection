@@ -30,8 +30,7 @@ const HeroModern = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-             Parce que nous croyons que la voix est un passeport universel,<br />
-Parce qu’il est temps d’offrir au lyrique un élan numérique digne de sa beauté,<br />
+             Parce que nous croyons que la voix est un passeport universel. Parce qu’il est temps d’offrir au lyrique un élan numérique digne de sa beauté,<br />
 Nous avons créé <strong>Lyrisphere</strong>.
             </p>
             
