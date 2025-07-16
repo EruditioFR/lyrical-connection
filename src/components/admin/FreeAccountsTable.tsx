@@ -8,6 +8,7 @@ import { ExternalLink, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
 import EditArtistProfileDialog from './EditArtistProfileDialog';
+import EditProfessionalProfileDialog from './EditProfessionalProfileDialog';
 import type { Database } from '@/integrations/supabase/types';
 
 type ProfessionalRole = Database['public']['Enums']['professional_role'];
@@ -106,6 +107,12 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                         onAccountUpdated={onAccountUpdated || (() => {})}
                       />
                     )}
+                    {type === 'professional' && (
+                      <EditProfessionalProfileDialog 
+                        account={account} 
+                        onAccountUpdated={onAccountUpdated || (() => {})}
+                      />
+                    )}
                     <Button
                       size="sm"
                       variant="outline"
@@ -150,66 +157,57 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
     </div>
   );
 
-  // Si accountType est spécifié, afficher seulement ce type
-  if (accountType) {
-    const accounts = accountType === 'artist' ? artistAccounts : professionalAccounts;
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold">
-              Comptes {accountType === 'artist' ? 'artistes' : 'professionnels'} gratuits créés
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {accounts.length} compte(s) trouvé(s)
-            </p>
-          </div>
-        </div>
-        <AccountTable accounts={accounts} type={accountType} />
-      </div>
-    );
-  }
-
-  // Sinon, afficher les onglets comme avant
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Comptes gratuits créés</h3>
+          <h3 className="text-lg font-semibold">
+            {accountType 
+              ? `Comptes ${accountType === 'artist' ? 'artistes' : 'professionnels'} gratuits créés`
+              : 'Comptes gratuits créés'
+            }
+          </h3>
           <p className="text-sm text-muted-foreground">
-            {filteredAccounts.length} compte(s) au total • {artistAccounts.length} artiste(s) • {professionalAccounts.length} professionnel(s)
+            {accountType 
+              ? `${accountType === 'artist' ? artistAccounts.length : professionalAccounts.length} compte(s) trouvé(s)`
+              : `${filteredAccounts.length} compte(s) au total • ${artistAccounts.length} artiste(s) • ${professionalAccounts.length} professionnel(s)`
+            }
           </p>
         </div>
       </div>
 
-      <Tabs defaultValue="artists" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="artists" className="relative">
-            Artistes
-            {artistAccounts.length > 0 && (
-              <Badge variant="secondary" className="ml-2 text-xs">
-                {artistAccounts.length}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="professionals" className="relative">
-            Professionnels
-            {professionalAccounts.length > 0 && (
-              <Badge variant="secondary" className="ml-2 text-xs">
-                {professionalAccounts.length}
-              </Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
+      {accountType ? (
+        <AccountTable accounts={accountType === 'artist' ? artistAccounts : professionalAccounts} type={accountType} />
+      ) : (
+        <Tabs defaultValue="artists" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="artists" className="relative">
+              Artistes
+              {artistAccounts.length > 0 && (
+                <Badge variant="secondary" className="ml-2 text-xs">
+                  {artistAccounts.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="professionals" className="relative">
+              Professionnels
+              {professionalAccounts.length > 0 && (
+                <Badge variant="secondary" className="ml-2 text-xs">
+                  {professionalAccounts.length}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="artists">
-          <AccountTable accounts={artistAccounts} type="artist" />
-        </TabsContent>
+          <TabsContent value="artists">
+            <AccountTable accounts={artistAccounts} type="artist" />
+          </TabsContent>
 
-        <TabsContent value="professionals">
-          <AccountTable accounts={professionalAccounts} type="professional" />
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="professionals">
+            <AccountTable accounts={professionalAccounts} type="professional" />
+          </TabsContent>
+        </Tabs>
+      )}
     </div>
   );
 };
