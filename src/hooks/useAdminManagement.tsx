@@ -48,12 +48,22 @@ export const useAdminManagement = () => {
       bio?: string;
       voice_type?: string;
       contact_email: string;
+      location?: string;
+      phone?: string;
+      website?: string;
+      nationality?: string;
+      experience_years?: string;
     }) => {
-      // Créer l'utilisateur d'abord (cela nécessitera une Edge Function)
+      // Préparer les données pour l'edge function
+      const profileData = {
+        ...artistData,
+        experience_years: artistData.experience_years ? parseInt(artistData.experience_years) : undefined,
+      };
+
       const { data, error } = await supabase.functions.invoke('create-free-user', {
         body: {
           type: 'artist',
-          profile_data: artistData,
+          profile_data: profileData,
           created_by: user?.id,
         },
       });
@@ -85,6 +95,10 @@ export const useAdminManagement = () => {
       professional_role: string;
       bio?: string;
       contact_email: string;
+      location?: string;
+      phone?: string;
+      website?: string;
+      team_description?: string;
     }) => {
       const { data, error } = await supabase.functions.invoke('create-free-user', {
         body: {

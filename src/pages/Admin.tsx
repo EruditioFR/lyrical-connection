@@ -32,9 +32,9 @@ const Admin = () => {
           <p className="text-gray-600 mt-2">Gestion de la plateforme Lyrisphere</p>
         </div>
 
-        <Tabs defaultValue="accounts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
-            <TabsTrigger value="accounts">Comptes</TabsTrigger>
+        <Tabs defaultValue="free-accounts" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-7">
+            <TabsTrigger value="free-accounts">Comptes Gratuits</TabsTrigger>
             <TabsTrigger value="verification">Vérification</TabsTrigger>
             <TabsTrigger value="upgrades">Upgrades</TabsTrigger>
             <TabsTrigger value="payments">Paiements</TabsTrigger>
@@ -43,7 +43,7 @@ const Admin = () => {
             <TabsTrigger value="translations">Traductions</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="accounts" className="space-y-6">
+          <TabsContent value="free-accounts" className="space-y-6">
             <FreeAccountsPanel />
           </TabsContent>
 
