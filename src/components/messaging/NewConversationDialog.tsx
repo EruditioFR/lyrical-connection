@@ -16,6 +16,8 @@ import { Badge } from '@/components/ui/badge';
 import { useConversations } from '@/hooks/useConversations';
 import { useArtists } from '@/hooks/useArtists';
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from '@/hooks/use-toast';
 
 interface NewConversationDialogProps {
   open: boolean;
@@ -42,9 +44,10 @@ const NewConversationDialog = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<'all' | 'artists' | 'professionals'>('all');
 
-  const { createConversation, isCreating } = useConversations();
+  const { createConversation, isCreating, conversations } = useConversations();
   const { artists } = useArtists({});
   const { profile: professionalProfile } = useProfessionalProfile();
+  const { user } = useAuth();
 
   // Transform data to contacts format
   const allContacts: Contact[] = [
@@ -60,6 +63,11 @@ const NewConversationDialog = ({
   ];
 
   const filteredContacts = allContacts.filter(contact => {
+    // Filtrer l'utilisateur actuel pour qu'il ne puisse pas se sélectionner
+    if (user && contact.userId === user.id) {
+      return false;
+    }
+    
     const matchesSearch = contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          contact.email?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = searchType === 'all' || 
@@ -69,6 +77,16 @@ const NewConversationDialog = ({
   });
 
   const handleContactToggle = (contact: Contact) => {
+    // Empêcher de se sélectionner soi-même
+    if (user && contact.userId === user.id) {
+      toast({
+        title: 'Action impossible',
+        description: 'Vous ne pouvez pas vous ajouter à une conversation.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setSelectedContacts(prev => {
       const isSelected = prev.some(c => c.id === contact.id);
       if (isSelected) {
@@ -81,6 +99,32 @@ const NewConversationDialog = ({
 
   const handleCreateConversation = async () => {
     if (selectedContacts.length === 0) return;
+
+    // Pour les conversations directes, vérifier qu'une conversation n'existe pas déjà
+    if (selectedContacts.length === 1 && user) {
+      const targetUserId = selectedContacts[0].userId;
+      
+      const existingConversation = conversations.find(conv => 
+        conv.type === 'direct' &&
+        conv.participants.length === 2 &&
+        conv.participants.some(p => p.user_id === user.id) &&
+        conv.participants.some(p => p.user_id === targetUserId)
+      );
+
+      if (existingConversation) {
+        toast({
+          title: 'Conversation existante',
+          description: `Une conversation avec ${selectedContacts[0].name} existe déjà.`,
+          variant: 'destructive',
+        });
+        onConversationCreated?.(existingConversation.id);
+        onOpenChange(false);
+        setSelectedContacts([]);
+        setConversationTitle('');
+        setSearchQuery('');
+        return;
+      }
+    }
 
     const participantIds = selectedContacts.map(c => c.userId);
     const title = conversationTitle.trim() || 
