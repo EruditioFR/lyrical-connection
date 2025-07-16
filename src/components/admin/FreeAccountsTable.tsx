@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -9,6 +10,7 @@ import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
 import EditArtistProfileDialog from './EditArtistProfileDialog';
 import EditProfessionalProfileDialog from './EditProfessionalProfileDialog';
+import DeleteProfileDialog from './DeleteProfileDialog';
 import type { Database } from '@/integrations/supabase/types';
 
 type ProfessionalRole = Database['public']['Enums']['professional_role'];
@@ -150,6 +152,10 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                         Voir profil
                       </a>
                     </Button>
+                    <DeleteProfileDialog 
+                      account={account}
+                      onProfileDeleted={onAccountUpdated || (() => {})}
+                    />
                   </div>
                 </TableCell>
               </TableRow>
