@@ -101,15 +101,18 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                     <Badge variant="secondary" className="text-xs">
                       Gratuit
                     </Badge>
-                    {type === 'artist' && (
+                    {type === 'artist' && account.type === 'artist' && (
                       <EditArtistProfileDialog 
                         account={account} 
                         onAccountUpdated={onAccountUpdated || (() => {})}
                       />
                     )}
-                    {type === 'professional' && (
+                    {type === 'professional' && account.type === 'professional' && (
                       <EditProfessionalProfileDialog 
-                        account={account} 
+                        account={{
+                          ...account,
+                          type: 'professional' as const
+                        }} 
                         onAccountUpdated={onAccountUpdated || (() => {})}
                       />
                     )}
