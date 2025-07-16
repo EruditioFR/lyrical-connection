@@ -31,7 +31,7 @@ $$;
 CREATE POLICY "Users can view their conversations" 
 ON public.conversations 
 FOR SELECT 
-USING (public.user_can_access_conversation(id, auth.uid()));
+USING (created_by = auth.uid() OR public.user_can_access_conversation(id, auth.uid()));
 
 CREATE POLICY "Users can create conversations" 
 ON public.conversations 
