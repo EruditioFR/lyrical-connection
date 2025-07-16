@@ -36,10 +36,34 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
 
   const conversation = conversations.find(c => c.id === conversationId);
 
+  // Fonction pour scroller vers le bas
+  const scrollToBottom = (behavior: 'smooth' | 'instant' = 'smooth') => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior,
+        block: 'end'
+      });
+    }
+  };
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 0) {
+      // Petit délai pour s'assurer que le DOM est mis à jour
+      const timer = setTimeout(() => {
+        scrollToBottom('smooth');
+      }, 100);
+      return () => clearTimeout(timer);
+    }
   }, [messages]);
+
+  // Scroll immédiat lors du changement de conversation
+  useEffect(() => {
+    if (conversationId && messages.length > 0) {
+      // Scroll immédiat lors du chargement d'une nouvelle conversation
+      scrollToBottom('instant');
+    }
+  }, [conversationId]);
 
   // Mark messages as read when conversation is opened
   useEffect(() => {
@@ -56,6 +80,10 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
     setNewMessage('');
     // Marquer comme lu après l'envoi d'un message
     markAsRead();
+    // Scroll vers le bas après l'envoi
+    setTimeout(() => {
+      scrollToBottom('smooth');
+    }, 100);
   };
 
   const handleLeaveConversation = () => {
