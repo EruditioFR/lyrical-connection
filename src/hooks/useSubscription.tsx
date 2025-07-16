@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,18 +57,48 @@ export const useSubscription = () => {
     queryFn: async () => {
       if (!user?.id) return null;
       
-      const { data, error } = await supabase
+      console.log('Fetching subscription for user:', user.id);
+      
+      // First, get the subscription
+      const { data: subscriptionData, error: subscriptionError } = await supabase
         .from('subscriptions')
-        .select(`
-          *,
-          plan:subscription_plans(*)
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .eq('status', 'active')
         .single();
       
-      if (error && error.code !== 'PGRST116') throw error;
-      return data as Subscription;
+      if (subscriptionError) {
+        if (subscriptionError.code === 'PGRST116') {
+          // No subscription found
+          console.log('No active subscription found');
+          return null;
+        }
+        console.error('Subscription error:', subscriptionError);
+        throw subscriptionError;
+      }
+
+      // If we have a subscription and plan_id, fetch the plan details
+      if (subscriptionData && subscriptionData.plan_id) {
+        const { data: planData, error: planError } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('id', subscriptionData.plan_id)
+          .single();
+        
+        if (planError) {
+          console.error('Plan error:', planError);
+          // Return subscription without plan details if plan fetch fails
+          return subscriptionData as Subscription;
+        }
+
+        // Combine subscription with plan data
+        return {
+          ...subscriptionData,
+          plan: planData
+        } as Subscription;
+      }
+
+      return subscriptionData as Subscription;
     },
     enabled: !!user?.id
   });
