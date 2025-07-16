@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -10,9 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Building, MapPin, Globe, Phone, Mail, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ChatButton from '@/components/messaging/ChatButton';
 
 interface ProfessionalProfile {
   id: string;
+  user_id: string;
   company_name: string | null;
   bio: string | null;
   professional_role: string;
@@ -247,6 +248,13 @@ const ProfessionalsList = () => {
                     )}
 
                     <div className="flex flex-wrap gap-2 pt-2">
+                      <ChatButton
+                        targetUserId={professional.user_id}
+                        targetName={professional.company_name || 'Professionnel'}
+                        variant="outline"
+                        size="sm"
+                      />
+
                       {professional.contact_email && (
                         <Button
                           variant="outline"

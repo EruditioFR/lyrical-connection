@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, User, MessageSquare, UserPlus } from 'lucide-react';
+import ChatButton from '@/components/messaging/ChatButton';
 import ContactArtistDialog from './ContactArtistDialog';
 import InviteArtistDialog from './InviteArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
@@ -86,28 +87,37 @@ const ArtistCard: React.FC<ArtistCardProps> = ({ artist, showContactButton = fal
               </Link>
             </Button>
             
-            {showContactButton && (
-              <div className="flex gap-1">
-                <ContactArtistDialog
-                  artistId={artist.id}
-                  artistName={artist.stage_name}
-                  trigger={
-                    <Button variant="outline" size="sm">
-                      <MessageSquare className="h-4 w-4" />
-                    </Button>
-                  }
-                />
-                <InviteArtistDialog
-                  artistId={artist.id}
-                  artistName={artist.stage_name}
-                  trigger={
-                    <Button variant="outline" size="sm">
-                      <UserPlus className="h-4 w-4" />
-                    </Button>
-                  }
-                />
-              </div>
-            )}
+            <div className="flex gap-1">
+              <ChatButton
+                targetUserId={artist.user_id}
+                targetName={artist.stage_name}
+                variant="outline"
+                size="sm"
+              />
+              
+              {showContactButton && (
+                <>
+                  <ContactArtistDialog
+                    artistId={artist.id}
+                    artistName={artist.stage_name}
+                    trigger={
+                      <Button variant="outline" size="sm">
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                  <InviteArtistDialog
+                    artistId={artist.id}
+                    artistName={artist.stage_name}
+                    trigger={
+                      <Button variant="outline" size="sm">
+                        <UserPlus className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>

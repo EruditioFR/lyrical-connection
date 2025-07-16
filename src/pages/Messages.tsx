@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import ConversationList from '@/components/messaging/ConversationList';
 import ChatInterface from '@/components/messaging/ChatInterface';
@@ -7,9 +8,18 @@ import NewConversationDialog from '@/components/messaging/NewConversationDialog'
 import { useConversations } from '@/hooks/useConversations';
 
 const Messages = () => {
+  const [searchParams] = useSearchParams();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [showNewConversation, setShowNewConversation] = useState(false);
   const { conversations } = useConversations();
+
+  // Handle conversation selection from URL parameters
+  useEffect(() => {
+    const conversationId = searchParams.get('conversation');
+    if (conversationId && conversations.some(c => c.id === conversationId)) {
+      setSelectedConversationId(conversationId);
+    }
+  }, [searchParams, conversations]);
 
   const selectedConversation = conversations.find(c => c.id === selectedConversationId);
 
