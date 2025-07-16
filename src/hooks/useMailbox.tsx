@@ -357,6 +357,81 @@ export const useMailbox = () => {
     },
   });
 
+  // Fetch trash messages
+  const { data: trashMessages = [], isLoading: isLoadingTrash } = useQuery({
+    queryKey: ['mailbox', 'trash'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('mail_messages')
+        .select('*')
+        .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.true),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.true)`)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Récupérer les profils pour les messages de la corbeille
+      const messagesWithProfiles = await Promise.all(
+        (data || []).map(async (message) => {
+          const [senderArtist, senderPro, recipientArtist, recipientPro] = await Promise.all([
+            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.sender_id).single(),
+            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.sender_id).single(),
+            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.recipient_id).single(),
+            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.recipient_id).single()
+          ]);
+
+          const sender = senderArtist.data || senderPro.data;
+          const recipient = recipientArtist.data || recipientPro.data;
+
+          return { ...message, sender, recipient };
+        })
+      );
+
+      return messagesWithProfiles as MailMessage[];
+    },
+  });
+
+  // Restore message mutation
+  const restoreMessageMutation = useMutation({
+    mutationFn: async ({ messageId, isSender }: { messageId: string; isSender: boolean }) => {
+      const updateField = isSender ? 'is_deleted_by_sender' : 'is_deleted_by_recipient';
+      const { error } = await supabase
+        .from('mail_messages')
+        .update({ [updateField]: false })
+        .eq('id', messageId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
+      toast({
+        title: "Message restauré",
+        description: "Le message a été restauré.",
+      });
+    },
+  });
+
+  // Permanently delete message mutation
+  const permanentDeleteMutation = useMutation({
+    mutationFn: async (messageId: string) => {
+      const { error } = await supabase
+        .from('mail_messages')
+        .delete()
+        .eq('id', messageId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
+      toast({
+        title: "Message supprimé définitivement",
+        description: "Le message a été supprimé définitivement.",
+      });
+    },
+  });
+
   // Real-time subscription
   useEffect(() => {
     const getUser = async () => {
@@ -394,13 +469,16 @@ export const useMailbox = () => {
     sentMessages,
     starredMessages,
     drafts,
+    trashMessages,
     unreadCount,
-    isLoading: isLoadingInbox || isLoadingSent || isLoadingStarred || isLoadingDrafts,
+    isLoading: isLoadingInbox || isLoadingSent || isLoadingStarred || isLoadingDrafts || isLoadingTrash,
     sendMessage: sendMessageMutation.mutate,
     isSending: sendMessageMutation.isPending,
     markAsRead: markAsReadMutation.mutate,
     toggleStar: toggleStarMutation.mutate,
     deleteMessage: deleteMessageMutation.mutate,
+    restoreMessage: restoreMessageMutation.mutate,
+    permanentDelete: permanentDeleteMutation.mutate,
     saveDraft: saveDraftMutation.mutate,
     deleteDraft: deleteDraftMutation.mutate,
   };

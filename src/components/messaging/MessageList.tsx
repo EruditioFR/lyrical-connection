@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Paperclip, Reply, Filter } from "lucide-react";
+import { Star, Paperclip, Reply, Filter, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -44,17 +44,19 @@ interface MessageListProps {
   onStarToggle: (messageId: string, isStarred: boolean) => void;
   folder: string;
   currentUserId?: string;
+  onRestore?: (messageId: string) => void;
 }
 
-export const MessageList = ({
-  messages,
-  selectedMessages,
-  onMessageSelect,
-  onSelectAll,
+export const MessageList = ({ 
+  messages, 
+  selectedMessages, 
+  onMessageSelect, 
+  onSelectAll, 
   onMessageClick,
   onStarToggle,
   folder,
-  currentUserId
+  currentUserId,
+  onRestore
 }: MessageListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -204,24 +206,39 @@ export const MessageList = ({
                   onClick={(e) => e.stopPropagation()}
                 />
 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-1 h-auto"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onStarToggle(message.id, message.is_starred);
-                  }}
-                >
-                  <Star 
-                    className={cn(
-                      "w-4 h-4",
-                      message.is_starred 
-                        ? "fill-yellow-400 text-yellow-400" 
-                        : "text-muted-foreground"
-                    )} 
-                  />
-                </Button>
+                {folder === 'trash' && onRestore ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1 h-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRestore(message.id);
+                    }}
+                    title="Restaurer"
+                  >
+                    <RotateCcw className="w-4 h-4 text-muted-foreground" />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1 h-auto"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onStarToggle(message.id, message.is_starred);
+                    }}
+                  >
+                    <Star 
+                      className={cn(
+                        "w-4 h-4",
+                        message.is_starred 
+                          ? "fill-yellow-400 text-yellow-400" 
+                          : "text-muted-foreground"
+                      )} 
+                    />
+                  </Button>
+                )}
 
                 <Avatar className="w-8 h-8">
                   <AvatarImage src={senderInfo.avatar} />

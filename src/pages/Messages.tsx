@@ -45,11 +45,14 @@ const Messages = () => {
     sentMessages,
     starredMessages,
     drafts,
+    trashMessages,
     unreadCount,
     isLoading,
     markAsRead,
     toggleStar,
     deleteMessage,
+    restoreMessage,
+    permanentDelete,
   } = useMailbox();
 
   const getCurrentMessages = () => {
@@ -74,7 +77,7 @@ const Messages = () => {
           reply_to_id: undefined,
         }));
       case 'trash':
-        return []; // TODO: Implement trash functionality
+        return trashMessages;
       default:
         return inboxMessages;
     }
@@ -117,10 +120,27 @@ const Messages = () => {
   };
 
   const handleDelete = (messageId: string) => {
-    const isSender = selectedFolder === 'sent';
-    deleteMessage({ messageId, isSender });
+    if (selectedFolder === 'trash') {
+      // Suppression définitive depuis la corbeille
+      permanentDelete(messageId);
+    } else {
+      // Déplacement vers la corbeille
+      const isSender = selectedFolder === 'sent';
+      deleteMessage({ messageId, isSender });
+    }
     if (selectedMessage?.id === messageId) {
       setSelectedMessage(null);
+    }
+  };
+
+  const handleRestore = (messageId: string) => {
+    const message = trashMessages.find(m => m.id === messageId);
+    if (message) {
+      const isSender = message.sender_id === user?.id;
+      restoreMessage({ messageId, isSender });
+      if (selectedMessage?.id === messageId) {
+        setSelectedMessage(null);
+      }
     }
   };
 
@@ -203,6 +223,7 @@ const Messages = () => {
                       onStarToggle={handleStarToggle}
                       folder={selectedFolder}
                       currentUserId={user?.id}
+                      onRestore={selectedFolder === 'trash' ? handleRestore : undefined}
                     />
                   )}
                 </div>
@@ -219,6 +240,7 @@ const Messages = () => {
                       onStarToggle={handleStarToggle}
                       folder={selectedFolder}
                       currentUserId={user?.id}
+                      onRestore={selectedFolder === 'trash' ? handleRestore : undefined}
                     />
                   </div>
                   <div className="flex-1">
