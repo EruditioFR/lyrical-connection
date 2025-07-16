@@ -221,20 +221,20 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
     };
     
     return (
-      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-4`}>
-        <div className={`flex ${isOwn ? 'max-w-[80%]' : 'max-w-[80%]'} ${isOwn ? 'flex-row-reverse' : 'flex-row'} items-end gap-2`}>
+      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-3`}>
+        <div className={`flex ${isOwn ? 'max-w-[85%] sm:max-w-[70%]' : 'max-w-[85%] sm:max-w-[70%]'} ${isOwn ? 'flex-row-reverse' : 'flex-row'} items-end gap-2`}>
           {!isOwn && (
             <Avatar className="w-8 h-8 flex-shrink-0">
-              <AvatarFallback className="text-xs">
+              <AvatarFallback className="text-xs bg-primary/10 text-primary">
                 {message.sender_id.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
           )}
           
-          <div className={`rounded-lg px-3 py-2 ${
+          <div className={`rounded-2xl px-4 py-2 shadow-sm ${
             isOwn 
-              ? 'bg-primary text-primary-foreground' 
-              : 'bg-muted text-muted-foreground'
+              ? 'bg-primary text-primary-foreground rounded-br-sm' 
+              : 'bg-muted text-foreground rounded-bl-sm border'
           }`}>
             {mediaData ? (
               <div className="space-y-2">
@@ -248,11 +248,11 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
                 {renderMediaContent()}
               </div>
             ) : (
-              <p className="text-sm">{message.content}</p>
+              <p className="text-sm leading-relaxed break-words">{message.content}</p>
             )}
             
             <p className={`text-xs mt-1 ${
-              isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground/70'
+              isOwn ? 'text-primary-foreground/60' : 'text-muted-foreground'
             }`}>
               {formatMessageTime(message.created_at)}
               {message.is_edited && ' (modifié)'}
@@ -264,11 +264,11 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
   };
 
   return (
-    <Card className="flex flex-col h-[calc(100vh-4rem)]">
-      {/* Header */}
-      <CardHeader className="border-b flex-shrink-0">
+    <Card className="flex flex-col h-full">
+      {/* Header - Hide on mobile as it's handled by parent */}
+      <CardHeader className="border-b flex-shrink-0 hidden lg:flex">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">
+          <CardTitle className="text-lg truncate">
             {(conversation as any)?.displayTitle || title || 'Conversation'}
           </CardTitle>
           <DropdownMenu>
@@ -301,13 +301,19 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       {/* Messages */}
       <CardContent className="flex-1 min-h-0 p-0">
         <ScrollArea ref={scrollAreaRef} className="h-full">
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-3">
             {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground min-h-[200px]">
-                <p>Aucun message pour le moment</p>
+              <div className="flex items-center justify-center h-full text-muted-foreground min-h-[300px]">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-muted/50 rounded-full flex items-center justify-center">
+                    <span className="text-2xl">💬</span>
+                  </div>
+                  <p className="text-lg font-medium mb-2">Aucun message</p>
+                  <p className="text-sm">Écrivez le premier message pour commencer la conversation</p>
+                </div>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {messages.map((message) => (
                   <MessageBubble key={message.id} message={message} />
                 ))}

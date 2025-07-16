@@ -57,7 +57,7 @@ const NewConversationDialog = ({
       email: artist.contact_email || undefined,
       type: 'artist' as const,
       profileImage: artist.profile_image_url || undefined,
-      userId: artist.id // Using artist profile id instead of user_id
+      userId: artist.user_id // Fixed: Using user_id instead of profile id
     })) || []),
     // Add professionals when available
   ];

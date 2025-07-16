@@ -5,12 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useConversations, type Conversation } from '@/hooks/useConversations';
-import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useConversations } from '@/hooks/useConversations';
+import ConversationItem from './ConversationItem';
 
 interface ConversationListProps {
   selectedConversationId?: string;
@@ -27,104 +24,28 @@ const ConversationList = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('active');
 
-  // Debug : afficher toutes les conversations et leurs statuts
-  console.log('All conversations:', conversations.map(c => ({
-    id: c.id,
-    title: c.title,
-    is_archived: c.is_archived,
-    user_left_at: c.user_left_at
-  })));
-
-  // Séparer les conversations par statut
-  const activeConversations = conversations.filter(conv => 
-    !conv.is_archived && !conv.user_left_at &&
-    ((conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  const archivedConversations = conversations.filter(conv => 
-    conv.is_archived &&
-    ((conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  const leftConversations = conversations.filter(conv => 
-    conv.user_left_at &&
-    ((conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  console.log('Filtered conversations:', {
-    active: activeConversations.length,
-    archived: archivedConversations.length,
-    left: leftConversations.length
-  });
-
-  const formatLastMessageTime = (timestamp: string | null) => {
-    if (!timestamp) return '';
-    return formatDistanceToNow(new Date(timestamp), {
-      addSuffix: true,
-      locale: fr
-    });
-  };
-
-  const ConversationItem = ({ conversation }: { conversation: Conversation }) => {
-    const isSelected = conversation.id === selectedConversationId;
-    const hasUnreadMessages = false; // TODO: Implement unread message logic
+  // Séparer les conversations par statut avec recherche
+  const filterConversations = (convs: typeof conversations) => {
+    if (!searchQuery.trim()) return convs;
     
-    return (
-      <div
-        className={`p-3 cursor-pointer rounded-lg transition-colors ${
-          isSelected 
-            ? 'bg-primary/10 border-primary/20 border' 
-            : 'hover:bg-muted/50'
-        }`}
-        onClick={() => onConversationSelect(conversation.id)}
-      >
-        <div className="flex items-start gap-3">
-          <Avatar className="w-10 h-10">
-            <AvatarFallback>
-              <MessageCircle className="w-5 h-5" />
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className={`font-medium text-sm truncate ${
-                hasUnreadMessages ? 'font-semibold' : ''
-              }`}>
-                {(conversation as any).displayTitle || conversation.title || 'Conversation sans titre'}
-              </h3>
-              
-              {conversation.last_message_at && (
-                <span className="text-xs text-muted-foreground">
-                  {formatLastMessageTime(conversation.last_message_at)}
-                </span>
-              )}
-            </div>
-            
-            {conversation.last_message && (
-              <p className="text-xs text-muted-foreground truncate">
-                {conversation.last_message.content}
-              </p>
-            )}
-            
-            <div className="flex items-center gap-2 mt-2">
-              <Badge variant="secondary" className="text-xs">
-                {conversation.type === 'direct' ? 'Direct' : 'Groupe'}
-              </Badge>
-              
-              {hasUnreadMessages && (
-                <Badge className="text-xs px-1.5 py-0.5">
-                  2
-                </Badge>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+    return convs.filter(conv => 
+      (conv as any).displayTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase())
     );
   };
+
+  const activeConversations = filterConversations(
+    conversations.filter(conv => !conv.is_archived && !conv.user_left_at)
+  );
+
+  const archivedConversations = filterConversations(
+    conversations.filter(conv => conv.is_archived && !conv.user_left_at)
+  );
+
+  const leftConversations = filterConversations(
+    conversations.filter(conv => conv.user_left_at)
+  );
 
   if (isLoading) {
     return (
@@ -189,11 +110,14 @@ const ConversationList = ({
                   )}
                 </div>
               ) : (
-                <div className="p-2 space-y-1">
+                <div className="p-2 space-y-2">
                   {activeConversations.map((conversation) => (
                     <ConversationItem 
                       key={conversation.id} 
-                      conversation={conversation} 
+                      conversation={conversation}
+                      isSelected={conversation.id === selectedConversationId}
+                      onSelect={() => onConversationSelect(conversation.id)}
+                      unreadCount={0} // TODO: Calculate real unread count
                     />
                   ))}
                 </div>
@@ -208,11 +132,14 @@ const ConversationList = ({
                   <p>Aucune conversation archivée</p>
                 </div>
               ) : (
-                <div className="p-2 space-y-1">
+                <div className="p-2 space-y-2">
                   {archivedConversations.map((conversation) => (
                     <ConversationItem 
                       key={conversation.id} 
-                      conversation={conversation} 
+                      conversation={conversation}
+                      isSelected={conversation.id === selectedConversationId}
+                      onSelect={() => onConversationSelect(conversation.id)}
+                      unreadCount={0}
                     />
                   ))}
                 </div>
@@ -227,11 +154,14 @@ const ConversationList = ({
                   <p>Aucune conversation terminée</p>
                 </div>
               ) : (
-                <div className="p-2 space-y-1">
+                <div className="p-2 space-y-2">
                   {leftConversations.map((conversation) => (
                     <ConversationItem 
                       key={conversation.id} 
-                      conversation={conversation} 
+                      conversation={conversation}
+                      isSelected={conversation.id === selectedConversationId}
+                      onSelect={() => onConversationSelect(conversation.id)}
+                      unreadCount={0}
                     />
                   ))}
                 </div>
