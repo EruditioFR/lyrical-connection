@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import { useAdminStats } from '@/hooks/useAdminStats';
-import { useSubscription } from '@/hooks/useSubscription';
 import NationalityStatsCard from './NationalityStatsCard';
 import GenderStatsCard from './GenderStatsCard';
 import VoiceTypeStatsCard from './VoiceTypeStatsCard';
@@ -29,9 +29,9 @@ const FreeAccountsStats = () => {
 
   // Calculer le vrai total des comptes gratuits basé sur les statistiques d'abonnement
   // Les comptes gratuits sont ceux qui n'ont pas d'abonnement actif
-  const totalFreeAccountsFromStats = adminStats?.totalUsers || 0;
+  const totalUsers = adminStats?.totalUsers || 0;
   const totalPaidAccounts = adminStats?.paidUsers || 0;
-  const realTotalFreeAccounts = totalFreeAccountsFromStats - totalPaidAccounts;
+  const realTotalFreeAccounts = totalUsers - totalPaidAccounts;
 
   // Comptes créés par les admins (pour l'affichage séparé)
   const adminCreatedAccounts = (freeAccounts?.artists?.length || 0) + (freeAccounts?.professionals?.length || 0);
@@ -53,8 +53,8 @@ const FreeAccountsStats = () => {
     }).length;
 
   // Calculer le taux de conversion réel
-  const conversionRate = totalFreeAccountsFromStats > 0 
-    ? ((totalPaidAccounts / totalFreeAccountsFromStats) * 100).toFixed(1)
+  const conversionRate = totalUsers > 0 
+    ? ((totalPaidAccounts / totalUsers) * 100).toFixed(1)
     : '0';
 
   return (

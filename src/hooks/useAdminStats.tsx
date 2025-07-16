@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -39,6 +38,12 @@ export const useAdminStats = () => {
       const { count: activeProfessionals } = await professionalQuery;
 
       const totalActiveUsers = (activeArtists || 0) + (activeProfessionals || 0);
+
+      // Récupérer le nombre d'utilisateurs avec un abonnement actif
+      const { count: paidUsers } = await supabase
+        .from('subscriptions')
+        .select('*', { count: 'exact' })
+        .in('status', ['active', 'trialing']);
 
       // Récupérer le nombre de demandes de vérification en attente
       const { count: pendingVerifications } = await supabase
@@ -206,6 +211,8 @@ export const useAdminStats = () => {
 
       return {
         totalActiveUsers,
+        totalUsers: totalActiveUsers, // Alias pour compatibilité
+        paidUsers: paidUsers || 0,
         activeArtists: activeArtists || 0,
         activeProfessionals: activeProfessionals || 0,
         userGrowthPercentage,
