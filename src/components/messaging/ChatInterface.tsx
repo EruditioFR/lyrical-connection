@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, MoreVertical, Info, Archive, LogOut } from 'lucide-react';
+import { Send, Paperclip, MoreVertical, Info, Archive, LogOut, Image, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,9 +9,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useMessages, useConversations, type Message } from '@/hooks/useConversations';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserType } from '@/hooks/useUserType';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ConversationInfoDialog from './ConversationInfoDialog';
+import MediaAttachmentDialog from './MediaAttachmentDialog';
 import { useNavigate } from 'react-router-dom';
 
 interface ChatInterfaceProps {
@@ -23,10 +25,12 @@ interface ChatInterfaceProps {
 const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterfaceProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { userType, isArtist } = useUserType();
   const { messages, sendMessage, isSending, markAsRead } = useMessages(conversationId);
   const { conversations, leaveConversation, archiveConversation } = useConversations();
   const [newMessage, setNewMessage] = useState('');
   const [showConversationInfo, setShowConversationInfo] = useState(false);
+  const [showMediaDialog, setShowMediaDialog] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -66,6 +70,15 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
     navigate('/messages');
   };
 
+  const handleMediaSelect = (mediaData: { type: 'photo' | 'audio'; url: string; name: string }) => {
+    const mediaMessage = mediaData.type === 'photo' 
+      ? `[Photo] ${mediaData.name}: ${mediaData.url}`
+      : `[Audio] ${mediaData.name}: ${mediaData.url}`;
+    
+    sendMessage({ content: mediaMessage });
+    markAsRead();
+  };
+
   const formatMessageTime = (timestamp: string) => {
     return formatDistanceToNow(new Date(timestamp), {
       addSuffix: true,
@@ -75,6 +88,25 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
 
   const MessageBubble = ({ message }: { message: Message }) => {
     const isOwn = message.sender_id === user?.id;
+    
+    // Détecter si le message contient un média
+    const isPhotoMessage = message.content.startsWith('[Photo]');
+    const isAudioMessage = message.content.startsWith('[Audio]');
+    const isMediaMessage = isPhotoMessage || isAudioMessage;
+    
+    const parseMediaMessage = (content: string) => {
+      const match = content.match(/\[(Photo|Audio)\] (.+): (.+)/);
+      if (match) {
+        return {
+          type: match[1].toLowerCase() as 'photo' | 'audio',
+          name: match[2],
+          url: match[3]
+        };
+      }
+      return null;
+    };
+    
+    const mediaData = isMediaMessage ? parseMediaMessage(message.content) : null;
     
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-4`}>
@@ -92,7 +124,39 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
               ? 'bg-primary text-primary-foreground' 
               : 'bg-muted text-muted-foreground'
           }`}>
-            <p className="text-sm">{message.content}</p>
+            {mediaData ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  {mediaData.type === 'photo' ? (
+                    <Image className="w-4 h-4" />
+                  ) : (
+                    <Music className="w-4 h-4" />
+                  )}
+                  <span className="text-sm font-medium">{mediaData.name}</span>
+                </div>
+                
+                {mediaData.type === 'photo' ? (
+                  <div className="max-w-xs">
+                    <img 
+                      src={mediaData.url} 
+                      alt={mediaData.name}
+                      className="w-full h-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => window.open(mediaData.url, '_blank')}
+                    />
+                  </div>
+                ) : (
+                  <div className="p-2 border rounded-lg bg-background/10">
+                    <audio controls className="w-full">
+                      <source src={mediaData.url} />
+                      Votre navigateur ne supporte pas la lecture audio.
+                    </audio>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm">{message.content}</p>
+            )}
+            
             <p className={`text-xs mt-1 ${
               isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground/70'
             }`}>
@@ -161,14 +225,18 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       {/* Message Input */}
       <div className="border-t p-4">
         <form onSubmit={handleSendMessage} className="flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="px-2"
-          >
-            <Paperclip className="w-4 h-4" />
-          </Button>
+          {isArtist && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="px-2"
+              onClick={() => setShowMediaDialog(true)}
+              title="Ajouter un média de votre profil"
+            >
+              <Paperclip className="w-4 h-4" />
+            </Button>
+          )}
           
           <Input
             value={newMessage}
@@ -199,6 +267,14 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
         onOpenChange={setShowConversationInfo}
         conversation={conversation || null}
       />
+
+      {isArtist && (
+        <MediaAttachmentDialog
+          open={showMediaDialog}
+          onOpenChange={setShowMediaDialog}
+          onMediaSelect={handleMediaSelect}
+        />
+      )}
     </Card>
   );
 };
