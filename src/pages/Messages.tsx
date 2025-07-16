@@ -61,9 +61,20 @@ const Messages = () => {
       case 'starred':
         return starredMessages;
       case 'drafts':
-        return []; // TODO: Handle drafts display
+        return drafts.map(draft => ({
+          id: draft.id,
+          sender_id: draft.user_id,
+          recipient_id: draft.recipient_id || '',
+          subject: draft.subject || '(Brouillon)',
+          content: draft.content || '',
+          is_read: true,
+          is_starred: false,
+          attachment_urls: draft.attachment_urls,
+          created_at: draft.updated_at,
+          reply_to_id: undefined,
+        }));
       case 'trash':
-        return []; // TODO: Handle trash display
+        return []; // TODO: Implement trash functionality
       default:
         return inboxMessages;
     }

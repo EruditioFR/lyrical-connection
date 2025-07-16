@@ -4,8 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { X, Send, Save, Paperclip } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { X, Send, Save, Paperclip, User, Building2 } from "lucide-react";
 import { useMailbox } from "@/hooks/useMailbox";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface ComposeMessageProps {
   onClose: () => void;
@@ -29,8 +32,50 @@ export const ComposeMessage = ({
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const [attachments, setAttachments] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { sendMessage, isSending, saveDraft } = useMailbox();
+
+  // Fetch available contacts
+  const { data: contacts = [] } = useQuery({
+    queryKey: ['contacts', searchQuery],
+    queryFn: async () => {
+      if (!searchQuery || searchQuery.length < 2) return [];
+      
+      const [artistsQuery, professionalsQuery] = await Promise.all([
+        supabase
+          .from('artist_profiles')
+          .select('id, stage_name, profile_image_url')
+          .ilike('stage_name', `%${searchQuery}%`)
+          .eq('is_active', true)
+          .limit(10),
+        supabase
+          .from('professional_profiles')
+          .select('id, company_name, logo_url')
+          .ilike('company_name', `%${searchQuery}%`)
+          .eq('is_active', true)
+          .limit(10)
+      ]);
+
+      const contacts = [
+        ...(artistsQuery.data?.map(a => ({ 
+          id: a.id, 
+          name: a.stage_name, 
+          type: 'artist',
+          avatar: a.profile_image_url 
+        })) || []),
+        ...(professionalsQuery.data?.map(p => ({ 
+          id: p.id, 
+          name: p.company_name, 
+          type: 'professional',
+          avatar: p.logo_url 
+        })) || [])
+      ];
+
+      return contacts;
+    },
+    enabled: searchQuery.length >= 2,
+  });
 
   useEffect(() => {
     if (replyTo) {
@@ -86,13 +131,40 @@ export const ComposeMessage = ({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="recipient">Destinataire</Label>
-          <Input
-            id="recipient"
-            value={recipientName || recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-            placeholder="Sélectionner un destinataire..."
-            disabled={!!replyTo || !!recipientId}
-          />
+          {replyTo || recipientId ? (
+            <Input
+              id="recipient"
+              value={recipientName || recipient}
+              disabled
+            />
+          ) : (
+            <Select value={recipient} onValueChange={setRecipient}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un destinataire..." />
+              </SelectTrigger>
+              <SelectContent>
+                <div className="p-2">
+                  <Input
+                    placeholder="Rechercher un contact..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                {contacts.map((contact) => (
+                  <SelectItem key={contact.id} value={contact.id}>
+                    <div className="flex items-center gap-2">
+                      {contact.type === 'artist' ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <Building2 className="w-4 h-4" />
+                      )}
+                      <span>{contact.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -143,8 +215,17 @@ export const ComposeMessage = ({
               variant="outline"
               size="sm"
               onClick={() => {
-                // TODO: Implement file attachment
-                console.log('Attach file');
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.multiple = true;
+                fileInput.onchange = (e) => {
+                  const files = (e.target as HTMLInputElement).files;
+                  if (files) {
+                    const fileNames = Array.from(files).map(file => file.name);
+                    setAttachments(prev => [...prev, ...fileNames]);
+                  }
+                };
+                fileInput.click();
               }}
             >
               <Paperclip className="w-4 h-4 mr-2" />

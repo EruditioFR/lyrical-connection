@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Paperclip, Reply } from "lucide-react";
+import { Star, Paperclip, Reply, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { MessageSearch } from "./MessageSearch";
+import { MessageActions } from "./MessageActions";
 
 interface Message {
   id: string;
@@ -53,8 +56,49 @@ export const MessageList = ({
   folder,
   currentUserId
 }: MessageListProps) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  
   const allSelected = messages.length > 0 && selectedMessages.length === messages.length;
   const someSelected = selectedMessages.length > 0 && selectedMessages.length < messages.length;
+
+  // Filter messages based on search query
+  const filteredMessages = messages.filter(message => {
+    if (!searchQuery) return true;
+    
+    const searchLower = searchQuery.toLowerCase();
+    const senderInfo = getSenderInfo(message);
+    
+    return (
+      message.subject.toLowerCase().includes(searchLower) ||
+      message.content.toLowerCase().includes(searchLower) ||
+      senderInfo.name.toLowerCase().includes(searchLower)
+    );
+  });
+
+  const handleBulkMarkAsRead = () => {
+    selectedMessages.forEach(messageId => {
+      const message = messages.find(m => m.id === messageId);
+      if (message && !message.is_read) {
+        // TODO: Call mark as read for each message
+      }
+    });
+  };
+
+  const handleBulkStarToggle = () => {
+    selectedMessages.forEach(messageId => {
+      const message = messages.find(m => m.id === messageId);
+      if (message) {
+        onStarToggle(messageId, message.is_starred);
+      }
+    });
+  };
+
+  const handleBulkDelete = () => {
+    selectedMessages.forEach(messageId => {
+      // TODO: Call delete for each message
+    });
+  };
 
   const getSenderInfo = (message: Message) => {
     if (folder === 'sent') {
@@ -79,7 +123,7 @@ export const MessageList = ({
       .slice(0, 2);
   };
 
-  if (messages.length === 0) {
+  if (filteredMessages.length === 0 && !searchQuery) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
         <div className="text-center">
@@ -90,8 +134,37 @@ export const MessageList = ({
     );
   }
 
+  if (filteredMessages.length === 0 && searchQuery) {
+    return (
+      <div className="flex-1 flex flex-col">
+        <MessageSearch onSearch={setSearchQuery} onFilter={() => setShowFilters(!showFilters)} />
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <div className="text-center">
+            <p className="text-lg font-medium mb-2">Aucun résultat</p>
+            <p className="text-sm">Aucun message ne correspond à votre recherche.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 flex flex-col">
+      {/* Search */}
+      <MessageSearch onSearch={setSearchQuery} onFilter={() => setShowFilters(!showFilters)} />
+
+      {/* Bulk Actions */}
+      <MessageActions
+        selectedCount={selectedMessages.length}
+        onMarkAsRead={handleBulkMarkAsRead}
+        onMarkAsUnread={() => {}}
+        onStarToggle={handleBulkStarToggle}
+        onArchive={() => {}}
+        onDelete={handleBulkDelete}
+        onReply={() => {}}
+        onForward={() => {}}
+      />
+
       {/* Header */}
       <div className="border-b border-border p-4 flex items-center gap-4">
         <Checkbox
@@ -99,13 +172,14 @@ export const MessageList = ({
           onCheckedChange={(checked) => onSelectAll(!!checked)}
         />
         <span className="text-sm text-muted-foreground">
-          {messages.length} message{messages.length > 1 ? 's' : ''}
+          {filteredMessages.length} message{filteredMessages.length > 1 ? 's' : ''} 
+          {searchQuery && ` (${messages.length} au total)`}
         </span>
       </div>
 
       {/* Message List */}
       <div className="flex-1 overflow-auto">
-        {messages.map((message) => {
+        {filteredMessages.map((message) => {
           const senderInfo = getSenderInfo(message);
           const isSelected = selectedMessages.includes(message.id);
           const hasAttachments = message.attachment_urls && message.attachment_urls.length > 0;

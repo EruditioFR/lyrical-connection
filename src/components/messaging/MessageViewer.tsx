@@ -120,7 +120,10 @@ export const MessageViewer = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => console.log('Forward message')}
+              onClick={() => {
+                // TODO: Implement forward functionality
+                navigator.clipboard.writeText(`${message.subject}\n\n${message.content}`);
+              }}
             >
               <Forward className="w-4 h-4" />
             </Button>

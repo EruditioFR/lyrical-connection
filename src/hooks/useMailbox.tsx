@@ -51,17 +51,21 @@ export const useMailbox = () => {
   const { data: inboxMessages = [], isLoading: isLoadingInbox } = useQuery({
     queryKey: ['mailbox', 'inbox'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('mail_messages')
         .select(`
           *,
-          sender:sender_id (
+          sender:sender_id!mail_messages_sender_id_fkey (
             stage_name,
             company_name,
             profile_image_url,
             logo_url
           )
         `)
+        .eq('recipient_id', user.id)
         .eq('is_deleted_by_recipient', false)
         .order('created_at', { ascending: false });
 
@@ -74,17 +78,21 @@ export const useMailbox = () => {
   const { data: sentMessages = [], isLoading: isLoadingSent } = useQuery({
     queryKey: ['mailbox', 'sent'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('mail_messages')
         .select(`
           *,
-          recipient:recipient_id (
+          recipient:recipient_id!mail_messages_recipient_id_fkey (
             stage_name,
             company_name,
             profile_image_url,
             logo_url
           )
         `)
+        .eq('sender_id', user.id)
         .eq('is_deleted_by_sender', false)
         .order('created_at', { ascending: false });
 
@@ -97,17 +105,20 @@ export const useMailbox = () => {
   const { data: starredMessages = [], isLoading: isLoadingStarred } = useQuery({
     queryKey: ['mailbox', 'starred'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('mail_messages')
         .select(`
           *,
-          sender:sender_id (
+          sender:sender_id!mail_messages_sender_id_fkey (
             stage_name,
             company_name,
             profile_image_url,
             logo_url
           ),
-          recipient:recipient_id (
+          recipient:recipient_id!mail_messages_recipient_id_fkey (
             stage_name,
             company_name,
             profile_image_url,
@@ -115,7 +126,7 @@ export const useMailbox = () => {
           )
         `)
         .eq('is_starred', true)
-        .eq('is_deleted_by_recipient', false)
+        .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.false),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.false)`)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
