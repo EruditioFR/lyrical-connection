@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Edit2, User, Phone, Music, Image as ImageIcon, Video, Upload, Link as LinkIcon, Trash2 } from 'lucide-react';
+import { Edit2, User, Phone, Music, Video, Upload, Link as LinkIcon, Trash2, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useArtistAirs } from '@/hooks/useArtistAirs';
 import { voiceTypes } from '@/constants/voiceTypes';
 import { countries } from '@/constants/countries';
 import type { Database } from '@/integrations/supabase/types';
@@ -41,18 +43,22 @@ interface EditArtistProfileDialogProps {
   onAccountUpdated: () => void;
 }
 
-interface MediaItem {
-  id: string;
-  type: 'video' | 'audio';
-  title: string;
-  url: string;
-  source: 'file' | 'url';
-}
-
 const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfileDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Utiliser le hook useArtistAirs pour gérer les médias
+  const {
+    airs,
+    isLoading: isLoadingAirs,
+    createAir,
+    updateAir,
+    deleteAir,
+    uploadFile,
+    getFileUrl,
+    deleteFile
+  } = useArtistAirs(account.id);
 
   const [formData, setFormData] = useState({
     stage_name: '',
@@ -74,7 +80,6 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
   const [newRepertoireItem, setNewRepertoireItem] = useState('');
   const [newLanguage, setNewLanguage] = useState('');
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [newMedia, setNewMedia] = useState({
     type: 'video' as 'video' | 'audio',
     title: '',
@@ -85,6 +90,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
   useEffect(() => {
     if (account && open) {
+      console.log('Loading account data:', account);
       setFormData({
         stage_name: account.stage_name || '',
         bio: account.bio || '',
@@ -110,19 +116,32 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
     setIsLoading(true);
 
     try {
+      console.log('Starting profile update for account:', account.id);
+      console.log('Form data to save:', formData);
+
       const updateData = {
         ...formData,
         experience_years: formData.experience_years || null,
         birth_date: formData.birth_date || null,
+        spoken_languages: formData.spoken_languages.length > 0 ? formData.spoken_languages : null,
+        repertoire: formData.repertoire.length > 0 ? formData.repertoire : null,
         updated_at: new Date().toISOString(),
       };
 
-      const { error } = await supabase
+      console.log('Sending update data:', updateData);
+
+      const { error, data } = await supabase
         .from('artist_profiles')
         .update(updateData)
-        .eq('id', account.id);
+        .eq('id', account.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+      }
+
+      console.log('Profile updated successfully:', data);
 
       toast({
         title: "Profil modifié",
@@ -135,7 +154,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
       console.error('Error updating artist profile:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de modifier le profil artiste.",
+        description: `Impossible de modifier le profil artiste: ${error.message}`,
         variant: "destructive",
       });
     } finally {
@@ -145,6 +164,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
   const addRepertoireItem = () => {
     if (newRepertoireItem.trim()) {
+      console.log('Adding repertoire item:', newRepertoireItem.trim());
       setFormData({
         ...formData,
         repertoire: [...formData.repertoire, newRepertoireItem.trim()]
@@ -154,6 +174,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
   };
 
   const removeRepertoireItem = (index: number) => {
+    console.log('Removing repertoire item at index:', index);
     setFormData({
       ...formData,
       repertoire: formData.repertoire.filter((_, i) => i !== index)
@@ -162,6 +183,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
   const addLanguage = () => {
     if (newLanguage.trim() && !formData.spoken_languages.includes(newLanguage.trim())) {
+      console.log('Adding language:', newLanguage.trim());
       setFormData({
         ...formData,
         spoken_languages: [...formData.spoken_languages, newLanguage.trim()]
@@ -171,6 +193,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
   };
 
   const removeLanguage = (language: string) => {
+    console.log('Removing language:', language);
     setFormData({
       ...formData,
       spoken_languages: formData.spoken_languages.filter(lang => lang !== language)
@@ -180,6 +203,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      console.log('File selected:', file.name, file.type);
       setNewMedia({
         ...newMedia,
         file,
@@ -188,16 +212,54 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
     }
   };
 
-  const addMediaItem = () => {
-    if (newMedia.source === 'url' && newMedia.url && newMedia.title) {
-      const mediaItem: MediaItem = {
-        id: Date.now().toString(),
-        type: newMedia.type,
-        title: newMedia.title,
-        url: newMedia.url,
-        source: 'url'
-      };
-      setMediaItems([...mediaItems, mediaItem]);
+  const addMediaItem = async () => {
+    if (!newMedia.title.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez saisir un titre pour le média.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      console.log('Adding media item:', newMedia);
+
+      if (newMedia.source === 'file' && newMedia.file) {
+        // Upload du fichier
+        console.log('Uploading file:', newMedia.file.name);
+        const filePath = await uploadFile(newMedia.file, account.user_id);
+        console.log('File uploaded to:', filePath);
+
+        // Créer l'enregistrement avec le chemin du fichier
+        await createAir({
+          title: newMedia.title.trim(),
+          type: newMedia.type,
+          file_path: filePath,
+          external_url: null,
+          description: '',
+          display_order: airs.length,
+        });
+
+        console.log('Media item created with file upload');
+      } else if (newMedia.source === 'url' && newMedia.url.trim()) {
+        // URL externe
+        console.log('Creating media item with URL:', newMedia.url);
+        await createAir({
+          title: newMedia.title.trim(),
+          type: newMedia.type,
+          file_path: null,
+          external_url: newMedia.url.trim(),
+          description: '',
+          display_order: airs.length,
+        });
+
+        console.log('Media item created with external URL');
+      } else {
+        throw new Error('Veuillez sélectionner un fichier ou saisir une URL');
+      }
+
+      // Reset du formulaire
       setNewMedia({
         type: 'video',
         title: '',
@@ -205,29 +267,59 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
         file: null,
         source: 'url'
       });
-    } else if (newMedia.source === 'file' && newMedia.file && newMedia.title) {
-      // For file uploads, we'd need to implement the upload logic
-      // For now, we'll create a placeholder URL
-      const mediaItem: MediaItem = {
-        id: Date.now().toString(),
-        type: newMedia.type,
-        title: newMedia.title,
-        url: URL.createObjectURL(newMedia.file),
-        source: 'file'
-      };
-      setMediaItems([...mediaItems, mediaItem]);
-      setNewMedia({
-        type: 'video',
-        title: '',
-        url: '',
-        file: null,
-        source: 'url'
+
+      toast({
+        title: "Média ajouté",
+        description: "Le média a été ajouté avec succès.",
+      });
+
+    } catch (error) {
+      console.error('Error adding media item:', error);
+      toast({
+        title: "Erreur",
+        description: `Impossible d'ajouter le média: ${error.message}`,
+        variant: "destructive",
       });
     }
   };
 
-  const removeMediaItem = (id: string) => {
-    setMediaItems(mediaItems.filter(item => item.id !== id));
+  const removeMediaItem = async (airId: string) => {
+    try {
+      console.log('Removing media item:', airId);
+      const air = airs.find(a => a.id === airId);
+      
+      if (air?.file_path) {
+        // Supprimer le fichier du storage
+        await deleteFile(air.file_path);
+        console.log('File deleted from storage:', air.file_path);
+      }
+
+      // Supprimer l'enregistrement
+      await deleteAir(airId);
+      console.log('Media item deleted from database');
+
+      toast({
+        title: "Média supprimé",
+        description: "Le média a été supprimé avec succès.",
+      });
+
+    } catch (error) {
+      console.error('Error removing media item:', error);
+      toast({
+        title: "Erreur",
+        description: `Impossible de supprimer le média: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getMediaUrl = (air: any) => {
+    if (air.external_url) {
+      return air.external_url;
+    } else if (air.file_path) {
+      return getFileUrl(air.file_path);
+    }
+    return '';
   };
 
   return (
@@ -247,7 +339,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
         <form onSubmit={handleSubmit}>
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="basic" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Infos de base</span>
@@ -260,11 +352,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
                 <Music className="h-4 w-4" />
                 <span className="hidden sm:inline">Artistique</span>
               </TabsTrigger>
-              <TabsTrigger value="media" className="flex items-center gap-2">
-                <ImageIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Images</span>
-              </TabsTrigger>
-              <TabsTrigger value="videos-audio" className="flex items-center gap-2">
+              <TabsTrigger value="medias" className="flex items-center gap-2">
                 <Video className="h-4 w-4" />
                 <span className="hidden sm:inline">Médias</span>
               </TabsTrigger>
@@ -346,6 +434,30 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
                       </Select>
                     </div>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cover_image_url">URL de l'image de couverture</Label>
+                    <Input
+                      id="cover_image_url"
+                      type="url"
+                      value={formData.cover_image_url}
+                      onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
+                      placeholder="https://..."
+                    />
+                  </div>
+                  {formData.cover_image_url && (
+                    <div className="mt-2">
+                      <p className="text-sm text-muted-foreground mb-2">Aperçu :</p>
+                      <img 
+                        src={formData.cover_image_url} 
+                        alt="Aperçu de l'image de couverture" 
+                        className="w-full max-w-md h-32 object-cover rounded-md border"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -501,44 +613,10 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
               </Card>
             </TabsContent>
 
-            <TabsContent value="media" className="space-y-4 mt-4">
+            <TabsContent value="medias" className="space-y-4 mt-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Médias et visuels</CardTitle>
-                  <CardDescription>Images et contenus visuels du profil</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cover_image_url">URL de l'image de couverture</Label>
-                    <Input
-                      id="cover_image_url"
-                      type="url"
-                      value={formData.cover_image_url}
-                      onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-                      placeholder="https://..."
-                    />
-                  </div>
-                  {formData.cover_image_url && (
-                    <div className="mt-2">
-                      <p className="text-sm text-muted-foreground mb-2">Aperçu :</p>
-                      <img 
-                        src={formData.cover_image_url} 
-                        alt="Aperçu de l'image de couverture" 
-                        className="w-full max-w-md h-32 object-cover rounded-md border"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="videos-audio" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Vidéos et audio</CardTitle>
+                  <CardTitle>Médias</CardTitle>
                   <CardDescription>Ajoutez des vidéos et fichiers audio via fichier ou URL</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -613,40 +691,65 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
                     Ajouter le média
                   </Button>
 
-                  {mediaItems.length > 0 && (
+                  {isLoadingAirs ? (
+                    <div className="text-center py-4">Chargement des médias...</div>
+                  ) : airs.length > 0 ? (
                     <div className="space-y-4">
-                      <h4 className="font-medium">Médias ajoutés ({mediaItems.length})</h4>
+                      <h4 className="font-medium">Médias existants ({airs.length})</h4>
                       <div className="grid grid-cols-1 gap-4">
-                        {mediaItems.map((item) => (
-                          <div key={item.id} className="border rounded-lg p-4 space-y-2">
+                        {airs.map((air) => (
+                          <div key={air.id} className="border rounded-lg p-4 space-y-2">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <Badge variant="outline" className="flex items-center gap-1">
-                                  {item.type === 'video' ? <Video className="h-3 w-3" /> : <Music className="h-3 w-3" />}
-                                  {item.type}
+                                  {air.type === 'video' ? <Video className="h-3 w-3" /> : <Music className="h-3 w-3" />}
+                                  {air.type}
                                 </Badge>
                                 <Badge variant="secondary" className="flex items-center gap-1">
-                                  {item.source === 'url' ? <LinkIcon className="h-3 w-3" /> : <Upload className="h-3 w-3" />}
-                                  {item.source === 'url' ? 'URL' : 'Fichier'}
+                                  {air.external_url ? <LinkIcon className="h-3 w-3" /> : <Upload className="h-3 w-3" />}
+                                  {air.external_url ? 'URL' : 'Fichier'}
                                 </Badge>
                               </div>
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => removeMediaItem(item.id)}
+                                onClick={() => removeMediaItem(air.id)}
                                 className="text-destructive hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
-                            <p className="font-medium">{item.title}</p>
-                            {item.source === 'url' && (
-                              <p className="text-sm text-muted-foreground truncate">{item.url}</p>
+                            <p className="font-medium">{air.title}</p>
+                            {air.description && (
+                              <p className="text-sm text-muted-foreground">{air.description}</p>
+                            )}
+                            {air.external_url && (
+                              <p className="text-sm text-muted-foreground truncate">{air.external_url}</p>
+                            )}
+                            {getMediaUrl(air) && (
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  asChild
+                                  className="gap-1"
+                                >
+                                  <a href={getMediaUrl(air)} target="_blank" rel="noopener noreferrer">
+                                    <Play className="h-3 w-3" />
+                                    Lire
+                                  </a>
+                                </Button>
+                              </div>
                             )}
                           </div>
                         ))}
                       </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Aucun média ajouté pour le moment
                     </div>
                   )}
                 </CardContent>
