@@ -56,9 +56,9 @@ const Messages = () => {
                     Choisissez une conversation existante ou créez-en une nouvelle pour commencer à échanger
                   </p>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
