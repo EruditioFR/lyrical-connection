@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from 'next-themes';
+import { AuthProvider } from '@/hooks/useAuth';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 // Import existing pages
 import Index from '@/pages/Index';
@@ -56,64 +58,68 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <div className="min-h-screen w-full">
-          <Router>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profil" element={<Profile />} />
-              <Route path="/professional-profile" element={<ProfessionalProfile />} />
-              <Route path="/artistes/:id" element={<ArtistProfile />} />
-              <Route path="/professionnel/:id" element={<ProfessionalProfile />} />
-              
-              {/* Routes pour les castings */}
-              <Route path="/castings" element={<Castings />} />
-              <Route path="/castings/nouveau" element={<CreateCasting />} />
-              <Route path="/castings/:id" element={<CastingDetail />} />
-              <Route path="/castings/:id/postuler" element={<CastingApplication />} />
-              <Route path="/mes-candidatures" element={<MyApplications />} />
-              <Route path="/candidatures-reçues" element={<ReceivedApplications />} />
-              <Route path="/professional/castings/:castingId/applications" element={<ProfessionalApplications />} />
-              <Route path="/professional/casting-applications" element={<ProfessionalCastingApplications />} />
-              
-              {/* Routes pour les événements */}
-              <Route path="/evenements" element={<Events />} />
-              <Route path="/evenements/nouveau" element={<CreateEvent />} />
-              <Route path="/evenements/:id" element={<EventDetail />} />
-              <Route path="/evenements/:id/modifier" element={<EditEvent />} />
-              <Route path="/mes-evenements" element={<ProfessionalEvents />} />
-              <Route path="/professional/event-applications" element={<ProfessionalEventApplications />} />
-              
-              {/* Routes pour les artistes */}
-              <Route path="/artistes" element={<ArtistsList />} />
-              <Route path="/recherche-artistes" element={<ArtistSearch />} />
-              
-              {/* Routes pour les professionnels */}
-              <Route path="/professionnels" element={<ProfessionalsList />} />
-              <Route path="/professionnels/:id" element={<ProfessionalDetail />} />
-              
-              {/* Routes pour la messagerie */}
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/professional/messages" element={<ProfessionalMessages />} />
-              
-              {/* Route pour les notifications */}
-              <Route path="/notifications" element={<Notifications />} />
-              
-              {/* Routes pour l'abonnement */}
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/subscription" element={<Subscription />} />
-              <Route path="/subscription/success" element={<SubscriptionSuccess />} />
-              
-              {/* Autres routes */}
-              <Route path="/change-password" element={<ChangePassword />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <Toaster />
-          </Router>
-        </div>
+        <AuthProvider>
+          <div className="min-h-screen w-full">
+            <Router>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/pricing" element={<Pricing />} />
+                
+                {/* Routes protégées par authentification */}
+                <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
+                <Route path="/profil" element={<AuthGuard><Profile /></AuthGuard>} />
+                <Route path="/professional-profile" element={<AuthGuard><ProfessionalProfile /></AuthGuard>} />
+                <Route path="/artistes/:id" element={<AuthGuard><ArtistProfile /></AuthGuard>} />
+                <Route path="/professionnel/:id" element={<AuthGuard><ProfessionalProfile /></AuthGuard>} />
+                
+                {/* Routes pour les castings */}
+                <Route path="/castings" element={<AuthGuard><Castings /></AuthGuard>} />
+                <Route path="/castings/nouveau" element={<AuthGuard><CreateCasting /></AuthGuard>} />
+                <Route path="/castings/:id" element={<AuthGuard><CastingDetail /></AuthGuard>} />
+                <Route path="/castings/:id/postuler" element={<AuthGuard><CastingApplication /></AuthGuard>} />
+                <Route path="/mes-candidatures" element={<AuthGuard><MyApplications /></AuthGuard>} />
+                <Route path="/candidatures-reçues" element={<AuthGuard><ReceivedApplications /></AuthGuard>} />
+                <Route path="/professional/castings/:castingId/applications" element={<AuthGuard><ProfessionalApplications /></AuthGuard>} />
+                <Route path="/professional/casting-applications" element={<AuthGuard><ProfessionalCastingApplications /></AuthGuard>} />
+                
+                {/* Routes pour les événements */}
+                <Route path="/evenements" element={<AuthGuard><Events /></AuthGuard>} />
+                <Route path="/evenements/nouveau" element={<AuthGuard><CreateEvent /></AuthGuard>} />
+                <Route path="/evenements/:id" element={<AuthGuard><EventDetail /></AuthGuard>} />
+                <Route path="/evenements/:id/modifier" element={<AuthGuard><EditEvent /></AuthGuard>} />
+                <Route path="/mes-evenements" element={<AuthGuard><ProfessionalEvents /></AuthGuard>} />
+                <Route path="/professional/event-applications" element={<AuthGuard><ProfessionalEventApplications /></AuthGuard>} />
+                
+                {/* Routes pour les artistes */}
+                <Route path="/artistes" element={<AuthGuard><ArtistsList /></AuthGuard>} />
+                <Route path="/recherche-artistes" element={<AuthGuard><ArtistSearch /></AuthGuard>} />
+                
+                {/* Routes pour les professionnels */}
+                <Route path="/professionnels" element={<AuthGuard><ProfessionalsList /></AuthGuard>} />
+                <Route path="/professionnels/:id" element={<AuthGuard><ProfessionalDetail /></AuthGuard>} />
+                
+                {/* Routes pour la messagerie */}
+                <Route path="/messages" element={<AuthGuard><Messages /></AuthGuard>} />
+                <Route path="/professional/messages" element={<AuthGuard><ProfessionalMessages /></AuthGuard>} />
+                
+                {/* Route pour les notifications */}
+                <Route path="/notifications" element={<AuthGuard><Notifications /></AuthGuard>} />
+                
+                {/* Routes pour l'abonnement */}
+                <Route path="/subscription" element={<AuthGuard><Subscription /></AuthGuard>} />
+                <Route path="/subscription/success" element={<AuthGuard><SubscriptionSuccess /></AuthGuard>} />
+                
+                {/* Autres routes */}
+                <Route path="/change-password" element={<AuthGuard><ChangePassword /></AuthGuard>} />
+                <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+            </Router>
+          </div>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

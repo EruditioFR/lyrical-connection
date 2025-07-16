@@ -31,9 +31,10 @@ const Auth = () => {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [signupEmail, setSignupEmail] = useState('');
 
-  // Redirect if already authenticated
+  // Redirection si déjà authentifié
   useEffect(() => {
     if (user) {
+      console.log('Utilisateur déjà connecté, redirection vers /');
       navigate('/');
     }
   }, [user, navigate]);
@@ -63,25 +64,28 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      console.log('Tentative de connexion pour:', loginForm.email);
       const { error } = await supabase.auth.signInWithPassword({
         email: loginForm.email,
         password: loginForm.password,
       });
 
       if (error) {
+        console.error('Erreur de connexion:', error);
         toast({
           title: "Erreur de connexion",
           description: error.message,
           variant: "destructive",
         });
       } else {
+        console.log('Connexion réussie');
         toast({
           title: "Connexion réussie",
           description: "Bienvenue !",
         });
-        navigate('/');
       }
     } catch (error) {
+      console.error('Erreur inattendue:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite",
@@ -107,10 +111,12 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      console.log('Inscription artiste pour:', artistSignupForm.email);
       const { error } = await supabase.auth.signUp({
         email: artistSignupForm.email,
         password: artistSignupForm.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             user_type: 'artist',
             stage_name: artistSignupForm.stageName,
@@ -119,16 +125,19 @@ const Auth = () => {
       });
 
       if (error) {
+        console.error('Erreur inscription artiste:', error);
         toast({
           title: "Erreur d'inscription",
           description: error.message,
           variant: "destructive",
         });
       } else {
+        console.log('Inscription artiste réussie');
         setSignupEmail(artistSignupForm.email);
         setSignupSuccess(true);
       }
     } catch (error) {
+      console.error('Erreur inattendue:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite",
@@ -163,10 +172,12 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      console.log('Inscription professionnel pour:', professionalSignupForm.email);
       const { error } = await supabase.auth.signUp({
         email: professionalSignupForm.email,
         password: professionalSignupForm.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/`,
           data: {
             user_type: 'professional',
             company_name: professionalSignupForm.companyName,
@@ -176,16 +187,19 @@ const Auth = () => {
       });
 
       if (error) {
+        console.error('Erreur inscription professionnel:', error);
         toast({
           title: "Erreur d'inscription",
           description: error.message,
           variant: "destructive",
         });
       } else {
+        console.log('Inscription professionnel réussie');
         setSignupEmail(professionalSignupForm.email);
         setSignupSuccess(true);
       }
     } catch (error) {
+      console.error('Erreur inattendue:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite",
