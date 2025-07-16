@@ -299,20 +299,22 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 p-0">
-        <ScrollArea ref={scrollAreaRef} className="h-full p-4">
-          {messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              <p>Aucun message pour le moment</p>
-            </div>
-          ) : (
-            <div>
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
+      <CardContent className="flex-1 p-0 overflow-hidden">
+        <ScrollArea ref={scrollAreaRef} className="h-full">
+          <div className="p-4 space-y-4">
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                <p>Aucun message pour le moment</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((message) => (
+                  <MessageBubble key={message.id} message={message} />
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
         </ScrollArea>
       </CardContent>
 
