@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -17,7 +16,6 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface Message {
@@ -87,7 +85,7 @@ export const MessageViewer = ({
       const fileName = pathname.split('/').pop() || 'fichier';
       return decodeURIComponent(fileName);
     } catch {
-      return 'fichier';
+      return 'fichier_' + Date.now();
     }
   };
 
@@ -98,70 +96,56 @@ export const MessageViewer = ({
     setDownloadingFiles(prev => new Set(prev).add(url));
 
     try {
-      // Si c'est une URL Supabase Storage, utiliser le client Supabase
-      if (url.includes('supabase') && url.includes('storage')) {
-        const urlParts = url.split('/');
-        const bucketName = urlParts[urlParts.length - 2];
-        const filePath = urlParts[urlParts.length - 1];
-        
-        const { data, error } = await supabase.storage
-          .from(bucketName)
-          .download(filePath);
+      // Approche simplifiée : téléchargement direct
+      const response = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+      });
 
-        if (error) {
-          console.error('Erreur lors du téléchargement depuis Supabase:', error);
-          throw error;
-        }
-
-        if (data) {
-          const blob = new Blob([data], { type: data.type });
-          const downloadUrl = URL.createObjectURL(blob);
-          
-          const link = document.createElement('a');
-          link.href = downloadUrl;
-          link.download = fileName;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          URL.revokeObjectURL(downloadUrl);
-          
-          toast({
-            title: "Téléchargement réussi",
-            description: `Le fichier ${fileName} a été téléchargé.`,
-          });
-        }
-      } else {
-        // Pour les autres URLs, téléchargement direct
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-
-        const blob = await response.blob();
-        const downloadUrl = URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        URL.revokeObjectURL(downloadUrl);
-        
-        toast({
-          title: "Téléchargement réussi",
-          description: `Le fichier ${fileName} a été téléchargé.`,
-        });
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
       }
+
+      const blob = await response.blob();
+      
+      // Créer le lien de téléchargement
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = fileName;
+      link.style.display = 'none';
+      
+      // Ajouter au DOM, cliquer, puis nettoyer
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Nettoyer l'URL objet
+      URL.revokeObjectURL(downloadUrl);
+      
+      toast({
+        title: "Téléchargement réussi",
+        description: `Le fichier ${fileName} a été téléchargé.`,
+      });
+
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
-      toast({
-        title: "Erreur de téléchargement",
-        description: "Impossible de télécharger le fichier.",
-        variant: "destructive",
-      });
+      
+      // Fallback : ouvrir dans un nouvel onglet
+      try {
+        window.open(url, '_blank');
+        toast({
+          title: "Ouverture du fichier",
+          description: "Le fichier s'ouvre dans un nouvel onglet.",
+        });
+      } catch (fallbackError) {
+        console.error('Erreur fallback:', fallbackError);
+        toast({
+          title: "Erreur de téléchargement",
+          description: "Impossible de télécharger ou d'ouvrir le fichier.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setDownloadingFiles(prev => {
         const newSet = new Set(prev);
@@ -218,8 +202,11 @@ export const MessageViewer = ({
               variant="ghost"
               size="sm"
               onClick={() => {
-                // TODO: Implement forward functionality
                 navigator.clipboard.writeText(`${message.subject}\n\n${message.content}`);
+                toast({
+                  title: "Message copié",
+                  description: "Le contenu du message a été copié dans le presse-papiers.",
+                });
               }}
             >
               <Forward className="w-4 h-4" />
@@ -244,7 +231,7 @@ export const MessageViewer = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="w-10 h-10">
-                  <AvatarImage src={contactAvatar} />
+                  <AvatarImage src={contactInfo?.profile_image_url || contactInfo?.logo_url} />
                   <AvatarFallback>
                     {getInitials(contactName)}
                   </AvatarFallback>
@@ -279,7 +266,7 @@ export const MessageViewer = ({
                     const isDownloading = downloadingFiles.has(url);
                     
                     return (
-                      <div key={index} className="flex items-center gap-2 bg-muted p-3 rounded-lg max-w-[300px]">
+                      <div key={index} className="flex items-center gap-2 bg-muted p-3 rounded-lg max-w-[300px] hover:bg-muted/80 transition-colors">
                         <Paperclip className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                         <span className="text-sm truncate flex-1" title={fileName}>
                           {fileName}
@@ -289,7 +276,8 @@ export const MessageViewer = ({
                           size="sm"
                           onClick={() => downloadAttachment(url)}
                           disabled={isDownloading}
-                          className="flex-shrink-0"
+                          className="flex-shrink-0 hover:bg-background"
+                          title="Télécharger le fichier"
                         >
                           <Download className={cn(
                             "w-4 h-4", 
