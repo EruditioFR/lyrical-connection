@@ -214,7 +214,7 @@ export const useConversations = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel('conversations-changes')
+      .channel(`user-conversations-${user.id}`)
       .on(
         'postgres_changes',
         {
@@ -222,7 +222,8 @@ export const useConversations = () => {
           schema: 'public',
           table: 'conversations'
         },
-        () => {
+        (payload) => {
+          console.log('Conversation change detected:', payload);
           queryClient.invalidateQueries({ queryKey: ['conversations'] });
         }
       )
@@ -233,9 +234,22 @@ export const useConversations = () => {
           schema: 'public',
           table: 'messages'
         },
-        () => {
+        (payload) => {
+          console.log('Message change detected:', payload);
           queryClient.invalidateQueries({ queryKey: ['conversations'] });
           queryClient.invalidateQueries({ queryKey: ['messages'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'conversation_participants'
+        },
+        (payload) => {
+          console.log('Participant change detected:', payload);
+          queryClient.invalidateQueries({ queryKey: ['conversations'] });
         }
       )
       .subscribe();
