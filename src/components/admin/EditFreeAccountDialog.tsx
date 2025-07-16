@@ -11,6 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { voiceTypes } from '@/constants/voiceTypes';
 import { countries } from '@/constants/countries';
+import type { Database } from '@/integrations/supabase/types';
+
+type ProfessionalRole = Database['public']['Enums']['professional_role'];
 
 interface Account {
   id: string;
@@ -27,7 +30,7 @@ interface Account {
   website?: string;
   nationality?: string;
   experience_years?: number;
-  professional_role?: string;
+  professional_role?: ProfessionalRole;
   team_description?: string;
 }
 
@@ -62,7 +65,7 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
     location: '',
     phone: '',
     website: '',
-    professional_role: 'vocal_coach' as const,
+    professional_role: 'vocal_coach' as ProfessionalRole,
     team_description: '',
   });
 
@@ -87,7 +90,7 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
         location: account.location || '',
         phone: account.phone || '',
         website: account.website || '',
-        professional_role: (account.professional_role as 'vocal_coach' | 'casting_director' | 'conductor' | 'opera_house_manager' | 'voice_teacher' | 'artistic_agent' | 'producer' | 'competition_director') || 'vocal_coach',
+        professional_role: account.professional_role || 'vocal_coach',
         team_description: account.team_description || '',
       });
     }
@@ -241,7 +244,7 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
                 <Label htmlFor="professional_role">Rôle professionnel *</Label>
                 <Select
                   value={professionalData.professional_role}
-                  onValueChange={(value: 'vocal_coach' | 'casting_director' | 'conductor' | 'opera_house_manager' | 'voice_teacher' | 'artistic_agent' | 'producer' | 'competition_director') => 
+                  onValueChange={(value: ProfessionalRole) => 
                     setProfessionalData({ ...professionalData, professional_role: value })
                   }
                 >

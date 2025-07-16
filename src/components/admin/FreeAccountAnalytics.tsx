@@ -15,19 +15,20 @@ const FreeAccountAnalytics = ({ accountType }: FreeAccountAnalyticsProps) => {
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
   const { data: adminStats, isLoading: isLoadingAdminStats } = useAdminStats();
 
-  if (isLoadingFreeAccounts || isLoadingAdminStats) {
-    return <div>Chargement des analytics...</div>;
-  }
+  // Always call React.useMemo hooks, regardless of loading state
+  const accountsToAnalyze = React.useMemo(() => {
+    if (!freeAccounts) return [];
+    
+    return accountType 
+      ? accountType === 'artist' 
+        ? freeAccounts.artists || []
+        : freeAccounts.professionals || []
+      : [...(freeAccounts.artists || []), ...(freeAccounts.professionals || [])];
+  }, [freeAccounts, accountType]);
 
-  // Filtrer les données selon le type de compte
-  const accountsToAnalyze = accountType 
-    ? accountType === 'artist' 
-      ? freeAccounts?.artists || []
-      : freeAccounts?.professionals || []
-    : [...(freeAccounts?.artists || []), ...(freeAccounts?.professionals || [])];
-
-  // Créer des données pour les graphiques
   const monthlyData = React.useMemo(() => {
+    if (!accountsToAnalyze.length) return [];
+    
     const monthCounts: Record<string, number> = {};
     
     accountsToAnalyze.forEach(account => {
@@ -50,15 +51,22 @@ const FreeAccountAnalytics = ({ accountType }: FreeAccountAnalyticsProps) => {
   }, [accountsToAnalyze]);
 
   const typeDistribution = React.useMemo(() => {
+    if (!freeAccounts) return [];
+    
     if (accountType) {
       return [{ name: accountType === 'artist' ? 'Artistes' : 'Professionnels', value: accountsToAnalyze.length }];
     }
     
     return [
-      { name: 'Artistes', value: freeAccounts?.artists?.length || 0 },
-      { name: 'Professionnels', value: freeAccounts?.professionals?.length || 0 }
+      { name: 'Artistes', value: freeAccounts.artists?.length || 0 },
+      { name: 'Professionnels', value: freeAccounts.professionals?.length || 0 }
     ];
   }, [accountsToAnalyze, freeAccounts, accountType]);
+
+  // Early return after all hooks have been called
+  if (isLoadingFreeAccounts || isLoadingAdminStats) {
+    return <div>Chargement des analytics...</div>;
+  }
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
