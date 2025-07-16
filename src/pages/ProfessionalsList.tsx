@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,7 +39,7 @@ const ProfessionalsList = () => {
         .eq('is_active', true);
 
       if (filters.role && filters.role !== 'all') {
-        query = query.eq('professional_role', filters.role);
+        query = query.eq('professional_role', filters.role as 'casting_director' | 'vocal_coach' | 'conductor' | 'opera_house_manager' | 'voice_teacher' | 'artistic_agent' | 'producer' | 'competition_director');
       }
 
       if (filters.company) {
