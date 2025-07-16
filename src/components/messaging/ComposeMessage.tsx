@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,9 @@ interface ComposeMessageProps {
   recipientId?: string;
   recipientName?: string;
 }
+
+// Constante pour la taille maximale des fichiers (2MB)
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB en octets
 
 export const ComposeMessage = ({ 
   onClose, 
@@ -93,7 +97,31 @@ export const ComposeMessage = ({
     }
   }, [replyTo]);
 
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const validateFileSize = (file: File): boolean => {
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "Fichier trop volumineux",
+        description: `Le fichier "${file.name}" (${formatFileSize(file.size)}) dépasse la limite de ${formatFileSize(MAX_FILE_SIZE)}.`,
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const uploadFile = async (file: File): Promise<string> => {
+    if (!validateFileSize(file)) {
+      throw new Error('Fichier trop volumineux');
+    }
+
     const fileName = `${Date.now()}-${file.name}`;
     const filePath = `${fileName}`;
 
@@ -117,7 +145,12 @@ export const ComposeMessage = ({
   const handleFileSelect = async (files: FileList) => {
     const fileArray = Array.from(files);
     
-    for (const file of fileArray) {
+    // Valider tous les fichiers avant de commencer l'upload
+    const validFiles = fileArray.filter(validateFileSize);
+    
+    if (validFiles.length === 0) return;
+    
+    for (const file of validFiles) {
       const fileId = `${Date.now()}-${file.name}`;
       setUploadingFiles(prev => new Set(prev).add(fileId));
       
@@ -127,7 +160,7 @@ export const ComposeMessage = ({
         
         toast({
           title: "Fichier ajouté",
-          description: `Le fichier ${file.name} a été ajouté avec succès.`,
+          description: `Le fichier ${file.name} (${formatFileSize(file.size)}) a été ajouté avec succès.`,
         });
       } catch (error) {
         console.error('Erreur lors de l\'upload du fichier:', error);
@@ -322,6 +355,7 @@ export const ComposeMessage = ({
                 const fileInput = document.createElement('input');
                 fileInput.type = 'file';
                 fileInput.multiple = true;
+                fileInput.accept = '*/*';
                 fileInput.onchange = (e) => {
                   const files = (e.target as HTMLInputElement).files;
                   if (files) {
@@ -335,6 +369,9 @@ export const ComposeMessage = ({
               <Paperclip className="w-4 h-4 mr-2" />
               Joindre
             </Button>
+            <span className="text-xs text-muted-foreground">
+              (Max. {formatFileSize(MAX_FILE_SIZE)} par fichier)
+            </span>
 
             <Button
               variant="outline"
