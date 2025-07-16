@@ -14,7 +14,7 @@ const HeroModern = () => {
   console.log('HeroModern rendered');
   
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
+    <section className="relative min-h-[80vh] bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-10"></div>
       
@@ -22,7 +22,7 @@ const HeroModern = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-lyrical-50/50 via-transparent to-gold-50/30"></div>
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center min-h-screen">
+        <div className="flex flex-col lg:flex-row items-center min-h-[80vh]">
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-12 text-center lg:text-left text-appear pt-20">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
@@ -30,9 +30,10 @@ const HeroModern = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-              Parce que nous croyons que la voix est un passeport universel.<br />
-Parce qu’il est temps d’offrir au lyrique un élan numérique digne de sa beauté.<br />
-Nous avons créé Lyrisphere.
+              Lyrisphere, c'est la sphère mondiale du lyrique. Un écosystème vivant, connecté, ouvert à tous les talents.<br /><br />
+              🎙 Pour les chanteurs : une vitrine, une scène, une trajectoire.<br />
+              🎭 Pour les professionnels : un outil de repérage, d'audition, de recrutement.<br />
+              🌍 Pour tous : une communauté d'âmes vibrantes, d'oreilles attentives, de chemins partagés.
             </p>
             
             {/* CTA Buttons */}
