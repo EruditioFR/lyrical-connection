@@ -264,7 +264,7 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
   };
 
   return (
-    <Card className="h-full flex flex-col max-h-[calc(100vh-2rem)]">
+    <Card className="flex flex-col h-[calc(100vh-4rem)]">
       {/* Header */}
       <CardHeader className="border-b flex-shrink-0">
         <div className="flex items-center justify-between">
@@ -299,7 +299,7 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       </CardHeader>
 
       {/* Messages */}
-      <div className="flex-1 overflow-hidden">
+      <CardContent className="flex-1 min-h-0 p-0">
         <ScrollArea ref={scrollAreaRef} className="h-full">
           <div className="p-4 space-y-4">
             {messages.length === 0 ? (
@@ -316,7 +316,7 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
             )}
           </div>
         </ScrollArea>
-      </div>
+      </CardContent>
 
       {/* Message Input */}
       <div className="border-t p-4 flex-shrink-0">
