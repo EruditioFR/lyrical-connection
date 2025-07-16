@@ -299,8 +299,8 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 p-0 overflow-hidden min-h-0">
-        <ScrollArea ref={scrollAreaRef} className="h-full max-h-[calc(100vh-16rem)]">
+      <CardContent className="flex-1 p-0 overflow-hidden min-h-0 flex flex-col">
+        <ScrollArea ref={scrollAreaRef} className="flex-1 min-h-0">
           <div className="p-4 space-y-4">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground min-h-[200px]">
