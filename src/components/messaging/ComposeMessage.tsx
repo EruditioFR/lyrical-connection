@@ -5,10 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Send, Save, Paperclip, User, Building2 } from "lucide-react";
+import { X, Send, Save, Paperclip, User, Building2, Upload } from "lucide-react";
 import { useMailbox } from "@/hooks/useMailbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 interface ComposeMessageProps {
   onClose: () => void;
@@ -33,8 +34,10 @@ export const ComposeMessage = ({
   const [content, setContent] = useState("");
   const [attachments, setAttachments] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
 
   const { sendMessage, isSending, saveDraft } = useMailbox();
+  const { toast } = useToast();
 
   // Fetch available contacts
   const { data: contacts = [] } = useQuery({
@@ -89,6 +92,88 @@ export const ComposeMessage = ({
       setContent(`\n\n--- Message original ---\n${replyTo.content}`);
     }
   }, [replyTo]);
+
+  const uploadFile = async (file: File): Promise<string> => {
+    const fileName = `${Date.now()}-${file.name}`;
+    const filePath = `${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from('message-attachments')
+      .upload(filePath, file);
+
+    if (error) {
+      console.error('Erreur upload:', error);
+      throw new Error(`Erreur lors de l'upload: ${error.message}`);
+    }
+
+    // Récupérer l'URL publique du fichier
+    const { data: urlData } = supabase.storage
+      .from('message-attachments')
+      .getPublicUrl(filePath);
+
+    return urlData.publicUrl;
+  };
+
+  const handleFileSelect = async (files: FileList) => {
+    const fileArray = Array.from(files);
+    
+    for (const file of fileArray) {
+      const fileId = `${Date.now()}-${file.name}`;
+      setUploadingFiles(prev => new Set(prev).add(fileId));
+      
+      try {
+        const fileUrl = await uploadFile(file);
+        setAttachments(prev => [...prev, fileUrl]);
+        
+        toast({
+          title: "Fichier ajouté",
+          description: `Le fichier ${file.name} a été ajouté avec succès.`,
+        });
+      } catch (error) {
+        console.error('Erreur lors de l\'upload du fichier:', error);
+        toast({
+          title: "Erreur d'upload",
+          description: `Impossible d'uploader le fichier ${file.name}.`,
+          variant: "destructive",
+        });
+      } finally {
+        setUploadingFiles(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(fileId);
+          return newSet;
+        });
+      }
+    }
+  };
+
+  const removeAttachment = async (attachmentUrl: string) => {
+    try {
+      // Extraire le nom du fichier depuis l'URL pour le supprimer du storage
+      const urlParts = attachmentUrl.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      
+      if (fileName && attachmentUrl.includes('supabase')) {
+        await supabase.storage
+          .from('message-attachments')
+          .remove([fileName]);
+      }
+      
+      setAttachments(prev => prev.filter(url => url !== attachmentUrl));
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+    }
+  };
+
+  const getFileNameFromUrl = (url: string) => {
+    try {
+      const urlParts = url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      // Enlever le timestamp ajouté
+      return fileName.split('-').slice(1).join('-') || fileName;
+    } catch {
+      return 'fichier';
+    }
+  };
 
   const handleSend = async () => {
     if (!recipient || !subject.trim()) return;
@@ -200,14 +285,28 @@ export const ComposeMessage = ({
               {attachments.map((attachment, index) => (
                 <div key={index} className="flex items-center gap-2 bg-muted p-2 rounded">
                   <Paperclip className="w-4 h-4" />
-                  <span className="text-sm truncate">{attachment}</span>
+                  <span className="text-sm truncate">{getFileNameFromUrl(attachment)}</span>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setAttachments(prev => prev.filter((_, i) => i !== index))}
+                    onClick={() => removeAttachment(attachment)}
                   >
                     <X className="w-3 h-3" />
                   </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {uploadingFiles.size > 0 && (
+          <div className="space-y-2">
+            <Label>Upload en cours...</Label>
+            <div className="flex flex-wrap gap-2">
+              {Array.from(uploadingFiles).map((fileId) => (
+                <div key={fileId} className="flex items-center gap-2 bg-muted p-2 rounded">
+                  <Upload className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">Upload...</span>
                 </div>
               ))}
             </div>
@@ -226,12 +325,12 @@ export const ComposeMessage = ({
                 fileInput.onchange = (e) => {
                   const files = (e.target as HTMLInputElement).files;
                   if (files) {
-                    const fileNames = Array.from(files).map(file => file.name);
-                    setAttachments(prev => [...prev, ...fileNames]);
+                    handleFileSelect(files);
                   }
                 };
                 fileInput.click();
               }}
+              disabled={uploadingFiles.size > 0}
             >
               <Paperclip className="w-4 h-4 mr-2" />
               Joindre
@@ -253,7 +352,7 @@ export const ComposeMessage = ({
             </Button>
             <Button 
               onClick={handleSend}
-              disabled={!canSend || isSending}
+              disabled={!canSend || isSending || uploadingFiles.size > 0}
             >
               <Send className="w-4 h-4 mr-2" />
               {isSending ? 'Envoi...' : 'Envoyer'}

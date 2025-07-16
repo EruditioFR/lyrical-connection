@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -81,10 +82,10 @@ export const MessageViewer = ({
 
   const getFileNameFromUrl = (url: string) => {
     try {
-      const urlObj = new URL(url);
-      const pathname = urlObj.pathname;
-      const fileName = pathname.split('/').pop() || 'fichier';
-      return decodeURIComponent(fileName);
+      const urlParts = url.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      // Enlever le timestamp ajouté lors de l'upload
+      return fileName.split('-').slice(1).join('-') || fileName;
     } catch {
       return 'fichier_' + Date.now();
     }
@@ -97,43 +98,8 @@ export const MessageViewer = ({
     setDownloadingFiles(prev => new Set(prev).add(url));
 
     try {
-      let downloadUrl = url;
-      
-      // Vérifier si c'est une URL Supabase Storage
-      if (url.includes('supabase')) {
-        try {
-          // Extraire le chemin du fichier depuis l'URL
-          const urlParts = url.split('/');
-          const bucketIndex = urlParts.findIndex(part => part === 'object');
-          if (bucketIndex !== -1 && bucketIndex + 2 < urlParts.length) {
-            const bucket = urlParts[bucketIndex + 1];
-            const filePath = urlParts.slice(bucketIndex + 2).join('/');
-            
-            console.log('Téléchargement depuis Supabase Storage:', { bucket, filePath });
-            
-            // Utiliser l'API Supabase pour obtenir l'URL signée
-            const { data, error } = await supabase.storage
-              .from(bucket)
-              .createSignedUrl(filePath, 3600); // URL valide pendant 1 heure
-            
-            if (error) {
-              console.error('Erreur lors de la création de l\'URL signée:', error);
-              throw error;
-            }
-            
-            if (data?.signedUrl) {
-              downloadUrl = data.signedUrl;
-              console.log('URL signée créée:', downloadUrl);
-            }
-          }
-        } catch (storageError) {
-          console.error('Erreur lors du traitement Supabase Storage:', storageError);
-          // Continuer avec l'URL originale en fallback
-        }
-      }
-
-      // Télécharger le fichier
-      const response = await fetch(downloadUrl, {
+      // Pour les URLs Supabase Storage, on peut télécharger directement
+      const response = await fetch(url, {
         method: 'GET',
         mode: 'cors',
       });
