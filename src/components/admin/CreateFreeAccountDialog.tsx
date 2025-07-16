@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -8,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import { useToast } from '@/hooks/use-toast';
-import { VOICE_TYPES } from '@/constants/voiceTypes';
-import { COUNTRIES } from '@/constants/countries';
+import { voiceTypes } from '@/constants/voiceTypes';
+import { countries } from '@/constants/countries';
 
 interface CreateFreeAccountDialogProps {
   open: boolean;
@@ -21,7 +22,7 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
   const { createFreeArtist, createFreeProfessional, isCreatingFreeArtist, isCreatingFreeProfessional } = useAdminManagement();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState(defaultAccountType || 'artist');
+  const [activeTab, setActiveTab] = useState<'artist' | 'professional'>(defaultAccountType || 'artist');
   
   const [artistForm, setArtistForm] = useState({
     stage_name: '',
@@ -127,7 +128,7 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'artist' | 'professional')} className="space-y-4">
           {!defaultAccountType && (
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="artist">Artiste</TabsTrigger>
@@ -169,14 +170,10 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
                       <SelectValue placeholder="Sélectionner un type de voix" />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(VOICE_TYPES).map(([category, voices]) => (
-                        <div key={category}>
-                          {voices.map((voice) => (
-                            <SelectItem key={voice} value={voice}>
-                              {voice}
-                            </SelectItem>
-                          ))}
-                        </div>
+                      {voiceTypes.map((voice) => (
+                        <SelectItem key={voice} value={voice}>
+                          {voice}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -188,9 +185,9 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
                       <SelectValue placeholder="Sélectionner une nationalité" />
                     </SelectTrigger>
                     <SelectContent>
-                      {COUNTRIES.map((country) => (
-                        <SelectItem key={country.code} value={country.name}>
-                          {country.name}
+                      {countries.map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
                         </SelectItem>
                       ))}
                     </SelectContent>
