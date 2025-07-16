@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, MoreVertical, Info, Archive, LogOut, Image, Music } from 'lucide-react';
+import { Send, Paperclip, MoreVertical, Info, Archive, Image, Music } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +27,7 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
   const navigate = useNavigate();
   const { userType, isArtist } = useUserType();
   const { messages, sendMessage, isSending, markAsRead } = useMessages(conversationId);
-  const { conversations, leaveConversation, archiveConversation } = useConversations();
+  const { conversations, archiveConversation } = useConversations();
   const [newMessage, setNewMessage] = useState('');
   const [showConversationInfo, setShowConversationInfo] = useState(false);
   const [showMediaDialog, setShowMediaDialog] = useState(false);
@@ -84,12 +84,6 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
     setTimeout(() => {
       scrollToBottom('smooth');
     }, 100);
-  };
-
-  const handleLeaveConversation = () => {
-    leaveConversation(conversationId);
-    onConversationLeft?.();
-    navigate('/messages');
   };
 
   const handleArchiveConversation = () => {
@@ -285,13 +279,6 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
               <DropdownMenuItem onClick={handleArchiveConversation}>
                 <Archive className="w-4 h-4 mr-2" />
                 Archiver
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={handleLeaveConversation}
-                className="text-destructive"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Quitter la conversation
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

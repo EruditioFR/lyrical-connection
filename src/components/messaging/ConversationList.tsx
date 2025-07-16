@@ -36,15 +36,11 @@ const ConversationList = ({
   };
 
   const activeConversations = filterConversations(
-    conversations.filter(conv => !conv.is_archived && !conv.user_left_at)
+    conversations.filter(conv => !conv.is_archived)
   );
 
   const archivedConversations = filterConversations(
-    conversations.filter(conv => conv.is_archived && !conv.user_left_at)
-  );
-
-  const leftConversations = filterConversations(
-    conversations.filter(conv => conv.user_left_at)
+    conversations.filter(conv => conv.is_archived)
   );
 
   if (isLoading) {
@@ -90,9 +86,6 @@ const ConversationList = ({
             <TabsTrigger value="archived" className="flex-1">
               Archives ({archivedConversations.length})
             </TabsTrigger>
-            <TabsTrigger value="left" className="flex-1">
-              Terminées ({leftConversations.length})
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active" className="flex-1 m-0">
@@ -134,28 +127,6 @@ const ConversationList = ({
               ) : (
                 <div className="p-2 space-y-2">
                   {archivedConversations.map((conversation) => (
-                    <ConversationItem 
-                      key={conversation.id} 
-                      conversation={conversation}
-                      isSelected={conversation.id === selectedConversationId}
-                      onSelect={() => onConversationSelect(conversation.id)}
-                      unreadCount={0}
-                    />
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </TabsContent>
-
-          <TabsContent value="left" className="flex-1 m-0">
-            <ScrollArea className="h-full">
-              {leftConversations.length === 0 ? (
-                <div className="p-4 text-center text-muted-foreground">
-                  <p>Aucune conversation terminée</p>
-                </div>
-              ) : (
-                <div className="p-2 space-y-2">
-                  {leftConversations.map((conversation) => (
                     <ConversationItem 
                       key={conversation.id} 
                       conversation={conversation}
