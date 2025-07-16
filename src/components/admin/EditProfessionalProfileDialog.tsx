@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -142,106 +143,124 @@ const EditProfessionalProfileDialog = ({ account, onAccountUpdated }: EditProfes
           Modifier
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Modifier le profil professionnel</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="company_name">Nom de société *</Label>
-            <Input
-              id="company_name"
-              value={formData.company_name}
-              onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-              required
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Tabs defaultValue="basic" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="basic">Informations de base</TabsTrigger>
+              <TabsTrigger value="professional">Professionnel</TabsTrigger>
+              <TabsTrigger value="contact">Contact</TabsTrigger>
+            </TabsList>
 
-          <div className="space-y-2">
-            <Label htmlFor="contact_email">Email de contact *</Label>
-            <Input
-              id="contact_email"
-              type="email"
-              value={formData.contact_email}
-              onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-              required
-            />
-          </div>
+            <TabsContent value="basic" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="company_name">Nom de société *</Label>
+                  <Input
+                    id="company_name"
+                    value={formData.company_name}
+                    onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                    required
+                  />
+                </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="professional_role">Rôle professionnel *</Label>
-            <Select
-              value={formData.professional_role}
-              onValueChange={(value: ProfessionalRole) => 
-                setFormData({ ...formData, professional_role: value })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="vocal_coach">Coach vocal</SelectItem>
-                <SelectItem value="opera_house_manager">Directeur d'opéra</SelectItem>
-                <SelectItem value="conductor">Chef d'orchestre</SelectItem>
-                <SelectItem value="casting_director">Directeur de casting</SelectItem>
-                <SelectItem value="artistic_agent">Agent</SelectItem>
-                <SelectItem value="voice_teacher">Accompagnateur</SelectItem>
-                <SelectItem value="producer">Producteur</SelectItem>
-                <SelectItem value="competition_director">Gestionnaire de salle</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_email">Email de contact *</Label>
+                  <Input
+                    id="contact_email"
+                    type="email"
+                    value={formData.contact_email}
+                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="bio">Biographie</Label>
-            <Textarea
-              id="bio"
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              rows={3}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">Biographie</Label>
+                <Textarea
+                  id="bio"
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  rows={4}
+                />
+              </div>
+            </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="team_description">Description de l'équipe</Label>
-            <Textarea
-              id="team_description"
-              value={formData.team_description}
-              onChange={(e) => setFormData({ ...formData, team_description: e.target.value })}
-              rows={2}
-            />
-          </div>
+            <TabsContent value="professional" className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="professional_role">Rôle professionnel *</Label>
+                <Select
+                  value={formData.professional_role}
+                  onValueChange={(value: ProfessionalRole) => 
+                    setFormData({ ...formData, professional_role: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="vocal_coach">Coach vocal</SelectItem>
+                    <SelectItem value="opera_house_manager">Directeur d'opéra</SelectItem>
+                    <SelectItem value="conductor">Chef d'orchestre</SelectItem>
+                    <SelectItem value="casting_director">Directeur de casting</SelectItem>
+                    <SelectItem value="artistic_agent">Agent</SelectItem>
+                    <SelectItem value="voice_teacher">Accompagnateur</SelectItem>
+                    <SelectItem value="producer">Producteur</SelectItem>
+                    <SelectItem value="competition_director">Gestionnaire de salle</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Localisation</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="team_description">Description de l'équipe</Label>
+                <Textarea
+                  id="team_description"
+                  value={formData.team_description}
+                  onChange={(e) => setFormData({ ...formData, team_description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+            </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone">Téléphone</Label>
-            <Input
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-            />
-          </div>
+            <TabsContent value="contact" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="location">Localisation</Label>
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  />
+                </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="website">Site web</Label>
-            <Input
-              id="website"
-              type="url"
-              value={formData.website}
-              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-            />
-          </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Téléphone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+                </div>
+              </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+              <div className="space-y-2">
+                <Label htmlFor="website">Site web</Label>
+                <Input
+                  id="website"
+                  type="url"
+                  value={formData.website}
+                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -112,7 +113,6 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
       console.log('Submitting form data:', formData);
       console.log('Account ID:', account.id);
 
-      // Préparer les données avec la gestion correcte des types
       const updateData = {
         stage_name: formData.stage_name,
         bio: formData.bio || null,
@@ -122,13 +122,11 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
         phone: formData.phone || null,
         website: formData.website || null,
         nationality: formData.nationality || null,
-        // Corriger la logique pour experience_years : gérer correctement 0
         experience_years: formData.experience_years !== '' && formData.experience_years !== null
           ? parseInt(formData.experience_years)
           : null,
         birth_date: formData.birth_date || null,
         gender: formData.gender || null,
-        // Corriger la gestion des arrays : toujours retourner un array, jamais null
         spoken_languages: formData.spoken_languages,
         project_description: formData.project_description || null,
         repertoire: formData.repertoire,
@@ -164,7 +162,6 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
     } catch (error: any) {
       console.error('Error updating artist profile:', error);
       
-      // Gestion d'erreur améliorée avec messages spécifiques
       let errorMessage = "Impossible de modifier le profil artiste.";
       
       if (error.code === '42501') {
@@ -195,203 +192,211 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Modifier le profil artiste complet</DialogTitle>
+          <DialogTitle>Modifier le profil artiste</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Informations de base */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="stage_name">Nom de scène *</Label>
-              <Input
-                id="stage_name"
-                value={formData.stage_name}
-                onChange={(e) => setFormData({ ...formData, stage_name: e.target.value })}
-                required
-              />
-            </div>
+          <Tabs defaultValue="basic" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="basic">Informations de base</TabsTrigger>
+              <TabsTrigger value="professional">Professionnel</TabsTrigger>
+              <TabsTrigger value="personal">Personnel</TabsTrigger>
+              <TabsTrigger value="contact">Contact</TabsTrigger>
+            </TabsList>
 
-            <div className="space-y-2">
-              <Label htmlFor="contact_email">Email de contact *</Label>
-              <Input
-                id="contact_email"
-                type="email"
-                value={formData.contact_email}
-                onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Biographie */}
-          <div className="space-y-2">
-            <Label htmlFor="bio">Biographie</Label>
-            <Textarea
-              id="bio"
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              rows={3}
-            />
-          </div>
-
-          {/* Description du projet */}
-          <div className="space-y-2">
-            <Label htmlFor="project_description">Description du projet</Label>
-            <Textarea
-              id="project_description"
-              value={formData.project_description}
-              onChange={(e) => setFormData({ ...formData, project_description: e.target.value })}
-              rows={3}
-            />
-          </div>
-
-          {/* Informations vocales */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="voice_type">Type de voix</Label>
-              <Select
-                value={formData.voice_type}
-                onValueChange={(value) => setFormData({ ...formData, voice_type: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un type de voix" />
-                </SelectTrigger>
-                <SelectContent>
-                  {voiceTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="experience_years">Années d'expérience</Label>
-              <Input
-                id="experience_years"
-                type="number"
-                min="0"
-                value={formData.experience_years}
-                onChange={(e) => setFormData({ ...formData, experience_years: e.target.value })}
-              />
-            </div>
-          </div>
-
-          {/* Informations personnelles */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="birth_date">Date de naissance</Label>
-              <Input
-                id="birth_date"
-                type="date"
-                value={formData.birth_date}
-                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="gender">Genre</Label>
-              <Select
-                value={formData.gender}
-                onValueChange={(value) => setFormData({ ...formData, gender: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Homme</SelectItem>
-                  <SelectItem value="female">Femme</SelectItem>
-                  <SelectItem value="other">Autre</SelectItem>
-                  <SelectItem value="prefer_not_to_say">Préfère ne pas dire</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="nationality">Nationalité</Label>
-              <Select
-                value={formData.nationality}
-                onValueChange={(value) => setFormData({ ...formData, nationality: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une nationalité" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country}>
-                      {country}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Langues parlées */}
-          <div className="space-y-2">
-            <Label>Langues parlées</Label>
-            <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto">
-              {languages.map((language) => (
-                <div key={language} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`language-${language}`}
-                    checked={formData.spoken_languages.includes(language)}
-                    onCheckedChange={(checked) => handleLanguageChange(language, checked as boolean)}
+            <TabsContent value="basic" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="stage_name">Nom de scène *</Label>
+                  <Input
+                    id="stage_name"
+                    value={formData.stage_name}
+                    onChange={(e) => setFormData({ ...formData, stage_name: e.target.value })}
+                    required
                   />
-                  <Label htmlFor={`language-${language}`} className="text-sm">
-                    {language}
-                  </Label>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Répertoire */}
-          <div className="space-y-2">
-            <Label htmlFor="repertoire">Répertoire (séparé par des virgules)</Label>
-            <Textarea
-              id="repertoire"
-              value={formData.repertoire.join(', ')}
-              onChange={(e) => handleRepertoireChange(e.target.value)}
-              placeholder="Exemple: La Traviata, Carmen, Don Giovanni"
-              rows={3}
-            />
-          </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact_email">Email de contact *</Label>
+                  <Input
+                    id="contact_email"
+                    type="email"
+                    value={formData.contact_email}
+                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
 
-          {/* Contact et localisation */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="location">Localisation</Label>
-              <Input
-                id="location"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              />
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">Biographie</Label>
+                <Textarea
+                  id="bio"
+                  value={formData.bio}
+                  onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                  rows={4}
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="project_description">Description du projet</Label>
+                <Textarea
+                  id="project_description"
+                  value={formData.project_description}
+                  onChange={(e) => setFormData({ ...formData, project_description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+            </TabsContent>
 
-          {/* Site web */}
-          <div className="space-y-2">
-            <Label htmlFor="website">Site web</Label>
-            <Input
-              id="website"
-              type="url"
-              value={formData.website}
-              onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-            />
-          </div>
+            <TabsContent value="professional" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="voice_type">Type de voix</Label>
+                  <Select
+                    value={formData.voice_type}
+                    onValueChange={(value) => setFormData({ ...formData, voice_type: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un type de voix" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {voiceTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-          <div className="flex justify-end gap-2 pt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="experience_years">Années d'expérience</Label>
+                  <Input
+                    id="experience_years"
+                    type="number"
+                    min="0"
+                    value={formData.experience_years}
+                    onChange={(e) => setFormData({ ...formData, experience_years: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Langues parlées</Label>
+                <div className="grid grid-cols-3 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {languages.map((language) => (
+                    <div key={language} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`language-${language}`}
+                        checked={formData.spoken_languages.includes(language)}
+                        onCheckedChange={(checked) => handleLanguageChange(language, checked as boolean)}
+                      />
+                      <Label htmlFor={`language-${language}`} className="text-sm">
+                        {language}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="repertoire">Répertoire (séparé par des virgules)</Label>
+                <Textarea
+                  id="repertoire"
+                  value={formData.repertoire.join(', ')}
+                  onChange={(e) => handleRepertoireChange(e.target.value)}
+                  placeholder="Exemple: La Traviata, Carmen, Don Giovanni"
+                  rows={3}
+                />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="personal" className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="birth_date">Date de naissance</Label>
+                  <Input
+                    id="birth_date"
+                    type="date"
+                    value={formData.birth_date}
+                    onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Genre</Label>
+                  <Select
+                    value={formData.gender}
+                    onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Homme</SelectItem>
+                      <SelectItem value="female">Femme</SelectItem>
+                      <SelectItem value="other">Autre</SelectItem>
+                      <SelectItem value="prefer_not_to_say">Préfère ne pas dire</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="nationality">Nationalité</Label>
+                  <Select
+                    value={formData.nationality}
+                    onValueChange={(value) => setFormData({ ...formData, nationality: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner une nationalité" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="contact" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="location">Localisation</Label>
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Téléphone</Label>
+                  <Input
+                    id="phone"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="website">Site web</Label>
+                <Input
+                  id="website"
+                  type="url"
+                  value={formData.website}
+                  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>
