@@ -47,6 +47,8 @@ export const useAdminManagement = () => {
       nationality?: string;
       experience_years?: string;
     }) => {
+      console.log('Creating free artist with data:', artistData);
+      
       // Préparer les données pour l'edge function
       const profileData = {
         ...artistData,
@@ -55,16 +57,22 @@ export const useAdminManagement = () => {
 
       const { data, error } = await supabase.functions.invoke('create-free-user', {
         body: {
-          type: 'artist',
+          type: 'artist', // S'assurer que le type est explicitement 'artist'
           profile_data: profileData,
           created_by: user?.id,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw error;
+      }
+      
+      console.log('Free artist created successfully:', data);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Artist creation success callback:', data);
       queryClient.invalidateQueries({ queryKey: ['free-accounts'] });
       toast({
         title: "Compte créé",
@@ -93,18 +101,26 @@ export const useAdminManagement = () => {
       website?: string;
       team_description?: string;
     }) => {
+      console.log('Creating free professional with data:', professionalData);
+      
       const { data, error } = await supabase.functions.invoke('create-free-user', {
         body: {
-          type: 'professional',
+          type: 'professional', // S'assurer que le type est explicitement 'professional'
           profile_data: professionalData,
           created_by: user?.id,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw error;
+      }
+      
+      console.log('Free professional created successfully:', data);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Professional creation success callback:', data);
       queryClient.invalidateQueries({ queryKey: ['free-accounts'] });
       toast({
         title: "Compte créé",

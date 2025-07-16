@@ -28,16 +28,41 @@ export const useUserType = () => {
     };
   }
 
-  const isProfessional = !!professionalProfile && !artistProfile;
-  const isArtist = !!artistProfile && !professionalProfile;
-  const userType = isProfessional ? 'professional' : isArtist ? 'artist' : null;
+  // Logique corrigée : un utilisateur ne peut être que l'un ou l'autre, jamais les deux
+  const hasProfessionalProfile = !!professionalProfile;
+  const hasArtistProfile = !!artistProfile;
+  
+  // Si l'utilisateur a un profil professionnel, il est professionnel (priorité)
+  if (hasProfessionalProfile) {
+    return {
+      userType: 'professional' as const,
+      isProfessional: true,
+      isArtist: false,
+      isLoading,
+      artistProfile: null, // Ne pas retourner le profil artiste s'il y en a un
+      professionalProfile,
+    };
+  }
+  
+  // Si l'utilisateur a seulement un profil artiste, il est artiste
+  if (hasArtistProfile) {
+    return {
+      userType: 'artist' as const,
+      isProfessional: false,
+      isArtist: true,
+      isLoading,
+      artistProfile,
+      professionalProfile: null, // Ne pas retourner le profil professionnel s'il y en a un
+    };
+  }
 
+  // Aucun profil trouvé
   return {
-    userType,
-    isProfessional,
-    isArtist,
+    userType: null,
+    isProfessional: false,
+    isArtist: false,
     isLoading,
-    artistProfile,
-    professionalProfile,
+    artistProfile: null,
+    professionalProfile: null,
   };
 };
