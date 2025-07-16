@@ -62,6 +62,7 @@ function App() {
               <Route path="/auth" element={<Auth />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profil" element={<Profile />} />
+              <Route path="/professional-profile" element={<ProfessionalProfile />} />
               <Route path="/artistes/:id" element={<ArtistProfile />} />
               <Route path="/professionnel/:id" element={<ProfessionalProfile />} />
               
