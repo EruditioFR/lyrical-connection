@@ -81,6 +81,12 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
       title: "Mon compte",
       items: [
         {
+          label: "Messages",
+          href: "/messages",
+          icon: MessageSquare,
+          description: "Conversations et messagerie"
+        },
+        {
           label: "Mes candidatures",
           href: "/mes-candidatures",
           icon: FileText,
@@ -147,6 +153,12 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
     {
       title: "Mon compte",
       items: [
+        {
+          label: "Messages",
+          href: "/messages",
+          icon: MessageSquare,
+          description: "Conversations et messagerie"
+        },
         {
           label: "Mon profil",
           href: "/profil-professionnel",
