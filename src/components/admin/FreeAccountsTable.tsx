@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ExternalLink, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
-import EditFreeAccountDialog from './EditFreeAccountDialog';
 import EditArtistProfileDialog from './EditArtistProfileDialog';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -102,10 +100,6 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                     <Badge variant="secondary" className="text-xs">
                       Gratuit
                     </Badge>
-                    <EditFreeAccountDialog 
-                      account={account} 
-                      onAccountUpdated={onAccountUpdated || (() => {})}
-                    />
                     {type === 'artist' && (
                       <EditArtistProfileDialog 
                         account={account} 

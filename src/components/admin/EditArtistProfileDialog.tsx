@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit2, User, Phone, Music, Image as ImageIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Edit2, User, Phone, Music, Image as ImageIcon, Video, Upload, Link as LinkIcon, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { voiceTypes } from '@/constants/voiceTypes';
@@ -41,6 +41,14 @@ interface EditArtistProfileDialogProps {
   onAccountUpdated: () => void;
 }
 
+interface MediaItem {
+  id: string;
+  type: 'video' | 'audio';
+  title: string;
+  url: string;
+  source: 'file' | 'url';
+}
+
 const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfileDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,6 +74,14 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
   const [newRepertoireItem, setNewRepertoireItem] = useState('');
   const [newLanguage, setNewLanguage] = useState('');
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [newMedia, setNewMedia] = useState({
+    type: 'video' as 'video' | 'audio',
+    title: '',
+    url: '',
+    file: null as File | null,
+    source: 'url' as 'file' | 'url'
+  });
 
   useEffect(() => {
     if (account && open) {
@@ -161,6 +177,59 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
     });
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewMedia({
+        ...newMedia,
+        file,
+        title: file.name.split('.')[0]
+      });
+    }
+  };
+
+  const addMediaItem = () => {
+    if (newMedia.source === 'url' && newMedia.url && newMedia.title) {
+      const mediaItem: MediaItem = {
+        id: Date.now().toString(),
+        type: newMedia.type,
+        title: newMedia.title,
+        url: newMedia.url,
+        source: 'url'
+      };
+      setMediaItems([...mediaItems, mediaItem]);
+      setNewMedia({
+        type: 'video',
+        title: '',
+        url: '',
+        file: null,
+        source: 'url'
+      });
+    } else if (newMedia.source === 'file' && newMedia.file && newMedia.title) {
+      // For file uploads, we'd need to implement the upload logic
+      // For now, we'll create a placeholder URL
+      const mediaItem: MediaItem = {
+        id: Date.now().toString(),
+        type: newMedia.type,
+        title: newMedia.title,
+        url: URL.createObjectURL(newMedia.file),
+        source: 'file'
+      };
+      setMediaItems([...mediaItems, mediaItem]);
+      setNewMedia({
+        type: 'video',
+        title: '',
+        url: '',
+        file: null,
+        source: 'url'
+      });
+    }
+  };
+
+  const removeMediaItem = (id: string) => {
+    setMediaItems(mediaItems.filter(item => item.id !== id));
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -178,7 +247,7 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
 
         <form onSubmit={handleSubmit}>
           <Tabs defaultValue="basic" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Infos de base</span>
@@ -193,6 +262,10 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
               </TabsTrigger>
               <TabsTrigger value="media" className="flex items-center gap-2">
                 <ImageIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Images</span>
+              </TabsTrigger>
+              <TabsTrigger value="videos-audio" className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
                 <span className="hidden sm:inline">Médias</span>
               </TabsTrigger>
             </TabsList>
@@ -456,6 +529,124 @@ const EditArtistProfileDialog = ({ account, onAccountUpdated }: EditArtistProfil
                           e.currentTarget.style.display = 'none';
                         }}
                       />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="videos-audio" className="space-y-4 mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Vidéos et audio</CardTitle>
+                  <CardDescription>Ajoutez des vidéos et fichiers audio via fichier ou URL</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Type de média</Label>
+                      <Select
+                        value={newMedia.type}
+                        onValueChange={(value: 'video' | 'audio') => setNewMedia({ ...newMedia, type: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="video">Vidéo</SelectItem>
+                          <SelectItem value="audio">Audio</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Source</Label>
+                      <Select
+                        value={newMedia.source}
+                        onValueChange={(value: 'file' | 'url') => setNewMedia({ ...newMedia, source: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="url">URL</SelectItem>
+                          <SelectItem value="file">Fichier</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="media-title">Titre</Label>
+                    <Input
+                      id="media-title"
+                      value={newMedia.title}
+                      onChange={(e) => setNewMedia({ ...newMedia, title: e.target.value })}
+                      placeholder="Titre du média"
+                    />
+                  </div>
+
+                  {newMedia.source === 'url' ? (
+                    <div className="space-y-2">
+                      <Label htmlFor="media-url">URL</Label>
+                      <Input
+                        id="media-url"
+                        type="url"
+                        value={newMedia.url}
+                        onChange={(e) => setNewMedia({ ...newMedia, url: e.target.value })}
+                        placeholder="https://..."
+                      />
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor="media-file">Fichier</Label>
+                      <Input
+                        id="media-file"
+                        type="file"
+                        accept={newMedia.type === 'video' ? 'video/*' : 'audio/*'}
+                        onChange={handleFileSelect}
+                      />
+                    </div>
+                  )}
+
+                  <Button type="button" onClick={addMediaItem} className="w-full">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Ajouter le média
+                  </Button>
+
+                  {mediaItems.length > 0 && (
+                    <div className="space-y-4">
+                      <h4 className="font-medium">Médias ajoutés ({mediaItems.length})</h4>
+                      <div className="grid grid-cols-1 gap-4">
+                        {mediaItems.map((item) => (
+                          <div key={item.id} className="border rounded-lg p-4 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Badge variant="outline" className="flex items-center gap-1">
+                                  {item.type === 'video' ? <Video className="h-3 w-3" /> : <Music className="h-3 w-3" />}
+                                  {item.type}
+                                </Badge>
+                                <Badge variant="secondary" className="flex items-center gap-1">
+                                  {item.source === 'url' ? <LinkIcon className="h-3 w-3" /> : <Upload className="h-3 w-3" />}
+                                  {item.source === 'url' ? 'URL' : 'Fichier'}
+                                </Badge>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeMediaItem(item.id)}
+                                className="text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <p className="font-medium">{item.title}</p>
+                            {item.source === 'url' && (
+                              <p className="text-sm text-muted-foreground truncate">{item.url}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </CardContent>
