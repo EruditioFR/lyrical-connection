@@ -9,6 +9,10 @@ import { ExternalLink, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
 import EditFreeAccountDialog from './EditFreeAccountDialog';
+import EditArtistProfileDialog from './EditArtistProfileDialog';
+import type { Database } from '@/integrations/supabase/types';
+
+type ProfessionalRole = Database['public']['Enums']['professional_role'];
 
 interface Account {
   id: string;
@@ -25,8 +29,14 @@ interface Account {
   website?: string;
   nationality?: string;
   experience_years?: number;
-  professional_role?: string;
+  professional_role?: ProfessionalRole;
   team_description?: string;
+  birth_date?: string;
+  gender?: string;
+  spoken_languages?: string[];
+  project_description?: string;
+  repertoire?: string[];
+  cover_image_url?: string;
 }
 
 interface FreeAccountsTableProps {
@@ -96,6 +106,12 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                       account={account} 
                       onAccountUpdated={onAccountUpdated || (() => {})}
                     />
+                    {type === 'artist' && (
+                      <EditArtistProfileDialog 
+                        account={account} 
+                        onAccountUpdated={onAccountUpdated || (() => {})}
+                      />
+                    )}
                     <Button
                       size="sm"
                       variant="outline"
