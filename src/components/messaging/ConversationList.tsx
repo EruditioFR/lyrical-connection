@@ -27,6 +27,14 @@ const ConversationList = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('active');
 
+  // Debug : afficher toutes les conversations et leurs statuts
+  console.log('All conversations:', conversations.map(c => ({
+    id: c.id,
+    title: c.title,
+    is_archived: c.is_archived,
+    user_left_at: c.user_left_at
+  })));
+
   // Séparer les conversations par statut
   const activeConversations = conversations.filter(conv => 
     !conv.is_archived && !conv.user_left_at &&
@@ -45,6 +53,12 @@ const ConversationList = ({
     (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
      conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  console.log('Filtered conversations:', {
+    active: activeConversations.length,
+    archived: archivedConversations.length,
+    left: leftConversations.length
+  });
 
   const formatLastMessageTime = (timestamp: string | null) => {
     if (!timestamp) return '';
