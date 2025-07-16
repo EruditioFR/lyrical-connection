@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import { useAdminStats } from '@/hooks/useAdminStats';
+import { useSubscription } from '@/hooks/useSubscription';
 import NationalityStatsCard from './NationalityStatsCard';
 import GenderStatsCard from './GenderStatsCard';
 import VoiceTypeStatsCard from './VoiceTypeStatsCard';
@@ -25,7 +27,15 @@ const FreeAccountsStats = () => {
     return <FreeAccountsStatsLoading />;
   }
 
-  const totalFreeAccounts = (freeAccounts?.artists?.length || 0) + (freeAccounts?.professionals?.length || 0);
+  // Calculer le vrai total des comptes gratuits basé sur les statistiques d'abonnement
+  // Les comptes gratuits sont ceux qui n'ont pas d'abonnement actif
+  const totalFreeAccountsFromStats = adminStats?.totalUsers || 0;
+  const totalPaidAccounts = adminStats?.paidUsers || 0;
+  const realTotalFreeAccounts = totalFreeAccountsFromStats - totalPaidAccounts;
+
+  // Comptes créés par les admins (pour l'affichage séparé)
+  const adminCreatedAccounts = (freeAccounts?.artists?.length || 0) + (freeAccounts?.professionals?.length || 0);
+  
   const recentAccounts = [...(freeAccounts?.artists || []), ...(freeAccounts?.professionals || [])]
     .filter(account => {
       const createdAt = new Date(account.created_at);
@@ -42,6 +52,11 @@ const FreeAccountsStats = () => {
       return createdAt <= thirtyDaysAgo;
     }).length;
 
+  // Calculer le taux de conversion réel
+  const conversionRate = totalFreeAccountsFromStats > 0 
+    ? ((totalPaidAccounts / totalFreeAccountsFromStats) * 100).toFixed(1)
+    : '0';
+
   return (
     <div className="space-y-6">
       {/* Statistiques principales */}
@@ -52,10 +67,10 @@ const FreeAccountsStats = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalFreeAccounts}</div>
+            <div className="text-2xl font-bold">{realTotalFreeAccounts}</div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Badge variant="secondary">{freeAccounts?.artists?.length || 0} Artistes</Badge>
-              <Badge variant="outline">{freeAccounts?.professionals?.length || 0} Pros</Badge>
+              <Badge variant="secondary">{adminCreatedAccounts} créés par admin</Badge>
+              <Badge variant="outline">{totalPaidAccounts} payants</Badge>
             </div>
           </CardContent>
         </Card>
@@ -92,7 +107,7 @@ const FreeAccountsStats = () => {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0%</div>
+            <div className="text-2xl font-bold">{conversionRate}%</div>
             <p className="text-xs text-muted-foreground">
               Gratuit → Payant
             </p>
