@@ -30,7 +30,7 @@ const HeroModern = () => {
             </h1>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-              {t('hero.subtitle')}
+              Lyrisphere, c'est la sphère mondiale du lyrique. Un écosystème vivant, connecté, ouvert à tous les talents. 🎙 Pour les chanteurs : une vitrine, une scène, une trajectoire. 🎭 Pour les professionnels : un outil de repérage, d'audition, de recrutement. 🌍 Pour tous : une communauté d'âmes vibrantes, d'oreilles attentives, de chemins partagés.
             </p>
             
             {/* CTA Buttons */}
