@@ -96,23 +96,11 @@ export const MessageViewer = ({
     setDownloadingFiles(prev => new Set(prev).add(url));
 
     try {
-      // Approche simplifiée : téléchargement direct
-      const response = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
-      }
-
-      const blob = await response.blob();
-      
-      // Créer le lien de téléchargement
-      const downloadUrl = URL.createObjectURL(blob);
+      // Créer un lien temporaire et le cliquer pour déclencher le téléchargement
       const link = document.createElement('a');
-      link.href = downloadUrl;
+      link.href = url;
       link.download = fileName;
+      link.target = '_self'; // Ne pas ouvrir dans un nouvel onglet
       link.style.display = 'none';
       
       // Ajouter au DOM, cliquer, puis nettoyer
@@ -120,32 +108,19 @@ export const MessageViewer = ({
       link.click();
       document.body.removeChild(link);
       
-      // Nettoyer l'URL objet
-      URL.revokeObjectURL(downloadUrl);
-      
       toast({
-        title: "Téléchargement réussi",
-        description: `Le fichier ${fileName} a été téléchargé.`,
+        title: "Téléchargement lancé",
+        description: `Le téléchargement de ${fileName} a été lancé.`,
       });
 
     } catch (error) {
       console.error('Erreur lors du téléchargement:', error);
       
-      // Fallback : ouvrir dans un nouvel onglet
-      try {
-        window.open(url, '_blank');
-        toast({
-          title: "Ouverture du fichier",
-          description: "Le fichier s'ouvre dans un nouvel onglet.",
-        });
-      } catch (fallbackError) {
-        console.error('Erreur fallback:', fallbackError);
-        toast({
-          title: "Erreur de téléchargement",
-          description: "Impossible de télécharger ou d'ouvrir le fichier.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Erreur de téléchargement",
+        description: "Impossible de télécharger le fichier.",
+        variant: "destructive",
+      });
     } finally {
       setDownloadingFiles(prev => {
         const newSet = new Set(prev);
