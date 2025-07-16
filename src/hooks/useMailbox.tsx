@@ -279,13 +279,20 @@ export const useMailbox = () => {
   // Delete message mutation
   const deleteMessageMutation = useMutation({
     mutationFn: async ({ messageId, isSender }: { messageId: string; isSender: boolean }) => {
+      console.log('Tentative de suppression du message:', { messageId, isSender });
       const updateField = isSender ? 'is_deleted_by_sender' : 'is_deleted_by_recipient';
+      console.log('Champ à mettre à jour:', updateField);
+      
       const { error } = await supabase
         .from('mail_messages')
         .update({ [updateField]: true })
         .eq('id', messageId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors de la suppression:', error);
+        throw error;
+      }
+      console.log('Message supprimé avec succès');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mailbox'] });
