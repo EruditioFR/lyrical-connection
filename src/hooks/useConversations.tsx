@@ -245,10 +245,24 @@ export const useConversations = () => {
     };
   }, [user, queryClient]);
 
+  // Compter les messages non lus
+  const unreadCount = conversations.reduce((total, conv) => {
+    if (!user) return total;
+    
+    const userParticipant = conv.participants.find(p => p.user_id === user.id);
+    if (!userParticipant || conv.user_left_at) return total;
+    
+    const lastReadAt = userParticipant.last_read_at ? new Date(userParticipant.last_read_at) : new Date(0);
+    const lastMessageAt = conv.last_message_at ? new Date(conv.last_message_at) : new Date(0);
+    
+    return lastMessageAt > lastReadAt ? total + 1 : total;
+  }, 0);
+
   return {
     conversations,
     isLoading,
     error,
+    unreadCount,
     createConversation: createConversation.mutate,
     isCreating: createConversation.isPending,
     leaveConversation: leaveConversation.mutate,

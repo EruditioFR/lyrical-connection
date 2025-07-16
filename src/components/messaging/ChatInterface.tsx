@@ -50,6 +50,8 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
 
     sendMessage({ content: newMessage.trim() });
     setNewMessage('');
+    // Marquer comme lu après l'envoi d'un message
+    markAsRead();
   };
 
   const handleLeaveConversation = () => {
