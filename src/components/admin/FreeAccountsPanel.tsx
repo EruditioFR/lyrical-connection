@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsStats from './FreeAccountsStats';
 import FreeAccountsTable from './FreeAccountsTable';
@@ -14,15 +16,12 @@ interface FreeAccountsPanelProps {
 
 const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
-  const [filters, setFilters] = useState({
-    search: '',
-    voiceType: '',
-    nationality: '',
-    professionalRole: '',
-    location: '',
-    experienceMin: '',
-    experienceMax: '',
-  });
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  
+  // State for filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [accountTypeFilter, setAccountTypeFilter] = useState('all');
+  const [dateFilter, setDateFilter] = useState('all');
 
   // Fonction pour rafraîchir les données après modification
   const handleAccountUpdated = () => {
@@ -30,82 +29,62 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
     window.location.reload();
   };
 
-  const filterAccounts = (accounts: any[]) => {
-    let filtered = [...accounts];
+  // Calculate active filters count
+  const activeFiltersCount = [
+    searchTerm,
+    accountTypeFilter !== 'all' ? accountTypeFilter : '',
+    dateFilter !== 'all' ? dateFilter : ''
+  ].filter(Boolean).length;
 
-    if (filters.search) {
-      filtered = filtered.filter(account =>
-        account.stage_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        account.company_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        account.contact_email?.toLowerCase().includes(filters.search.toLowerCase())
-      );
-    }
-
-    if (filters.voiceType) {
-      filtered = filtered.filter(account => account.voice_type === filters.voiceType);
-    }
-
-    if (filters.nationality) {
-      filtered = filtered.filter(account => account.nationality === filters.nationality);
-    }
-
-    if (filters.professionalRole) {
-      filtered = filtered.filter(account => account.professional_role === filters.professionalRole);
-    }
-
-    if (filters.location) {
-      filtered = filtered.filter(account =>
-        account.location?.toLowerCase().includes(filters.location.toLowerCase())
-      );
-    }
-
-    if (filters.experienceMin) {
-      filtered = filtered.filter(account =>
-        (account.experience_years || 0) >= parseInt(filters.experienceMin)
-      );
-    }
-
-    if (filters.experienceMax) {
-      filtered = filtered.filter(account =>
-        (account.experience_years || 0) <= parseInt(filters.experienceMax)
-      );
-    }
-
-    return filtered;
-  };
-
+  // Clear all filters
   const clearFilters = () => {
-    setFilters({
-      search: '',
-      voiceType: '',
-      nationality: '',
-      professionalRole: '',
-      location: '',
-      experienceMin: '',
-      experienceMax: '',
-    });
+    setSearchTerm('');
+    setAccountTypeFilter('all');
+    setDateFilter('all');
   };
 
   const applyFilters = (accounts: any[]) => {
-    return accounts.filter(account => {
-      const matchesSearch = !filters.search || 
-        (account.stage_name?.toLowerCase().includes(filters.search.toLowerCase())) ||
-        (account.company_name?.toLowerCase().includes(filters.search.toLowerCase())) ||
-        (account.contact_email?.toLowerCase().includes(filters.search.toLowerCase()));
+    let filtered = [...accounts];
 
-      const matchesVoiceType = !filters.voiceType || account.voice_type === filters.voiceType;
-      const matchesNationality = !filters.nationality || account.nationality === filters.nationality;
-      const matchesProfessionalRole = !filters.professionalRole || account.professional_role === filters.professionalRole;
-      const matchesLocation = !filters.location || account.location?.toLowerCase().includes(filters.location.toLowerCase());
-      
-      const experienceYears = account.experience_years || 0;
-      const matchesExperienceMin = !filters.experienceMin || experienceYears >= parseInt(filters.experienceMin);
-      const matchesExperienceMax = !filters.experienceMax || experienceYears <= parseInt(filters.experienceMax);
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(account =>
+        account.stage_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        account.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        account.contact_email?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
-      return matchesSearch && matchesVoiceType && matchesNationality && 
-             matchesProfessionalRole && matchesLocation && 
-             matchesExperienceMin && matchesExperienceMax;
-    });
+    // Apply account type filter
+    if (accountTypeFilter !== 'all') {
+      filtered = filtered.filter(account => account.type === accountTypeFilter);
+    }
+
+    // Apply date filter
+    if (dateFilter !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter(account => {
+        const createdAt = new Date(account.created_at);
+        
+        switch (dateFilter) {
+          case 'today':
+            return createdAt.toDateString() === now.toDateString();
+          case 'week':
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return createdAt >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return createdAt >= monthAgo;
+          case 'older':
+            const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return createdAt <= thirtyDaysAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    return filtered;
   };
 
   if (!freeAccounts) {
@@ -142,15 +121,24 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
             {!accountType && 'Créez et gérez les comptes gratuits pour les artistes et professionnels'}
           </p>
         </div>
-        <CreateFreeAccountDialog />
+        <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Créer un compte
+        </Button>
       </div>
 
       <FreeAccountsStats accountType={accountType} />
       
       <FreeAccountsFilters 
-        filters={filters}
-        onFiltersChange={setFilters}
-        accountType={accountType}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        accountTypeFilter={accountTypeFilter}
+        onAccountTypeChange={setAccountTypeFilter}
+        dateFilter={dateFilter}
+        onDateFilterChange={setDateFilter}
+        onClearFilters={clearFilters}
+        activeFiltersCount={activeFiltersCount}
+        hideAccountTypeFilter={!!accountType}
       />
 
       <Card>
@@ -169,6 +157,12 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
       </Card>
 
       <FreeAccountAnalytics accountType={accountType} />
+
+      <CreateFreeAccountDialog 
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        defaultAccountType={accountType}
+      />
     </div>
   );
 };

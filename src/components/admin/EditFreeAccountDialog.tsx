@@ -62,7 +62,7 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
     location: '',
     phone: '',
     website: '',
-    professional_role: 'vocal_coach',
+    professional_role: 'vocal_coach' as const,
     team_description: '',
   });
 
@@ -87,7 +87,7 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
         location: account.location || '',
         phone: account.phone || '',
         website: account.website || '',
-        professional_role: account.professional_role || 'vocal_coach',
+        professional_role: (account.professional_role as 'vocal_coach' | 'casting_director' | 'conductor' | 'opera_house_manager' | 'voice_teacher' | 'artistic_agent' | 'producer' | 'competition_director') || 'vocal_coach',
         team_description: account.team_description || '',
       });
     }
@@ -241,20 +241,22 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
                 <Label htmlFor="professional_role">Rôle professionnel *</Label>
                 <Select
                   value={professionalData.professional_role}
-                  onValueChange={(value) => setProfessionalData({ ...professionalData, professional_role: value })}
+                  onValueChange={(value: 'vocal_coach' | 'casting_director' | 'conductor' | 'opera_house_manager' | 'voice_teacher' | 'artistic_agent' | 'producer' | 'competition_director') => 
+                    setProfessionalData({ ...professionalData, professional_role: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="vocal_coach">Coach vocal</SelectItem>
-                    <SelectItem value="opera_director">Directeur d'opéra</SelectItem>
+                    <SelectItem value="opera_house_manager">Directeur d'opéra</SelectItem>
                     <SelectItem value="conductor">Chef d'orchestre</SelectItem>
                     <SelectItem value="casting_director">Directeur de casting</SelectItem>
-                    <SelectItem value="agent">Agent</SelectItem>
-                    <SelectItem value="accompanist">Accompagnateur</SelectItem>
+                    <SelectItem value="artistic_agent">Agent</SelectItem>
+                    <SelectItem value="voice_teacher">Accompagnateur</SelectItem>
                     <SelectItem value="producer">Producteur</SelectItem>
-                    <SelectItem value="venue_manager">Gestionnaire de salle</SelectItem>
+                    <SelectItem value="competition_director">Gestionnaire de salle</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
