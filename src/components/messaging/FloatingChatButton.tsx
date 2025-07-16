@@ -22,7 +22,7 @@ const FloatingChatButton = () => {
       <Button
         onClick={handleClick}
         size="lg"
-        className="rounded-full w-14 h-14 p-0 shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in hover-scale"
+        className="rounded-full w-14 h-14 p-0 shadow-lg hover:shadow-xl transition-all duration-300"
         aria-label="Ouvrir les messages"
       >
         <MessageCircle className="w-6 h-6" />
