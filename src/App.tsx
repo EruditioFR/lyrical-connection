@@ -41,6 +41,7 @@ import ProfessionalDetail from '@/pages/ProfessionalDetail';
 // Import nouvelles pages
 import ProfessionalCastingApplications from '@/pages/ProfessionalCastingApplications';
 import ProfessionalEventApplications from '@/pages/ProfessionalEventApplications';
+import ReceivedApplications from '@/pages/ReceivedApplications';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,6 +73,7 @@ function App() {
               <Route path="/castings/:id" element={<CastingDetail />} />
               <Route path="/castings/:id/postuler" element={<CastingApplication />} />
               <Route path="/mes-candidatures" element={<MyApplications />} />
+              <Route path="/candidatures-reçues" element={<ReceivedApplications />} />
               <Route path="/professional/castings/:castingId/applications" element={<ProfessionalApplications />} />
               <Route path="/professional/casting-applications" element={<ProfessionalCastingApplications />} />
               
