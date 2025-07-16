@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,6 +17,8 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -59,6 +62,9 @@ export const MessageViewer = ({
   onDelete,
   currentUserId
 }: MessageViewerProps) => {
+  const { toast } = useToast();
+  const [downloadingFiles, setDownloadingFiles] = useState<Set<string>>(new Set());
+  
   const isSender = message.sender_id === currentUserId;
   const contactInfo = isSender ? message.recipient : message.sender;
   
@@ -73,6 +79,97 @@ export const MessageViewer = ({
 
   const contactName = contactInfo?.stage_name || contactInfo?.company_name || 'Utilisateur';
   const contactAvatar = contactInfo?.profile_image_url || contactInfo?.logo_url;
+
+  const getFileNameFromUrl = (url: string) => {
+    try {
+      const urlObj = new URL(url);
+      const pathname = urlObj.pathname;
+      const fileName = pathname.split('/').pop() || 'fichier';
+      return decodeURIComponent(fileName);
+    } catch {
+      return 'fichier';
+    }
+  };
+
+  const downloadAttachment = async (url: string) => {
+    console.log('Téléchargement de la pièce jointe:', url);
+    
+    const fileName = getFileNameFromUrl(url);
+    setDownloadingFiles(prev => new Set(prev).add(url));
+
+    try {
+      // Si c'est une URL Supabase Storage, utiliser le client Supabase
+      if (url.includes('supabase') && url.includes('storage')) {
+        const urlParts = url.split('/');
+        const bucketName = urlParts[urlParts.length - 2];
+        const filePath = urlParts[urlParts.length - 1];
+        
+        const { data, error } = await supabase.storage
+          .from(bucketName)
+          .download(filePath);
+
+        if (error) {
+          console.error('Erreur lors du téléchargement depuis Supabase:', error);
+          throw error;
+        }
+
+        if (data) {
+          const blob = new Blob([data], { type: data.type });
+          const downloadUrl = URL.createObjectURL(blob);
+          
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          URL.revokeObjectURL(downloadUrl);
+          
+          toast({
+            title: "Téléchargement réussi",
+            description: `Le fichier ${fileName} a été téléchargé.`,
+          });
+        }
+      } else {
+        // Pour les autres URLs, téléchargement direct
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(downloadUrl);
+        
+        toast({
+          title: "Téléchargement réussi",
+          description: `Le fichier ${fileName} a été téléchargé.`,
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error);
+      toast({
+        title: "Erreur de téléchargement",
+        description: "Impossible de télécharger le fichier.",
+        variant: "destructive",
+      });
+    } finally {
+      setDownloadingFiles(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(url);
+        return newSet;
+      });
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-background">
@@ -177,15 +274,31 @@ export const MessageViewer = ({
                   Pièces jointes ({message.attachment_urls.length})
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {message.attachment_urls.map((url, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-muted p-3 rounded-lg">
-                      <Paperclip className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm truncate max-w-[200px]">{url}</span>
-                      <Button variant="ghost" size="sm">
-                        <Download className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ))}
+                  {message.attachment_urls.map((url, index) => {
+                    const fileName = getFileNameFromUrl(url);
+                    const isDownloading = downloadingFiles.has(url);
+                    
+                    return (
+                      <div key={index} className="flex items-center gap-2 bg-muted p-3 rounded-lg max-w-[300px]">
+                        <Paperclip className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm truncate flex-1" title={fileName}>
+                          {fileName}
+                        </span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => downloadAttachment(url)}
+                          disabled={isDownloading}
+                          className="flex-shrink-0"
+                        >
+                          <Download className={cn(
+                            "w-4 h-4", 
+                            isDownloading && "animate-spin"
+                          )} />
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}
