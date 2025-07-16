@@ -29,7 +29,7 @@ const Admin = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Administration</h1>
-          <p className="text-gray-600 mt-2">Gestion de la plateforme Lyrical Connection</p>
+          <p className="text-gray-600 mt-2">Gestion de la plateforme Lyrisphere</p>
         </div>
 
         <Tabs defaultValue="accounts" className="space-y-6">

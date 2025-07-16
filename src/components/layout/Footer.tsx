@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="inline-block">
               <span className="text-xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-lyrical-700 to-gold-500">
-                Lyrical Connection
+                Lyrisphere
               </span>
             </Link>
             <p className="text-muted-foreground text-sm">
@@ -149,7 +149,7 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-center text-muted-foreground text-sm">
-            &copy; {currentYear} Lyrical Connection. Tous droits réservés.
+            &copy; {currentYear} Lyrisphere. Tous droits réservés.
           </p>
         </div>
       </div>

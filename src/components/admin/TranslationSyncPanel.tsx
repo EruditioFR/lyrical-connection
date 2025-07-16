@@ -59,7 +59,7 @@ const frenchTranslations = {
       },
       features: {
         title: 'Une plateforme pensée pour tous les acteurs du lyrique',
-        subtitle: 'Découvrez comment Lyrical Connection révolutionne la façon dont les artistes et les professionnels interagissent dans le monde de l\'opéra',
+        subtitle: 'Découvrez comment Lyrisphere révolutionne la façon dont les artistes et les professionnels interagissent dans le monde de l\'opéra',
         artists: {
           title: 'Pour les Artistes',
           subtitle: 'Développez votre carrière avec des outils professionnels de promotion et de networking',
@@ -94,7 +94,7 @@ const frenchTranslations = {
       },
       cta: {
         title: 'Prêt à rejoindre la communauté de la musique lyrique ?',
-        subtitle: 'Que vous soyez artiste ou professionnel, Lyrical Connection vous offre les outils nécessaires pour faire avancer votre carrière.',
+        subtitle: 'Que vous soyez artiste ou professionnel, Lyrisphere vous offre les outils nécessaires pour faire avancer votre carrière.',
         createAccount: 'Créer un compte',
         viewPlans: 'Voir les abonnements'
       }

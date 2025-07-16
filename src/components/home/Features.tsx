@@ -22,7 +22,7 @@ const Features = () => {
             Une plateforme complète dédiée à la musique lyrique
           </h2>
           <p className="text-muted-foreground mt-4">
-            Découvrez comment Lyrical Connection peut vous aider à mettre en valeur votre talent
+            Découvrez comment Lyrisphere peut vous aider à mettre en valeur votre talent
             ou à découvrir les artistes de demain.
           </p>
         </div>
@@ -93,7 +93,7 @@ const Features = () => {
                   Des fonctionnalités premium pour tous les utilisateurs
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Lyrical Connection offre une gamme complète d'outils pour aider les artistes à se démarquer et les professionnels à trouver des talents.
+                  Lyrisphere offre une gamme complète d'outils pour aider les artistes à se démarquer et les professionnels à trouver des talents.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                   <div className="flex items-start space-x-3">

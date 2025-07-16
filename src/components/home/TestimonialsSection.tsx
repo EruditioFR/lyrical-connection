@@ -6,7 +6,7 @@ const testimonials = [
   {
     name: "Sophie Martineau",
     role: "Soprano • Opéra de Lyon",
-    content: "Grâce à Lyrical Connection, j'ai décroché mon premier rôle principal. La plateforme m'a permis d'être visible auprès des directeurs artistiques et de présenter mon travail de manière professionnelle.",
+    content: "Grâce à Lyrisphere, j'ai décroché mon premier rôle principal. La plateforme m'a permis d'être visible auprès des directeurs artistiques et de présenter mon travail de manière professionnelle.",
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     rating: 5
   },
@@ -20,14 +20,14 @@ const testimonials = [
   {
     name: "Elena Rodriguez",
     role: "Mezzo-soprano • Artiste indépendante",
-    content: "Les outils de Lyrical Connection m'ont aidée à structurer ma démarche artistique. Les statistiques me permettent de comprendre mon audience et d'adapter ma communication.",
+    content: "Les outils de Lyrisphere m'ont aidée à structurer ma démarche artistique. Les statistiques me permettent de comprendre mon audience et d'adapter ma communication.",
     avatar: "https://images.unsplash.com/photo-1553267751-1c148a7280a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
     rating: 5
   },
   {
     name: "Marc Lejeune",
     role: "Agent Artistique • ML Artist Management",
-    content: "La qualité des profils sur Lyrical Connection est exceptionnelle. C'est devenu ma première source pour découvrir de nouveaux talents et développer mon réseau professionnel.",
+    content: "La qualité des profils sur Lyrisphere est exceptionnelle. C'est devenu ma première source pour découvrir de nouveaux talents et développer mon réseau professionnel.",
     avatar: "https://images.unsplash.com/photo-1552642986-ccb41e7059e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80",
     rating: 5
   }
@@ -47,7 +47,7 @@ const TestimonialsSection = () => {
           </h2>
           <p className="text-lg text-muted-foreground">
             Découvrez les témoignages d'artistes et de professionnels qui utilisent 
-            Lyrical Connection pour développer leur carrière
+            Lyrisphere pour développer leur carrière
           </p>
         </div>
 

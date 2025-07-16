@@ -11,12 +11,12 @@ export const useLanguage = () => {
     
     // Update document title based on language
     const titles = {
-      fr: 'Lyrical Connection - Découvrez les chanteurs lyriques',
-      en: 'Lyrical Connection - Discover Opera Singers',
-      de: 'Lyrical Connection - Entdecken Sie Opernsänger',
-      it: 'Lyrical Connection - Scopri i cantanti lirici',
-      zh: 'Lyrical Connection - 发现歌剧歌手',
-      ko: 'Lyrical Connection - 오페라 가수 발견'
+      fr: 'Lyrisphere - Découvrez les chanteurs lyriques',
+      en: 'Lyrisphere - Discover Opera Singers',
+      de: 'Lyrisphere - Entdecken Sie Opernsänger',
+      it: 'Lyrisphere - Scopri i cantanti lirici',
+      zh: 'Lyrisphere - 发现歌剧歌手',
+      ko: 'Lyrisphere - 오페라 가수 발견'
     };
     
     document.title = titles[i18n.language as keyof typeof titles] || titles.fr;

@@ -108,7 +108,7 @@ const PricingSection = () => {
               Vous hésitez encore ?
             </h3>
             <p className="text-muted-foreground mb-6">
-              Contactez notre équipe pour découvrir comment Lyrical Connection peut 
+              Contactez notre équipe pour découvrir comment Lyrisphere peut 
               vous aider à développer votre carrière ou trouver les talents que vous recherchez.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -79,7 +79,7 @@ const FeaturesDetailed = () => {
             Une plateforme pensée pour tous les acteurs du lyrique
           </h2>
           <p className="text-lg text-muted-foreground">
-            Découvrez comment Lyrical Connection révolutionne la façon dont les artistes 
+            Découvrez comment Lyrisphere révolutionne la façon dont les artistes 
             et les professionnels interagissent dans le monde de l'opéra
           </p>
         </div>
@@ -188,7 +188,7 @@ const FeaturesDetailed = () => {
           </h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
             Plus de 650 artistes et professionnels nous font déjà confiance. 
-            Découvrez pourquoi Lyrical Connection est devenu la référence du secteur.
+            Découvrez pourquoi Lyrisphere est devenu la référence du secteur.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>

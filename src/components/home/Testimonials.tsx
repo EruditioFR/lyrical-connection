@@ -8,7 +8,7 @@ const testimonials = [
     id: '1',
     name: 'Sophie Dupont',
     role: 'Soprano',
-    quote: 'Grâce à Lyrical Connection, j\'ai pu me connecter avec des professionnels de renom et ma carrière a pris un véritable essor.',
+    quote: 'Grâce à Lyrisphere, j\'ai pu me connecter avec des professionnels de renom et ma carrière a pris un véritable essor.',
     image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80'
   },
   {
@@ -36,7 +36,7 @@ const Testimonials = () => {
             Ce qu'ils disent de nous
           </h2>
           <p className="text-muted-foreground mt-4">
-            Des artistes et professionnels qui ont transformé leur expérience grâce à Lyrical Connection.
+            Des artistes et professionnels qui ont transformé leur expérience grâce à Lyrisphere.
           </p>
         </div>
 
