@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConversations, type Conversation } from '@/hooks/useConversations';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -24,10 +25,25 @@ const ConversationList = ({
 }: ConversationListProps) => {
   const { conversations, isLoading } = useConversations();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('active');
 
-  const filteredConversations = conversations.filter(conv => 
-    conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase())
+  // Séparer les conversations par statut
+  const activeConversations = conversations.filter(conv => 
+    !conv.is_archived && !conv.user_left_at &&
+    (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const archivedConversations = conversations.filter(conv => 
+    conv.is_archived &&
+    (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const leftConversations = conversations.filter(conv => 
+    conv.user_left_at &&
+    (conv.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     conv.last_message?.content?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const formatLastMessageTime = (timestamp: string | null) => {
@@ -131,30 +147,84 @@ const ConversationList = ({
       </CardHeader>
 
       <CardContent className="flex-1 p-0">
-        <ScrollArea className="h-full">
-          {filteredConversations.length === 0 ? (
-            <div className="p-4 text-center text-muted-foreground">
-              {searchQuery ? (
-                <p>Aucune conversation trouvée</p>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+          <TabsList className="w-full justify-start mx-2 mt-2">
+            <TabsTrigger value="active" className="flex-1">
+              Conversations ({activeConversations.length})
+            </TabsTrigger>
+            <TabsTrigger value="archived" className="flex-1">
+              Archives ({archivedConversations.length})
+            </TabsTrigger>
+            <TabsTrigger value="left" className="flex-1">
+              Terminées ({leftConversations.length})
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="active" className="flex-1 m-0">
+            <ScrollArea className="h-full">
+              {activeConversations.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  {searchQuery ? (
+                    <p>Aucune conversation trouvée</p>
+                  ) : (
+                    <div>
+                      <MessageCircle className="w-12 h-12 mx-auto mb-2 text-muted-foreground/50" />
+                      <p>Aucune conversation</p>
+                      <p className="text-sm">Commencez une nouvelle conversation</p>
+                    </div>
+                  )}
+                </div>
               ) : (
-                <div>
-                  <MessageCircle className="w-12 h-12 mx-auto mb-2 text-muted-foreground/50" />
-                  <p>Aucune conversation</p>
-                  <p className="text-sm">Commencez une nouvelle conversation</p>
+                <div className="p-2 space-y-1">
+                  {activeConversations.map((conversation) => (
+                    <ConversationItem 
+                      key={conversation.id} 
+                      conversation={conversation} 
+                    />
+                  ))}
                 </div>
               )}
-            </div>
-          ) : (
-            <div className="p-2 space-y-1">
-              {filteredConversations.map((conversation) => (
-                <ConversationItem 
-                  key={conversation.id} 
-                  conversation={conversation} 
-                />
-              ))}
-            </div>
-          )}
-        </ScrollArea>
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="archived" className="flex-1 m-0">
+            <ScrollArea className="h-full">
+              {archivedConversations.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  <p>Aucune conversation archivée</p>
+                </div>
+              ) : (
+                <div className="p-2 space-y-1">
+                  {archivedConversations.map((conversation) => (
+                    <ConversationItem 
+                      key={conversation.id} 
+                      conversation={conversation} 
+                    />
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="left" className="flex-1 m-0">
+            <ScrollArea className="h-full">
+              {leftConversations.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  <p>Aucune conversation terminée</p>
+                </div>
+              ) : (
+                <div className="p-2 space-y-1">
+                  {leftConversations.map((conversation) => (
+                    <ConversationItem 
+                      key={conversation.id} 
+                      conversation={conversation} 
+                    />
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );

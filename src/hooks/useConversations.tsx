@@ -16,6 +16,7 @@ export interface Conversation {
   created_by: string | null;
   participants: ConversationParticipant[];
   last_message?: Message;
+  user_left_at?: string | null;
 }
 
 export interface ConversationParticipant {
@@ -63,7 +64,6 @@ export const useConversations = () => {
           participants:conversation_participants(*),
           messages:messages(*)
         `)
-        .eq('is_archived', false) // Filter out archived conversations
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
       if (error) {
@@ -71,10 +71,14 @@ export const useConversations = () => {
         throw error;
       }
 
-      return data.map(conv => ({
-        ...conv,
-        last_message: conv.messages?.[conv.messages.length - 1]
-      })) as Conversation[];
+      return data.map(conv => {
+        const userParticipant = conv.participants.find(p => p.user_id === user.id);
+        return {
+          ...conv,
+          last_message: conv.messages?.[conv.messages.length - 1],
+          user_left_at: userParticipant?.left_at
+        };
+      }) as Conversation[];
     },
     enabled: !!user
   });
