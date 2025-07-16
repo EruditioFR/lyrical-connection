@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
@@ -85,10 +86,6 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
     });
   };
 
-  const onFiltersChange = (newFilters: Partial<typeof filters>) => {
-    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
-  };
-
   const applyFilters = (accounts: any[]) => {
     return accounts.filter(account => {
       const matchesSearch = !filters.search || 
@@ -145,13 +142,10 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
             {!accountType && 'Créez et gérez les comptes gratuits pour les artistes et professionnels'}
           </p>
         </div>
-        <CreateFreeAccountDialog accountType={accountType} />
+        <CreateFreeAccountDialog />
       </div>
 
-      <FreeAccountsStats 
-        freeAccounts={freeAccounts} 
-        accountType={accountType}
-      />
+      <FreeAccountsStats accountType={accountType} />
       
       <FreeAccountsFilters 
         filters={filters}
@@ -174,10 +168,7 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
         </CardContent>
       </Card>
 
-      <FreeAccountAnalytics 
-        freeAccounts={freeAccounts} 
-        accountType={accountType}
-      />
+      <FreeAccountAnalytics accountType={accountType} />
     </div>
   );
 };

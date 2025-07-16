@@ -98,26 +98,26 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
     setIsLoading(true);
 
     try {
-      let updateData: any;
-      let tableName: string;
-
       if (account.type === 'artist') {
-        tableName = 'artist_profiles';
-        updateData = {
+        const updateData = {
           ...artistData,
           experience_years: artistData.experience_years || null,
         };
+
+        const { error } = await supabase
+          .from('artist_profiles')
+          .update(updateData)
+          .eq('id', account.id);
+
+        if (error) throw error;
       } else {
-        tableName = 'professional_profiles';
-        updateData = professionalData;
+        const { error } = await supabase
+          .from('professional_profiles')
+          .update(professionalData)
+          .eq('id', account.id);
+
+        if (error) throw error;
       }
-
-      const { error } = await supabase
-        .from(tableName)
-        .update(updateData)
-        .eq('id', account.id);
-
-      if (error) throw error;
 
       toast({
         title: "Compte modifié",
@@ -206,8 +206,8 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
                   </SelectTrigger>
                   <SelectContent>
                     {countries.map((country) => (
-                      <SelectItem key={country.code} value={country.name}>
-                        {country.name}
+                      <SelectItem key={country} value={country}>
+                        {country}
                       </SelectItem>
                     ))}
                   </SelectContent>
