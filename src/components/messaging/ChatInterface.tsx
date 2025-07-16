@@ -264,7 +264,7 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
   };
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full max-h-screen flex flex-col">
       {/* Header */}
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
@@ -299,11 +299,11 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
       </CardHeader>
 
       {/* Messages */}
-      <CardContent className="flex-1 p-0 overflow-hidden">
-        <ScrollArea ref={scrollAreaRef} className="h-full">
+      <CardContent className="flex-1 p-0 overflow-hidden min-h-0">
+        <ScrollArea ref={scrollAreaRef} className="h-full max-h-[calc(100vh-16rem)]">
           <div className="p-4 space-y-4">
             {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
+              <div className="flex items-center justify-center h-full text-muted-foreground min-h-[200px]">
                 <p>Aucun message pour le moment</p>
               </div>
             ) : (
