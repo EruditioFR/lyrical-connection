@@ -8,7 +8,33 @@ export const useAdminManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Récupérer tous les comptes gratuits créés par des admins
+  // Récupérer tous les comptes (gratuits et payants) créés par des admins ou par inscription normale
+  const { data: allAccounts, isLoading: isLoadingAllAccounts } = useQuery({
+    queryKey: ['all-accounts'],
+    queryFn: async () => {
+      const { data: artistProfiles, error: artistError } = await supabase
+        .from('artist_profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const { data: professionalProfiles, error: professionalError } = await supabase
+        .from('professional_profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (artistError || professionalError) {
+        throw artistError || professionalError;
+      }
+
+      return {
+        artists: artistProfiles || [],
+        professionals: professionalProfiles || [],
+      };
+    },
+    enabled: !!user,
+  });
+
+  // Récupérer tous les comptes gratuits créés par des admins (pour compatibilité)
   const { data: freeAccounts, isLoading: isLoadingFreeAccounts } = useQuery({
     queryKey: ['free-accounts'],
     queryFn: async () => {
@@ -74,6 +100,7 @@ export const useAdminManagement = () => {
     onSuccess: (data) => {
       console.log('Artist creation success callback:', data);
       queryClient.invalidateQueries({ queryKey: ['free-accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['all-accounts'] });
       toast({
         title: "Compte créé",
         description: "Le compte artiste gratuit a été créé avec succès.",
@@ -122,6 +149,7 @@ export const useAdminManagement = () => {
     onSuccess: (data) => {
       console.log('Professional creation success callback:', data);
       queryClient.invalidateQueries({ queryKey: ['free-accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['all-accounts'] });
       toast({
         title: "Compte créé",
         description: "Le compte professionnel gratuit a été créé avec succès.",
@@ -173,6 +201,8 @@ export const useAdminManagement = () => {
   });
 
   return {
+    allAccounts,
+    isLoadingAllAccounts,
     freeAccounts,
     isLoadingFreeAccounts,
     createFreeArtist: createFreeArtist.mutate,

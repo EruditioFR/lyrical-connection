@@ -15,7 +15,7 @@ interface FreeAccountsPanelProps {
 }
 
 const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
-  const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
+  const { allAccounts, isLoadingAllAccounts } = useAdminManagement();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   
   // State for filters
@@ -87,20 +87,20 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
     return filtered;
   };
 
-  if (!freeAccounts) {
+  if (!allAccounts) {
     return <div>Chargement...</div>;
   }
 
   // Filtrer par type de compte si spécifié
   let accountsToFilter = [];
   if (accountType === 'artist') {
-    accountsToFilter = freeAccounts.artists.map(account => ({ ...account, type: 'artist' as const }));
+    accountsToFilter = allAccounts.artists.map(account => ({ ...account, type: 'artist' as const }));
   } else if (accountType === 'professional') {
-    accountsToFilter = freeAccounts.professionals.map(account => ({ ...account, type: 'professional' as const }));
+    accountsToFilter = allAccounts.professionals.map(account => ({ ...account, type: 'professional' as const }));
   } else {
     accountsToFilter = [
-      ...freeAccounts.artists.map(account => ({ ...account, type: 'artist' as const })),
-      ...freeAccounts.professionals.map(account => ({ ...account, type: 'professional' as const }))
+      ...allAccounts.artists.map(account => ({ ...account, type: 'artist' as const })),
+      ...allAccounts.professionals.map(account => ({ ...account, type: 'professional' as const }))
     ];
   }
 
@@ -111,14 +111,14 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">
-            {accountType === 'artist' && 'Gestion des Comptes Artistes Gratuits'}
-            {accountType === 'professional' && 'Gestion des Comptes Professionnels Gratuits'}
-            {!accountType && 'Gestion des Comptes Gratuits'}
+            {accountType === 'artist' && 'Gestion des Comptes Artistes'}
+            {accountType === 'professional' && 'Gestion des Comptes Professionnels'}
+            {!accountType && 'Gestion des Comptes'}
           </h2>
           <p className="text-muted-foreground mt-1">
-            {accountType === 'artist' && 'Créez et gérez les comptes artistes gratuits'}
-            {accountType === 'professional' && 'Créez et gérez les comptes professionnels gratuits'}
-            {!accountType && 'Créez et gérez les comptes gratuits pour les artistes et professionnels'}
+            {accountType === 'artist' && 'Gérez tous les comptes artistes (gratuits et payants)'}
+            {accountType === 'professional' && 'Gérez tous les comptes professionnels (gratuits et payants)'}
+            {!accountType && 'Gérez tous les comptes pour les artistes et professionnels'}
           </p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
@@ -144,7 +144,7 @@ const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
       <Card>
         <CardHeader>
           <CardTitle>
-            Comptes {accountType === 'artist' ? 'artistes' : accountType === 'professional' ? 'professionnels' : ''} créés
+            Comptes {accountType === 'artist' ? 'artistes' : accountType === 'professional' ? 'professionnels' : ''} 
           </CardTitle>
         </CardHeader>
         <CardContent>

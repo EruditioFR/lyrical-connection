@@ -38,6 +38,7 @@ interface Account {
   project_description?: string;
   repertoire?: string[];
   cover_image_url?: string;
+  is_free_account?: boolean;
 }
 
 interface FreeAccountsTableProps {
@@ -47,9 +48,9 @@ interface FreeAccountsTableProps {
 }
 
 const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: FreeAccountsTableProps) => {
-  const { sendUpgradeRequest, isSendingUpgradeRequest, isLoadingFreeAccounts } = useAdminManagement();
+  const { sendUpgradeRequest, isSendingUpgradeRequest, isLoadingAllAccounts } = useAdminManagement();
 
-  if (isLoadingFreeAccounts) {
+  if (isLoadingAllAccounts) {
     return <FreeAccountsTableSkeleton />;
   }
 
@@ -79,6 +80,7 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
           <TableRow>
             <TableHead>{type === 'artist' ? 'Nom de scène' : 'Société'}</TableHead>
             <TableHead>Email de contact</TableHead>
+            <TableHead>Statut</TableHead>
             <TableHead>Date de création</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -86,7 +88,7 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
         <TableBody>
           {accounts.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+              <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                 Aucun compte {type === 'artist' ? 'artiste' : 'professionnel'} trouvé
               </TableCell>
             </TableRow>
@@ -97,12 +99,14 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                   {type === 'artist' ? account.stage_name : account.company_name}
                 </TableCell>
                 <TableCell>{account.contact_email}</TableCell>
+                <TableCell>
+                  <Badge variant={account.is_free_account ? "secondary" : "default"} className="text-xs">
+                    {account.is_free_account ? 'Gratuit' : 'Payant'}
+                  </Badge>
+                </TableCell>
                 <TableCell>{formatDate(account.created_at)}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Badge variant="secondary" className="text-xs">
-                      Gratuit
-                    </Badge>
                     {type === 'artist' && account.type === 'artist' && (
                       <EditArtistProfileDialog 
                         account={account} 
@@ -118,25 +122,27 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                         onAccountUpdated={onAccountUpdated || (() => {})}
                       />
                     )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleUpgradeRequest(account)}
-                      disabled={isSendingUpgradeRequest}
-                      className="gap-1"
-                    >
-                      {isSendingUpgradeRequest ? (
-                        <>
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
-                          Traitement...
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard className="h-3 w-3" />
-                          Passer en payant
-                        </>
-                      )}
-                    </Button>
+                    {account.is_free_account && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleUpgradeRequest(account)}
+                        disabled={isSendingUpgradeRequest}
+                        className="gap-1"
+                      >
+                        {isSendingUpgradeRequest ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
+                            Traitement...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="h-3 w-3" />
+                            Passer en payant
+                          </>
+                        )}
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="ghost"
@@ -172,8 +178,8 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
         <div>
           <h3 className="text-lg font-semibold">
             {accountType 
-              ? `Comptes ${accountType === 'artist' ? 'artistes' : 'professionnels'} gratuits créés`
-              : 'Comptes gratuits créés'
+              ? `Comptes ${accountType === 'artist' ? 'artistes' : 'professionnels'}`
+              : 'Comptes'
             }
           </h3>
           <p className="text-sm text-muted-foreground">
