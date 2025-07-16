@@ -105,6 +105,11 @@ const ConversationItem = ({
               <Badge variant="outline" className="text-xs px-2 py-0.5">
                 {conversation.type === 'direct' ? 'Direct' : 'Groupe'}
               </Badge>
+              {conversation.is_archived && (
+                <Badge variant="secondary" className="text-xs px-2 py-0.5 bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                  Archivée
+                </Badge>
+              )}
             </div>
           </div>
         </div>
