@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MailMessage {
   id: string;
@@ -43,9 +44,40 @@ interface MailDraft {
   updated_at: string;
 }
 
+// Helper function to handle authentication errors
+const handleAuthError = async (error: any, refreshSession: () => Promise<void>, toast: any) => {
+  if (error?.code === '42501' || error?.message?.includes('row-level security')) {
+    console.log('=== ERREUR D\'AUTHENTIFICATION DÉTECTÉE ===');
+    toast({
+      title: "Session expirée",
+      description: "Votre session a expiré. Reconnexion en cours...",
+      variant: "destructive",
+    });
+    
+    try {
+      await refreshSession();
+      toast({
+        title: "Session restaurée",
+        description: "Veuillez réessayer votre action.",
+      });
+    } catch (refreshError) {
+      console.error('Impossible de rafraîchir la session:', refreshError);
+      toast({
+        title: "Reconnexion nécessaire",
+        description: "Veuillez vous reconnecter pour continuer.",
+        variant: "destructive",
+      });
+      // Redirection vers la page de connexion sera gérée par le composant
+    }
+    return true;
+  }
+  return false;
+};
+
 export const useMailbox = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { refreshSession } = useAuth();
 
   // Fetch inbox messages
   const { data: inboxMessages = [], isLoading: isLoadingInbox } = useQuery({
@@ -251,9 +283,11 @@ export const useMailbox = () => {
     mutationFn: async (messageId: string) => {
       console.log('Marquage comme lu du message:', messageId);
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-      
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        console.error('Problème d\'authentification:', authError);
+        throw new Error('Utilisateur non authentifié');
+      }
       console.log('Utilisateur actuel:', user.id);
 
       const { error } = await supabase
@@ -270,6 +304,9 @@ export const useMailbox = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mailbox'] });
     },
+    onError: async (error) => {
+      await handleAuthError(error, refreshSession, toast);
+    },
   });
 
   // Toggle star mutation
@@ -277,9 +314,11 @@ export const useMailbox = () => {
     mutationFn: async ({ messageId, isStarred }: { messageId: string; isStarred: boolean }) => {
       console.log('Basculement étoile pour le message:', { messageId, isStarred });
       
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-      
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        console.error('Problème d\'authentification:', authError);
+        throw new Error('Utilisateur non authentifié');
+      }
       console.log('Utilisateur actuel:', user.id);
 
       const { error } = await supabase
@@ -296,6 +335,9 @@ export const useMailbox = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mailbox'] });
     },
+    onError: async (error) => {
+      await handleAuthError(error, refreshSession, toast);
+    },
   });
 
   // Delete message mutation
@@ -305,11 +347,11 @@ export const useMailbox = () => {
       console.log('ID du message:', messageId);
       console.log('Est expéditeur:', isSender);
       
-      // Récupérer l'utilisateur actuel
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.error('Utilisateur non authentifié');
-        throw new Error('User not authenticated');
+      // Vérifier l'authentification avant la suppression
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        console.error('Problème d\'authentification:', authError);
+        throw new Error('Utilisateur non authentifié');
       }
       console.log('ID utilisateur actuel:', user.id);
 
@@ -364,13 +406,19 @@ export const useMailbox = () => {
         description: "Le message a été supprimé.",
       });
     },
-    onError: (error) => {
+    onError: async (error) => {
       console.error('Erreur dans onError:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le message.",
-        variant: "destructive",
-      });
+      
+      // Gérer spécifiquement les erreurs d'authentification
+      const isAuthError = await handleAuthError(error, refreshSession, toast);
+      
+      if (!isAuthError) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de supprimer le message.",
+          variant: "destructive",
+        });
+      }
     },
   });
 

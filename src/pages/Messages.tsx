@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import { MailboxSidebar } from '@/components/messaging/MailboxSidebar';
 import { MessageList } from '@/components/messaging/MessageList';
 import { MessageViewer } from '@/components/messaging/MessageViewer';
 import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 import { useMailbox } from '@/hooks/useMailbox';
 import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -32,13 +35,14 @@ interface Message {
   };
 }
 
-const Messages = () => {
-  const { user } = useAuth();
+const MessagesContent = () => {
+  const { user, refreshSession } = useAuth();
   const [selectedFolder, setSelectedFolder] = useState('inbox');
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [showCompose, setShowCompose] = useState(false);
   const [replyToMessage, setReplyToMessage] = useState<Message | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const {
     inboxMessages,
@@ -54,6 +58,15 @@ const Messages = () => {
     restoreMessage,
     permanentDelete,
   } = useMailbox();
+
+  const handleRefreshSession = async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshSession();
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const getCurrentMessages = () => {
     switch (selectedFolder) {
@@ -177,11 +190,25 @@ const Messages = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-6">
+        {/* Session refresh button for debugging */}
+        <div className="mb-4 flex justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefreshSession}
+            disabled={isRefreshing}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Actualisation...' : 'Actualiser la session'}
+          </Button>
+        </div>
+
         <div className="h-[85vh] bg-background rounded-lg border border-border shadow-sm overflow-hidden">
           {showCompose ? (
             <div className="h-full p-6 overflow-auto">
               <ComposeMessage 
-                onClose={handleCloseCompose}
+                onClose={() => setShowCompose(false)}
                 replyTo={replyToMessage ? {
                   id: replyToMessage.id,
                   sender_id: replyToMessage.sender_id,
@@ -197,7 +224,7 @@ const Messages = () => {
                 selectedFolder={selectedFolder}
                 onFolderSelect={setSelectedFolder}
                 unreadCount={unreadCount}
-                onCompose={handleCompose}
+                onCompose={() => setShowCompose(true)}
               />
 
               {/* Main Content */}
@@ -207,23 +234,53 @@ const Messages = () => {
                   {selectedMessage ? (
                     <MessageViewer
                       message={selectedMessage}
-                      onBack={handleBackToList}
-                      onReply={handleReply}
-                      onStarToggle={handleStarToggle}
-                      onDelete={handleDelete}
+                      onBack={() => setSelectedMessage(null)}
+                      onReply={(message) => {
+                        setReplyToMessage(message);
+                        setShowCompose(true);
+                        setSelectedMessage(null);
+                      }}
+                      onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
+                      onDelete={(messageId) => {
+                        const message = inboxMessages.find(m => m.id === messageId);
+                        if (message) {
+                          const isSender = message.sender_id === user?.id;
+                          deleteMessage({ messageId, isSender });
+                          setSelectedMessage(null);
+                        }
+                      }}
                       currentUserId={user?.id}
                     />
                   ) : (
                     <MessageList
-                      messages={getCurrentMessages()}
+                      messages={inboxMessages}
                       selectedMessages={selectedMessages}
-                      onMessageSelect={handleMessageSelect}
-                      onSelectAll={handleSelectAll}
-                      onMessageClick={handleMessageClick}
-                      onStarToggle={handleStarToggle}
+                      onMessageSelect={(messageId) => {
+                        setSelectedMessages(prev => 
+                          prev.includes(messageId)
+                            ? prev.filter(id => id !== messageId)
+                            : [...prev, messageId]
+                        );
+                      }}
+                      onSelectAll={(checked) => {
+                        if (checked) {
+                          setSelectedMessages(inboxMessages.map(msg => msg.id));
+                        } else {
+                          setSelectedMessages([]);
+                        }
+                      }}
+                      onMessageClick={(message) => {
+                        setSelectedMessage(message);
+                        setSelectedMessages([]);
+                        
+                        // Mark as read if it's an unread inbox message
+                        if (!message.is_read && selectedFolder === 'inbox') {
+                          markAsRead(message.id);
+                        }
+                      }}
+                      onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       folder={selectedFolder}
                       currentUserId={user?.id}
-                      onRestore={selectedFolder === 'trash' ? handleRestore : undefined}
                     />
                   )}
                 </div>
@@ -232,25 +289,55 @@ const Messages = () => {
                 <div className="hidden md:flex w-full">
                   <div className="w-1/2 border-r border-border">
                     <MessageList
-                      messages={getCurrentMessages()}
+                      messages={inboxMessages}
                       selectedMessages={selectedMessages}
-                      onMessageSelect={handleMessageSelect}
-                      onSelectAll={handleSelectAll}
-                      onMessageClick={handleMessageClick}
-                      onStarToggle={handleStarToggle}
+                      onMessageSelect={(messageId) => {
+                        setSelectedMessages(prev => 
+                          prev.includes(messageId)
+                            ? prev.filter(id => id !== messageId)
+                            : [...prev, messageId]
+                        );
+                      }}
+                      onSelectAll={(checked) => {
+                        if (checked) {
+                          setSelectedMessages(inboxMessages.map(msg => msg.id));
+                        } else {
+                          setSelectedMessages([]);
+                        }
+                      }}
+                      onMessageClick={(message) => {
+                        setSelectedMessage(message);
+                        setSelectedMessages([]);
+                        
+                        // Mark as read if it's an unread inbox message
+                        if (!message.is_read && selectedFolder === 'inbox') {
+                          markAsRead(message.id);
+                        }
+                      }}
+                      onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       folder={selectedFolder}
                       currentUserId={user?.id}
-                      onRestore={selectedFolder === 'trash' ? handleRestore : undefined}
                     />
                   </div>
                   <div className="flex-1">
                     {selectedMessage ? (
                       <MessageViewer
                         message={selectedMessage}
-                        onBack={handleBackToList}
-                        onReply={handleReply}
-                        onStarToggle={handleStarToggle}
-                        onDelete={handleDelete}
+                        onBack={() => setSelectedMessage(null)}
+                        onReply={(message) => {
+                          setReplyToMessage(message);
+                          setShowCompose(true);
+                          setSelectedMessage(null);
+                        }}
+                        onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
+                        onDelete={(messageId) => {
+                          const message = inboxMessages.find(m => m.id === messageId);
+                          if (message) {
+                            const isSender = message.sender_id === user?.id;
+                            deleteMessage({ messageId, isSender });
+                            setSelectedMessage(null);
+                          }
+                        }}
                         currentUserId={user?.id}
                       />
                     ) : (
@@ -269,6 +356,14 @@ const Messages = () => {
         </div>
       </div>
     </Layout>
+  );
+};
+
+const Messages = () => {
+  return (
+    <AuthGuard>
+      <MessagesContent />
+    </AuthGuard>
   );
 };
 
