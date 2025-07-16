@@ -56,15 +56,7 @@ export const useMailbox = () => {
 
       const { data, error } = await supabase
         .from('mail_messages')
-        .select(`
-          *,
-          sender:sender_id!mail_messages_sender_id_fkey (
-            stage_name,
-            company_name,
-            profile_image_url,
-            logo_url
-          )
-        `)
+        .select('*')
         .eq('recipient_id', user.id)
         .eq('is_deleted_by_recipient', false)
         .order('created_at', { ascending: false });
@@ -83,15 +75,7 @@ export const useMailbox = () => {
 
       const { data, error } = await supabase
         .from('mail_messages')
-        .select(`
-          *,
-          recipient:recipient_id!mail_messages_recipient_id_fkey (
-            stage_name,
-            company_name,
-            profile_image_url,
-            logo_url
-          )
-        `)
+        .select('*')
         .eq('sender_id', user.id)
         .eq('is_deleted_by_sender', false)
         .order('created_at', { ascending: false });
@@ -110,21 +94,7 @@ export const useMailbox = () => {
 
       const { data, error } = await supabase
         .from('mail_messages')
-        .select(`
-          *,
-          sender:sender_id!mail_messages_sender_id_fkey (
-            stage_name,
-            company_name,
-            profile_image_url,
-            logo_url
-          ),
-          recipient:recipient_id!mail_messages_recipient_id_fkey (
-            stage_name,
-            company_name,
-            profile_image_url,
-            logo_url
-          )
-        `)
+        .select('*')
         .eq('is_starred', true)
         .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.false),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.false)`)
         .order('created_at', { ascending: false });

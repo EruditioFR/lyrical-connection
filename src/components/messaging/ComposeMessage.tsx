@@ -42,37 +42,42 @@ export const ComposeMessage = ({
     queryFn: async () => {
       if (!searchQuery || searchQuery.length < 2) return [];
       
-      const [artistsQuery, professionalsQuery] = await Promise.all([
-        supabase
-          .from('artist_profiles')
-          .select('id, stage_name, profile_image_url')
-          .ilike('stage_name', `%${searchQuery}%`)
-          .eq('is_active', true)
-          .limit(10),
-        supabase
-          .from('professional_profiles')
-          .select('id, company_name, logo_url')
-          .ilike('company_name', `%${searchQuery}%`)
-          .eq('is_active', true)
-          .limit(10)
-      ]);
+      try {
+        const [artistsQuery, professionalsQuery] = await Promise.all([
+          supabase
+            .from('artist_profiles')
+            .select('id, stage_name, profile_image_url, user_id')
+            .ilike('stage_name', `%${searchQuery}%`)
+            .eq('is_active', true)
+            .limit(10),
+          supabase
+            .from('professional_profiles')
+            .select('id, company_name, logo_url, user_id')
+            .ilike('company_name', `%${searchQuery}%`)
+            .eq('is_active', true)
+            .limit(10)
+        ]);
 
-      const contacts = [
-        ...(artistsQuery.data?.map(a => ({ 
-          id: a.id, 
-          name: a.stage_name, 
-          type: 'artist',
-          avatar: a.profile_image_url 
-        })) || []),
-        ...(professionalsQuery.data?.map(p => ({ 
-          id: p.id, 
-          name: p.company_name, 
-          type: 'professional',
-          avatar: p.logo_url 
-        })) || [])
-      ];
+        const contacts = [
+          ...(artistsQuery.data?.map(a => ({ 
+            id: a.user_id, 
+            name: a.stage_name, 
+            type: 'artist',
+            avatar: a.profile_image_url 
+          })) || []),
+          ...(professionalsQuery.data?.map(p => ({ 
+            id: p.user_id, 
+            name: p.company_name, 
+            type: 'professional',
+            avatar: p.logo_url 
+          })) || [])
+        ];
 
-      return contacts;
+        return contacts;
+      } catch (error) {
+        console.error('Error fetching contacts:', error);
+        return [];
+      }
     },
     enabled: searchQuery.length >= 2,
   });
