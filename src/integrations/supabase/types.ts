@@ -1750,6 +1750,10 @@ export type Database = {
         Args: { casting_id: string }
         Returns: undefined
       }
+      user_can_access_conversation: {
+        Args: { conversation_id: string; user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       application_status: "pending" | "accepted" | "rejected" | "waitlisted"
