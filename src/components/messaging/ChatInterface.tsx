@@ -92,13 +92,14 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
     // Détecter si le message contient un média
     const isPhotoMessage = message.content.startsWith('[Photo]');
     const isAudioMessage = message.content.startsWith('[Audio]');
-    const isMediaMessage = isPhotoMessage || isAudioMessage;
+    const isVideoMessage = message.content.startsWith('[Vidéo]');
+    const isMediaMessage = isPhotoMessage || isAudioMessage || isVideoMessage;
     
     const parseMediaMessage = (content: string) => {
-      const match = content.match(/\[(Photo|Audio)\] (.+): (.+)/);
+      const match = content.match(/\[(Photo|Audio|Vidéo)\] (.+): (.+)/);
       if (match) {
         return {
-          type: match[1].toLowerCase() as 'photo' | 'audio',
+          type: match[1].toLowerCase() as 'photo' | 'audio' | 'vidéo',
           name: match[2],
           url: match[3]
         };
@@ -108,11 +109,94 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
     
     const mediaData = isMediaMessage ? parseMediaMessage(message.content) : null;
     
+    // Fonction pour déterminer le type de fichier basé sur l'URL ou l'extension
+    const getFileType = (url: string) => {
+      const extension = url.split('.').pop()?.toLowerCase();
+      if (['mp4', 'webm', 'ogg', 'avi', 'mov'].includes(extension || '')) {
+        return 'video';
+      }
+      if (['mp3', 'wav', 'ogg', 'aac', 'm4a'].includes(extension || '')) {
+        return 'audio';
+      }
+      if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
+        return 'photo';
+      }
+      return 'unknown';
+    };
+    
+    const renderMediaContent = () => {
+      if (!mediaData) return null;
+      
+      const fileType = mediaData.type === 'vidéo' ? 'video' : 
+                      mediaData.type === 'audio' ? 'audio' : 
+                      getFileType(mediaData.url);
+      
+      switch (fileType) {
+        case 'photo':
+          return (
+            <div className="max-w-xs">
+              <img 
+                src={mediaData.url} 
+                alt={mediaData.name}
+                className="w-full h-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => window.open(mediaData.url, '_blank')}
+              />
+            </div>
+          );
+          
+        case 'audio':
+          return (
+            <div className="w-full max-w-sm">
+              <div className="p-3 rounded-lg bg-background/10 border">
+                <audio 
+                  controls 
+                  className="w-full"
+                  preload="metadata"
+                >
+                  <source src={mediaData.url} />
+                  Votre navigateur ne supporte pas la lecture audio.
+                </audio>
+              </div>
+            </div>
+          );
+          
+        case 'video':
+          return (
+            <div className="w-full max-w-md">
+              <div className="rounded-lg overflow-hidden bg-background/10 border">
+                <video 
+                  controls 
+                  className="w-full h-auto"
+                  preload="metadata"
+                >
+                  <source src={mediaData.url} />
+                  Votre navigateur ne supporte pas la lecture vidéo.
+                </video>
+              </div>
+            </div>
+          );
+          
+        default:
+          return (
+            <div className="p-3 rounded-lg bg-background/10 border">
+              <a 
+                href={mediaData.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                📎 {mediaData.name}
+              </a>
+            </div>
+          );
+      }
+    };
+    
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-4`}>
-        <div className={`flex max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'} items-end gap-2`}>
+        <div className={`flex ${isOwn ? 'max-w-[80%]' : 'max-w-[80%]'} ${isOwn ? 'flex-row-reverse' : 'flex-row'} items-end gap-2`}>
           {!isOwn && (
-            <Avatar className="w-8 h-8">
+            <Avatar className="w-8 h-8 flex-shrink-0">
               <AvatarFallback className="text-xs">
                 {message.sender_id.slice(0, 2).toUpperCase()}
               </AvatarFallback>
@@ -127,31 +211,13 @@ const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterf
             {mediaData ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  {mediaData.type === 'photo' ? (
-                    <Image className="w-4 h-4" />
-                  ) : (
-                    <Music className="w-4 h-4" />
-                  )}
+                  {mediaData.type === 'photo' && <Image className="w-4 h-4" />}
+                  {(mediaData.type === 'audio' || getFileType(mediaData.url) === 'audio') && <Music className="w-4 h-4" />}
+                  {(mediaData.type === 'vidéo' || getFileType(mediaData.url) === 'video') && <div className="w-4 h-4 border rounded-sm flex items-center justify-center text-xs">▶</div>}
                   <span className="text-sm font-medium">{mediaData.name}</span>
                 </div>
                 
-                {mediaData.type === 'photo' ? (
-                  <div className="max-w-xs">
-                    <img 
-                      src={mediaData.url} 
-                      alt={mediaData.name}
-                      className="w-full h-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => window.open(mediaData.url, '_blank')}
-                    />
-                  </div>
-                ) : (
-                  <div className="p-2 border rounded-lg bg-background/10">
-                    <audio controls className="w-full">
-                      <source src={mediaData.url} />
-                      Votre navigateur ne supporte pas la lecture audio.
-                    </audio>
-                  </div>
-                )}
+                {renderMediaContent()}
               </div>
             ) : (
               <p className="text-sm">{message.content}</p>
