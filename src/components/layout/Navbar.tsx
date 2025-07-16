@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -102,7 +103,7 @@ const Navbar = () => {
                   onMouseLeave={handleMouseLeave}
                 >
                   <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
-                    Mon Espace
+                    Menu
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </button>
                 </div>
