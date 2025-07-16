@@ -47,42 +47,118 @@ serve(async (req) => {
 
     console.log('User created:', authData.user?.id);
 
-    // Créer le profil correspondant
+    // Créer ou mettre à jour le profil correspondant
     if (type === 'artist') {
-      const { error: profileError } = await supabaseClient
+      // Vérifier si un profil artiste existe déjà
+      const { data: existingProfile } = await supabaseClient
         .from('artist_profiles')
-        .insert({
-          user_id: authData.user!.id,
-          stage_name: profile_data.stage_name,
-          bio: profile_data.bio || null,
-          voice_type: profile_data.voice_type || null,
-          contact_email: profile_data.contact_email,
-          created_by_admin: created_by,
-          is_free_account: true,
-          is_active: true,
-        });
+        .select('id')
+        .eq('user_id', authData.user!.id)
+        .single();
 
-      if (profileError) {
-        console.error('Error creating artist profile:', profileError);
-        throw profileError;
+      if (existingProfile) {
+        // Mettre à jour le profil existant
+        const { error: profileError } = await supabaseClient
+          .from('artist_profiles')
+          .update({
+            stage_name: profile_data.stage_name,
+            bio: profile_data.bio || null,
+            voice_type: profile_data.voice_type || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            nationality: profile_data.nationality || null,
+            experience_years: profile_data.experience_years || null,
+            created_by_admin: created_by,
+            is_free_account: true,
+            is_active: true,
+          })
+          .eq('user_id', authData.user!.id);
+
+        if (profileError) {
+          console.error('Error updating artist profile:', profileError);
+          throw profileError;
+        }
+      } else {
+        // Créer un nouveau profil
+        const { error: profileError } = await supabaseClient
+          .from('artist_profiles')
+          .insert({
+            user_id: authData.user!.id,
+            stage_name: profile_data.stage_name,
+            bio: profile_data.bio || null,
+            voice_type: profile_data.voice_type || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            nationality: profile_data.nationality || null,
+            experience_years: profile_data.experience_years || null,
+            created_by_admin: created_by,
+            is_free_account: true,
+            is_active: true,
+          });
+
+        if (profileError) {
+          console.error('Error creating artist profile:', profileError);
+          throw profileError;
+        }
       }
     } else if (type === 'professional') {
-      const { error: profileError } = await supabaseClient
+      // Vérifier si un profil professionnel existe déjà
+      const { data: existingProfile } = await supabaseClient
         .from('professional_profiles')
-        .insert({
-          user_id: authData.user!.id,
-          company_name: profile_data.company_name,
-          professional_role: profile_data.professional_role,
-          bio: profile_data.bio || null,
-          contact_email: profile_data.contact_email,
-          created_by_admin: created_by,
-          is_free_account: true,
-          is_active: true,
-        });
+        .select('id')
+        .eq('user_id', authData.user!.id)
+        .single();
 
-      if (profileError) {
-        console.error('Error creating professional profile:', profileError);
-        throw profileError;
+      if (existingProfile) {
+        // Mettre à jour le profil existant
+        const { error: profileError } = await supabaseClient
+          .from('professional_profiles')
+          .update({
+            company_name: profile_data.company_name,
+            professional_role: profile_data.professional_role,
+            bio: profile_data.bio || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            team_description: profile_data.team_description || null,
+            created_by_admin: created_by,
+            is_free_account: true,
+            is_active: true,
+          })
+          .eq('user_id', authData.user!.id);
+
+        if (profileError) {
+          console.error('Error updating professional profile:', profileError);
+          throw profileError;
+        }
+      } else {
+        // Créer un nouveau profil
+        const { error: profileError } = await supabaseClient
+          .from('professional_profiles')
+          .insert({
+            user_id: authData.user!.id,
+            company_name: profile_data.company_name,
+            professional_role: profile_data.professional_role,
+            bio: profile_data.bio || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            team_description: profile_data.team_description || null,
+            created_by_admin: created_by,
+            is_free_account: true,
+            is_active: true,
+          });
+
+        if (profileError) {
+          console.error('Error creating professional profile:', profileError);
+          throw profileError;
+        }
       }
     }
 
