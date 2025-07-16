@@ -1,253 +1,182 @@
-
-import React, { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Bell, Settings, BarChart3, CreditCard } from 'lucide-react';
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
-import CreateFreeAccountDialog from './CreateFreeAccountDialog';
 import FreeAccountsStats from './FreeAccountsStats';
-import FreeAccountsFilters from './FreeAccountsFilters';
 import FreeAccountsTable from './FreeAccountsTable';
-import NotificationCenter from './NotificationCenter';
-import AutomatedWorkflows from './AutomatedWorkflows';
+import FreeAccountsFilters from './FreeAccountsFilters';
+import CreateFreeAccountDialog from './CreateFreeAccountDialog';
 import FreeAccountAnalytics from './FreeAccountAnalytics';
-import PaymentManager from './PaymentManager';
-import UpgradeRequestManager from './UpgradeRequestManager';
 
 interface FreeAccountsPanelProps {
   accountType?: 'artist' | 'professional';
 }
 
 const FreeAccountsPanel = ({ accountType }: FreeAccountsPanelProps) => {
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [accountTypeFilter, setAccountTypeFilter] = useState(accountType || 'all');
-  const [dateFilter, setDateFilter] = useState('all');
-  
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
+  const [filters, setFilters] = useState({
+    search: '',
+    voiceType: '',
+    nationality: '',
+    professionalRole: '',
+    location: '',
+    experienceMin: '',
+    experienceMax: '',
+  });
 
-  // Transform data for the table
-  const allAccounts = useMemo(() => {
-    const accounts = [];
-    
-    // Add artists
-    if (freeAccounts?.artists && (!accountType || accountType === 'artist')) {
-      accounts.push(...freeAccounts.artists.map(artist => ({
-        id: artist.id,
-        user_id: artist.user_id,
-        stage_name: artist.stage_name,
-        contact_email: artist.contact_email,
-        created_at: artist.created_at,
-        type: 'artist' as const
-      })));
-    }
-    
-    // Add professionals
-    if (freeAccounts?.professionals && (!accountType || accountType === 'professional')) {
-      accounts.push(...freeAccounts.professionals.map(professional => ({
-        id: professional.id,
-        user_id: professional.user_id,
-        company_name: professional.company_name,
-        contact_email: professional.contact_email,
-        created_at: professional.created_at,
-        type: 'professional' as const
-      })));
-    }
-    
-    return accounts;
-  }, [freeAccounts, accountType]);
+  // Fonction pour rafraîchir les données après modification
+  const handleAccountUpdated = () => {
+    // Les données seront automatiquement rafraîchies grâce à React Query
+    window.location.reload();
+  };
 
-  // Filter accounts based on search and filters
-  const filteredAccounts = useMemo(() => {
-    let filtered = allAccounts;
+  const filterAccounts = (accounts: any[]) => {
+    let filtered = [...accounts];
 
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(account => {
-        const name = account.stage_name || account.company_name || '';
-        const email = account.contact_email || '';
-        return name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               email.toLowerCase().includes(searchTerm.toLowerCase());
-      });
+    if (filters.search) {
+      filtered = filtered.filter(account =>
+        account.stage_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        account.company_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
+        account.contact_email?.toLowerCase().includes(filters.search.toLowerCase())
+      );
     }
 
-    // Account type filter (only apply if not already filtered by accountType prop)
-    if (!accountType && accountTypeFilter !== 'all') {
-      filtered = filtered.filter(account => account.type === accountTypeFilter);
+    if (filters.voiceType) {
+      filtered = filtered.filter(account => account.voice_type === filters.voiceType);
     }
 
-    // Date filter
-    if (dateFilter !== 'all') {
-      const now = new Date();
-      filtered = filtered.filter(account => {
-        const createdAt = new Date(account.created_at);
-        
-        switch (dateFilter) {
-          case 'today':
-            return createdAt.toDateString() === now.toDateString();
-          case 'week':
-            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            return createdAt >= weekAgo;
-          case 'month':
-            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-            return createdAt >= monthAgo;
-          case 'older':
-            const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-            return createdAt <= thirtyDaysAgo;
-          default:
-            return true;
-        }
-      });
+    if (filters.nationality) {
+      filtered = filtered.filter(account => account.nationality === filters.nationality);
+    }
+
+    if (filters.professionalRole) {
+      filtered = filtered.filter(account => account.professional_role === filters.professionalRole);
+    }
+
+    if (filters.location) {
+      filtered = filtered.filter(account =>
+        account.location?.toLowerCase().includes(filters.location.toLowerCase())
+      );
+    }
+
+    if (filters.experienceMin) {
+      filtered = filtered.filter(account =>
+        (account.experience_years || 0) >= parseInt(filters.experienceMin)
+      );
+    }
+
+    if (filters.experienceMax) {
+      filtered = filtered.filter(account =>
+        (account.experience_years || 0) <= parseInt(filters.experienceMax)
+      );
     }
 
     return filtered;
-  }, [allAccounts, searchTerm, accountTypeFilter, dateFilter, accountType]);
-
-  const activeFiltersCount = [searchTerm, !accountType && accountTypeFilter !== 'all', dateFilter !== 'all']
-    .filter(Boolean).length;
-
-  const handleClearFilters = () => {
-    setSearchTerm('');
-    if (!accountType) {
-      setAccountTypeFilter('all');
-    }
-    setDateFilter('all');
   };
 
-  if (isLoadingFreeAccounts) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">
-              Gestion des comptes {accountType === 'artist' ? 'artistes' : accountType === 'professional' ? 'professionnels' : ''} gratuits
-            </h2>
-            <Skeleton className="h-4 w-64 mt-1" />
-          </div>
-          <Skeleton className="h-10 w-48" />
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-full" />
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-24" />
-            ))}
-          </div>
-          <Skeleton className="h-64" />
-        </div>
-      </div>
-    );
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      voiceType: '',
+      nationality: '',
+      professionalRole: '',
+      location: '',
+      experienceMin: '',
+      experienceMax: '',
+    });
+  };
+
+  const onFiltersChange = (newFilters: Partial<typeof filters>) => {
+    setFilters(prevFilters => ({ ...prevFilters, ...newFilters }));
+  };
+
+  const applyFilters = (accounts: any[]) => {
+    return accounts.filter(account => {
+      const matchesSearch = !filters.search || 
+        (account.stage_name?.toLowerCase().includes(filters.search.toLowerCase())) ||
+        (account.company_name?.toLowerCase().includes(filters.search.toLowerCase())) ||
+        (account.contact_email?.toLowerCase().includes(filters.search.toLowerCase()));
+
+      const matchesVoiceType = !filters.voiceType || account.voice_type === filters.voiceType;
+      const matchesNationality = !filters.nationality || account.nationality === filters.nationality;
+      const matchesProfessionalRole = !filters.professionalRole || account.professional_role === filters.professionalRole;
+      const matchesLocation = !filters.location || account.location?.toLowerCase().includes(filters.location.toLowerCase());
+      
+      const experienceYears = account.experience_years || 0;
+      const matchesExperienceMin = !filters.experienceMin || experienceYears >= parseInt(filters.experienceMin);
+      const matchesExperienceMax = !filters.experienceMax || experienceYears <= parseInt(filters.experienceMax);
+
+      return matchesSearch && matchesVoiceType && matchesNationality && 
+             matchesProfessionalRole && matchesLocation && 
+             matchesExperienceMin && matchesExperienceMax;
+    });
+  };
+
+  if (!freeAccounts) {
+    return <div>Chargement...</div>;
   }
 
-  const getTitle = () => {
-    if (accountType === 'artist') return 'Gestion des comptes artistes';
-    if (accountType === 'professional') return 'Gestion des comptes professionnels';
-    return 'Gestion des comptes gratuits';
-  };
+  // Filtrer par type de compte si spécifié
+  let accountsToFilter = [];
+  if (accountType === 'artist') {
+    accountsToFilter = freeAccounts.artists.map(account => ({ ...account, type: 'artist' as const }));
+  } else if (accountType === 'professional') {
+    accountsToFilter = freeAccounts.professionals.map(account => ({ ...account, type: 'professional' as const }));
+  } else {
+    accountsToFilter = [
+      ...freeAccounts.artists.map(account => ({ ...account, type: 'artist' as const })),
+      ...freeAccounts.professionals.map(account => ({ ...account, type: 'professional' as const }))
+    ];
+  }
 
-  const getDescription = () => {
-    const total = filteredAccounts.length;
-    if (accountType === 'artist') return `Système de gestion des artistes (${total} comptes)`;
-    if (accountType === 'professional') return `Système de gestion des professionnels (${total} comptes)`;
-    return `Système complet de gestion, automatisation et paiements (${total} comptes)`;
-  };
-
-  const getCreateButtonText = () => {
-    if (accountType === 'artist') return 'Créer un compte artiste';
-    if (accountType === 'professional') return 'Créer un compte professionnel';
-    return 'Créer un compte gratuit';
-  };
+  const filteredAccounts = applyFilters(accountsToFilter);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">{getTitle()}</h2>
-          <p className="text-muted-foreground">{getDescription()}</p>
+          <h2 className="text-2xl font-bold">
+            {accountType === 'artist' && 'Gestion des Comptes Artistes Gratuits'}
+            {accountType === 'professional' && 'Gestion des Comptes Professionnels Gratuits'}
+            {!accountType && 'Gestion des Comptes Gratuits'}
+          </h2>
+          <p className="text-muted-foreground mt-1">
+            {accountType === 'artist' && 'Créez et gérez les comptes artistes gratuits'}
+            {accountType === 'professional' && 'Créez et gérez les comptes professionnels gratuits'}
+            {!accountType && 'Créez et gérez les comptes gratuits pour les artistes et professionnels'}
+          </p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {getCreateButtonText()}
-        </Button>
+        <CreateFreeAccountDialog accountType={accountType} />
       </div>
 
-      <Tabs defaultValue="accounts" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="accounts" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Comptes
-          </TabsTrigger>
-          <TabsTrigger value="payments" className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4" />
-            Paiements
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <Bell className="h-4 w-4" />
-            Notifications
-          </TabsTrigger>
-          <TabsTrigger value="workflows" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Workflows
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Analytics
-          </TabsTrigger>
-        </TabsList>
+      <FreeAccountsStats 
+        freeAccounts={freeAccounts} 
+        accountType={accountType}
+      />
+      
+      <FreeAccountsFilters 
+        filters={filters}
+        onFiltersChange={setFilters}
+        accountType={accountType}
+      />
 
-        <TabsContent value="accounts" className="space-y-6">
-          <FreeAccountsStats accountType={accountType} />
-          
-          <FreeAccountsFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            accountTypeFilter={accountTypeFilter}
-            onAccountTypeChange={setAccountTypeFilter}
-            dateFilter={dateFilter}
-            onDateFilterChange={setDateFilter}
-            onClearFilters={handleClearFilters}
-            activeFiltersCount={activeFiltersCount}
-            hideAccountTypeFilter={!!accountType}
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Comptes {accountType === 'artist' ? 'artistes' : accountType === 'professional' ? 'professionnels' : ''} créés
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FreeAccountsTable 
+            filteredAccounts={filteredAccounts}
+            accountType={accountType}
+            onAccountUpdated={handleAccountUpdated}
           />
+        </CardContent>
+      </Card>
 
-          <FreeAccountsTable filteredAccounts={filteredAccounts} accountType={accountType} />
-        </TabsContent>
-
-        <TabsContent value="payments" className="space-y-6">
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-              <TabsTrigger value="requests">Demandes d'upgrade</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview">
-              <PaymentManager />
-            </TabsContent>
-            
-            <TabsContent value="requests">
-              <UpgradeRequestManager />
-            </TabsContent>
-          </Tabs>
-        </TabsContent>
-
-        <TabsContent value="notifications">
-          <NotificationCenter />
-        </TabsContent>
-
-        <TabsContent value="workflows">
-          <AutomatedWorkflows />
-        </TabsContent>
-
-        <TabsContent value="analytics">
-          <FreeAccountAnalytics accountType={accountType} />
-        </TabsContent>
-      </Tabs>
-
-      <CreateFreeAccountDialog 
-        open={showCreateDialog} 
-        onOpenChange={setShowCreateDialog}
-        defaultAccountType={accountType}
+      <FreeAccountAnalytics 
+        freeAccounts={freeAccounts} 
+        accountType={accountType}
       />
     </div>
   );

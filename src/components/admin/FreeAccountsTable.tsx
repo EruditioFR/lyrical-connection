@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ExternalLink, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
+import EditFreeAccountDialog from './EditFreeAccountDialog';
 
 interface Account {
   id: string;
@@ -17,14 +18,24 @@ interface Account {
   contact_email: string;
   created_at: string;
   type: 'artist' | 'professional';
+  bio?: string;
+  voice_type?: string;
+  location?: string;
+  phone?: string;
+  website?: string;
+  nationality?: string;
+  experience_years?: number;
+  professional_role?: string;
+  team_description?: string;
 }
 
 interface FreeAccountsTableProps {
   filteredAccounts: Account[];
   accountType?: 'artist' | 'professional';
+  onAccountUpdated?: () => void;
 }
 
-const FreeAccountsTable = ({ filteredAccounts, accountType }: FreeAccountsTableProps) => {
+const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: FreeAccountsTableProps) => {
   const { sendUpgradeRequest, isSendingUpgradeRequest, isLoadingFreeAccounts } = useAdminManagement();
 
   if (isLoadingFreeAccounts) {
@@ -77,10 +88,14 @@ const FreeAccountsTable = ({ filteredAccounts, accountType }: FreeAccountsTableP
                 <TableCell>{account.contact_email}</TableCell>
                 <TableCell>{formatDate(account.created_at)}</TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <Badge variant="secondary" className="text-xs">
                       Gratuit
                     </Badge>
+                    <EditFreeAccountDialog 
+                      account={account} 
+                      onAccountUpdated={onAccountUpdated || (() => {})}
+                    />
                     <Button
                       size="sm"
                       variant="outline"
