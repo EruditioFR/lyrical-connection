@@ -62,7 +62,40 @@ export const useMailbox = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as MailMessage[];
+
+      // Récupérer les profils des expéditeurs
+      const messagesWithProfiles = await Promise.all(
+        (data || []).map(async (message) => {
+          const [artistProfile, professionalProfile] = await Promise.all([
+            supabase
+              .from('artist_profiles')
+              .select('stage_name, profile_image_url, user_id')
+              .eq('user_id', message.sender_id)
+              .single(),
+            supabase
+              .from('professional_profiles')
+              .select('company_name, logo_url, user_id')
+              .eq('user_id', message.sender_id)
+              .single()
+          ]);
+
+          const sender = artistProfile.data 
+            ? { 
+                stage_name: artistProfile.data.stage_name, 
+                profile_image_url: artistProfile.data.profile_image_url 
+              }
+            : professionalProfile.data 
+            ? { 
+                company_name: professionalProfile.data.company_name, 
+                logo_url: professionalProfile.data.logo_url 
+              }
+            : null;
+
+          return { ...message, sender };
+        })
+      );
+
+      return messagesWithProfiles as MailMessage[];
     },
   });
 
@@ -81,7 +114,40 @@ export const useMailbox = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as MailMessage[];
+
+      // Récupérer les profils des destinataires
+      const messagesWithProfiles = await Promise.all(
+        (data || []).map(async (message) => {
+          const [artistProfile, professionalProfile] = await Promise.all([
+            supabase
+              .from('artist_profiles')
+              .select('stage_name, profile_image_url, user_id')
+              .eq('user_id', message.recipient_id)
+              .single(),
+            supabase
+              .from('professional_profiles')
+              .select('company_name, logo_url, user_id')
+              .eq('user_id', message.recipient_id)
+              .single()
+          ]);
+
+          const recipient = artistProfile.data 
+            ? { 
+                stage_name: artistProfile.data.stage_name, 
+                profile_image_url: artistProfile.data.profile_image_url 
+              }
+            : professionalProfile.data 
+            ? { 
+                company_name: professionalProfile.data.company_name, 
+                logo_url: professionalProfile.data.logo_url 
+              }
+            : null;
+
+          return { ...message, recipient };
+        })
+      );
+
+      return messagesWithProfiles as MailMessage[];
     },
   });
 
@@ -100,7 +166,25 @@ export const useMailbox = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as MailMessage[];
+
+      // Récupérer les profils pour les messages favoris
+      const messagesWithProfiles = await Promise.all(
+        (data || []).map(async (message) => {
+          const [senderArtist, senderPro, recipientArtist, recipientPro] = await Promise.all([
+            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.sender_id).single(),
+            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.sender_id).single(),
+            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.recipient_id).single(),
+            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.recipient_id).single()
+          ]);
+
+          const sender = senderArtist.data || senderPro.data;
+          const recipient = recipientArtist.data || recipientPro.data;
+
+          return { ...message, sender, recipient };
+        })
+      );
+
+      return messagesWithProfiles as MailMessage[];
     },
   });
 
@@ -108,9 +192,13 @@ export const useMailbox = () => {
   const { data: drafts = [], isLoading: isLoadingDrafts } = useQuery({
     queryKey: ['mailbox', 'drafts'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
         .from('mail_drafts')
         .select('*')
+        .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
