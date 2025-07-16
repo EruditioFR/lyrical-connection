@@ -36,6 +36,7 @@ import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
 import Notifications from '@/pages/Notifications';
 import ProfessionalsList from '@/pages/ProfessionalsList';
+import ProfessionalDetail from '@/pages/ProfessionalDetail';
 
 // Import nouvelles pages
 import ProfessionalCastingApplications from '@/pages/ProfessionalCastingApplications';
@@ -85,8 +86,9 @@ function App() {
               <Route path="/artistes" element={<ArtistsList />} />
               <Route path="/recherche-artistes" element={<ArtistSearch />} />
               
-              {/* Route pour les professionnels */}
+              {/* Routes pour les professionnels */}
               <Route path="/professionnels" element={<ProfessionalsList />} />
+              <Route path="/professionnels/:id" element={<ProfessionalDetail />} />
               
               {/* Routes pour la messagerie */}
               <Route path="/messages" element={<Messages />} />

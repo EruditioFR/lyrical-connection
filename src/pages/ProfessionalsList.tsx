@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +25,7 @@ interface ProfessionalProfile {
 }
 
 const ProfessionalsList = () => {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     role: '',
     company: '',
@@ -86,6 +89,10 @@ const ProfessionalsList = () => {
       country: '',
       city: ''
     });
+  };
+
+  const handleProfessionalClick = (professionalId: string) => {
+    navigate(`/professionnels/${professionalId}`);
   };
 
   return (
@@ -181,7 +188,11 @@ const ProfessionalsList = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {professionals?.map((professional) => (
-              <Card key={professional.id} className="hover:shadow-lg transition-shadow">
+              <Card 
+                key={professional.id} 
+                className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => handleProfessionalClick(professional.id)}
+              >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
@@ -197,7 +208,13 @@ const ProfessionalsList = () => {
                         </div>
                       )}
                       <div>
-                        <h3 className="font-semibold text-lg">
+                        <h3 
+                          className="font-semibold text-lg hover:text-blue-600 transition-colors cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleProfessionalClick(professional.id);
+                          }}
+                        >
                           {professional.company_name || 'Professionnel'}
                         </h3>
                         {professional.is_verified && (
@@ -235,7 +252,10 @@ const ProfessionalsList = () => {
                           variant="outline"
                           size="sm"
                           className="text-xs"
-                          onClick={() => window.open(`mailto:${professional.contact_email}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(`mailto:${professional.contact_email}`);
+                          }}
                         >
                           <Mail className="h-3 w-3 mr-1" />
                           Contact
@@ -247,7 +267,10 @@ const ProfessionalsList = () => {
                           variant="outline"
                           size="sm"
                           className="text-xs"
-                          onClick={() => window.open(professional.website, '_blank')}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(professional.website, '_blank');
+                          }}
                         >
                           <ExternalLink className="h-3 w-3 mr-1" />
                           Site web
@@ -259,7 +282,10 @@ const ProfessionalsList = () => {
                           variant="outline"
                           size="sm"
                           className="text-xs"
-                          onClick={() => window.open(`tel:${professional.phone}`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(`tel:${professional.phone}`);
+                          }}
                         >
                           <Phone className="h-3 w-3 mr-1" />
                           Appeler
