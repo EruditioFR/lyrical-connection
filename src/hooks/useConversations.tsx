@@ -63,6 +63,7 @@ export const useConversations = () => {
           participants:conversation_participants(*),
           messages:messages(*)
         `)
+        .eq('is_archived', false) // Filter out archived conversations
         .order('last_message_at', { ascending: false, nullsFirst: false });
 
       if (error) {
@@ -149,6 +150,61 @@ export const useConversations = () => {
     }
   });
 
+  const leaveConversation = useMutation({
+    mutationFn: async (conversationId: string) => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('conversation_participants')
+        .update({ left_at: new Date().toISOString() })
+        .eq('conversation_id', conversationId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: "Conversation quittée",
+        description: "Vous avez quitté la conversation",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de quitter la conversation",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const archiveConversation = useMutation({
+    mutationFn: async (conversationId: string) => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('conversations')
+        .update({ is_archived: true })
+        .eq('id', conversationId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      toast({
+        title: "Conversation archivée",
+        description: "La conversation a été archivée",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'archiver la conversation",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Real-time subscription for conversations
   useEffect(() => {
     if (!user) return;
@@ -190,7 +246,11 @@ export const useConversations = () => {
     isLoading,
     error,
     createConversation: createConversation.mutate,
-    isCreating: createConversation.isPending
+    isCreating: createConversation.isPending,
+    leaveConversation: leaveConversation.mutate,
+    isLeavingConversation: leaveConversation.isPending,
+    archiveConversation: archiveConversation.mutate,
+    isArchivingConversation: archiveConversation.isPending
   };
 };
 

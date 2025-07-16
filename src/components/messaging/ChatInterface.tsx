@@ -1,28 +1,36 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, MoreVertical } from 'lucide-react';
+import { Send, Paperclip, MoreVertical, Info, Archive, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useMessages, type Message } from '@/hooks/useConversations';
+import { useMessages, useConversations, type Message } from '@/hooks/useConversations';
 import { useAuth } from '@/hooks/useAuth';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import ConversationInfoDialog from './ConversationInfoDialog';
+import { useNavigate } from 'react-router-dom';
 
 interface ChatInterfaceProps {
   conversationId: string;
   title?: string;
+  onConversationLeft?: () => void;
 }
 
-const ChatInterface = ({ conversationId, title }: ChatInterfaceProps) => {
+const ChatInterface = ({ conversationId, title, onConversationLeft }: ChatInterfaceProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { messages, sendMessage, isSending, markAsRead } = useMessages(conversationId);
+  const { conversations, leaveConversation, archiveConversation } = useConversations();
   const [newMessage, setNewMessage] = useState('');
+  const [showConversationInfo, setShowConversationInfo] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const conversation = conversations.find(c => c.id === conversationId);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -42,6 +50,18 @@ const ChatInterface = ({ conversationId, title }: ChatInterfaceProps) => {
 
     sendMessage({ content: newMessage.trim() });
     setNewMessage('');
+  };
+
+  const handleLeaveConversation = () => {
+    leaveConversation(conversationId);
+    onConversationLeft?.();
+    navigate('/messages');
+  };
+
+  const handleArchiveConversation = () => {
+    archiveConversation(conversationId);
+    onConversationLeft?.();
+    navigate('/messages');
   };
 
   const formatMessageTime = (timestamp: string) => {
@@ -98,9 +118,19 @@ const ChatInterface = ({ conversationId, title }: ChatInterfaceProps) => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Informations</DropdownMenuItem>
-              <DropdownMenuItem>Archiver</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem onClick={() => setShowConversationInfo(true)}>
+                <Info className="w-4 h-4 mr-2" />
+                Informations
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleArchiveConversation}>
+                <Archive className="w-4 h-4 mr-2" />
+                Archiver
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleLeaveConversation}
+                className="text-destructive"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
                 Quitter la conversation
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -161,6 +191,12 @@ const ChatInterface = ({ conversationId, title }: ChatInterfaceProps) => {
           </Button>
         </form>
       </div>
+
+      <ConversationInfoDialog
+        open={showConversationInfo}
+        onOpenChange={setShowConversationInfo}
+        conversation={conversation || null}
+      />
     </Card>
   );
 };

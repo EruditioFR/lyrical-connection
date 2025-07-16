@@ -54,6 +54,7 @@ const Messages = () => {
               <ChatInterface
                 conversationId={selectedConversationId}
                 title={selectedConversation.title || undefined}
+                onConversationLeft={() => setSelectedConversationId(null)}
               />
             ) : (
               <div className="h-full flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed border-muted">
