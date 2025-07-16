@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ExternalLink, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
-import EditArtistProfileDialog from './EditArtistProfileDialog';
+import AdminArtistProfileDialog from './AdminArtistProfileDialog';
 import EditProfessionalProfileDialog from './EditProfessionalProfileDialog';
 import DeleteProfileDialog from './DeleteProfileDialog';
 import type { Database } from '@/integrations/supabase/types';
@@ -108,7 +107,7 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                 <TableCell>
                   <div className="flex items-center gap-2 flex-wrap">
                     {type === 'artist' && account.type === 'artist' && (
-                      <EditArtistProfileDialog 
+                      <AdminArtistProfileDialog 
                         account={account} 
                         onAccountUpdated={onAccountUpdated || (() => {})}
                       />
