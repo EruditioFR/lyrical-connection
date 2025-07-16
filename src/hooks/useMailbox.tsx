@@ -249,12 +249,23 @@ export const useMailbox = () => {
   // Mark as read mutation
   const markAsReadMutation = useMutation({
     mutationFn: async (messageId: string) => {
+      console.log('Marquage comme lu du message:', messageId);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+      
+      console.log('Utilisateur actuel:', user.id);
+
       const { error } = await supabase
         .from('mail_messages')
         .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('id', messageId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors du marquage comme lu:', error);
+        throw error;
+      }
+      console.log('Message marqué comme lu avec succès');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mailbox'] });
@@ -264,12 +275,23 @@ export const useMailbox = () => {
   // Toggle star mutation
   const toggleStarMutation = useMutation({
     mutationFn: async ({ messageId, isStarred }: { messageId: string; isStarred: boolean }) => {
+      console.log('Basculement étoile pour le message:', { messageId, isStarred });
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+      
+      console.log('Utilisateur actuel:', user.id);
+
       const { error } = await supabase
         .from('mail_messages')
         .update({ is_starred: !isStarred })
         .eq('id', messageId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Erreur lors du basculement étoile:', error);
+        throw error;
+      }
+      console.log('Étoile basculée avec succès');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mailbox'] });
@@ -279,26 +301,75 @@ export const useMailbox = () => {
   // Delete message mutation
   const deleteMessageMutation = useMutation({
     mutationFn: async ({ messageId, isSender }: { messageId: string; isSender: boolean }) => {
-      console.log('Tentative de suppression du message:', { messageId, isSender });
+      console.log('=== DÉBUT SUPPRESSION MESSAGE ===');
+      console.log('ID du message:', messageId);
+      console.log('Est expéditeur:', isSender);
+      
+      // Récupérer l'utilisateur actuel
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('Utilisateur non authentifié');
+        throw new Error('User not authenticated');
+      }
+      console.log('ID utilisateur actuel:', user.id);
+
+      // Récupérer les détails du message pour vérification
+      const { data: messageData, error: fetchError } = await supabase
+        .from('mail_messages')
+        .select('id, sender_id, recipient_id, subject, is_deleted_by_sender, is_deleted_by_recipient')
+        .eq('id', messageId)
+        .single();
+
+      if (fetchError) {
+        console.error('Erreur lors de la récupération du message:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Détails du message:', messageData);
+      console.log('Utilisateur est expéditeur:', messageData.sender_id === user.id);
+      console.log('Utilisateur est destinataire:', messageData.recipient_id === user.id);
+
+      // Déterminer le champ à mettre à jour
       const updateField = isSender ? 'is_deleted_by_sender' : 'is_deleted_by_recipient';
       console.log('Champ à mettre à jour:', updateField);
       
-      const { error } = await supabase
+      // Créer l'objet de mise à jour
+      const updateData = { [updateField]: true };
+      console.log('Données de mise à jour:', updateData);
+
+      // Effectuer la mise à jour
+      const { data: updateResult, error } = await supabase
         .from('mail_messages')
-        .update({ [updateField]: true })
-        .eq('id', messageId);
+        .update(updateData)
+        .eq('id', messageId)
+        .select();
 
       if (error) {
-        console.error('Erreur lors de la suppression:', error);
+        console.error('=== ERREUR LORS DE LA SUPPRESSION ===');
+        console.error('Code d\'erreur:', error.code);
+        console.error('Message d\'erreur:', error.message);
+        console.error('Détails:', error.details);
+        console.error('Hint:', error.hint);
         throw error;
       }
-      console.log('Message supprimé avec succès');
+      
+      console.log('=== SUPPRESSION RÉUSSIE ===');
+      console.log('Résultat de la mise à jour:', updateResult);
+      return updateResult;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mailbox'] });
       toast({
         title: "Message supprimé",
         description: "Le message a été supprimé.",
+      });
+    },
+    onError: (error) => {
+      console.error('Erreur dans onError:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le message.",
+        variant: "destructive",
       });
     },
   });
