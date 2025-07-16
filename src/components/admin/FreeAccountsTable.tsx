@@ -107,7 +107,7 @@ const FreeAccountsTable = ({ filteredAccounts, accountType }: FreeAccountsTableP
                       className="gap-1"
                     >
                       <a 
-                        href={type === 'artist' ? `/artist/${account.id}` : `/professional/${account.id}`}
+                        href={type === 'artist' ? `/artistes/${account.id}` : `/professionnels/${account.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
