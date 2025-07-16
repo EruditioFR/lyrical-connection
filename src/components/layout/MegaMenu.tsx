@@ -141,12 +141,6 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
           href: "/recherche-artistes",
           icon: Search,
           description: "Trouvez les talents parfaits"
-        },
-        {
-          label: "Artistes",
-          href: "/artistes",
-          icon: Users,
-          description: "Parcourez les profils"
         }
       ]
     },
