@@ -39,7 +39,7 @@ const ProfessionalsList = () => {
         .select('*')
         .eq('is_active', true);
 
-      if (filters.role) {
+      if (filters.role && filters.role !== 'all') {
         query = query.eq('professional_role', filters.role);
       }
 
@@ -113,12 +113,12 @@ const ProfessionalsList = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Métier</label>
-                <Select value={filters.role} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value }))}>
+                <Select value={filters.role || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, role: value === 'all' ? '' : value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Tous les métiers" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tous les métiers</SelectItem>
+                    <SelectItem value="all">Tous les métiers</SelectItem>
                     <SelectItem value="casting_director">Directeur de casting</SelectItem>
                     <SelectItem value="vocal_coach">Coach vocal</SelectItem>
                     <SelectItem value="conductor">Chef d'orchestre</SelectItem>
