@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Send, Paperclip, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';

@@ -11,6 +11,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { MegaMenu } from './MegaMenu';
 import NotificationBell from '@/components/notifications/NotificationBell';
+
 const Navbar = () => {
   const {
     t
@@ -32,10 +33,26 @@ const Navbar = () => {
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
+
+  const getMenuItems = () => {
+    if (!user) return [];
+
+    const baseItems = [
+      { href: "/", label: t('nav.home') },
+      { href: "/events", label: t('nav.events') },
+      { href: "/castings", label: t('nav.castings') },
+      { href: "/artists", label: t('nav.artists') },
+      { href: "/messages", label: "Messages" },
+    ];
+
+    return baseItems;
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
   };
+
   const getDisplayName = () => {
     if (professionalProfile?.company_name) {
       return professionalProfile.company_name;
@@ -45,30 +62,36 @@ const Navbar = () => {
     }
     return user?.user_metadata?.full_name || user?.email?.split('@')[0];
   };
+
   const handleMouseEnter = (menuType: string) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setActiveMegaMenu(menuType);
   };
+
   const handleMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveMegaMenu(null);
     }, 150);
   };
+
   const handleMegaMenuMouseEnter = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
   };
+
   const handleMegaMenuMouseLeave = () => {
     timeoutRef.current = setTimeout(() => {
       setActiveMegaMenu(null);
     }, 150);
   };
+
   const closeMegaMenu = () => {
     setActiveMegaMenu(null);
   };
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -76,6 +99,7 @@ const Navbar = () => {
       }
     };
   }, []);
+
   return <nav className="bg-white shadow-sm border-b relative" ref={navRef}>
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
@@ -181,4 +205,5 @@ const Navbar = () => {
       <MegaMenu isOpen={activeMegaMenu !== null} onClose={closeMegaMenu} menuType={activeMegaMenu || 'discover'} onMouseEnter={handleMegaMenuMouseEnter} onMouseLeave={handleMegaMenuMouseLeave} />
     </nav>;
 };
+
 export default Navbar;

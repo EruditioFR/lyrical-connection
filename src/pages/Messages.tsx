@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import ConversationList from '@/components/messaging/ConversationList';
@@ -55,9 +56,9 @@ const Messages = () => {
                     Choisissez une conversation existante ou créez-en une nouvelle pour commencer à échanger
                   </p>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
