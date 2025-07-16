@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,18 +14,12 @@ export const useAdminManagement = () => {
     queryFn: async () => {
       const { data: artistProfiles, error: artistError } = await supabase
         .from('artist_profiles')
-        .select(`
-          *,
-          created_by_admin:created_by_admin(email)
-        `)
+        .select('*')
         .eq('is_free_account', true);
 
       const { data: professionalProfiles, error: professionalError } = await supabase
         .from('professional_profiles')
-        .select(`
-          *,
-          created_by_admin:created_by_admin(email)
-        `)
+        .select('*')
         .eq('is_free_account', true);
 
       if (artistError || professionalError) {
