@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Plus, Bell, Settings, BarChart3, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import CreateFreeAccountDialog from './CreateFreeAccountDialog';
@@ -114,16 +115,18 @@ const FreeAccountsPanel = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">Gestion des comptes gratuits</h2>
-            <p className="text-muted-foreground">Chargement...</p>
+            <Skeleton className="h-4 w-64 mt-1" />
           </div>
+          <Skeleton className="h-10 w-48" />
         </div>
-        <div className="animate-pulse space-y-4">
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-full" />
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+              <Skeleton key={i} className="h-24" />
             ))}
           </div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <Skeleton className="h-64" />
         </div>
       </div>
     );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,26 +15,14 @@ import NationalityStatsCard from './NationalityStatsCard';
 import GenderStatsCard from './GenderStatsCard';
 import VoiceTypeStatsCard from './VoiceTypeStatsCard';
 import AgeStatsCard from './AgeStatsCard';
+import FreeAccountsStatsLoading from './FreeAccountsStatsLoading';
 
 const FreeAccountsStats = () => {
   const { freeAccounts, isLoadingFreeAccounts } = useAdminManagement();
   const { data: adminStats, isLoading: isLoadingAdminStats } = useAdminStats();
 
-  if (isLoadingFreeAccounts) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+  if (isLoadingFreeAccounts || isLoadingAdminStats) {
+    return <FreeAccountsStatsLoading />;
   }
 
   const totalFreeAccounts = (freeAccounts?.artists?.length || 0) + (freeAccounts?.professionals?.length || 0);

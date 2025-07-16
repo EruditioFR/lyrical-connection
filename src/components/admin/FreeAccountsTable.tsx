@@ -4,8 +4,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ExternalLink, CreditCard } from 'lucide-react';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
+import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
 
 interface Account {
   id: string;
@@ -22,7 +24,11 @@ interface FreeAccountsTableProps {
 }
 
 const FreeAccountsTable = ({ filteredAccounts }: FreeAccountsTableProps) => {
-  const { sendUpgradeRequest, isSendingUpgradeRequest } = useAdminManagement();
+  const { sendUpgradeRequest, isSendingUpgradeRequest, isLoadingFreeAccounts } = useAdminManagement();
+
+  if (isLoadingFreeAccounts) {
+    return <FreeAccountsTableSkeleton />;
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -81,8 +87,17 @@ const FreeAccountsTable = ({ filteredAccounts }: FreeAccountsTableProps) => {
                       disabled={isSendingUpgradeRequest}
                       className="gap-1"
                     >
-                      <CreditCard className="h-3 w-3" />
-                      Passer en payant
+                      {isSendingUpgradeRequest ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-current"></div>
+                          Traitement...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="h-3 w-3" />
+                          Passer en payant
+                        </>
+                      )}
                     </Button>
                     <Button
                       size="sm"
