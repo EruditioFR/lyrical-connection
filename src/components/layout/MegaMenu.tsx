@@ -15,7 +15,8 @@ import {
   BookOpen,
   Star,
   Zap,
-  Building
+  Building,
+  Mail
 } from 'lucide-react';
 
 interface MenuItem {
@@ -105,6 +106,17 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
           description: "Statistiques et analyses"
         }
       ]
+    },
+    {
+      title: "Support",
+      items: [
+        {
+          label: "Contact",
+          href: "/contact",
+          icon: Mail,
+          description: "Contactez notre équipe"
+        }
+      ]
     }
   ];
 
@@ -166,6 +178,17 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
           description: "Statistiques et analyses"
         }
       ]
+    },
+    {
+      title: "Support",
+      items: [
+        {
+          label: "Contact",
+          href: "/contact",
+          icon: Mail,
+          description: "Contactez notre équipe"
+        }
+      ]
     }
   ];
 
@@ -214,6 +237,17 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
           href: "/pricing",
           icon: Zap,
           description: "Nos offres et prix"
+        }
+      ]
+    },
+    {
+      title: "Support",
+      items: [
+        {
+          label: "Contact",
+          href: "/contact",
+          icon: Mail,
+          description: "Contactez notre équipe"
         }
       ]
     }
