@@ -173,7 +173,7 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
                 endDate={endDate}
                 registrationDeadline={registrationDeadline}
                 dateErrors={dateErrors}
-                eventTypes={eventTypes}
+                eventTypes={[...eventTypes]}
               />
             </TabsContent>
 
@@ -189,7 +189,7 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
               <EventPricingStep
                 formData={formData}
                 handleInputChange={handleInputChange}
-                currencies={currencies}
+                currencies={[...currencies]}
               />
             </TabsContent>
 
@@ -215,9 +215,9 @@ export const EventFormImproved: React.FC<EventFormImprovedProps> = ({ event, onC
                 startDate={startDate}
                 endDate={endDate}
                 registrationDeadline={registrationDeadline}
-                eventTypes={eventTypes}
+                eventTypes={[...eventTypes]}
                 categories={categories}
-                currencies={currencies}
+                currencies={[...currencies]}
               />
             </TabsContent>
           </Tabs>

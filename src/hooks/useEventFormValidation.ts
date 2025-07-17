@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 
-interface DateErrors {
+interface DateErrors extends Record<string, string> {
   endDate?: string;
   registrationDeadline?: string;
 }
