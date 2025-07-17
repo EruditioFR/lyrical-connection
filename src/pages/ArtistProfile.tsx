@@ -186,6 +186,32 @@ const ArtistProfile = () => {
                       )}
                     </div>
 
+                    {/* Informations supplémentaires déplacées au-dessus de la biographie */}
+                    <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {profile.experience_years !== null && (
+                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                          <div className="text-2xl font-bold text-primary">{profile.experience_years}</div>
+                          <div className="text-sm text-gray-600">Années d'expérience</div>
+                        </div>
+                      )}
+                      
+                      {profile.nationality && (
+                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                          <div className="text-lg font-semibold text-gray-800">{profile.nationality}</div>
+                          <div className="text-sm text-gray-600">Nationalité</div>
+                        </div>
+                      )}
+                      
+                      {profile.spoken_languages && profile.spoken_languages.length > 0 && (
+                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                          <div className="text-lg font-semibold text-gray-800">
+                            {profile.spoken_languages.join(', ')}
+                          </div>
+                          <div className="text-sm text-gray-600">Langues parlées</div>
+                        </div>
+                      )}
+                    </div>
+
                     {profile.bio && (
                       <p className="text-gray-700 max-w-2xl">
                         {profile.bio}
@@ -220,32 +246,6 @@ const ArtistProfile = () => {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Informations supplémentaires */}
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-              {profile.experience_years !== null && (
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl font-bold text-primary">{profile.experience_years}</div>
-                  <div className="text-sm text-gray-600">Années d'expérience</div>
-                </div>
-              )}
-              
-              {profile.nationality && (
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-semibold text-gray-800">{profile.nationality}</div>
-                  <div className="text-sm text-gray-600">Nationalité</div>
-                </div>
-              )}
-              
-              {profile.spoken_languages && profile.spoken_languages.length > 0 && (
-                <div className="text-center p-4 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-semibold text-gray-800">
-                    {profile.spoken_languages.join(', ')}
-                  </div>
-                  <div className="text-sm text-gray-600">Langues parlées</div>
-                </div>
-              )}
             </div>
           </div>
 
