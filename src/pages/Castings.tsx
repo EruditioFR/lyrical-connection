@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import CastingCard from '@/components/castings/CastingCard';
 import CastingFilters from '@/components/castings/CastingFilters';
+import CastingsMarketing from '@/components/castings/CastingsMarketing';
 import { Button } from '@/components/ui/button';
 import { useCastings, useMyCastings } from '@/hooks/useCastings';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,6 +17,15 @@ const Castings = () => {
   const { user } = useAuth();
   const { userType } = useUserType();
   const [filters, setFilters] = useState({});
+  
+  // Si l'utilisateur n'est pas connecté, afficher la page marketing
+  if (!user) {
+    return (
+      <Layout>
+        <CastingsMarketing />
+      </Layout>
+    );
+  }
   
   // Utiliser le bon hook selon le type d'utilisateur
   const { castings: allCastings, isLoading: allCastingsLoading } = useCastings(filters);
