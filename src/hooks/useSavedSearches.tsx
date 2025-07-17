@@ -39,33 +39,75 @@ export const useSaveSearch = () => {
 
   return useMutation({
     mutationFn: async (searchData: Omit<SavedSearchInsert, 'professional_profile_id'>) => {
-      console.log('Saving search with data:', searchData);
+      console.log('=== DÉBUT SAUVEGARDE RECHERCHE ===');
+      console.log('Search data:', searchData);
       
       // Récupérer l'utilisateur connecté
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
-      if (userError || !user) {
-        console.error('User error:', userError);
+      if (userError) {
+        console.error('❌ User authentication error:', userError);
+        throw new Error('Erreur d\'authentification: ' + userError.message);
+      }
+
+      if (!user) {
+        console.error('❌ No user found');
         throw new Error('Utilisateur non connecté');
       }
 
-      console.log('Current user:', user.id);
+      console.log('✅ User authenticated:', user.id, user.email);
 
       // Récupérer le profil professionnel de l'utilisateur connecté
+      console.log('🔍 Searching for professional profile for user:', user.id);
+      
       const { data: profile, error: profileError } = await supabase
         .from('professional_profiles')
-        .select('id')
+        .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError || !profile) {
-        console.error('Profile error:', profileError);
-        console.error('No professional profile found for user:', user.id);
-        throw new Error('Profil professionnel requis pour sauvegarder une recherche');
+      console.log('📊 Profile query result:', { profile, profileError });
+
+      if (profileError) {
+        console.error('❌ Database error while fetching profile:', profileError);
+        throw new Error('Erreur de base de données: ' + profileError.message);
       }
 
-      console.log('Professional profile found:', profile.id);
+      if (!profile) {
+        console.error('❌ No professional profile found for user:', user.id);
+        console.log('📋 Checking if user has any profiles...');
+        
+        // Vérifier si l'utilisateur a un profil artiste à la place
+        const { data: artistProfile } = await supabase
+          .from('artist_profiles')
+          .select('id, user_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+          
+        if (artistProfile) {
+          console.log('ℹ️ User has artist profile instead:', artistProfile.id);
+          throw new Error('Vous devez avoir un profil professionnel pour sauvegarder des recherches. Vous avez actuellement un profil artiste.');
+        }
+        
+        throw new Error('Aucun profil professionnel trouvé. Veuillez créer un profil professionnel pour sauvegarder vos recherches.');
+      }
 
+      console.log('✅ Professional profile found:', profile.id);
+      console.log('📄 Profile details:', {
+        id: profile.id,
+        user_id: profile.user_id,
+        professional_role: profile.professional_role,
+        is_active: profile.is_active
+      });
+
+      // Vérifier que le profil est actif
+      if (!profile.is_active) {
+        console.warn('⚠️ Professional profile is inactive');
+        throw new Error('Votre profil professionnel est inactif. Contactez le support.');
+      }
+
+      console.log('💾 Inserting search into database...');
+      
       const { data, error } = await supabase
         .from('saved_searches')
         .insert({
@@ -76,11 +118,13 @@ export const useSaveSearch = () => {
         .single();
 
       if (error) {
-        console.error('Error saving search:', error);
-        throw error;
+        console.error('❌ Error saving search to database:', error);
+        throw new Error('Erreur lors de la sauvegarde: ' + error.message);
       }
 
-      console.log('Search saved successfully:', data);
+      console.log('✅ Search saved successfully:', data);
+      console.log('=== FIN SAUVEGARDE RECHERCHE ===');
+      
       return data;
     },
     onSuccess: () => {
@@ -91,7 +135,7 @@ export const useSaveSearch = () => {
       });
     },
     onError: (error) => {
-      console.error('Save search error:', error);
+      console.error('💥 Save search error:', error);
       toast({
         title: "Erreur",
         description: error.message || "Impossible de sauvegarder la recherche.",
