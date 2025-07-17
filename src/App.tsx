@@ -65,6 +65,7 @@ function App() {
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/qui-sommes-nous" element={<About />} />
                 <Route path="/pricing" element={<Pricing />} />
                 
                 {/* Routes protégées par authentification */}
