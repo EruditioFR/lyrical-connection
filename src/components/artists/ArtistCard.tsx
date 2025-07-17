@@ -1,11 +1,11 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
-
 
 interface ArtistCardProps {
   artist: Artist;
@@ -18,10 +18,17 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
   onClick, 
   showContactInfo = false 
 }) => {
+  const navigate = useNavigate();
+
   const handleCardClick = (e: React.MouseEvent) => {
     if (onClick && !e.defaultPrevented) {
       onClick();
     }
+  };
+
+  const handleViewProfile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/artistes/${artist.id}`);
   };
 
   return (
@@ -133,10 +140,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onClick) onClick();
-            }}
+            onClick={handleViewProfile}
           >
             Voir le profil
           </Button>
@@ -149,7 +153,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
               console.log('Contact artist:', artist.stage_name);
             }}
           >
-            <MessageCircle className="w-4 h-4 mr-1" />
+            <MessageCircle className="w-4 w-4 mr-1" />
             Contacter
           </Button>
         </div>
