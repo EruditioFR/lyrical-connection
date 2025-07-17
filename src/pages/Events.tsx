@@ -6,6 +6,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { usePublicEvents, useEventCategories, useArtistApplications } from '@/hooks/useEvents';
 import { EventCard } from '@/components/events/EventCard';
 import { EventFilters } from '@/components/events/EventFilters';
+import EventsMarketing from '@/components/events/EventsMarketing';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,6 +39,15 @@ const Events = () => {
     data: artistApplications = [],
     isLoading: applicationsLoading
   } = useArtistApplications();
+
+  // Si l'utilisateur n'est pas authentifié, afficher la page marketing
+  if (!loading && !user) {
+    return (
+      <Layout>
+        <EventsMarketing />
+      </Layout>
+    );
+  }
 
   const getStatusLabel = (status: string) => {
     const labels = {

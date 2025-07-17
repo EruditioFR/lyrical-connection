@@ -4,13 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
+import { useAuth } from '@/hooks/useAuth';
+import ProfessionalsMarketing from '@/components/professionals/ProfessionalsMarketing';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Target, Building, CheckCircle, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-
 
 interface Professional {
   id: string;
@@ -25,8 +26,18 @@ interface Professional {
 }
 
 const ProfessionalsList = () => {
+  const { user, loading } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  // Si l'utilisateur n'est pas authentifié, afficher la page marketing
+  if (!loading && !user) {
+    return (
+      <Layout>
+        <ProfessionalsMarketing />
+      </Layout>
+    );
+  }
 
   const { data: professionals = [], isLoading, error } = useQuery({
     queryKey: ['professionals'],
@@ -48,7 +59,7 @@ const ProfessionalsList = () => {
     professional.company_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (isLoading) {
+  if (loading || isLoading) {
     return <Layout><div>Loading professionals...</div></Layout>;
   }
 
