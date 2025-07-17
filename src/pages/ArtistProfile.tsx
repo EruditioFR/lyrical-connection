@@ -21,7 +21,10 @@ import {
   Camera,
   MessageCircle,
   Edit,
-  Play
+  Play,
+  Clock,
+  Flag,
+  Languages
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
@@ -186,28 +189,29 @@ const ArtistProfile = () => {
                       )}
                     </div>
 
-                    {/* Informations supplémentaires déplacées au-dessus de la biographie */}
-                    <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Informations supplémentaires déplacées au-dessus de la biographie - version améliorée */}
+                    <div className="mb-6 flex flex-wrap gap-6">
                       {profile.experience_years !== null && (
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                          <div className="text-2xl font-bold text-primary">{profile.experience_years}</div>
-                          <div className="text-sm text-gray-600">Années d'expérience</div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Clock className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-medium text-foreground">{profile.experience_years}</span>
+                          <span className="text-muted-foreground">années d'expérience</span>
                         </div>
                       )}
                       
                       {profile.nationality && (
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                          <div className="text-lg font-semibold text-gray-800">{profile.nationality}</div>
-                          <div className="text-sm text-gray-600">Nationalité</div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Flag className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-medium text-foreground">{profile.nationality}</span>
                         </div>
                       )}
                       
                       {profile.spoken_languages && profile.spoken_languages.length > 0 && (
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                          <div className="text-lg font-semibold text-gray-800">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Languages className="w-4 h-4 text-muted-foreground" />
+                          <span className="font-medium text-foreground">
                             {profile.spoken_languages.join(', ')}
-                          </div>
-                          <div className="text-sm text-gray-600">Langues parlées</div>
+                          </span>
                         </div>
                       )}
                     </div>
