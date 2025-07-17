@@ -39,6 +39,7 @@ import NotFound from '@/pages/NotFound';
 import Notifications from '@/pages/Notifications';
 import ProfessionalsList from '@/pages/ProfessionalsList';
 import ProfessionalDetail from '@/pages/ProfessionalDetail';
+import Contact from '@/pages/Contact';
 
 // Import nouvelles pages
 import ProfessionalCastingApplications from '@/pages/ProfessionalCastingApplications';
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/qui-sommes-nous" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="/pricing" element={<Pricing />} />
                 
                 {/* Routes protégées par authentification */}
