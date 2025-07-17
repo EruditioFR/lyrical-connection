@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -50,6 +51,12 @@ export const AppRouter = () => {
       <Route path="/contact" element={<Contact />} />
       <Route path="/pricing" element={<Pricing />} />
       
+      {/* Castings route - accessible publiquement pour afficher la page marketing */}
+      <Route path="/castings" element={<Castings />} />
+      <Route path="/evenements" element={<Events />} />
+      <Route path="/artistes" element={<ArtistsList />} />
+      <Route path="/professionnels" element={<ProfessionalsList />} />
+      
       {/* Protected routes */}
       <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
       <Route path="/profil" element={<AuthGuard><Profile /></AuthGuard>} />
@@ -57,8 +64,7 @@ export const AppRouter = () => {
       <Route path="/artistes/:id" element={<AuthGuard><ArtistProfile /></AuthGuard>} />
       <Route path="/professionnel/:id" element={<AuthGuard><ProfessionalProfile /></AuthGuard>} />
       
-      {/* Casting routes */}
-      <Route path="/castings" element={<AuthGuard><Castings /></AuthGuard>} />
+      {/* Protected casting routes */}
       <Route path="/castings/nouveau" element={<AuthGuard><CreateCasting /></AuthGuard>} />
       <Route path="/castings/:id" element={<AuthGuard><CastingDetail /></AuthGuard>} />
       <Route path="/castings/:id/postuler" element={<AuthGuard><CastingApplication /></AuthGuard>} />
@@ -67,23 +73,20 @@ export const AppRouter = () => {
       <Route path="/professional/castings/:castingId/applications" element={<AuthGuard><ProfessionalApplications /></AuthGuard>} />
       <Route path="/professional/casting-applications" element={<AuthGuard><ProfessionalCastingApplications /></AuthGuard>} />
       
-      {/* Event routes */}
-      <Route path="/evenements" element={<AuthGuard><Events /></AuthGuard>} />
+      {/* Protected event routes */}
       <Route path="/evenements/nouveau" element={<AuthGuard><CreateEvent /></AuthGuard>} />
       <Route path="/evenements/:id" element={<AuthGuard><EventDetail /></AuthGuard>} />
       <Route path="/evenements/:id/modifier" element={<AuthGuard><EditEvent /></AuthGuard>} />
       <Route path="/mes-evenements" element={<AuthGuard><ProfessionalEvents /></AuthGuard>} />
       <Route path="/professional/event-applications" element={<AuthGuard><ProfessionalEventApplications /></AuthGuard>} />
       
-      {/* Artist routes */}
-      <Route path="/artistes" element={<AuthGuard><ArtistsList /></AuthGuard>} />
+      {/* Protected artist routes */}
       <Route path="/recherche-artistes" element={<AuthGuard><ArtistSearch /></AuthGuard>} />
       
-      {/* Professional routes */}
-      <Route path="/professionnels" element={<AuthGuard><ProfessionalsList /></AuthGuard>} />
+      {/* Protected professional routes */}
       <Route path="/professionnels/:id" element={<AuthGuard><ProfessionalDetail /></AuthGuard>} />
       
-      {/* Messaging routes */}
+      {/* Protected messaging routes */}
       <Route path="/messages" element={<AuthGuard><Messages /></AuthGuard>} />
       <Route path="/professional/messages" element={<AuthGuard><ProfessionalMessages /></AuthGuard>} />
       

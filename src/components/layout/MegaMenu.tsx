@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useUserType } from '@/hooks/useUserType';
+import { useAuth } from '@/hooks/useAuth';
 import { 
   Users, 
   Briefcase, 
@@ -41,6 +42,7 @@ interface MegaMenuProps {
 
 export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave }: MegaMenuProps) => {
   const { isProfessional, isArtist } = useUserType();
+  const { user } = useAuth();
 
   // Don't render anything if not open
   if (!isOpen) {
@@ -253,7 +255,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
     }
   ];
 
-  const sections = isProfessional ? professionalSections : isArtist ? artistSections : defaultSections;
+  const sections = user ? (isProfessional ? professionalSections : isArtist ? artistSections : defaultSections) : defaultSections;
 
   return (
     <div 
