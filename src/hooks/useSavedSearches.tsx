@@ -39,16 +39,32 @@ export const useSaveSearch = () => {
 
   return useMutation({
     mutationFn: async (searchData: Omit<SavedSearchInsert, 'professional_profile_id'>) => {
+      console.log('Saving search with data:', searchData);
+      
+      // Récupérer l'utilisateur connecté
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        console.error('User error:', userError);
+        throw new Error('Utilisateur non connecté');
+      }
+
+      console.log('Current user:', user.id);
+
       // Récupérer le profil professionnel de l'utilisateur connecté
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('professional_profiles')
         .select('id')
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .eq('user_id', user.id)
         .single();
 
-      if (!profile) {
-        throw new Error('Profil professionnel requis');
+      if (profileError || !profile) {
+        console.error('Profile error:', profileError);
+        console.error('No professional profile found for user:', user.id);
+        throw new Error('Profil professionnel requis pour sauvegarder une recherche');
       }
+
+      console.log('Professional profile found:', profile.id);
 
       const { data, error } = await supabase
         .from('saved_searches')
@@ -64,6 +80,7 @@ export const useSaveSearch = () => {
         throw error;
       }
 
+      console.log('Search saved successfully:', data);
       return data;
     },
     onSuccess: () => {
@@ -77,7 +94,7 @@ export const useSaveSearch = () => {
       console.error('Save search error:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder la recherche.",
+        description: error.message || "Impossible de sauvegarder la recherche.",
         variant: "destructive",
       });
     },
