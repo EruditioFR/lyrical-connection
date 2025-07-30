@@ -34,6 +34,7 @@ import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
 import LegalNotice from '@/pages/LegalNotice';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
 import Notifications from '@/pages/Notifications';
 import ProfessionalsList from '@/pages/ProfessionalsList';
 import ProfessionalDetail from '@/pages/ProfessionalDetail';
@@ -54,6 +55,7 @@ export const AppRouter = () => {
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/mentions-legales" element={<LegalNotice />} />
       <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
+      <Route path="/cgu" element={<TermsOfService />} />
       
       {/* Castings route - accessible publiquement pour afficher la page marketing */}
       <Route path="/castings" element={<Castings />} />
