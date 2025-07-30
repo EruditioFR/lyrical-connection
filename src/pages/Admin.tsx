@@ -7,8 +7,7 @@ import UpgradeRequestManager from '@/components/admin/UpgradeRequestManager';
 import PaymentManager from '@/components/admin/PaymentManager';
 import NotificationCenter from '@/components/admin/NotificationCenter';
 import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
-import { TranslationManager } from '@/components/admin/TranslationManager';
-import { BlogManager } from '@/components/admin/BlogManager';
+import BlogManagement from '@/components/admin/BlogManagement';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
 import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText } from 'lucide-react';
@@ -35,7 +34,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="artists" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-9">
             <TabsTrigger value="artists" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Artistes
@@ -107,7 +106,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="blog" className="space-y-6">
-            <BlogManager />
+            <BlogManagement />
           </TabsContent>
         </Tabs>
       </div>

@@ -12,7 +12,6 @@ import ArtistProfile from '@/pages/ArtistProfile';
 import ProfessionalProfile from '@/pages/ProfessionalProfile';
 import Castings from '@/pages/Castings';
 import CreateCasting from '@/pages/CreateCasting';
-import CastingDetail from '@/pages/CastingDetail';
 import CastingApplication from '@/pages/CastingApplication';
 import MyApplications from '@/pages/MyApplications';
 import ProfessionalApplications from '@/pages/ProfessionalApplications';
@@ -67,9 +66,9 @@ export const AppRouter = () => {
       <Route path="/castings" element={<Castings />} />
       <Route path="/evenements" element={<Events />} />
       <Route path="/artistes" element={<ArtistsList />} />
-      <Route path="/professionnels" element={<ProfessionalsList />} />
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:slug" element={<BlogPost />} />
+      <Route path="/professionnels" element={<ProfessionalsList />} />
       
       {/* Protected routes */}
       <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
