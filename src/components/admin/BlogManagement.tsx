@@ -53,6 +53,7 @@ import { useBlogPosts, BlogPost } from '@/hooks/useBlogPosts';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { ImageUploadField } from './ImageUploadField';
 
 interface BlogFormData {
   title: string;
@@ -437,15 +438,13 @@ const BlogManagement = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="featured_image">Image à la une</Label>
-                  <Input
-                    id="featured_image"
-                    value={formData.featured_image_url}
-                    onChange={(e) => setFormData(prev => ({ ...prev, featured_image_url: e.target.value }))}
-                    placeholder="URL de l'image"
-                  />
-                </div>
+                <ImageUploadField
+                  label="Image à la une"
+                  value={formData.featured_image_url}
+                  onChange={(url) => setFormData(prev => ({ ...prev, featured_image_url: url }))}
+                  bucket="blog-images"
+                  path="featured"
+                />
               </TabsContent>
 
               <TabsContent value="settings" className="space-y-4">
