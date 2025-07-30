@@ -102,7 +102,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="translations" className="space-y-6">
-            <TranslationManager />
+            <div>Translation Manager - Coming Soon</div>
           </TabsContent>
 
           <TabsContent value="blog" className="space-y-6">

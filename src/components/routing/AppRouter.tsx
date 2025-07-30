@@ -79,7 +79,7 @@ export const AppRouter = () => {
       
       {/* Protected casting routes */}
       <Route path="/castings/nouveau" element={<AuthGuard><CreateCasting /></AuthGuard>} />
-      <Route path="/castings/:id" element={<AuthGuard><CastingDetail /></AuthGuard>} />
+      <Route path="/castings/:id" element={<AuthGuard><div>Casting Detail - Coming Soon</div></AuthGuard>} />
       <Route path="/castings/:id/postuler" element={<AuthGuard><CastingApplication /></AuthGuard>} />
       <Route path="/mes-candidatures" element={<AuthGuard><MyApplications /></AuthGuard>} />
       <Route path="/candidatures-reçues" element={<AuthGuard><ReceivedApplications /></AuthGuard>} />
