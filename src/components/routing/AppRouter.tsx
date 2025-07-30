@@ -32,6 +32,7 @@ import ChangePassword from '@/pages/ChangePassword';
 import About from '@/pages/About';
 import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
+import LegalNotice from '@/pages/LegalNotice';
 import Notifications from '@/pages/Notifications';
 import ProfessionalsList from '@/pages/ProfessionalsList';
 import ProfessionalDetail from '@/pages/ProfessionalDetail';
@@ -50,6 +51,7 @@ export const AppRouter = () => {
       <Route path="/qui-sommes-nous" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/mentions-legales" element={<LegalNotice />} />
       
       {/* Castings route - accessible publiquement pour afficher la page marketing */}
       <Route path="/castings" element={<Castings />} />
