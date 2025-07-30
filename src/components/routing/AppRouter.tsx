@@ -44,6 +44,8 @@ import Contact from '@/pages/Contact';
 import ProfessionalCastingApplications from '@/pages/ProfessionalCastingApplications';
 import ProfessionalEventApplications from '@/pages/ProfessionalEventApplications';
 import ReceivedApplications from '@/pages/ReceivedApplications';
+import Blog from '@/pages/Blog';
+import BlogPost from '@/pages/BlogPost';
 
 export const AppRouter = () => {
   return (
@@ -66,6 +68,8 @@ export const AppRouter = () => {
       <Route path="/evenements" element={<Events />} />
       <Route path="/artistes" element={<ArtistsList />} />
       <Route path="/professionnels" element={<ProfessionalsList />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:slug" element={<BlogPost />} />
       
       {/* Protected routes */}
       <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
