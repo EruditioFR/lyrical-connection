@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { X, Plus, Save, FileText } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageUploadField } from './ImageUploadField';
 
 interface BlogPostDialogProps {
   post?: BlogPost | null;
@@ -163,16 +164,13 @@ export const BlogPostDialog = ({ post, open, onClose }: BlogPostDialogProps) => 
             </TabsContent>
 
             <TabsContent value="metadata" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="featured_image_url">URL de l'image à la une</Label>
-                <Input
-                  id="featured_image_url"
-                  value={formData.featured_image_url}
-                  onChange={(e) => handleInputChange('featured_image_url', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  type="url"
-                />
-              </div>
+              <ImageUploadField
+                label="Image à la une"
+                value={formData.featured_image_url}
+                onChange={(url) => handleInputChange('featured_image_url', url)}
+                bucket="blog-images"
+                path="featured"
+              />
 
               <div className="space-y-2">
                 <Label>Tags</Label>
