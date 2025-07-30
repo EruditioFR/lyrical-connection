@@ -81,7 +81,8 @@ const Blog = () => {
                             <img
                               src={post.featured_image_url}
                               alt={post.title}
-                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                              style={{ objectPosition: 'center top' }}
                             />
                           </div>
                         )}
@@ -147,7 +148,8 @@ const Blog = () => {
                             <img
                               src={post.featured_image_url}
                               alt={post.title}
-                              className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                              style={{ objectPosition: 'center top' }}
                             />
                           </div>
                         )}

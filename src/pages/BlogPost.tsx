@@ -183,7 +183,8 @@ const BlogPostComponent = () => {
               <img
                 src={post.featured_image_url}
                 alt={post.title}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'center top' }}
               />
             </div>
           )}
