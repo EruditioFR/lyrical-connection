@@ -179,11 +179,11 @@ const BlogPostComponent = () => {
 
           {/* Featured Image */}
           {post.featured_image_url && (
-            <div className="mb-8 rounded-lg overflow-hidden">
+            <div className="mb-8 rounded-lg overflow-hidden aspect-[16/9] max-h-[500px]">
               <img
                 src={post.featured_image_url}
                 alt={post.title}
-                className="w-full h-auto max-h-96 object-cover"
+                className="w-full h-full object-cover"
               />
             </div>
           )}

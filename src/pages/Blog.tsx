@@ -77,7 +77,7 @@ const Blog = () => {
                     {featuredPosts.map((post) => (
                       <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                         {post.featured_image_url && (
-                          <div className="aspect-video overflow-hidden">
+                          <div className="aspect-[4/3] overflow-hidden">
                             <img
                               src={post.featured_image_url}
                               alt={post.title}
@@ -143,7 +143,7 @@ const Blog = () => {
                     {regularPosts.map((post) => (
                       <Card key={post.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                         {post.featured_image_url && (
-                          <div className="aspect-video overflow-hidden">
+                          <div className="aspect-[4/3] overflow-hidden">
                             <img
                               src={post.featured_image_url}
                               alt={post.title}
