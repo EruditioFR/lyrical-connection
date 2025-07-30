@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
@@ -318,6 +318,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      blog_posts: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          excerpt: string | null
+          featured_image_url: string | null
+          id: string
+          is_featured: boolean | null
+          meta_description: string | null
+          meta_title: string | null
+          published_at: string | null
+          reading_time: number | null
+          slug: string
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          view_count: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          is_featured?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug: string
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          view_count?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          is_featured?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          reading_time?: number | null
+          slug?: string
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          view_count?: number | null
+        }
+        Relationships: []
       }
       casting_favorites: {
         Row: {
