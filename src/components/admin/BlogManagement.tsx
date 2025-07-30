@@ -143,7 +143,10 @@ const BlogManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleSubmit démarré', { formData });
+    
     if (!formData.title.trim() || !formData.content.trim()) {
+      console.log('Validation échouée - titre ou contenu manquant');
       toast({
         title: "Erreur",
         description: "Le titre et le contenu sont obligatoires",
@@ -154,13 +157,17 @@ const BlogManagement = () => {
 
     setSubmitting(true);
     try {
+      console.log('Tentative de sauvegarde...', { editingPost: !!editingPost });
+      
       if (editingPost) {
+        console.log('Mise à jour du post...', editingPost.id);
         await updatePost(editingPost.id, formData);
         toast({
           title: "Article mis à jour",
           description: "L'article a été mis à jour avec succès",
         });
       } else {
+        console.log('Création du post...');
         await createPost(formData);
         toast({
           title: "Article créé",
@@ -170,6 +177,7 @@ const BlogManagement = () => {
       setIsDialogOpen(false);
       fetchAllPosts();
     } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
       toast({
         title: "Erreur",
         description: error instanceof Error ? error.message : "Une erreur est survenue",
