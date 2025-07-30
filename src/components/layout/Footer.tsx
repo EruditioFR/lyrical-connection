@@ -81,11 +81,6 @@ const Footer = () => {
                   Événements
                 </Link>
               </li>
-              <li>
-                <Link to="/articles" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Articles
-                </Link>
-              </li>
             </ul>
           </div>
 
