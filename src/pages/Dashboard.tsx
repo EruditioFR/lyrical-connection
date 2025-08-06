@@ -1,3 +1,4 @@
+
 import Layout from '@/components/layout/Layout';
 import ProfessionalDashboard from '@/components/dashboard/ProfessionalDashboard';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
@@ -15,6 +16,15 @@ const Dashboard = () => {
     artistProfile, 
     professionalProfile 
   } = useUserType();
+
+  console.log('Dashboard - User state:', { 
+    user: user?.email, 
+    loading, 
+    userType, 
+    isProfessional, 
+    isArtist, 
+    userTypeLoading 
+  });
 
   if (loading || userTypeLoading) {
     return (
@@ -57,7 +67,7 @@ const Dashboard = () => {
             <div>
               <h1 className="text-2xl font-bold">Tableau de bord artiste</h1>
               <p className="text-muted-foreground">
-                Bienvenue, {artistProfile.stage_name}
+                Bienvenue, {artistProfile?.stage_name || 'Artiste'}
               </p>
             </div>
             <AnalyticsDashboard profileType="artist" />
