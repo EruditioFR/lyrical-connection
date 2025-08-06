@@ -4,56 +4,67 @@ import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { useAuth } from '@/hooks/useAuth';
 
 export const useUserType = () => {
+  // All hooks must be called unconditionally at the top
   const { user } = useAuth();
   const { profile: artistProfile, isLoading: artistLoading } = useArtistProfile();
   const { profile: professionalProfile, isLoading: professionalLoading } = useProfessionalProfile();
 
+  // Calculate loading state
   const isLoading = artistLoading || professionalLoading;
   
-  // Variables pour les conditions de test, calculées une seule fois
+  // Early return for loading state - but only after all hooks are called
+  if (isLoading) {
+    return {
+      userType: null,
+      isProfessional: false,
+      isArtist: false,
+      isLoading: true,
+      artistProfile: null,
+      professionalProfile: null,
+    };
+  }
+
+  // Calculate test user conditions
   const isTestUser = user?.email?.startsWith('jbbejot') || false;
   const isMainTestUser = user?.email === 'jbbejot@gmail.com';
   const isBaldoUser = user?.email === 'jbbejot+abaldo@gmail.com';
   const isMlombardUser = user?.email === 'jbbejot+mlombard@gmail.com';
   const isFvalentinUser = user?.email === 'jbbejot+fvalentin@gmail.com';
   
-  // Logique de détermination du type d'utilisateur - pas de retour prématuré
+  // Determine user type
   let userType = null;
   let isProfessional = false;
   let isArtist = false;
   let finalArtistProfile = null;
   let finalProfessionalProfile = null;
 
-  // Forcer le statut professionnel pour les utilisateurs jbbejot (utilisateurs de test)
-  // Sauf pour jbbejot@gmail.com, jbbejot+abaldo@gmail.com, jbbejot+mlombard@gmail.com et jbbejot+fvalentin@gmail.com qui doivent avoir un profil artiste
+  // Special logic for test users
   if (isTestUser && !isMainTestUser && !isBaldoUser && !isMlombardUser && !isFvalentinUser) {
-    // Pour les utilisateurs de test jbbejot* (sauf les exceptions), toujours considérer comme professionnel
+    // For test users jbbejot* (except exceptions), always consider as professional
     userType = 'professional' as const;
     isProfessional = true;
     isArtist = false;
     finalArtistProfile = null;
     finalProfessionalProfile = professionalProfile;
   } else {
-    // Logique normale : un utilisateur ne peut être que l'un ou l'autre, jamais les deux
+    // Normal logic: user can only be one type
     const hasProfessionalProfile = !!professionalProfile;
     const hasArtistProfile = !!artistProfile;
     
-    // Si l'utilisateur a un profil professionnel, il est professionnel (priorité)
     if (hasProfessionalProfile) {
       userType = 'professional' as const;
       isProfessional = true;
       isArtist = false;
-      finalArtistProfile = null; // Ne pas retourner le profil artiste s'il y en a un
+      finalArtistProfile = null;
       finalProfessionalProfile = professionalProfile;
     } else if (hasArtistProfile) {
-      // Si l'utilisateur a seulement un profil artiste, il est artiste
       userType = 'artist' as const;
       isProfessional = false;
       isArtist = true;
       finalArtistProfile = artistProfile;
-      finalProfessionalProfile = null; // Ne pas retourner le profil professionnel s'il y en a un
+      finalProfessionalProfile = null;
     } else {
-      // Aucun profil trouvé
+      // No profile found
       userType = null;
       isProfessional = false;
       isArtist = false;
@@ -62,12 +73,12 @@ export const useUserType = () => {
     }
   }
 
-  // Retour unique à la fin pour respecter les règles des hooks
+  // Single return statement at the end
   return {
     userType,
     isProfessional,
     isArtist,
-    isLoading,
+    isLoading: false,
     artistProfile: finalArtistProfile,
     professionalProfile: finalProfessionalProfile,
   };

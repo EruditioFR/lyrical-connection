@@ -7,6 +7,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { Card, CardContent } from '@/components/ui/card';
 
 const Dashboard = () => {
+  // All hooks called unconditionally at the top
   const { user, loading } = useAuth();
   const { 
     userType, 
@@ -23,9 +24,12 @@ const Dashboard = () => {
     userType, 
     isProfessional, 
     isArtist, 
-    userTypeLoading 
+    userTypeLoading,
+    hasArtistProfile: !!artistProfile,
+    hasProfessionalProfile: !!professionalProfile
   });
 
+  // Handle loading state
   if (loading || userTypeLoading) {
     return (
       <Layout>
@@ -38,6 +42,7 @@ const Dashboard = () => {
     );
   }
 
+  // Handle unauthenticated user
   if (!user) {
     return (
       <Layout>
@@ -57,6 +62,7 @@ const Dashboard = () => {
     );
   }
 
+  // Handle authenticated user with profile
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
