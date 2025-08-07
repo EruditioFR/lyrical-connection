@@ -57,7 +57,7 @@ const OperaDatabaseManager = () => {
     isDeleting,
   } = useOperaDatabase({
     searchTerm: searchTerm.length > 1 ? searchTerm : undefined,
-    difficulty: difficultyFilter ? Number(difficultyFilter) : undefined,
+    difficulty: difficultyFilter && difficultyFilter !== 'all' ? Number(difficultyFilter) : undefined,
   });
 
   // Statistics calculations
@@ -80,7 +80,7 @@ const OperaDatabaseManager = () => {
   // Filtered arias
   const filteredArias = useMemo(() => {
     return arias.filter(aria => {
-      const matchesCategory = !categoryFilter || aria.lyrical_works?.category === categoryFilter;
+      const matchesCategory = !categoryFilter || categoryFilter === 'all' || aria.lyrical_works?.category === categoryFilter;
       return matchesCategory;
     });
   }, [arias, categoryFilter]);
@@ -228,7 +228,7 @@ const OperaDatabaseManager = () => {
                 <SelectValue placeholder="Difficulté" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toutes difficultés</SelectItem>
+                <SelectItem value="all">Toutes difficultés</SelectItem>
                 <SelectItem value="1">Très facile</SelectItem>
                 <SelectItem value="2">Facile</SelectItem>
                 <SelectItem value="3">Intermédiaire</SelectItem>
@@ -242,7 +242,7 @@ const OperaDatabaseManager = () => {
                 <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toutes catégories</SelectItem>
+                <SelectItem value="all">Toutes catégories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
