@@ -19,15 +19,26 @@ export const useOpenOpusImport = () => {
 
   const importMutation = useMutation({
     mutationFn: async (options: ImportOptions): Promise<ImportResult> => {
-      const { data, error } = await supabase.functions.invoke('import-openopus-data', {
-        body: options,
-      });
+      console.log('Starting OpenOpus import with options:', options);
+      
+      try {
+        const { data, error } = await supabase.functions.invoke('import-openopus-data', {
+          body: options,
+        });
 
-      if (error) {
-        throw new Error(error.message);
+        console.log('Supabase function response:', { data, error });
+
+        if (error) {
+          console.error('Supabase function error:', error);
+          throw new Error(error.message);
+        }
+
+        console.log('Import successful, result:', data);
+        return data;
+      } catch (err) {
+        console.error('Import mutation error:', err);
+        throw err;
       }
-
-      return data;
     },
     onSuccess: (result) => {
       toast({
