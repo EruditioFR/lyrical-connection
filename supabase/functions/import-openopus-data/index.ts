@@ -106,16 +106,34 @@ serve(async (req) => {
       if (composers) {
         for (const composer of composers) {
           try {
-            // Fetch works for this composer
+            // Fetch ALL works for this composer, not just operas
             const worksResponse = await fetch(
-              `https://api.openopus.org/work/list/composer/${composer.openopus_id}/genre/Opera.json`
+              `https://api.openopus.org/work/list/composer/${composer.openopus_id}.json`
             );
 
             if (worksResponse.ok) {
               const worksData = await worksResponse.json();
               
               if (worksData.works) {
-                for (const work of worksData.works) {
+                // Filter for vocal/lyrical works
+                const vocalWorks = worksData.works.filter(work => 
+                  work.genre && (
+                    work.genre.toLowerCase().includes('opera') ||
+                    work.genre.toLowerCase().includes('vocal') ||
+                    work.genre.toLowerCase().includes('song') ||
+                    work.genre.toLowerCase().includes('lied') ||
+                    work.genre.toLowerCase().includes('aria') ||
+                    work.genre.toLowerCase().includes('cantata') ||
+                    work.genre.toLowerCase().includes('oratorio') ||
+                    work.genre.toLowerCase().includes('mass') ||
+                    work.genre.toLowerCase().includes('requiem') ||
+                    work.searchterms?.toLowerCase().includes('voice') ||
+                    work.title.toLowerCase().includes('aria') ||
+                    work.title.toLowerCase().includes('song')
+                  )
+                );
+                
+                for (const work of vocalWorks) {
                   try {
                     // Check if work already exists
                     const { data: existingWork } = await supabase
@@ -133,7 +151,7 @@ serve(async (req) => {
                           composer_id: composer.id,
                           openopus_id: composer.openopus_id,
                           openopus_work_id: work.id,
-                          category: 'Opera',
+                          category: work.genre || 'Vocal',
                           genre: work.genre,
                           description: work.subtitle,
                           recommended_recording: work.recommended,
