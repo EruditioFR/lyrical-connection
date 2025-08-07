@@ -136,13 +136,13 @@ export const LyricalWorksManager = () => {
   };
 
   const getDifficultyBadge = (level: number) => {
-    const colors = {
-      1: 'bg-green-100 text-green-800',
-      2: 'bg-blue-100 text-blue-800', 
-      3: 'bg-yellow-100 text-yellow-800',
-      4: 'bg-orange-100 text-orange-800',
-      5: 'bg-red-100 text-red-800',
-    };
+    const variants = {
+      1: 'secondary',
+      2: 'outline',
+      3: 'default', 
+      4: 'destructive',
+      5: 'destructive',
+    } as const;
     
     const labels = {
       1: 'Très facile',
@@ -153,7 +153,7 @@ export const LyricalWorksManager = () => {
     };
 
     return (
-      <Badge className={colors[level as keyof typeof colors] || colors[3]}>
+      <Badge variant={variants[level as keyof typeof variants] || 'default'}>
         {labels[level as keyof typeof labels] || 'Moyen'}
       </Badge>
     );
@@ -214,7 +214,7 @@ export const LyricalWorksManager = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border rounded-md"
+                className="px-3 py-2 border border-input rounded-md bg-background text-foreground"
               >
                 <option value="all">Toutes les catégories</option>
                 {categories.map(category => (
