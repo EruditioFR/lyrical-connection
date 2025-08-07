@@ -108,9 +108,10 @@ serve(async (req) => {
           try {
             console.log(`Processing composer: ${composer.name} (OpenOpus ID: ${composer.openopus_id})`);
             
-            // Fetch ALL works for this composer, not just operas
+            // WORKAROUND: Since work/list/composer endpoint is broken,
+            // search for works by composer name using search endpoint
             const worksResponse = await fetch(
-              `https://api.openopus.org/work/list/composer/${composer.openopus_id}.json`
+              `https://api.openopus.org/work/list/search/${encodeURIComponent(composer.name)}.json`
             );
 
             console.log(`API Response status for ${composer.name}: ${worksResponse.status}`);
@@ -122,7 +123,7 @@ serve(async (req) => {
               if (worksData.works && Array.isArray(worksData.works)) {
                 console.log(`Found ${worksData.works.length} total works for ${composer.name}`);
                 
-                // Filter for vocal/lyrical works
+                // Filter for vocal/lyrical works  
                 const vocalWorks = worksData.works.filter(work => {
                   const hasVocalGenre = work.genre && (
                     work.genre.toLowerCase().includes('opera') ||
@@ -137,8 +138,12 @@ serve(async (req) => {
                   );
                   
                   const hasVocalTerms = work.searchterms?.toLowerCase().includes('voice') ||
+                    work.searchterms?.toLowerCase().includes('opera') ||
+                    work.searchterms?.toLowerCase().includes('vocal') ||
                     work.title.toLowerCase().includes('aria') ||
-                    work.title.toLowerCase().includes('song');
+                    work.title.toLowerCase().includes('song') ||
+                    work.title.toLowerCase().includes('mass') ||
+                    work.title.toLowerCase().includes('requiem');
                     
                   return hasVocalGenre || hasVocalTerms;
                 });

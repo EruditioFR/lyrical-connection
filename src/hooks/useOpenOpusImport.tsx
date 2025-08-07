@@ -41,9 +41,10 @@ export const useOpenOpusImport = () => {
       }
     },
     onSuccess: (result) => {
+      console.log('Import result details:', result);
       toast({
         title: "Import OpenOpus terminé",
-        description: result.message,
+        description: `${result.message} - ${result.imported} éléments importés`,
       });
     },
     onError: (error) => {
