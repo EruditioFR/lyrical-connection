@@ -9,9 +9,10 @@ import NotificationCenter from '@/components/admin/NotificationCenter';
 import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
 import BlogManagement from '@/components/admin/BlogManagement';
 import { LyricalWorksManager } from '@/components/admin/LyricalWorksManager';
+import OperaDatabaseManager from '@/components/admin/OperaDatabaseManager';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
-import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music } from 'lucide-react';
+import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music, Database } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
@@ -35,7 +36,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="artists" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-10">
+          <TabsList className="grid w-full grid-cols-11">
             <TabsTrigger value="artists" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Artistes
@@ -75,6 +76,10 @@ const Admin = () => {
             <TabsTrigger value="blog" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Blog
+            </TabsTrigger>
+            <TabsTrigger value="opera-database" className="flex items-center gap-2">
+              <Database className="h-4 w-4" />
+              Base Opéra
             </TabsTrigger>
           </TabsList>
 
@@ -116,6 +121,10 @@ const Admin = () => {
 
           <TabsContent value="blog" className="space-y-6">
             <BlogManagement />
+          </TabsContent>
+
+          <TabsContent value="opera-database" className="space-y-6">
+            <OperaDatabaseManager />
           </TabsContent>
         </Tabs>
       </div>
