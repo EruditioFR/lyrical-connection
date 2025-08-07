@@ -106,18 +106,25 @@ serve(async (req) => {
       if (composers) {
         for (const composer of composers) {
           try {
+            console.log(`Processing composer: ${composer.name} (OpenOpus ID: ${composer.openopus_id})`);
+            
             // Fetch ALL works for this composer, not just operas
             const worksResponse = await fetch(
               `https://api.openopus.org/work/list/composer/${composer.openopus_id}.json`
             );
 
+            console.log(`API Response status for ${composer.name}: ${worksResponse.status}`);
+
             if (worksResponse.ok) {
               const worksData = await worksResponse.json();
+              console.log(`Raw works data for ${composer.name}:`, JSON.stringify(worksData, null, 2));
               
-              if (worksData.works) {
+              if (worksData.works && Array.isArray(worksData.works)) {
+                console.log(`Found ${worksData.works.length} total works for ${composer.name}`);
+                
                 // Filter for vocal/lyrical works
-                const vocalWorks = worksData.works.filter(work => 
-                  work.genre && (
+                const vocalWorks = worksData.works.filter(work => {
+                  const hasVocalGenre = work.genre && (
                     work.genre.toLowerCase().includes('opera') ||
                     work.genre.toLowerCase().includes('vocal') ||
                     work.genre.toLowerCase().includes('song') ||
@@ -126,23 +133,31 @@ serve(async (req) => {
                     work.genre.toLowerCase().includes('cantata') ||
                     work.genre.toLowerCase().includes('oratorio') ||
                     work.genre.toLowerCase().includes('mass') ||
-                    work.genre.toLowerCase().includes('requiem') ||
-                    work.searchterms?.toLowerCase().includes('voice') ||
+                    work.genre.toLowerCase().includes('requiem')
+                  );
+                  
+                  const hasVocalTerms = work.searchterms?.toLowerCase().includes('voice') ||
                     work.title.toLowerCase().includes('aria') ||
-                    work.title.toLowerCase().includes('song')
-                  )
-                );
+                    work.title.toLowerCase().includes('song');
+                    
+                  return hasVocalGenre || hasVocalTerms;
+                });
+                
+                console.log(`Filtered to ${vocalWorks.length} vocal works for ${composer.name}`);
                 
                 for (const work of vocalWorks) {
                   try {
+                    console.log(`Processing work: ${work.title} (Genre: ${work.genre})`);
+                    
                     // Check if work already exists
                     const { data: existingWork } = await supabase
                       .from('lyrical_works')
                       .select('id')
                       .eq('openopus_work_id', work.id)
-                      .single();
+                      .maybeSingle();
 
                     if (!existingWork) {
+                      console.log(`Inserting new work: ${work.title}`);
                       const { error: workError } = await supabase
                         .from('lyrical_works')
                         .insert({
@@ -161,19 +176,28 @@ serve(async (req) => {
                         });
 
                       if (workError) {
+                        console.error(`Error inserting work ${work.title}:`, workError);
                         errors.push(`Work ${work.title}: ${workError.message}`);
                       } else {
                         totalImported++;
-                        console.log(`Imported work: ${work.title} by ${composer.name}`);
+                        console.log(`Successfully imported work: ${work.title} by ${composer.name}`);
                       }
+                    } else {
+                      console.log(`Work already exists: ${work.title}`);
                     }
                   } catch (error) {
+                    console.error(`Error processing work ${work.title}:`, error);
                     errors.push(`Work ${work.title}: ${error.message}`);
                   }
                 }
+              } else {
+                console.log(`No works found in API response for ${composer.name}`);
               }
+            } else {
+              console.error(`API request failed for ${composer.name}: ${worksResponse.status} ${worksResponse.statusText}`);
             }
           } catch (error) {
+            console.error(`Error processing composer ${composer.name}:`, error);
             errors.push(`Works for ${composer.name}: ${error.message}`);
           }
 
