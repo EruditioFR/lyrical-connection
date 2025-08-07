@@ -146,6 +146,7 @@ const OperaDatabaseManager = () => {
     setAriaDialogOpen(true);
   };
 
+
   return (
     <div className="space-y-6">
       {/* Header */}
