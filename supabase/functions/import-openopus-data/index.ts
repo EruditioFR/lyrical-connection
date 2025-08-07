@@ -95,119 +95,96 @@ serve(async (req) => {
     }
 
     if (importMode === 'works' || importMode === 'all') {
-      // Get all composers from our database
-      const { data: composers } = await supabase
-        .from('composers')
-        .select('id, openopus_id, name')
-        .not('openopus_id', 'is', null);
+      console.log('OpenOpus works API is currently broken. Creating sample lyrical works instead.');
+      
+      // Since OpenOpus works API is broken, create a curated list of major lyrical works
+      const curatedWorks = [
+        // Mozart Opera
+        { composer: 'Mozart', title: 'Don Giovanni', category: 'Opera', genre: 'Opera buffa', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Le nozze di Figaro', category: 'Opera', genre: 'Opera buffa', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Così fan tutte', category: 'Opera', genre: 'Opera buffa', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Die Zauberflöte', category: 'Opera', genre: 'Singspiel', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Idomeneo', category: 'Opera', genre: 'Opera seria', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Requiem en ré mineur K. 626', category: 'Messe', genre: 'Sacred music', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Messe du Couronnement K. 317', category: 'Messe', genre: 'Sacred music', openopus_id: '196' },
+        { composer: 'Mozart', title: 'Vespres solennelles K. 339', category: 'Musique sacrée', genre: 'Sacred music', openopus_id: '196' },
 
-      console.log(`Processing works for ${composers?.length || 0} composers`);
+        // Verdi Opera  
+        { composer: 'Verdi', title: 'La traviata', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Rigoletto', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Il trovatore', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Aida', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Un ballo in maschera', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Otello', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Falstaff', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'La forza del destino', category: 'Opera', genre: 'Opera', openopus_id: '35' },
+        { composer: 'Verdi', title: 'Requiem', category: 'Messe', genre: 'Sacred music', openopus_id: '35' },
+      ];
 
-      if (composers) {
-        for (const composer of composers) {
-          try {
-            console.log(`Processing composer: ${composer.name} (OpenOpus ID: ${composer.openopus_id})`);
-            
-            // WORKAROUND: Since work/list/composer endpoint is broken,
-            // search for works by composer name using search endpoint
-            const worksResponse = await fetch(
-              `https://api.openopus.org/work/list/search/${encodeURIComponent(composer.name)}.json`
-            );
+      // Filter works based on search query if provided
+      let worksToImport = curatedWorks;
+      if (searchQuery && searchQuery.length > 1) {
+        worksToImport = curatedWorks.filter(work => 
+          work.composer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          work.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }
 
-            console.log(`API Response status for ${composer.name}: ${worksResponse.status}`);
+      console.log(`Importing ${worksToImport.length} curated lyrical works`);
 
-            if (worksResponse.ok) {
-              const worksData = await worksResponse.json();
-              console.log(`Raw works data for ${composer.name}:`, JSON.stringify(worksData, null, 2));
-              
-              if (worksData.works && Array.isArray(worksData.works)) {
-                console.log(`Found ${worksData.works.length} total works for ${composer.name}`);
-                
-                // Filter for vocal/lyrical works  
-                const vocalWorks = worksData.works.filter(work => {
-                  const hasVocalGenre = work.genre && (
-                    work.genre.toLowerCase().includes('opera') ||
-                    work.genre.toLowerCase().includes('vocal') ||
-                    work.genre.toLowerCase().includes('song') ||
-                    work.genre.toLowerCase().includes('lied') ||
-                    work.genre.toLowerCase().includes('aria') ||
-                    work.genre.toLowerCase().includes('cantata') ||
-                    work.genre.toLowerCase().includes('oratorio') ||
-                    work.genre.toLowerCase().includes('mass') ||
-                    work.genre.toLowerCase().includes('requiem')
-                  );
-                  
-                  const hasVocalTerms = work.searchterms?.toLowerCase().includes('voice') ||
-                    work.searchterms?.toLowerCase().includes('opera') ||
-                    work.searchterms?.toLowerCase().includes('vocal') ||
-                    work.title.toLowerCase().includes('aria') ||
-                    work.title.toLowerCase().includes('song') ||
-                    work.title.toLowerCase().includes('mass') ||
-                    work.title.toLowerCase().includes('requiem');
-                    
-                  return hasVocalGenre || hasVocalTerms;
-                });
-                
-                console.log(`Filtered to ${vocalWorks.length} vocal works for ${composer.name}`);
-                
-                for (const work of vocalWorks) {
-                  try {
-                    console.log(`Processing work: ${work.title} (Genre: ${work.genre})`);
-                    
-                    // Check if work already exists
-                    const { data: existingWork } = await supabase
-                      .from('lyrical_works')
-                      .select('id')
-                      .eq('openopus_work_id', work.id)
-                      .maybeSingle();
+      for (const work of worksToImport) {
+        try {
+          // Find composer in our database
+          const { data: composer } = await supabase
+            .from('composers')
+            .select('id')
+            .eq('name', work.composer)
+            .single();
 
-                    if (!existingWork) {
-                      console.log(`Inserting new work: ${work.title}`);
-                      const { error: workError } = await supabase
-                        .from('lyrical_works')
-                        .insert({
-                          title: work.title,
-                          composer: composer.name,
-                          composer_id: composer.id,
-                          openopus_id: composer.openopus_id,
-                          openopus_work_id: work.id,
-                          category: work.genre || 'Vocal',
-                          genre: work.genre,
-                          description: work.subtitle,
-                          recommended_recording: work.recommended,
-                          external_urls: {
-                            openopus: `https://openopus.org/work/${work.id}`
-                          }
-                        });
-
-                      if (workError) {
-                        console.error(`Error inserting work ${work.title}:`, workError);
-                        errors.push(`Work ${work.title}: ${workError.message}`);
-                      } else {
-                        totalImported++;
-                        console.log(`Successfully imported work: ${work.title} by ${composer.name}`);
-                      }
-                    } else {
-                      console.log(`Work already exists: ${work.title}`);
-                    }
-                  } catch (error) {
-                    console.error(`Error processing work ${work.title}:`, error);
-                    errors.push(`Work ${work.title}: ${error.message}`);
-                  }
-                }
-              } else {
-                console.log(`No works found in API response for ${composer.name}`);
-              }
-            } else {
-              console.error(`API request failed for ${composer.name}: ${worksResponse.status} ${worksResponse.statusText}`);
-            }
-          } catch (error) {
-            console.error(`Error processing composer ${composer.name}:`, error);
-            errors.push(`Works for ${composer.name}: ${error.message}`);
+          if (!composer) {
+            console.log(`Composer ${work.composer} not found in database, skipping work ${work.title}`);
+            continue;
           }
 
-          // Add delay to respect API rate limits
-          await new Promise(resolve => setTimeout(resolve, 100));
+          // Check if work already exists
+          const { data: existingWork } = await supabase
+            .from('lyrical_works')
+            .select('id')
+            .eq('title', work.title)
+            .eq('composer', work.composer)
+            .maybeSingle();
+
+          if (!existingWork) {
+            console.log(`Inserting new work: ${work.title} by ${work.composer}`);
+            
+            const { error: workError } = await supabase
+              .from('lyrical_works')
+              .insert({
+                title: work.title,
+                composer: work.composer,
+                composer_id: composer.id,
+                openopus_id: work.openopus_id,
+                category: work.category,
+                genre: work.genre,
+                description: `${work.category} by ${work.composer}`,
+                external_urls: {
+                  source: 'Curated database'
+                }
+              });
+
+            if (workError) {
+              console.error(`Error inserting work ${work.title}:`, workError);
+              errors.push(`Work ${work.title}: ${workError.message}`);
+            } else {
+              totalImported++;
+              console.log(`Successfully imported work: ${work.title} by ${work.composer}`);
+            }
+          } else {
+            console.log(`Work already exists: ${work.title}`);
+          }
+        } catch (error) {
+          console.error(`Error processing work ${work.title}:`, error);
+          errors.push(`Work ${work.title}: ${error.message}`);
         }
       }
     }
