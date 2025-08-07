@@ -77,6 +77,128 @@ export type Database = {
           },
         ]
       }
+      aria_texts: {
+        Row: {
+          aria_id: string
+          created_at: string | null
+          full_text: string
+          id: string
+          language: string
+          phonetic_transcription: string | null
+          translation: string | null
+          verse_structure: Json | null
+        }
+        Insert: {
+          aria_id: string
+          created_at?: string | null
+          full_text: string
+          id?: string
+          language: string
+          phonetic_transcription?: string | null
+          translation?: string | null
+          verse_structure?: Json | null
+        }
+        Update: {
+          aria_id?: string
+          created_at?: string | null
+          full_text?: string
+          id?: string
+          language?: string
+          phonetic_transcription?: string | null
+          translation?: string | null
+          verse_structure?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aria_texts_aria_id_fkey"
+            columns: ["aria_id"]
+            isOneToOne: false
+            referencedRelation: "arias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      arias: {
+        Row: {
+          act_number: number | null
+          aria_type: string | null
+          created_at: string | null
+          difficulty_level: number | null
+          dramatic_context: string | null
+          duration_minutes: number | null
+          first_line: string | null
+          id: string
+          key_signature: string | null
+          role_id: string | null
+          scene_number: number | null
+          style_period: string | null
+          tempo_marking: string | null
+          tessitura_max: string | null
+          tessitura_min: string | null
+          title: string
+          updated_at: string | null
+          vocal_technique_notes: string | null
+          work_id: string
+        }
+        Insert: {
+          act_number?: number | null
+          aria_type?: string | null
+          created_at?: string | null
+          difficulty_level?: number | null
+          dramatic_context?: string | null
+          duration_minutes?: number | null
+          first_line?: string | null
+          id?: string
+          key_signature?: string | null
+          role_id?: string | null
+          scene_number?: number | null
+          style_period?: string | null
+          tempo_marking?: string | null
+          tessitura_max?: string | null
+          tessitura_min?: string | null
+          title: string
+          updated_at?: string | null
+          vocal_technique_notes?: string | null
+          work_id: string
+        }
+        Update: {
+          act_number?: number | null
+          aria_type?: string | null
+          created_at?: string | null
+          difficulty_level?: number | null
+          dramatic_context?: string | null
+          duration_minutes?: number | null
+          first_line?: string | null
+          id?: string
+          key_signature?: string | null
+          role_id?: string | null
+          scene_number?: number | null
+          style_period?: string | null
+          tempo_marking?: string | null
+          tessitura_max?: string | null
+          tessitura_min?: string | null
+          title?: string
+          updated_at?: string | null
+          vocal_technique_notes?: string | null
+          work_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "arias_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "work_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "arias_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "lyrical_works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artist_airs: {
         Row: {
           artist_profile_id: string
@@ -686,39 +808,63 @@ export type Database = {
       }
       lyrical_works: {
         Row: {
+          acts_count: number | null
           category: string
           composer: string
           created_at: string
           description: string | null
           difficulty_level: number | null
+          historical_context: string | null
           id: string
           language: string | null
+          librettist: string | null
+          performance_notes: string | null
           period: string | null
+          premiere_date: string | null
+          premiere_venue: string | null
+          synopsis: string | null
           title: string
+          total_duration_minutes: number | null
           updated_at: string
         }
         Insert: {
+          acts_count?: number | null
           category: string
           composer: string
           created_at?: string
           description?: string | null
           difficulty_level?: number | null
+          historical_context?: string | null
           id?: string
           language?: string | null
+          librettist?: string | null
+          performance_notes?: string | null
           period?: string | null
+          premiere_date?: string | null
+          premiere_venue?: string | null
+          synopsis?: string | null
           title: string
+          total_duration_minutes?: number | null
           updated_at?: string
         }
         Update: {
+          acts_count?: number | null
           category?: string
           composer?: string
           created_at?: string
           description?: string | null
           difficulty_level?: number | null
+          historical_context?: string | null
           id?: string
           language?: string | null
+          librettist?: string | null
+          performance_notes?: string | null
           period?: string | null
+          premiere_date?: string | null
+          premiere_venue?: string | null
+          synopsis?: string | null
           title?: string
+          total_duration_minutes?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -901,6 +1047,188 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      opera_analytics: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      opera_productions: {
+        Row: {
+          cast_info: Json | null
+          city: string | null
+          conductor: string | null
+          costume_designer: string | null
+          country: string | null
+          created_at: string | null
+          director: string | null
+          id: string
+          images: Json | null
+          is_notable: boolean | null
+          production_date: string | null
+          production_notes: string | null
+          reviews_summary: string | null
+          stage_designer: string | null
+          title: string
+          venue: string | null
+          work_id: string
+        }
+        Insert: {
+          cast_info?: Json | null
+          city?: string | null
+          conductor?: string | null
+          costume_designer?: string | null
+          country?: string | null
+          created_at?: string | null
+          director?: string | null
+          id?: string
+          images?: Json | null
+          is_notable?: boolean | null
+          production_date?: string | null
+          production_notes?: string | null
+          reviews_summary?: string | null
+          stage_designer?: string | null
+          title: string
+          venue?: string | null
+          work_id: string
+        }
+        Update: {
+          cast_info?: Json | null
+          city?: string | null
+          conductor?: string | null
+          costume_designer?: string | null
+          country?: string | null
+          created_at?: string | null
+          director?: string | null
+          id?: string
+          images?: Json | null
+          is_notable?: boolean | null
+          production_date?: string | null
+          production_notes?: string | null
+          reviews_summary?: string | null
+          stage_designer?: string | null
+          title?: string
+          venue?: string | null
+          work_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opera_productions_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "lyrical_works"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opera_recordings: {
+        Row: {
+          aria_id: string | null
+          conductor: string | null
+          created_at: string | null
+          duration_seconds: number | null
+          external_url: string | null
+          file_path: string | null
+          id: string
+          is_featured: boolean | null
+          language: string | null
+          orchestra: string | null
+          performer_name: string | null
+          platform: string | null
+          quality: string | null
+          recording_type: string | null
+          recording_year: number | null
+          title: string
+          view_count: number | null
+          work_id: string | null
+        }
+        Insert: {
+          aria_id?: string | null
+          conductor?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          external_url?: string | null
+          file_path?: string | null
+          id?: string
+          is_featured?: boolean | null
+          language?: string | null
+          orchestra?: string | null
+          performer_name?: string | null
+          platform?: string | null
+          quality?: string | null
+          recording_type?: string | null
+          recording_year?: number | null
+          title: string
+          view_count?: number | null
+          work_id?: string | null
+        }
+        Update: {
+          aria_id?: string | null
+          conductor?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          external_url?: string | null
+          file_path?: string | null
+          id?: string
+          is_featured?: boolean | null
+          language?: string | null
+          orchestra?: string | null
+          performer_name?: string | null
+          platform?: string | null
+          quality?: string | null
+          recording_type?: string | null
+          recording_year?: number | null
+          title?: string
+          view_count?: number | null
+          work_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opera_recordings_aria_id_fkey"
+            columns: ["aria_id"]
+            isOneToOne: false
+            referencedRelation: "arias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opera_recordings_work_id_fkey"
+            columns: ["work_id"]
+            isOneToOne: false
+            referencedRelation: "lyrical_works"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       professional_availability: {
         Row: {
@@ -1355,6 +1683,62 @@ export type Database = {
           },
         ]
       }
+      sheet_music: {
+        Row: {
+          aria_id: string
+          arrangement_type: string | null
+          created_at: string | null
+          edition: string | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          is_public_domain: boolean | null
+          original_key: string | null
+          price_cents: number | null
+          publisher: string | null
+          title: string
+          transposed_key: string | null
+        }
+        Insert: {
+          aria_id: string
+          arrangement_type?: string | null
+          created_at?: string | null
+          edition?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          is_public_domain?: boolean | null
+          original_key?: string | null
+          price_cents?: number | null
+          publisher?: string | null
+          title: string
+          transposed_key?: string | null
+        }
+        Update: {
+          aria_id?: string
+          arrangement_type?: string | null
+          created_at?: string | null
+          edition?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          is_public_domain?: boolean | null
+          original_key?: string | null
+          price_cents?: number | null
+          publisher?: string | null
+          title?: string
+          transposed_key?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sheet_music_aria_id_fkey"
+            columns: ["aria_id"]
+            isOneToOne: false
+            referencedRelation: "arias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_plans: {
         Row: {
           created_at: string
@@ -1705,8 +2089,13 @@ export type Database = {
           aria_title: string | null
           created_at: string
           description: string | null
+          difficulty_level: number | null
           id: string
           role_name: string
+          role_type: string | null
+          tessitura_max: string | null
+          tessitura_min: string | null
+          vocal_characteristics: string | null
           voice_type: string | null
           work_id: string
         }
@@ -1714,8 +2103,13 @@ export type Database = {
           aria_title?: string | null
           created_at?: string
           description?: string | null
+          difficulty_level?: number | null
           id?: string
           role_name: string
+          role_type?: string | null
+          tessitura_max?: string | null
+          tessitura_min?: string | null
+          vocal_characteristics?: string | null
           voice_type?: string | null
           work_id: string
         }
@@ -1723,8 +2117,13 @@ export type Database = {
           aria_title?: string | null
           created_at?: string
           description?: string | null
+          difficulty_level?: number | null
           id?: string
           role_name?: string
+          role_type?: string | null
+          tessitura_max?: string | null
+          tessitura_min?: string | null
+          vocal_characteristics?: string | null
           voice_type?: string | null
           work_id?: string
         }
