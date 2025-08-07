@@ -30,9 +30,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useAriaDatabase, AriaWithDetails } from '@/hooks/useOperaDatabase';
-import { useLyricalWorks } from '@/hooks/useLyricalWorks';
-import { useWorkRoles } from '@/hooks/useLyricalWorks';
+import { useOperaDatabase, AriaWithDetails } from '@/hooks/useOperaDatabase';
+import { useLyricalWorks, useWorkRoles } from '@/hooks/useLyricalWorks';
 import AriaDialog from './AriaDialog';
 
 const OperaDatabaseManager = () => {
@@ -49,13 +48,14 @@ const OperaDatabaseManager = () => {
   const {
     arias,
     isLoading,
+    error,
     createAria,
     updateAria,
     deleteAria,
     isCreating,
     isUpdating,
     isDeleting,
-  } = useAriaDatabase({
+  } = useOperaDatabase({
     searchTerm: searchTerm.length > 1 ? searchTerm : undefined,
     difficulty: difficultyFilter ? Number(difficultyFilter) : undefined,
   });
@@ -275,6 +275,10 @@ const OperaDatabaseManager = () => {
               {isLoading ? (
                 <div className="flex items-center justify-center h-32">
                   <div className="text-muted-foreground">Chargement...</div>
+                </div>
+              ) : error ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-destructive">Erreur de chargement: {error.message}</div>
                 </div>
               ) : (
                 <Table>

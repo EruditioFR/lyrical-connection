@@ -105,7 +105,7 @@ export interface OperaProduction {
   created_at: string;
 }
 
-export const useAriaDatabase = (filters?: {
+export const useOperaDatabase = (filters?: {
   workId?: string;
   roleId?: string;
   difficulty?: number;
