@@ -8,9 +8,10 @@ import PaymentManager from '@/components/admin/PaymentManager';
 import NotificationCenter from '@/components/admin/NotificationCenter';
 import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
 import BlogManagement from '@/components/admin/BlogManagement';
+import { LyricalWorksManager } from '@/components/admin/LyricalWorksManager';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
-import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText } from 'lucide-react';
+import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
@@ -34,7 +35,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="artists" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-9">
+          <TabsList className="grid w-full grid-cols-10">
             <TabsTrigger value="artists" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Artistes
@@ -66,6 +67,10 @@ const Admin = () => {
             <TabsTrigger value="translations" className="flex items-center gap-2">
               <Languages className="h-4 w-4" />
               Traductions
+            </TabsTrigger>
+            <TabsTrigger value="lyrical-works" className="flex items-center gap-2">
+              <Music className="h-4 w-4" />
+              Œuvres lyriques
             </TabsTrigger>
             <TabsTrigger value="blog" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
@@ -103,6 +108,10 @@ const Admin = () => {
 
           <TabsContent value="translations" className="space-y-6">
             <div>Translation Manager - Coming Soon</div>
+          </TabsContent>
+
+          <TabsContent value="lyrical-works" className="space-y-6">
+            <LyricalWorksManager />
           </TabsContent>
 
           <TabsContent value="blog" className="space-y-6">
