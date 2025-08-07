@@ -5,6 +5,7 @@ import type { Tables } from '@/integrations/supabase/types';
 
 export interface LyricalWork extends Tables<'lyrical_works'> {
   work_roles?: WorkRole[];
+  composers?: Tables<'composers'>;
 }
 
 export interface WorkRole extends Tables<'work_roles'> {}
@@ -17,7 +18,8 @@ export const useLyricalWorks = (searchTerm?: string) => {
         .from('lyrical_works')
         .select(`
           *,
-          work_roles (*)
+          work_roles (*),
+          composers (*)
         `)
         .order('title');
 

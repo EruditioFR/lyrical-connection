@@ -32,18 +32,24 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useOperaDatabase, AriaWithDetails } from '@/hooks/useOperaDatabase';
 import { useLyricalWorks, useWorkRoles } from '@/hooks/useLyricalWorks';
+import { useComposers } from '@/hooks/useComposers';
+import { useOpenOpusImport } from '@/hooks/useOpenOpusImport';
 import AriaDialog from './AriaDialog';
 
 const OperaDatabaseManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [difficultyFilter, setDifficultyFilter] = useState<string>('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('');
+  const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [ariaDialogOpen, setAriaDialogOpen] = useState(false);
   const [editingAria, setEditingAria] = useState<AriaWithDetails | null>(null);
   const [deletingAria, setDeletingAria] = useState<AriaWithDetails | null>(null);
+  const [importQuery, setImportQuery] = useState('');
+  const [importMode, setImportMode] = useState<'composers' | 'works' | 'all'>('all');
 
   const { works } = useLyricalWorks();
   const { roles } = useWorkRoles();
+  const { composers } = useComposers();
+  const { importData, isImporting, importResult } = useOpenOpusImport();
   
   const {
     arias,
@@ -123,6 +129,13 @@ const OperaDatabaseManager = () => {
     }
   };
 
+  const handleImportFromOpenOpus = () => {
+    importData({
+      searchQuery: importQuery || undefined,
+      importMode,
+    });
+  };
+
   const openEditDialog = (aria: AriaWithDetails) => {
     setEditingAria(aria);
     setAriaDialogOpen(true);
@@ -143,10 +156,37 @@ const OperaDatabaseManager = () => {
             Gestion complète du répertoire opératique
           </p>
         </div>
-        <Button onClick={openCreateDialog} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Nouvel air
-        </Button>
+        <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Recherche pour import..."
+              value={importQuery}
+              onChange={(e) => setImportQuery(e.target.value)}
+              className="w-48"
+            />
+            <Select value={importMode} onValueChange={(value: 'composers' | 'works' | 'all') => setImportMode(value)}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tout</SelectItem>
+                <SelectItem value="composers">Compositeurs</SelectItem>
+                <SelectItem value="works">Œuvres</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button 
+              onClick={handleImportFromOpenOpus} 
+              disabled={isImporting}
+              variant="outline"
+            >
+              {isImporting ? "Import..." : "Import OpenOpus"}
+            </Button>
+          </div>
+          <Button onClick={openCreateDialog} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Nouvel air
+          </Button>
+        </div>
       </div>
 
       {/* Statistics Cards */}

@@ -734,6 +734,48 @@ export type Database = {
           },
         ]
       }
+      composers: {
+        Row: {
+          biography: string | null
+          birth_year: number | null
+          complete_name: string | null
+          created_at: string
+          death_year: number | null
+          epoch: string | null
+          id: string
+          name: string
+          openopus_id: string | null
+          portrait_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          biography?: string | null
+          birth_year?: number | null
+          complete_name?: string | null
+          created_at?: string
+          death_year?: number | null
+          epoch?: string | null
+          id?: string
+          name: string
+          openopus_id?: string | null
+          portrait_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          biography?: string | null
+          birth_year?: number | null
+          complete_name?: string | null
+          created_at?: string
+          death_year?: number | null
+          epoch?: string | null
+          id?: string
+          name?: string
+          openopus_id?: string | null
+          portrait_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       event_applications: {
         Row: {
           applied_at: string
@@ -809,19 +851,26 @@ export type Database = {
       lyrical_works: {
         Row: {
           acts_count: number | null
+          catalogue_number: string | null
           category: string
           composer: string
+          composer_id: string | null
           created_at: string
           description: string | null
           difficulty_level: number | null
+          external_urls: Json | null
+          genre: string | null
           historical_context: string | null
           id: string
           language: string | null
           librettist: string | null
+          openopus_id: string | null
+          openopus_work_id: string | null
           performance_notes: string | null
           period: string | null
           premiere_date: string | null
           premiere_venue: string | null
+          recommended_recording: string | null
           synopsis: string | null
           title: string
           total_duration_minutes: number | null
@@ -829,19 +878,26 @@ export type Database = {
         }
         Insert: {
           acts_count?: number | null
+          catalogue_number?: string | null
           category: string
           composer: string
+          composer_id?: string | null
           created_at?: string
           description?: string | null
           difficulty_level?: number | null
+          external_urls?: Json | null
+          genre?: string | null
           historical_context?: string | null
           id?: string
           language?: string | null
           librettist?: string | null
+          openopus_id?: string | null
+          openopus_work_id?: string | null
           performance_notes?: string | null
           period?: string | null
           premiere_date?: string | null
           premiere_venue?: string | null
+          recommended_recording?: string | null
           synopsis?: string | null
           title: string
           total_duration_minutes?: number | null
@@ -849,25 +905,40 @@ export type Database = {
         }
         Update: {
           acts_count?: number | null
+          catalogue_number?: string | null
           category?: string
           composer?: string
+          composer_id?: string | null
           created_at?: string
           description?: string | null
           difficulty_level?: number | null
+          external_urls?: Json | null
+          genre?: string | null
           historical_context?: string | null
           id?: string
           language?: string | null
           librettist?: string | null
+          openopus_id?: string | null
+          openopus_work_id?: string | null
           performance_notes?: string | null
           period?: string | null
           premiere_date?: string | null
           premiere_venue?: string | null
+          recommended_recording?: string | null
           synopsis?: string | null
           title?: string
           total_duration_minutes?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "lyrical_works_composer_id_fkey"
+            columns: ["composer_id"]
+            isOneToOne: false
+            referencedRelation: "composers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mail_drafts: {
         Row: {
