@@ -40,6 +40,7 @@ const OperaDatabaseManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [composerFilter, setComposerFilter] = useState<string>('all');
   const [ariaDialogOpen, setAriaDialogOpen] = useState(false);
   const [editingAria, setEditingAria] = useState<AriaWithDetails | null>(null);
   const [deletingAria, setDeletingAria] = useState<AriaWithDetails | null>(null);
@@ -69,11 +70,11 @@ const OperaDatabaseManager = () => {
   // Statistics calculations
   const stats = useMemo(() => {
     const totalArias = arias.length;
-    const totalWorks = new Set(arias.map(aria => aria.work_id)).size;
+    const totalWorks = works.length; // Use actual lyrical works count
     const avgDifficulty = arias.length > 0 
       ? arias.reduce((sum, aria) => sum + aria.difficulty_level, 0) / arias.length 
       : 0;
-    const categories = new Set(arias.map(aria => aria.lyrical_works?.category).filter(Boolean)).size;
+    const categories = new Set(works.map(work => work.category).filter(Boolean)).size;
 
     return {
       totalArias,
@@ -81,7 +82,7 @@ const OperaDatabaseManager = () => {
       avgDifficulty: Math.round(avgDifficulty * 10) / 10,
       categories,
     };
-  }, [arias]);
+  }, [arias, works]);
 
   // Filtered arias
   const filteredArias = useMemo(() => {
@@ -91,10 +92,27 @@ const OperaDatabaseManager = () => {
     });
   }, [arias, categoryFilter]);
 
+  // Filtered works for the new Works tab
+  const filteredWorks = useMemo(() => {
+    return works.filter(work => {
+      const matchesCategory = !categoryFilter || categoryFilter === 'all' || work.category === categoryFilter;
+      const matchesComposer = !composerFilter || composerFilter === 'all' || work.composer === composerFilter;
+      const matchesSearch = !searchTerm || searchTerm.length <= 1 || 
+        work.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        work.composer.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesCategory && matchesComposer && matchesSearch;
+    });
+  }, [works, categoryFilter, composerFilter, searchTerm]);
+
   // Available categories
   const categories = useMemo(() => {
-    return Array.from(new Set(arias.map(aria => aria.lyrical_works?.category).filter(Boolean)));
-  }, [arias]);
+    return Array.from(new Set(works.map(work => work.category).filter(Boolean)));
+  }, [works]);
+
+  // Available composers
+  const availableComposers = useMemo(() => {
+    return Array.from(new Set(works.map(work => work.composer).filter(Boolean))).sort();
+  }, [works]);
 
   const getDifficultyBadge = (level: number) => {
     const badges = {
@@ -291,18 +309,104 @@ const OperaDatabaseManager = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            <Select value={composerFilter} onValueChange={setComposerFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Compositeur" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous compositeurs</SelectItem>
+                {availableComposers.map((composer) => (
+                  <SelectItem key={composer} value={composer}>
+                    {composer}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="arias" className="space-y-4">
+      <Tabs defaultValue="works" className="space-y-4">
         <TabsList>
+          <TabsTrigger value="works">Œuvres</TabsTrigger>
           <TabsTrigger value="arias">Airs</TabsTrigger>
           <TabsTrigger value="recordings">Enregistrements</TabsTrigger>
           <TabsTrigger value="scores">Partitions</TabsTrigger>
           <TabsTrigger value="analytics">Analytiques</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="works" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Liste des œuvres</CardTitle>
+              <CardDescription>
+                {filteredWorks.length} œuvre(s) trouvée(s)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Titre</TableHead>
+                    <TableHead>Compositeur</TableHead>
+                    <TableHead>Catégorie</TableHead>
+                    <TableHead>Époque</TableHead>
+                    <TableHead>Genre</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Source</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredWorks.map((work) => (
+                    <TableRow key={work.id}>
+                      <TableCell className="font-medium">
+                        <div>
+                          <div className="font-semibold">{work.title}</div>
+                          {work.catalogue_number && (
+                            <div className="text-sm text-muted-foreground">
+                              {work.catalogue_number}
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{work.composer}</div>
+                        {work.composers && (
+                          <div className="text-sm text-muted-foreground">
+                            {work.composers.epoch}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{work.category}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {work.period || work.composers?.epoch || '-'}
+                      </TableCell>
+                      <TableCell>
+                        {work.genre ? (
+                          <Badge variant="secondary">{work.genre}</Badge>
+                        ) : '-'}
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate">
+                        {work.description || '-'}
+                      </TableCell>
+                      <TableCell>
+                        {work.openopus_work_id ? (
+                          <Badge variant="outline">OpenOpus</Badge>
+                        ) : (
+                          <Badge variant="secondary">Manuel</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="arias" className="space-y-4">
           <Card>
