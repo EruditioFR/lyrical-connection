@@ -157,18 +157,30 @@ serve(async (req) => {
           if (!existingWork) {
             console.log(`Inserting new work: ${work.title} by ${work.composer}`);
             
+            // Generate unique curated work id and avoid duplicate composer openopus_id constraint
+            const slugify = (s: string) =>
+              s.toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+            const uniqueWorkId = `${work.composer.toLowerCase()}-${slugify(work.title)}-curated`;
+
             const { error: workError } = await supabase
               .from('lyrical_works')
               .insert({
                 title: work.title,
                 composer: work.composer,
                 composer_id: composer.id,
-                openopus_id: work.openopus_id,
+                // Leave openopus_id null to respect unique constraint on that column
+                openopus_id: null,
+                openopus_work_id: uniqueWorkId,
                 category: work.category,
                 genre: work.genre,
                 description: `${work.category} by ${work.composer}`,
                 external_urls: {
-                  source: 'Curated database'
+                  source: 'Curated database',
+                  composer_openopus_id: work.openopus_id
                 }
               });
 
