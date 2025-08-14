@@ -229,6 +229,12 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
       title: "À propos",
       items: [
         {
+          label: "Fonctionnalités",
+          href: "/fonctionnalites",
+          icon: Star,
+          description: "Découvrez toutes nos fonctionnalités"
+        },
+        {
           label: "Qui sommes-nous",
           href: "/qui-sommes-nous",
           icon: BookOpen,

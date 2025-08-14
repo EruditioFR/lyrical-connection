@@ -5,6 +5,7 @@ import { AuthGuard } from '@/components/auth/AuthGuard';
 
 // Import pages
 import Index from '@/pages/Index';
+import Features from '@/pages/Features';
 import Auth from '@/pages/Auth';
 import Dashboard from '@/pages/Dashboard';
 import Profile from '@/pages/Profile';
@@ -51,6 +52,8 @@ export const AppRouter = () => {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<Index />} />
+      <Route path="/features" element={<Features />} />
+      <Route path="/fonctionnalites" element={<Features />} />
       <Route path="/auth" element={<Auth />} />
       <Route path="/about" element={<About />} />
       <Route path="/qui-sommes-nous" element={<About />} />
