@@ -35,7 +35,7 @@ import { useLyricalWorks, useWorkRoles } from '@/hooks/useLyricalWorks';
 import { useComposers } from '@/hooks/useComposers';
 import { useOpenOpusImport } from '@/hooks/useOpenOpusImport';
 import AriaDialog from './AriaDialog';
-import CsvImportDialog from './CsvImportDialog';
+import AdvancedCsvImportDialog from './AdvancedCsvImportDialog';
 
 const OperaDatabaseManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,7 +47,7 @@ const OperaDatabaseManager = () => {
   const [deletingAria, setDeletingAria] = useState<AriaWithDetails | null>(null);
   const [importQuery, setImportQuery] = useState('');
   const [importMode, setImportMode] = useState<'composers' | 'works' | 'all'>('all');
-  const [csvImportOpen, setCsvImportOpen] = useState(false);
+  const [advancedImportOpen, setAdvancedImportOpen] = useState(false);
 
   const { works } = useLyricalWorks();
   const { roles } = useWorkRoles();
@@ -203,12 +203,12 @@ const OperaDatabaseManager = () => {
               {isImporting ? "Import..." : "Import OpenOpus"}
             </Button>
             <Button 
-              onClick={() => setCsvImportOpen(true)} 
+              onClick={() => setAdvancedImportOpen(true)} 
               variant="outline"
               className="gap-2"
             >
               <FileText className="h-4 w-4" />
-              Import CSV
+              Import CSV Avancé
             </Button>
           </div>
           <Button onClick={openCreateDialog} className="gap-2">
@@ -577,9 +577,9 @@ const OperaDatabaseManager = () => {
         roles={roles.map(r => ({ id: r.id, role_name: r.role_name, voice_type: r.voice_type }))}
       />
 
-      <CsvImportDialog
-        open={csvImportOpen}
-        onOpenChange={setCsvImportOpen}
+      <AdvancedCsvImportDialog
+        open={advancedImportOpen}
+        onOpenChange={setAdvancedImportOpen}
         onImportSuccess={() => window.location.reload()}
       />
 
