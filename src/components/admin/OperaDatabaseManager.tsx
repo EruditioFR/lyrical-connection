@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Music, BookOpen, Mic, Archive, Eye, Edit, Trash2 } from 'lucide-react';
+import { Search, Plus, Music, BookOpen, Mic, Archive, Eye, Edit, Trash2, FileText } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +35,7 @@ import { useLyricalWorks, useWorkRoles } from '@/hooks/useLyricalWorks';
 import { useComposers } from '@/hooks/useComposers';
 import { useOpenOpusImport } from '@/hooks/useOpenOpusImport';
 import AriaDialog from './AriaDialog';
+import CsvImportDialog from './CsvImportDialog';
 
 const OperaDatabaseManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -46,6 +47,7 @@ const OperaDatabaseManager = () => {
   const [deletingAria, setDeletingAria] = useState<AriaWithDetails | null>(null);
   const [importQuery, setImportQuery] = useState('');
   const [importMode, setImportMode] = useState<'composers' | 'works' | 'all'>('all');
+  const [csvImportOpen, setCsvImportOpen] = useState(false);
 
   const { works } = useLyricalWorks();
   const { roles } = useWorkRoles();
@@ -199,6 +201,14 @@ const OperaDatabaseManager = () => {
               variant="outline"
             >
               {isImporting ? "Import..." : "Import OpenOpus"}
+            </Button>
+            <Button 
+              onClick={() => setCsvImportOpen(true)} 
+              variant="outline"
+              className="gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Import CSV
             </Button>
           </div>
           <Button onClick={openCreateDialog} className="gap-2">
@@ -565,6 +575,12 @@ const OperaDatabaseManager = () => {
         isLoading={isCreating || isUpdating}
         works={works.map(w => ({ id: w.id, title: w.title, composer: w.composer }))}
         roles={roles.map(r => ({ id: r.id, role_name: r.role_name, voice_type: r.voice_type }))}
+      />
+
+      <CsvImportDialog
+        open={csvImportOpen}
+        onOpenChange={setCsvImportOpen}
+        onImportSuccess={() => window.location.reload()}
       />
 
       <AlertDialog open={!!deletingAria} onOpenChange={() => setDeletingAria(null)}>
