@@ -57,16 +57,17 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Stripe customer found", { customerId });
 
-    // Check if we're in test mode (customer ID starts with cus_test_)
-    const isTestMode = customerId.startsWith('cus_test_');
-    logStep("Mode detected", { isTestMode, customerId });
+    // Check if we're in test mode (detect both test customer ID patterns and environment)
+    const isTestMode = customerId.startsWith('cus_test_') || stripeKey.includes('sk_test_');
+    logStep("Mode detected", { isTestMode, customerId, stripeKeyPrefix: stripeKey.substring(0, 8) });
 
-    // Get subscriptions - for test mode, get all subscriptions (not just active)
+    // Get subscriptions - for test mode, get all subscriptions regardless of status
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: isTestMode ? undefined : "active", // In test mode, get all subscriptions
-      limit: 1,
+      limit: 10, // Get more subscriptions to find any test ones
     });
+
+    logStep("Found subscriptions", { count: subscriptions.data.length, subscriptions: subscriptions.data.map(s => ({ id: s.id, status: s.status })) });
 
     let subscriptionData = null;
     if (subscriptions.data.length > 0) {
