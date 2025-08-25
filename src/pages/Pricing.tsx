@@ -52,9 +52,9 @@ export default function Pricing() {
         </div>
 
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {plans
-            .filter(plan => plan.name === 'Artistes' || plan.name === 'Professionnels')
+            .sort((a, b) => a.display_order - b.display_order)
             .map((plan) => (
             <PricingCard
               key={plan.id}
@@ -67,22 +67,32 @@ export default function Pricing() {
         </div>
 
         <div className="mt-12 text-center">
+          <div className="mb-8 p-6 bg-muted/30 rounded-lg max-w-4xl mx-auto">
+            <h3 className="text-lg font-semibold mb-2">Option Visibilité Premium</h3>
+            <p className="text-muted-foreground text-sm mb-3">
+              Tous les abonnés payants peuvent ajouter l'option Visibilité Premium (+29€/mois) 
+              pour apparaître en priorité sur les pages publiques avec un badge premium.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Disponible depuis votre profil une fois abonné à un plan payant.
+            </p>
+          </div>
+
           <h2 className="text-2xl font-semibold mb-4">Questions fréquentes</h2>
           <div className="max-w-3xl mx-auto space-y-4 text-left">
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-medium mb-2">Quelle est la différence entre les plans ?</h3>
+              <p className="text-muted-foreground text-sm">
+                Le plan Gratuit est sur invitation uniquement. Early Bird offre un tarif privilégié. 
+                Artistes convient aux créateurs, Professionnels aux institutions avec plus de fonctionnalités.
+              </p>
+            </div>
+            
             <div className="p-4 border rounded-lg">
               <h3 className="font-medium mb-2">Comment changer de plan ?</h3>
               <p className="text-muted-foreground text-sm">
                 Vous pouvez changer de plan à tout moment depuis votre espace de gestion d'abonnement. 
                 Les changements prennent effet immédiatement.
-              </p>
-            </div>
-            
-            
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Comment contacter le support ?</h3>
-              <p className="text-muted-foreground text-sm">
-                Pour toute question ou assistance, vous pouvez nous contacter via la messagerie 
-                intégrée ou par email.
               </p>
             </div>
 

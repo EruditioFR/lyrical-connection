@@ -12,13 +12,18 @@ interface PricingCardProps {
 }
 
 export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading }: PricingCardProps) => {
-  const isPopular = plan.name === "Premium";
+  const isPopular = plan.name === "Artistes" || plan.name === "Early Bird";
 
   return (
     <Card className={`relative ${isPopular ? 'ring-2 ring-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-accent' : ''}`}>
-      {isPopular && (
+      {plan.name === "Artistes" && (
         <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
           Populaire
+        </Badge>
+      )}
+      {plan.name === "Early Bird" && (
+        <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-accent text-accent-foreground">
+          Offre limitée
         </Badge>
       )}
       
@@ -67,12 +72,12 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading }: Pr
       <CardFooter>
         <Button
           className="w-full"
-          variant={isCurrentPlan ? "outline" : "default"}
+          variant={isCurrentPlan ? "outline" : (plan.name === "Artistes" ? "default" : "outline")}
           onClick={() => onSelectPlan(plan.id)}
-          disabled={isCurrentPlan || isLoading || plan.name === 'Gratuit'}
+          disabled={isCurrentPlan || isLoading}
         >
           {isCurrentPlan ? 'Plan actuel' : 
-           plan.name === 'Gratuit' ? 'Sur invitation' :
+           plan.name === 'Gratuit' ? 'Plan actuel' :
            isLoading ? 'Chargement...' : 'Choisir ce plan'}
         </Button>
       </CardFooter>
