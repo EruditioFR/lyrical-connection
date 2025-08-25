@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -312,8 +312,10 @@ export type Database = {
           location: string | null
           nationality: string | null
           phone: string | null
+          premium_subscription_end: string | null
           profile_image_url: string | null
           project_description: string | null
+          public_visibility_premium: boolean | null
           repertoire: string[] | null
           social_links: Json | null
           spoken_languages: string[] | null
@@ -338,8 +340,10 @@ export type Database = {
           location?: string | null
           nationality?: string | null
           phone?: string | null
+          premium_subscription_end?: string | null
           profile_image_url?: string | null
           project_description?: string | null
+          public_visibility_premium?: boolean | null
           repertoire?: string[] | null
           social_links?: Json | null
           spoken_languages?: string[] | null
@@ -364,8 +368,10 @@ export type Database = {
           location?: string | null
           nationality?: string | null
           phone?: string | null
+          premium_subscription_end?: string | null
           profile_image_url?: string | null
           project_description?: string | null
+          public_visibility_premium?: boolean | null
           repertoire?: string[] | null
           social_links?: Json | null
           spoken_languages?: string[] | null
@@ -1301,6 +1307,45 @@ export type Database = {
           },
         ]
       }
+      premium_visibility_subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          profile_id: string
+          profile_type: string
+          status: string
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_period_end: string
+          current_period_start: string
+          id?: string
+          profile_id: string
+          profile_type: string
+          status?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          profile_id?: string
+          profile_type?: string
+          status?: string
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       professional_availability: {
         Row: {
           created_at: string
@@ -1588,7 +1633,9 @@ export type Database = {
           location: string | null
           logo_url: string | null
           phone: string | null
+          premium_subscription_end: string | null
           professional_role: Database["public"]["Enums"]["professional_role"]
+          public_visibility_premium: boolean | null
           social_links: Json | null
           team_description: string | null
           updated_at: string
@@ -1609,7 +1656,9 @@ export type Database = {
           location?: string | null
           logo_url?: string | null
           phone?: string | null
+          premium_subscription_end?: string | null
           professional_role: Database["public"]["Enums"]["professional_role"]
+          public_visibility_premium?: boolean | null
           social_links?: Json | null
           team_description?: string | null
           updated_at?: string
@@ -1630,7 +1679,9 @@ export type Database = {
           location?: string | null
           logo_url?: string | null
           phone?: string | null
+          premium_subscription_end?: string | null
           professional_role?: Database["public"]["Enums"]["professional_role"]
+          public_visibility_premium?: boolean | null
           social_links?: Json | null
           team_description?: string | null
           updated_at?: string
@@ -2215,11 +2266,11 @@ export type Database = {
     Functions: {
       create_notification_system: {
         Args: {
-          p_user_id: string
-          p_type: string
-          p_title: string
           p_content: string
           p_data?: Json
+          p_title: string
+          p_type: string
+          p_user_id: string
         }
         Returns: string
       }
@@ -2229,8 +2280,8 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["user_role"]
+          _user_id: string
         }
         Returns: boolean
       }
