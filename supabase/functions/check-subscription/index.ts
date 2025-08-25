@@ -84,13 +84,37 @@ serve(async (req) => {
 
         // Get plan details from Stripe price
         const priceId = stripeSubscription.items.data[0].price.id;
-        const { data: plan, error: planError } = await supabaseClient
+        let plan = null;
+        let planError = null;
+        
+        // Try to get plan by stripe_price_id
+        const { data: planData, error: planErr } = await supabaseClient
           .from('subscription_plans')
           .select('*')
           .eq('stripe_price_id', priceId)
           .single();
+        
+        if (planErr && planErr.code !== 'PGRST116') {
+          planError = planErr;
+        } else if (planData) {
+          plan = planData;
+        }
+        
+        // If no plan found by stripe_price_id and we're in test mode, use a default plan
+        if (!plan && isTestMode) {
+          const { data: defaultPlan } = await supabaseClient
+            .from('subscription_plans')
+            .select('*')
+            .eq('name', 'Artistes')
+            .single();
+          
+          if (defaultPlan) {
+            plan = defaultPlan;
+            logStep("Using default plan for test mode", { planId: plan.id, planName: plan.name });
+          }
+        }
 
-        logStep("Plan lookup", { priceId, plan: plan?.name, planError });
+        logStep("Plan lookup", { priceId, plan: plan?.name, planError, isTestMode });
 
         // Update or create subscription record - treat test subscriptions as active
         const subscriptionRecord = {
@@ -107,20 +131,44 @@ serve(async (req) => {
 
         logStep("Subscription record to upsert", subscriptionRecord);
 
-        // Use upsert to either insert or update based on user_id
-        const { data: upsertResult, error: upsertError } = await supabaseClient
+        // Check if subscription already exists for this user
+        const { data: existingSubscription, error: checkError } = await supabaseClient
           .from('subscriptions')
-          .upsert(subscriptionRecord, { 
-            onConflict: 'user_id',
-            ignoreDuplicates: false 
-          })
-          .select()
+          .select('id')
+          .eq('user_id', user.id)
           .single();
 
-        if (upsertError) {
-          logStep("Upsert error", { error: upsertError });
+        if (checkError && checkError.code !== 'PGRST116') {
+          logStep("Error checking existing subscription", { error: checkError });
+        }
+
+        if (existingSubscription) {
+          // Update existing subscription
+          const { data: updateResult, error: updateError } = await supabaseClient
+            .from('subscriptions')
+            .update(subscriptionRecord)
+            .eq('user_id', user.id)
+            .select()
+            .single();
+
+          if (updateError) {
+            logStep("Update error", { error: updateError });
+          } else {
+            logStep("Subscription updated successfully", updateResult);
+          }
         } else {
-          logStep("Subscription upserted successfully", upsertResult);
+          // Insert new subscription
+          const { data: insertResult, error: insertError } = await supabaseClient
+            .from('subscriptions')
+            .insert(subscriptionRecord)
+            .select()
+            .single();
+
+          if (insertError) {
+            logStep("Insert error", { error: insertError });
+          } else {
+            logStep("Subscription inserted successfully", insertResult);
+          }
         }
 
         subscriptionData = {
