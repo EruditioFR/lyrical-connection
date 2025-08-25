@@ -23,8 +23,8 @@ export const PlanComparisonCard = ({
 }: PlanComparisonCardProps) => {
   const isUpgrade = plan.price_monthly > currentPlanPrice;
   const isDowngrade = plan.price_monthly < currentPlanPrice && !isCurrentPlan;
-  const isPremium = plan.name === "Professionnels";
-  const isPremiumPlan = plan.name === "Professionnels";
+  const isPremium = plan.name === "Premium Visibilité";
+  const isPremiumVisibility = plan.name === "Premium Visibilité";
 
   const getActionButton = () => {
     if (isCurrentPlan) {
@@ -72,12 +72,12 @@ export const PlanComparisonCard = ({
   };
 
   return (
-    <Card className={`relative ${isPremium ? 'border-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isPremiumPlan ? 'bg-gradient-to-br from-primary/5 to-primary/10' : ''}`}>
+    <Card className={`relative ${isPremium ? 'border-primary ring-2 ring-primary/50' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isPremiumVisibility ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary' : ''}`}>
       {isPremium && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <Badge className="bg-primary text-primary-foreground">
+          <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
             <Crown className="h-3 w-3 mr-1" />
-            Premium
+            Option Premium
           </Badge>
         </div>
       )}
@@ -102,24 +102,28 @@ export const PlanComparisonCard = ({
         </div>
         <p className="text-muted-foreground">{plan.description}</p>
         
-        {isPremiumPlan && (
-          <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
-            <div className="flex items-center gap-2 text-primary font-semibold mb-2">
-              <Star className="h-4 w-4" />
-              Mise en valeur premium
+        {isPremiumVisibility && (
+          <div className="mt-4 p-4 bg-primary/15 rounded-lg border border-primary/30">
+            <div className="flex items-center gap-2 text-primary font-bold mb-3">
+              <Star className="h-5 w-5" />
+              Votre profil affiché et mis en valeur pour tous les visiteurs
             </div>
-            <div className="space-y-1 text-sm">
+            <p className="text-sm text-foreground/80 mb-3">
+              Cette option premium transforme la visibilité de votre profil sur toute la plateforme. 
+              Idéale pour les artistes qui souhaitent maximiser leur exposition et attirer plus d&apos;opportunités.
+            </p>
+            <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
-                <Eye className="h-3 w-3 text-primary" />
-                <span>Profil mis en avant sur toutes les pages</span>
+                <Eye className="h-4 w-4 text-primary" />
+                <span className="font-medium">Profil affiché en premier dans toutes les recherches</span>
               </div>
               <div className="flex items-center gap-2">
-                <Crown className="h-3 w-3 text-primary" />
-                <span>Badge "Premium" visible sur votre profil</span>
+                <Crown className="h-4 w-4 text-primary" />
+                <span className="font-medium">Badge "Premium" visible partout sur votre profil</span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="h-3 w-3 text-primary" />
-                <span>Positionnement prioritaire dans les recherches</span>
+                <Star className="h-4 w-4 text-primary" />
+                <span className="font-medium">Mise en avant sur la page d&apos;accueil et pages artistes</span>
               </div>
             </div>
           </div>

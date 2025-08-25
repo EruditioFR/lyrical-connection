@@ -30,15 +30,22 @@ export const SubscriptionManager = () => {
 
   // Filter plans based on user type
   const getFilteredPlans = () => {
+    // Always exclude Early Bird from public display
+    let filtered = plans.filter(plan => plan.name !== 'Early Bird');
+    
     if (userType === 'artist') {
       // Show all plans except "Professionnels" for artists
-      return plans.filter(plan => plan.name !== 'Professionnels');
+      return filtered.filter(plan => plan.name !== 'Professionnels');
     } else if (userType === 'professional') {
-      // Show only "Gratuit", "Early Bird" and "Professionnels" for professionals
-      return plans.filter(plan => plan.name === 'Gratuit' || plan.name === 'Early Bird' || plan.name === 'Professionnels');
+      // Show only "Gratuit", "Premium Visibilité" and "Professionnels" for professionals
+      return filtered.filter(plan => 
+        plan.name === 'Gratuit' || 
+        plan.name === 'Premium Visibilité' || 
+        plan.name === 'Professionnels'
+      );
     }
-    // Show all plans for unknown users
-    return plans;
+    // Show all plans except Early Bird for unknown users
+    return filtered;
   };
 
   const filteredPlans = getFilteredPlans();
@@ -219,9 +226,11 @@ export const SubscriptionManager = () => {
         subscription={subscription}
         onManageSubscription={() => manageSubscription.mutate()}
         onUpgradeToPremium={() => {
+          // For professionals, upgrade to "Professionnels" plan
+          // For artists, upgrade to "Premium Visibilité" 
           const premiumPlan = userType === 'professional' 
             ? plans.find(p => p.name === "Professionnels")
-            : plans.find(p => p.name === "Artistes");
+            : plans.find(p => p.name === "Premium Visibilité");
           if (premiumPlan) {
             createCheckoutSession.mutate(premiumPlan.id);
           }
