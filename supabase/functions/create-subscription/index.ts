@@ -78,7 +78,6 @@ serve(async (req) => {
         recurring: { interval: 'month' },
         product_data: {
           name: plan.name,
-          description: plan.description,
         },
       });
       priceId = price.id;
