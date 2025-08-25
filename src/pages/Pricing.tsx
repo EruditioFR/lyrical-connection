@@ -17,7 +17,8 @@ export default function Pricing() {
 
   // Filter plans based on user type
   const getFilteredPlans = () => {
-    const basePlans = [...plans];
+    // Filter out Early Bird from public display (admin-only plan)
+    const basePlans = plans.filter(plan => plan.name !== 'Early Bird');
     
     // Add premium plan for artists
     const premiumArtistPlan = {
@@ -44,20 +45,19 @@ export default function Pricing() {
     };
 
     if (!user) {
-      // Not logged in: show all plans except premium
+      // Not logged in: show base plans (no Early Bird, no premium)
       return basePlans;
     }
     
     if (userTypeLoading) {
-      // Still loading user type: show all plans temporarily
+      // Still loading user type: show base plans temporarily
       return basePlans;
     }
 
     if (isArtist) {
-      // Artist: show Gratuit, Early Bird, Artistes, Premium Artistes
+      // Artist: show Gratuit, Artistes, Premium Artistes
       const artistPlans = basePlans.filter(plan => 
         plan.name === 'Gratuit' || 
-        plan.name === 'Early Bird' || 
         plan.name === 'Artistes'
       );
       artistPlans.push(premiumArtistPlan);
@@ -65,15 +65,14 @@ export default function Pricing() {
     }
     
     if (isProfessional) {
-      // Professional: show Gratuit, Early Bird, Professionnels (no premium)
+      // Professional: show Gratuit, Professionnels (no premium)
       return basePlans.filter(plan => 
         plan.name === 'Gratuit' || 
-        plan.name === 'Early Bird' || 
         plan.name === 'Professionnels'
       );
     }
     
-    // No profile yet: show all plans except premium
+    // No profile yet: show base plans (no premium)
     return basePlans;
   };
 
@@ -175,8 +174,9 @@ export default function Pricing() {
             <div className="p-4 border rounded-lg">
               <h3 className="font-medium mb-2">Quelle est la différence entre les plans ?</h3>
               <p className="text-muted-foreground text-sm">
-                Le plan Gratuit est sur invitation uniquement. Early Bird offre un tarif privilégié. 
-                Artistes convient aux créateurs, Professionnels aux institutions avec plus de fonctionnalités.
+                Le plan Gratuit est sur invitation uniquement. 
+                Le plan Artistes convient aux créateurs individuels, 
+                le plan Professionnels aux institutions avec plus de fonctionnalités avancées.
               </p>
             </div>
             
