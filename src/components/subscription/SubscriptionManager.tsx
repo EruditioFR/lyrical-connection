@@ -7,34 +7,27 @@ import { CreditCard, Calendar, Users, Settings } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-
 export const SubscriptionManager = () => {
-  const { 
-    subscription, 
-    subscriptionLoading, 
-    manageSubscription, 
+  const {
+    subscription,
+    subscriptionLoading,
+    manageSubscription,
     checkSubscriptionStatus,
-    isSubscribed 
+    isSubscribed
   } = useSubscription();
-
   useEffect(() => {
     // Check subscription status on component mount
     checkSubscriptionStatus.mutate();
   }, []);
-
   if (subscriptionLoading) {
-    return (
-      <Card>
+    return <Card>
         <CardContent className="flex items-center justify-center p-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   if (!isSubscribed || !subscription) {
-    return (
-      <Card>
+    return <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5" />
@@ -49,10 +42,8 @@ export const SubscriptionManager = () => {
             Voir les plans
           </Button>
         </CardContent>
-      </Card>
-    );
+      </Card>;
   }
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
@@ -67,9 +58,7 @@ export const SubscriptionManager = () => {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Current Plan Overview */}
       <Card>
         <CardHeader>
@@ -87,8 +76,7 @@ export const SubscriptionManager = () => {
               <h3 className="font-semibold text-lg">{subscription.plan?.name}</h3>
               <p className="text-muted-foreground">{subscription.plan?.description}</p>
               <p className="text-2xl font-bold mt-2">
-                {subscription.plan?.price_monthly === 0 ? 'Gratuit' : 
-                 `${subscription.plan?.price_monthly}€/mois`}
+                {subscription.plan?.price_monthly === 0 ? 'Gratuit' : `${subscription.plan?.price_monthly}€/mois`}
               </p>
             </div>
             
@@ -98,23 +86,27 @@ export const SubscriptionManager = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Période actuelle</p>
                   <p className="text-sm font-medium">
-                    {format(new Date(subscription.current_period_start), 'dd MMMM yyyy', { locale: fr })} - {' '}
-                    {format(new Date(subscription.current_period_end), 'dd MMMM yyyy', { locale: fr })}
+                    {format(new Date(subscription.current_period_start), 'dd MMMM yyyy', {
+                    locale: fr
+                  })} - {' '}
+                    {format(new Date(subscription.current_period_end), 'dd MMMM yyyy', {
+                    locale: fr
+                  })}
                   </p>
                 </div>
               </div>
 
-              {subscription.trial_end && new Date(subscription.trial_end) > new Date() && (
-                <div className="flex items-center gap-2">
+              {subscription.trial_end && new Date(subscription.trial_end) > new Date() && <div className="flex items-center gap-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Fin de l'essai gratuit</p>
                     <p className="text-sm font-medium">
-                      {format(new Date(subscription.trial_end), 'dd MMMM yyyy', { locale: fr })}
+                      {format(new Date(subscription.trial_end), 'dd MMMM yyyy', {
+                    locale: fr
+                  })}
                     </p>
                   </div>
-                </div>
-              )}
+                </div>}
             </div>
           </div>
 
@@ -123,32 +115,22 @@ export const SubscriptionManager = () => {
           <div className="space-y-2">
             <h4 className="font-medium">Fonctionnalités incluses</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {subscription.plan?.features.map((feature, index) => (
-                <div key={index} className="flex items-center gap-2 text-sm">
+              {subscription.plan?.features.map((feature, index) => <div key={index} className="flex items-center gap-2 text-sm">
                   <div className="h-2 w-2 bg-primary rounded-full"></div>
                   <span>{feature}</span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
 
           <Separator />
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button 
-              onClick={() => manageSubscription.mutate()}
-              disabled={manageSubscription.isPending}
-              className="flex items-center gap-2"
-            >
+            <Button onClick={() => manageSubscription.mutate()} disabled={manageSubscription.isPending} className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               {manageSubscription.isPending ? 'Chargement...' : 'Gérer l\'abonnement'}
             </Button>
             
-            <Button 
-              variant="outline"
-              onClick={() => checkSubscriptionStatus.mutate()}
-              disabled={checkSubscriptionStatus.isPending}
-            >
+            <Button variant="outline" onClick={() => checkSubscriptionStatus.mutate()} disabled={checkSubscriptionStatus.isPending}>
               {checkSubscriptionStatus.isPending ? 'Vérification...' : 'Actualiser le statut'}
             </Button>
           </div>
@@ -156,32 +138,6 @@ export const SubscriptionManager = () => {
       </Card>
 
       {/* Usage and Limits */}
-      {subscription.plan?.limitations && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Utilisation et limites</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {Object.entries(subscription.plan.limitations).map(([key, value]) => (
-                <div key={key} className="text-center p-4 border rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    {key === 'castings_per_month' && 'Castings par mois'}
-                    {key === 'messages_per_day' && 'Messages par jour'}
-                    {key === 'profile_views' && 'Vues de profil'}
-                    {key === 'team_members' && 'Membres d\'équipe'}
-                    {key === 'api_calls' && 'Appels API'}
-                  </p>
-                  <p className="text-2xl font-bold mt-1">
-                    {typeof value === 'boolean' ? (value ? '✓' : '✗') : 
-                     value === 9999 ? '∞' : value}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+      {subscription.plan?.limitations}
+    </div>;
 };
