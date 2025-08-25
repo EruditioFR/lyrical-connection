@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import { Briefcase, MapPin, Globe, Phone, Mail, Users, Loader2 } from 'lucide-react';
+import { Briefcase, MapPin, Globe, Phone, Mail, Users, Loader2, Crown } from 'lucide-react';
 import MediaUploadSection from './MediaUploadSection';
+import PremiumVisibilityCard from '@/components/premium/PremiumVisibilityCard';
 import type { Database } from '@/integrations/supabase/types';
 
 type ProfessionalRole = Database['public']['Enums']['professional_role'];
@@ -336,6 +337,17 @@ const ProfessionalProfileForm = () => {
       {/* Section Médias - affichée seulement si le profil existe */}
       {profile && (
         <MediaUploadSection profileId={profile.id} />
+      )}
+
+      {/* Section Premium - affichée seulement si le profil existe */}
+      {profile && (
+        <div className="mt-8">
+          <PremiumVisibilityCard 
+            profileType="professional" 
+            profileId={profile.id}
+            title="Visibilité Premium Professionnel"
+          />
+        </div>
       )}
     </div>
   );
