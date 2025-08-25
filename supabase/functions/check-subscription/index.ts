@@ -57,62 +57,76 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Stripe customer found", { customerId });
 
-    // Get active subscriptions
+    // Check if we're in test mode (customer ID starts with cus_test_)
+    const isTestMode = customerId.startsWith('cus_test_');
+    logStep("Mode detected", { isTestMode, customerId });
+
+    // Get subscriptions - for test mode, get all subscriptions (not just active)
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      status: "active",
+      status: isTestMode ? undefined : "active", // In test mode, get all subscriptions
       limit: 1,
     });
 
     let subscriptionData = null;
     if (subscriptions.data.length > 0) {
       const stripeSubscription = subscriptions.data[0];
-      logStep("Active subscription found", { subscriptionId: stripeSubscription.id });
+      
+      // For test mode, consider any subscription (including test ones) as valid
+      const isValidSubscription = isTestMode || stripeSubscription.status === 'active';
+      
+      if (isValidSubscription) {
+        logStep("Valid subscription found", { 
+          subscriptionId: stripeSubscription.id, 
+          status: stripeSubscription.status,
+          isTestMode 
+        });
 
-      // Get plan details from Stripe price
-      const priceId = stripeSubscription.items.data[0].price.id;
-      const { data: plan } = await supabaseClient
-        .from('subscription_plans')
-        .select('*')
-        .eq('stripe_price_id', priceId)
-        .single();
+        // Get plan details from Stripe price
+        const priceId = stripeSubscription.items.data[0].price.id;
+        const { data: plan } = await supabaseClient
+          .from('subscription_plans')
+          .select('*')
+          .eq('stripe_price_id', priceId)
+          .single();
 
-      // Update or create subscription record
-      const subscriptionRecord = {
-        user_id: user.id,
-        plan_id: plan?.id,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: stripeSubscription.id,
-        status: stripeSubscription.status,
-        current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
-        current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
-        trial_end: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000).toISOString() : null,
-        updated_at: new Date().toISOString(),
-      };
+        // Update or create subscription record - treat test subscriptions as active
+        const subscriptionRecord = {
+          user_id: user.id,
+          plan_id: plan?.id,
+          stripe_customer_id: customerId,
+          stripe_subscription_id: stripeSubscription.id,
+          status: isTestMode ? 'active' : stripeSubscription.status, // Force active for test mode
+          current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+          current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+          trial_end: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000).toISOString() : null,
+          updated_at: new Date().toISOString(),
+        };
 
-      const { data: existingSubscription } = await supabaseClient
-        .from('subscriptions')
-        .select('*')
-        .eq('stripe_subscription_id', stripeSubscription.id)
-        .single();
-
-      if (existingSubscription) {
-        await supabaseClient
+        const { data: existingSubscription } = await supabaseClient
           .from('subscriptions')
-          .update(subscriptionRecord)
-          .eq('id', existingSubscription.id);
-      } else {
-        await supabaseClient
-          .from('subscriptions')
-          .insert(subscriptionRecord);
+          .select('*')
+          .eq('stripe_subscription_id', stripeSubscription.id)
+          .single();
+
+        if (existingSubscription) {
+          await supabaseClient
+            .from('subscriptions')
+            .update(subscriptionRecord)
+            .eq('id', existingSubscription.id);
+        } else {
+          await supabaseClient
+            .from('subscriptions')
+            .insert(subscriptionRecord);
+        }
+
+        subscriptionData = {
+          ...subscriptionRecord,
+          plan
+        };
       }
-
-      subscriptionData = {
-        ...subscriptionRecord,
-        plan
-      };
     } else {
-      logStep("No active subscription found");
+      logStep("No subscription found");
       
       // Update any existing subscription to inactive
       await supabaseClient
