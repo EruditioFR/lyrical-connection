@@ -138,6 +138,22 @@ export const SubscriptionManager = () => {
       </Card>
 
       {/* Usage and Limits */}
-      {subscription.plan?.limitations}
+      {subscription.plan?.limitations && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Limites du plan</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {Object.entries(subscription.plan.limitations).map(([key, value]) => (
+                <div key={key} className="flex justify-between text-sm">
+                  <span className="capitalize">{key.replace('_', ' ')}</span>
+                  <span className="font-medium">{String(value)}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>;
 };
