@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useSubscription } from './useSubscription';
 import { toast } from 'sonner';
 
 interface PremiumSubscription {
@@ -13,6 +14,7 @@ interface PremiumSubscription {
 
 export const usePremiumVisibility = () => {
   const { user } = useAuth();
+  const { subscription, isSubscribed } = useSubscription();
   const queryClient = useQueryClient();
 
   // Check premium status
@@ -87,6 +89,8 @@ export const usePremiumVisibility = () => {
     isCreatingPremium: createPremiumMutation.isPending,
     isPremiumActive,
     getPremiumEndDate,
-    refreshPremiumStatus
+    refreshPremiumStatus,
+    hasStandardSubscription: isSubscribed,
+    standardSubscription: subscription
   };
 };

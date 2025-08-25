@@ -11,6 +11,7 @@ import RepertoireTab from './RepertoireTab';
 import PhotosTab from './PhotosTab';
 import AudioTab from './AudioTab';
 import PremiumVisibilityCard from '@/components/premium/PremiumVisibilityCard';
+import SubscriptionSummary from '@/components/subscription/SubscriptionSummary';
 
 const ArtistProfileForm = () => {
   const { profile, createProfile, updateProfile, isCreating, isUpdating } = useArtistProfile();
@@ -200,7 +201,11 @@ const ArtistProfileForm = () => {
 
             <TabsContent value="premium" className="mt-6">
               {profile ? (
-                <div className="max-w-2xl mx-auto">
+                <div className="max-w-2xl mx-auto space-y-6">
+                  <SubscriptionSummary 
+                    profileType="artist" 
+                    profileId={profile.id}
+                  />
                   <PremiumVisibilityCard 
                     profileType="artist" 
                     profileId={profile.id}

@@ -73,29 +73,75 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
-    // Create subscription for premium visibility
-    const subscription = await stripe.subscriptions.create({
+    // Check if user already has an active subscription (standard plan)
+    const existingSubscriptions = await stripe.subscriptions.list({
       customer: customerId,
-      items: [{
-        price_data: {
-          currency: 'eur',
-          product_data: {
-            name: 'Visibilité Premium',
-            description: 'Apparaître en page publique et booster votre visibilité'
-          },
-          unit_amount: 2900, // 29.00 EUR in cents
-          recurring: {
-            interval: 'month'
-          }
-        }
-      }],
-      metadata: {
-        user_id: user.id,
-        profile_type: profileType,
-        profile_id: profileId,
-        feature: 'premium_visibility'
-      }
+      status: 'active',
+      limit: 1
     });
+
+    let subscriptionToModify = null;
+    if (existingSubscriptions.data.length > 0) {
+      subscriptionToModify = existingSubscriptions.data[0];
+      logStep("Found existing subscription to modify", { subscriptionId: subscriptionToModify.id });
+    }
+
+    let subscription;
+
+    if (subscriptionToModify) {
+      // Add premium visibility as an additional line item to existing subscription
+      subscription = await stripe.subscriptions.update(subscriptionToModify.id, {
+        items: [
+          ...subscriptionToModify.items.data.map(item => ({ id: item.id })),
+          {
+            price_data: {
+              currency: 'eur',
+              product_data: {
+                name: 'Visibilité Premium Add-on',
+                description: 'Option premium pour apparaître en page publique'
+              },
+              unit_amount: 2900, // 29.00 EUR in cents
+              recurring: {
+                interval: 'month'
+              }
+            }
+          }
+        ],
+        metadata: {
+          ...subscriptionToModify.metadata,
+          has_premium_visibility: 'true',
+          premium_profile_type: profileType,
+          premium_profile_id: profileId
+        }
+      });
+      logStep("Updated existing subscription with premium visibility", { subscriptionId: subscription.id });
+    } else {
+      // Create new subscription for premium visibility only
+      subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: 'Visibilité Premium',
+              description: 'Apparaître en page publique et booster votre visibilité'
+            },
+            unit_amount: 2900, // 29.00 EUR in cents
+            recurring: {
+              interval: 'month'
+            }
+          }
+        }],
+        metadata: {
+          user_id: user.id,
+          profile_type: profileType,
+          profile_id: profileId,
+          feature: 'premium_visibility',
+          standalone: 'true'
+        }
+      });
+      logStep("Created new standalone premium subscription", { subscriptionId: subscription.id });
+    }
 
     logStep("Created subscription", { subscriptionId: subscription.id });
 
