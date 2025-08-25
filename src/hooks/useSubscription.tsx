@@ -106,21 +106,36 @@ export const useSubscription = () => {
   // Create Stripe checkout session
   const createCheckoutSession = useMutation({
     mutationFn: async (planId: string) => {
+      console.log('=== CREATE CHECKOUT SESSION ===');
+      console.log('Plan ID received:', planId);
+      console.log('User authenticated:', !!user);
+      
       const { data, error } = await supabase.functions.invoke('create-subscription', {
         body: { plan_id: planId }
       });
       
-      if (error) throw error;
+      console.log('Supabase function response:', { data, error });
+      
+      if (error) {
+        console.error('Function invocation error:', error);
+        throw error;
+      }
       return data;
     },
     onSuccess: (data) => {
+      console.log('=== CHECKOUT SUCCESS ===');
+      console.log('Response data:', data);
       if (data.url) {
+        console.log('Opening checkout URL:', data.url);
         window.open(data.url, '_blank');
+      } else {
+        console.error('No URL in response data');
       }
     },
     onError: (error) => {
+      console.error('=== CHECKOUT ERROR ===');
+      console.error('Full error:', error);
       toast.error('Erreur lors de la création de la session de paiement');
-      console.error('Checkout error:', error);
     }
   });
 

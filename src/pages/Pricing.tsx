@@ -77,24 +77,34 @@ export default function Pricing() {
   };
 
   const handleSelectPlan = async (planId: string) => {
+    console.log('=== HANDLE SELECT PLAN ===');
+    console.log('Plan ID:', planId);
+    console.log('User:', user);
+    console.log('Subscription:', subscription);
+    
     if (!user) {
+      console.log('No user, redirecting to auth');
       window.location.href = '/auth';
       return;
     }
 
     // Handle premium artist plan specially - redirect to profile to add premium visibility
     if (planId === 'premium-artist') {
+      console.log('Premium artist plan selected');
       // First check if user has a paid subscription
       if (!subscription || subscription.plan_id === 'gratuit') {
+        console.log('No paid subscription, redirecting to subscription page');
         // Need to get a paid plan first
         window.location.href = '/subscription';
         return;
       }
       // Redirect to profile to add premium visibility
+      console.log('Redirecting to profile for premium visibility');
       window.location.href = '/profile?tab=premium';
       return;
     }
 
+    console.log('Calling createCheckoutSession.mutate with planId:', planId);
     createCheckoutSession.mutate(planId);
   };
 
