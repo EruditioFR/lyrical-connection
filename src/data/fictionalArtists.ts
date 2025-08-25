@@ -17,7 +17,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'isabella.rossini@exemple.it',
     phone: '+39 02 1234 5678',
     website: 'https://isabella-rossini.it',
-    nationality: 'Italienne'
+    nationality: 'Italienne',
+    public_visibility_premium: true
   },
   {
     id: 'fictional-2',
@@ -33,7 +34,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'pierre.dubois@exemple.fr',
     phone: '+33 1 42 34 56 78',
     website: 'https://pierre-dubois.fr',
-    nationality: 'Française'
+    nationality: 'Française',
+    public_visibility_premium: false
   },
   {
     id: 'fictional-3',
@@ -49,7 +51,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'maria.wagner@exemple.de',
     phone: '+49 30 1234 5678',
     website: 'https://maria-wagner.de',
-    nationality: 'Allemande'
+    nationality: 'Allemande',
+    public_visibility_premium: true
   },
   {
     id: 'fictional-4',
@@ -65,7 +68,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'antonio.silva@exemple.es',
     phone: '+34 95 123 4567',
     website: null,
-    nationality: 'Espagnole'
+    nationality: 'Espagnole',
+    public_visibility_premium: true
   },
   {
     id: 'fictional-5',
@@ -81,7 +85,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'charlotte.moreau@exemple.fr',
     phone: '+33 4 78 12 34 56',
     website: 'https://charlotte-moreau.com',
-    nationality: 'Française'
+    nationality: 'Française',
+    public_visibility_premium: false
   },
   {
     id: 'fictional-6',
@@ -97,7 +102,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'giuseppe.romano@exemple.it',
     phone: '+39 081 123 4567',
     website: null,
-    nationality: 'Italienne'
+    nationality: 'Italienne',
+    public_visibility_premium: true
   },
   {
     id: 'fictional-7',
@@ -113,7 +119,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'anna.petrov@exemple.ru',
     phone: '+7 812 123 4567',
     website: 'https://anna-petrov.ru',
-    nationality: 'Russe'
+    nationality: 'Russe',
+    public_visibility_premium: false
   },
   {
     id: 'fictional-8',
@@ -129,7 +136,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'james.mitchell@exemple.co.uk',
     phone: '+44 20 7123 4567',
     website: 'https://james-mitchell.co.uk',
-    nationality: 'Britannique'
+    nationality: 'Britannique',
+    public_visibility_premium: true
   },
   {
     id: 'fictional-9',
@@ -145,7 +153,8 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'camille.larsson@exemple.se',
     phone: '+46 8 123 4567',
     website: null,
-    nationality: 'Suédoise'
+    nationality: 'Suédoise',
+    public_visibility_premium: false
   },
   {
     id: 'fictional-10',
@@ -161,6 +170,7 @@ export const fictionalArtists: Artist[] = [
     contact_email: 'lucas.fernandez@exemple.mx',
     phone: '+52 55 1234 5678',
     website: 'https://lucas-fernandez.mx',
-    nationality: 'Mexicaine'
+    nationality: 'Mexicaine',
+    public_visibility_premium: true
   }
 ];

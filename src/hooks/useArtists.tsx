@@ -34,10 +34,12 @@ export const useArtists = (filters?: ArtistFilters) => {
   const { data: artists, isLoading, error } = useQuery({
     queryKey: ['artists', filters],
     queryFn: async () => {
+      // Récupérer les artistes avec les informations d'abonnement
       let query = supabase
         .from('artist_profiles')
         .select(`
           id,
+          user_id,
           stage_name,
           voice_type,
           bio,
@@ -60,27 +62,79 @@ export const useArtists = (filters?: ArtistFilters) => {
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      // Si l'utilisateur n'est pas connecté, ne montrer que les profils premium
-      if (filters?.isUserAuthenticated === false) {
-        query = query.eq('public_visibility_premium', true);
+      const { data: artistsData, error: artistsError } = await query;
+
+      if (artistsError) {
+        console.error('Error fetching artists:', artistsError);
+        throw artistsError;
       }
+
+      // Récupérer les abonnements premium actifs
+      const { data: subscriptions, error: subscriptionsError } = await supabase
+        .from('subscriptions')
+        .select('user_id, status, current_period_end')
+        .eq('status', 'active');
+
+      if (subscriptionsError) {
+        console.error('Error fetching subscriptions:', subscriptionsError);
+      }
+
+      // Récupérer les abonnements de visibilité premium actifs
+      const { data: premiumVisibility, error: premiumVisibilityError } = await supabase
+        .from('premium_visibility_subscriptions')
+        .select('user_id, status, current_period_end')
+        .eq('status', 'active')
+        .gte('current_period_end', new Date().toISOString());
+
+      if (premiumVisibilityError) {
+        console.error('Error fetching premium visibility:', premiumVisibilityError);
+      }
+
+      // Créer un Set des user_ids avec abonnement premium
+      const premiumUserIds = new Set([
+        ...(subscriptions || []).map(sub => sub.user_id),
+        ...(premiumVisibility || []).map(pv => pv.user_id)
+      ]);
+
+      // Filtrer pour ne garder que les artistes premium
+      const premiumArtists = (artistsData || []).filter(artist => {
+        // Artiste premium si :
+        // 1. public_visibility_premium = true OU
+        // 2. premium_subscription_end est dans le futur OU
+        // 3. a un abonnement premium actif
+        const hasPublicVisibilityPremium = artist.public_visibility_premium === true;
+        const hasPremiumSubscriptionEnd = artist.premium_subscription_end && 
+          new Date(artist.premium_subscription_end) > new Date();
+        const hasActiveSubscription = premiumUserIds.has(artist.user_id);
+
+        return hasPublicVisibilityPremium || hasPremiumSubscriptionEnd || hasActiveSubscription;
+      });
+
+      let filteredArtists = premiumArtists;
 
       // Apply search term filter
       if (filters?.searchTerm) {
-        query = query.ilike('stage_name', `%${filters.searchTerm}%`);
+        filteredArtists = filteredArtists.filter(artist =>
+          artist.stage_name.toLowerCase().includes(filters.searchTerm!.toLowerCase()) ||
+          (artist.voice_type && artist.voice_type.toLowerCase().includes(filters.searchTerm!.toLowerCase())) ||
+          (artist.location && artist.location.toLowerCase().includes(filters.searchTerm!.toLowerCase())) ||
+          (artist.bio && artist.bio.toLowerCase().includes(filters.searchTerm!.toLowerCase()))
+        );
       }
 
       // Apply voice type filter
       if (filters?.voiceType) {
-        query = query.eq('voice_type', filters.voiceType);
+        filteredArtists = filteredArtists.filter(artist => artist.voice_type === filters.voiceType);
       }
 
       // Apply location filter
       if (filters?.location) {
-        query = query.ilike('location', `%${filters.location}%`);
+        filteredArtists = filteredArtists.filter(artist =>
+          artist.location && artist.location.toLowerCase().includes(filters.location!.toLowerCase())
+        );
       }
 
-      // If we have repertoire filters, we need to join with artist_repertoire or artist_airs
+      // If we have repertoire filters, apply them to the filtered artists
       if (filters?.repertoire && (filters.repertoire.workId || filters.repertoire.composer || filters.repertoire.category || filters.repertoire.period || filters.repertoire.masteryLevel || filters.repertoire.airSearch)) {
         let artistIds: string[] = [];
 
@@ -161,19 +215,12 @@ export const useArtists = (filters?: ArtistFilters) => {
           return []; // Aucun artiste ne correspond aux filtres
         }
 
-        // Filtrer la requête principale par ces IDs
-        query = query.in('id', uniqueArtistIds);
+        // Filtrer les artistes premium par ces IDs
+        filteredArtists = filteredArtists.filter(artist => uniqueArtistIds.includes(artist.id));
       }
 
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching artists:', error);
-        throw error;
-      }
-
-      // Traiter les artistes réels pour récupérer la photo de profil favorite
-      const realArtists = (data as any[]).map(artist => {
+      // Traiter les artistes premium pour récupérer la photo de profil favorite
+      const realArtists = filteredArtists.map(artist => {
         const profilePhoto = artist.artist_photos?.find((photo: any) => photo.is_profile_photo);
         const profileImageUrl = profilePhoto 
           ? supabase.storage.from('artist-photos').getPublicUrl(profilePhoto.file_path).data.publicUrl
@@ -186,14 +233,16 @@ export const useArtists = (filters?: ArtistFilters) => {
         } as Artist;
       });
       
-      // Mixer les artistes réels et fictifs
-      const allArtists = [...realArtists, ...fictionalArtists];
+      // Filtrer les artistes fictifs pour ne garder que ceux avec visibilité premium
+      const premiumFictionalArtists = fictionalArtists.filter(artist => 
+        artist.public_visibility_premium === true
+      );
       
-      // Appliquer les filtres côté client pour les artistes fictifs
-      let filteredFictionalArtists = fictionalArtists;
+      // Appliquer les filtres côté client pour les artistes fictifs premium
+      let filteredFictionalArtists = premiumFictionalArtists;
       
       if (filters?.searchTerm) {
-        filteredFictionalArtists = fictionalArtists.filter(artist =>
+        filteredFictionalArtists = filteredFictionalArtists.filter(artist =>
           artist.stage_name.toLowerCase().includes(filters.searchTerm!.toLowerCase()) ||
           (artist.voice_type && artist.voice_type.toLowerCase().includes(filters.searchTerm!.toLowerCase())) ||
           (artist.location && artist.location.toLowerCase().includes(filters.searchTerm!.toLowerCase())) ||
