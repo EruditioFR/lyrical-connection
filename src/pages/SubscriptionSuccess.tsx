@@ -68,8 +68,17 @@ export default function SubscriptionSuccess() {
               <Alert className="border-green-200 bg-green-50">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  Votre abonnement {subscription?.plan?.name || 'Premium'} a été activé avec succès. 
-                  Vous avez maintenant accès à toutes les fonctionnalités premium !
+                  {subscription?.plan?.name?.toLowerCase().includes('premium') ? (
+                    <>
+                      Votre <strong>abonnement Premium</strong> a été activé avec succès ! 
+                      Vous avez maintenant accès à toutes les fonctionnalités avancées et à la visibilité maximale.
+                    </>
+                  ) : (
+                    <>
+                      Votre <strong>abonnement Classique</strong> a été activé avec succès ! 
+                      Vous avez maintenant accès aux fonctionnalités essentielles de la plateforme.
+                    </>
+                  )}
                 </AlertDescription>
               </Alert>
               
