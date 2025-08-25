@@ -95,21 +95,24 @@ export const useArtists = (filters?: ArtistFilters) => {
         ...(premiumVisibility || []).map(pv => pv.user_id)
       ]);
 
-      // Filtrer pour ne garder que les artistes premium
-      const premiumArtists = (artistsData || []).filter(artist => {
-        // Artiste premium si :
-        // 1. public_visibility_premium = true OU
-        // 2. premium_subscription_end est dans le futur OU
-        // 3. a un abonnement premium actif
-        const hasPublicVisibilityPremium = artist.public_visibility_premium === true;
-        const hasPremiumSubscriptionEnd = artist.premium_subscription_end && 
-          new Date(artist.premium_subscription_end) > new Date();
-        const hasActiveSubscription = premiumUserIds.has(artist.user_id);
+      let filteredArtists = artistsData || [];
 
-        return hasPublicVisibilityPremium || hasPremiumSubscriptionEnd || hasActiveSubscription;
-      });
+      // Si l'utilisateur n'est pas connecté, filtrer pour ne garder que les artistes premium
+      if (!filters?.isUserAuthenticated) {
+        filteredArtists = filteredArtists.filter(artist => {
+          // Artiste premium si :
+          // 1. public_visibility_premium = true OU
+          // 2. premium_subscription_end est dans le futur OU
+          // 3. a un abonnement premium actif
+          const hasPublicVisibilityPremium = artist.public_visibility_premium === true;
+          const hasPremiumSubscriptionEnd = artist.premium_subscription_end && 
+            new Date(artist.premium_subscription_end) > new Date();
+          const hasActiveSubscription = premiumUserIds.has(artist.user_id);
 
-      let filteredArtists = premiumArtists;
+          return hasPublicVisibilityPremium || hasPremiumSubscriptionEnd || hasActiveSubscription;
+        });
+      }
+      // Si l'utilisateur est connecté, on garde tous les artistes actifs (déjà filtrés par is_active = true)
 
       // Apply search term filter
       if (filters?.searchTerm) {
