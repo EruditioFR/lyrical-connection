@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown } from "lucide-react";
+import { Check, Crown, Star, Eye } from "lucide-react";
 import { SubscriptionPlan } from "@/hooks/useSubscription";
 
 interface PlanComparisonCardProps {
@@ -10,6 +10,7 @@ interface PlanComparisonCardProps {
   currentPlanPrice?: number;
   onSelectPlan: (planId: string) => void;
   isLoading: boolean;
+  userType?: 'artist' | 'professional' | 'unknown';
 }
 
 export const PlanComparisonCard = ({
@@ -17,11 +18,13 @@ export const PlanComparisonCard = ({
   isCurrentPlan,
   currentPlanPrice = 0,
   onSelectPlan,
-  isLoading
+  isLoading,
+  userType = 'unknown'
 }: PlanComparisonCardProps) => {
   const isUpgrade = plan.price_monthly > currentPlanPrice;
   const isDowngrade = plan.price_monthly < currentPlanPrice && !isCurrentPlan;
   const isPremium = plan.name === "Artistes" || plan.name === "Professionnels";
+  const isArtistPremium = plan.name === "Artistes" && userType === 'artist';
 
   const getActionButton = () => {
     if (isCurrentPlan) {
@@ -69,12 +72,12 @@ export const PlanComparisonCard = ({
   };
 
   return (
-    <Card className={`relative ${isPremium ? 'border-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}>
+    <Card className={`relative ${isPremium ? 'border-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isArtistPremium ? 'bg-gradient-to-br from-primary/5 to-primary/10' : ''}`}>
       {isPremium && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
           <Badge className="bg-primary text-primary-foreground">
             <Crown className="h-3 w-3 mr-1" />
-            Populaire
+            {isArtistPremium ? 'Recommandé' : 'Populaire'}
           </Badge>
         </div>
       )}
@@ -98,6 +101,29 @@ export const PlanComparisonCard = ({
           )}
         </div>
         <p className="text-muted-foreground">{plan.description}</p>
+        
+        {isArtistPremium && (
+          <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+            <div className="flex items-center gap-2 text-primary font-semibold mb-2">
+              <Star className="h-4 w-4" />
+              Mise en valeur premium
+            </div>
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center gap-2">
+                <Eye className="h-3 w-3 text-primary" />
+                <span>Profil mis en avant sur la page artistes</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Crown className="h-3 w-3 text-primary" />
+                <span>Badge "Premium" visible sur votre profil</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Star className="h-3 w-3 text-primary" />
+                <span>Positionnement prioritaire dans les recherches</span>
+              </div>
+            </div>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4">

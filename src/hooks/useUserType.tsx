@@ -1,85 +1,74 @@
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
 
-import { useArtistProfile } from '@/hooks/useArtistProfile';
-import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import { useAuth } from '@/hooks/useAuth';
+export type UserType = 'artist' | 'professional' | 'unknown';
 
 export const useUserType = () => {
-  // All hooks must be called unconditionally at the top
   const { user } = useAuth();
-  const { profile: artistProfile, isLoading: artistLoading } = useArtistProfile();
-  const { profile: professionalProfile, isLoading: professionalLoading } = useProfessionalProfile();
 
-  // Calculate loading state
-  const isLoading = artistLoading || professionalLoading;
-  
-  // Early return for loading state - but only after all hooks are called
-  if (isLoading) {
-    return {
-      userType: null,
-      isProfessional: false,
-      isArtist: false,
-      isLoading: true,
-      artistProfile: null,
-      professionalProfile: null,
-    };
-  }
+  const { data, isLoading } = useQuery({
+    queryKey: ['user-type', user?.id],
+    queryFn: async () => {
+      if (!user?.id) {
+        return {
+          userType: 'unknown' as UserType,
+          artistProfile: null,
+          professionalProfile: null
+        };
+      }
 
-  // Calculate test user conditions
-  const isTestUser = user?.email?.startsWith('jbbejot') || false;
-  const isMainTestUser = user?.email === 'jbbejot@gmail.com';
-  const isBaldoUser = user?.email === 'jbbejot+abaldo@gmail.com';
-  const isMlombardUser = user?.email === 'jbbejot+mlombard@gmail.com';
-  const isFvalentinUser = user?.email === 'jbbejot+fvalentin@gmail.com';
-  
-  // Determine user type
-  let userType = null;
-  let isProfessional = false;
-  let isArtist = false;
-  let finalArtistProfile = null;
-  let finalProfessionalProfile = null;
+      // Check if user has an artist profile
+      const { data: artistProfile } = await supabase
+        .from('artist_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-  // Special logic for test users
-  if (isTestUser && !isMainTestUser && !isBaldoUser && !isMlombardUser && !isFvalentinUser) {
-    // For test users jbbejot* (except exceptions), always consider as professional
-    userType = 'professional' as const;
-    isProfessional = true;
-    isArtist = false;
-    finalArtistProfile = null;
-    finalProfessionalProfile = professionalProfile;
-  } else {
-    // Normal logic: user can only be one type
-    const hasProfessionalProfile = !!professionalProfile;
-    const hasArtistProfile = !!artistProfile;
-    
-    if (hasProfessionalProfile) {
-      userType = 'professional' as const;
-      isProfessional = true;
-      isArtist = false;
-      finalArtistProfile = null;
-      finalProfessionalProfile = professionalProfile;
-    } else if (hasArtistProfile) {
-      userType = 'artist' as const;
-      isProfessional = false;
-      isArtist = true;
-      finalArtistProfile = artistProfile;
-      finalProfessionalProfile = null;
-    } else {
-      // No profile found
-      userType = null;
-      isProfessional = false;
-      isArtist = false;
-      finalArtistProfile = null;
-      finalProfessionalProfile = null;
-    }
-  }
+      if (artistProfile) {
+        return {
+          userType: 'artist' as UserType,
+          artistProfile,
+          professionalProfile: null
+        };
+      }
 
-  // Single return statement at the end
-  return {
-    userType,
-    isProfessional,
+      // Check if user has a professional profile
+      const { data: professionalProfile } = await supabase
+        .from('professional_profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (professionalProfile) {
+        return {
+          userType: 'professional' as UserType,
+          artistProfile: null,
+          professionalProfile
+        };
+      }
+
+      return {
+        userType: 'unknown' as UserType,
+        artistProfile: null,
+        professionalProfile: null
+      };
+    },
+    enabled: !!user?.id
+  });
+
+  const userType = data?.userType || 'unknown';
+  const artistProfile = data?.artistProfile;
+  const professionalProfile = data?.professionalProfile;
+  const isArtist = userType === 'artist';
+  const isProfessional = userType === 'professional';
+
+  return { 
+    userType, 
+    artistProfile,
+    professionalProfile,
     isArtist,
-    isLoading: false,
-    artistProfile: finalArtistProfile,
-    professionalProfile: finalProfessionalProfile,
+    isProfessional,
+    isLoading 
   };
 };

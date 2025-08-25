@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { PlanComparisonCard } from "./PlanComparisonCard";
 import { SubscriptionActions } from "./SubscriptionActions";
+import { useUserType } from "@/hooks/useUserType";
 export const SubscriptionManager = () => {
   const {
     plans,
@@ -20,11 +21,28 @@ export const SubscriptionManager = () => {
     checkSubscriptionStatus,
     isSubscribed
   } = useSubscription();
+  
+  const { userType, isLoading: userTypeLoading } = useUserType();
   useEffect(() => {
     // Check subscription status on component mount
     checkSubscriptionStatus.mutate();
   }, []);
-  if (subscriptionLoading || plansLoading) {
+
+  // Filter plans based on user type
+  const getFilteredPlans = () => {
+    if (userType === 'artist') {
+      // Show all plans except "Professionnels" for artists
+      return plans.filter(plan => plan.name !== 'Professionnels');
+    } else if (userType === 'professional') {
+      // Show only "Gratuit", "Early Bird" and "Professionnels" for professionals
+      return plans.filter(plan => plan.name === 'Gratuit' || plan.name === 'Early Bird' || plan.name === 'Professionnels');
+    }
+    // Show all plans for unknown users
+    return plans;
+  };
+
+  const filteredPlans = getFilteredPlans();
+  if (subscriptionLoading || plansLoading || userTypeLoading) {
     return <Card>
         <CardContent className="flex items-center justify-center p-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -44,7 +62,7 @@ export const SubscriptionManager = () => {
             Vous n'avez pas d'abonnement actif. Consultez nos plans pour débloquer toutes les fonctionnalités.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {plans.map((plan) => (
+            {filteredPlans.map((plan) => (
               <PlanComparisonCard
                 key={plan.id}
                 plan={plan}
@@ -52,6 +70,7 @@ export const SubscriptionManager = () => {
                 currentPlanPrice={0}
                 onSelectPlan={(planId) => createCheckoutSession.mutate(planId)}
                 isLoading={createCheckoutSession.isPending}
+                userType={userType}
               />
             ))}
           </div>
@@ -180,7 +199,7 @@ export const SubscriptionManager = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {plans.map((plan) => (
+            {filteredPlans.map((plan) => (
               <PlanComparisonCard
                 key={plan.id}
                 plan={plan}
@@ -188,6 +207,7 @@ export const SubscriptionManager = () => {
                 currentPlanPrice={subscription?.plan?.price_monthly || 0}
                 onSelectPlan={(planId) => createCheckoutSession.mutate(planId)}
                 isLoading={createCheckoutSession.isPending}
+                userType={userType}
               />
             ))}
           </div>
@@ -199,7 +219,9 @@ export const SubscriptionManager = () => {
         subscription={subscription}
         onManageSubscription={() => manageSubscription.mutate()}
         onUpgradeToPremium={() => {
-          const premiumPlan = plans.find(p => p.name === "Artistes");
+          const premiumPlan = userType === 'professional' 
+            ? plans.find(p => p.name === "Professionnels")
+            : plans.find(p => p.name === "Artistes");
           if (premiumPlan) {
             createCheckoutSession.mutate(premiumPlan.id);
           }
