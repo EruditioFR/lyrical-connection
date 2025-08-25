@@ -89,9 +89,12 @@ export const useArtists = (filters?: ArtistFilters) => {
         console.error('Error fetching premium visibility:', premiumVisibilityError);
       }
 
-      // Créer un Set des user_ids avec abonnement premium_visibility actif uniquement
+      // Créer des Sets pour les différents types d'abonnements
       const premiumVisibilityUserIds = new Set(
         (premiumVisibility || []).map(pv => pv.user_id)
+      );
+      const activeSubscriptionUserIds = new Set(
+        (subscriptions || []).map(sub => sub.user_id)
       );
 
       let filteredArtists = artistsData || [];
@@ -102,8 +105,13 @@ export const useArtists = (filters?: ArtistFilters) => {
           // Seuls les artistes avec un abonnement premium_visibility actif sont visibles
           return premiumVisibilityUserIds.has(artist.user_id);
         });
+      } else if (filters?.isUserAuthenticated) {
+        // Si l'utilisateur est connecté, filtrer pour ne garder que les artistes avec un abonnement actif
+        filteredArtists = filteredArtists.filter(artist => {
+          return activeSubscriptionUserIds.has(artist.user_id);
+        });
       }
-      // Si l'utilisateur est connecté, on garde tous les artistes actifs (déjà filtrés par is_active = true)
+      // Si l'utilisateur est connecté et qu'on n'a pas de filtres spécifiques, on garde tous les artistes actifs
 
       // Apply search term filter
       if (filters?.searchTerm) {
