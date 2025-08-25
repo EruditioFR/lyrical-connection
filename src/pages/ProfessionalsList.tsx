@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import ProfessionalsMarketing from '@/components/professionals/ProfessionalsMarketing';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Target, Building, CheckCircle, MessageCircle } from 'lucide-react';
+import { MapPin, Target, Building, CheckCircle, MessageCircle, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -23,6 +23,8 @@ interface Professional {
   bio: string;
   logo_url: string;
   is_verified: boolean;
+  public_visibility_premium?: boolean;
+  premium_subscription_end?: string | null;
 }
 
 const ProfessionalsList = () => {
@@ -31,11 +33,18 @@ const ProfessionalsList = () => {
   const navigate = useNavigate();
 
   const { data: professionals = [], isLoading, error } = useQuery({
-    queryKey: ['professionals'],
+    queryKey: ['professionals', !!user],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('professional_profiles')
         .select('*');
+
+      // Si l'utilisateur n'est pas connecté, ne montrer que les profils premium
+      if (!user) {
+        query = query.eq('public_visibility_premium', true);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching professionals:', error);
@@ -73,9 +82,17 @@ const ProfessionalsList = () => {
         <CardContent className="p-6">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {professional.company_name}
-              </h3>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {professional.company_name}
+                </h3>
+                {professional.public_visibility_premium && (
+                  <Badge variant="default" className="bg-primary text-primary-foreground">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Premium
+                  </Badge>
+                )}
+              </div>
               
               <Badge variant="secondary" className="mb-2">
                 {professional.professional_role === 'vocal_coach' && 'Coach vocal'}

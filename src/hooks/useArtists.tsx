@@ -18,6 +18,8 @@ export interface Artist {
   phone: string | null;
   website: string | null;
   nationality: string | null;
+  public_visibility_premium?: boolean;
+  premium_subscription_end?: string | null;
 }
 
 interface ArtistFilters {
@@ -25,6 +27,7 @@ interface ArtistFilters {
   voiceType?: string;
   location?: string;
   repertoire?: RepertoireFilters;
+  isUserAuthenticated?: boolean;
 }
 
 export const useArtists = (filters?: ArtistFilters) => {
@@ -44,6 +47,11 @@ export const useArtists = (filters?: ArtistFilters) => {
           experience_years,
           repertoire,
           contact_email,
+          phone,
+          website,
+          nationality,
+          public_visibility_premium,
+          premium_subscription_end,
           artist_photos!left (
             file_path,
             is_profile_photo
@@ -51,6 +59,11 @@ export const useArtists = (filters?: ArtistFilters) => {
         `)
         .eq('is_active', true)
         .order('created_at', { ascending: false });
+
+      // Si l'utilisateur n'est pas connecté, ne montrer que les profils premium
+      if (filters?.isUserAuthenticated === false) {
+        query = query.eq('public_visibility_premium', true);
+      }
 
       // Apply search term filter
       if (filters?.searchTerm) {

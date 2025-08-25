@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle } from 'lucide-react';
+import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
 
@@ -41,9 +41,17 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              {artist.stage_name}
-            </h3>
+            <div className="flex items-center gap-2 mb-2">
+              <h3 className="text-xl font-semibold text-gray-900">
+                {artist.stage_name}
+              </h3>
+              {artist.public_visibility_premium && (
+                <Badge variant="default" className="bg-primary text-primary-foreground">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Premium
+                </Badge>
+              )}
+            </div>
             
             {artist.voice_type && (
               <Badge variant="secondary" className="mb-2">

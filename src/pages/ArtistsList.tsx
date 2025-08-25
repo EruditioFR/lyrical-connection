@@ -20,6 +20,7 @@ const ArtistsList = () => {
   // Construire les filtres pour useArtists (seulement les filtres que le hook peut gérer)
   const apiFilters = {
     voiceType: voiceType || undefined,
+    isUserAuthenticated: !!user,
     ...repertoireFilters
   };
 
