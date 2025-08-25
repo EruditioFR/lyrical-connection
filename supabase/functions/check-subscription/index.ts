@@ -84,40 +84,43 @@ serve(async (req) => {
 
         // Get plan details from Stripe price
         const priceId = stripeSubscription.items.data[0].price.id;
-        const { data: plan } = await supabaseClient
+        const { data: plan, error: planError } = await supabaseClient
           .from('subscription_plans')
           .select('*')
           .eq('stripe_price_id', priceId)
           .single();
 
+        logStep("Plan lookup", { priceId, plan: plan?.name, planError });
+
         // Update or create subscription record - treat test subscriptions as active
         const subscriptionRecord = {
           user_id: user.id,
-          plan_id: plan?.id,
+          plan_id: plan?.id || null,
           stripe_customer_id: customerId,
           stripe_subscription_id: stripeSubscription.id,
-          status: isTestMode ? 'active' : stripeSubscription.status, // Force active for test mode
+          status: 'active', // Force active for both test and live mode
           current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
           current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
           trial_end: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000).toISOString() : null,
           updated_at: new Date().toISOString(),
         };
 
-        const { data: existingSubscription } = await supabaseClient
+        logStep("Subscription record to upsert", subscriptionRecord);
+
+        // Use upsert to either insert or update based on user_id
+        const { data: upsertResult, error: upsertError } = await supabaseClient
           .from('subscriptions')
-          .select('*')
-          .eq('stripe_subscription_id', stripeSubscription.id)
+          .upsert(subscriptionRecord, { 
+            onConflict: 'user_id',
+            ignoreDuplicates: false 
+          })
+          .select()
           .single();
 
-        if (existingSubscription) {
-          await supabaseClient
-            .from('subscriptions')
-            .update(subscriptionRecord)
-            .eq('id', existingSubscription.id);
+        if (upsertError) {
+          logStep("Upsert error", { error: upsertError });
         } else {
-          await supabaseClient
-            .from('subscriptions')
-            .insert(subscriptionRecord);
+          logStep("Subscription upserted successfully", upsertResult);
         }
 
         subscriptionData = {
@@ -129,11 +132,15 @@ serve(async (req) => {
       logStep("No subscription found");
       
       // Update any existing subscription to inactive
-      await supabaseClient
+      const { error: updateError } = await supabaseClient
         .from('subscriptions')
-        .update({ status: 'inactive' })
+        .update({ status: 'inactive', updated_at: new Date().toISOString() })
         .eq('user_id', user.id)
         .eq('status', 'active');
+
+      if (updateError) {
+        logStep("Error updating inactive subscription", { error: updateError });
+      }
     }
 
     return new Response(JSON.stringify({
