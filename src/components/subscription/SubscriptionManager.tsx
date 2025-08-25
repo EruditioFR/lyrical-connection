@@ -3,14 +3,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { CreditCard, Calendar, Users, Settings } from "lucide-react";
+import { CreditCard, Calendar, Users, Settings, Crown } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { PlanComparisonCard } from "./PlanComparisonCard";
+import { SubscriptionActions } from "./SubscriptionActions";
 export const SubscriptionManager = () => {
   const {
+    plans,
+    plansLoading,
     subscription,
     subscriptionLoading,
+    createCheckoutSession,
     manageSubscription,
     checkSubscriptionStatus,
     isSubscribed
@@ -19,7 +24,7 @@ export const SubscriptionManager = () => {
     // Check subscription status on component mount
     checkSubscriptionStatus.mutate();
   }, []);
-  if (subscriptionLoading) {
+  if (subscriptionLoading || plansLoading) {
     return <Card>
         <CardContent className="flex items-center justify-center p-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -38,9 +43,18 @@ export const SubscriptionManager = () => {
           <p className="text-muted-foreground mb-4">
             Vous n'avez pas d'abonnement actif. Consultez nos plans pour débloquer toutes les fonctionnalités.
           </p>
-          <Button onClick={() => window.location.href = '/pricing'}>
-            Voir les plans
-          </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {plans.map((plan) => (
+              <PlanComparisonCard
+                key={plan.id}
+                plan={plan}
+                isCurrentPlan={false}
+                currentPlanPrice={0}
+                onSelectPlan={(planId) => createCheckoutSession.mutate(planId)}
+                isLoading={createCheckoutSession.isPending}
+              />
+            ))}
+          </div>
         </CardContent>
       </Card>;
   }
@@ -155,5 +169,42 @@ export const SubscriptionManager = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Available Plans Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Crown className="h-5 w-5" />
+            Plans disponibles
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {plans.map((plan) => (
+              <PlanComparisonCard
+                key={plan.id}
+                plan={plan}
+                isCurrentPlan={subscription?.plan_id === plan.id}
+                currentPlanPrice={subscription?.plan?.price_monthly || 0}
+                onSelectPlan={(planId) => createCheckoutSession.mutate(planId)}
+                isLoading={createCheckoutSession.isPending}
+              />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions Section */}
+      <SubscriptionActions
+        subscription={subscription}
+        onManageSubscription={() => manageSubscription.mutate()}
+        onUpgradeToPremium={() => {
+          const premiumPlan = plans.find(p => p.name === "Artistes");
+          if (premiumPlan) {
+            createCheckoutSession.mutate(premiumPlan.id);
+          }
+        }}
+        isLoading={manageSubscription.isPending || createCheckoutSession.isPending}
+      />
     </div>;
 };
