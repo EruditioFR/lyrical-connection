@@ -5,7 +5,6 @@ import { useArtists } from '@/hooks/useArtists';
 import { useAuth } from '@/hooks/useAuth';
 import SearchFilters from '@/components/artists/SearchFilters';
 import ArtistsGrid from '@/components/artists/ArtistsGrid';
-import ArtistsMarketing from '@/components/artists/ArtistsMarketing';
 import { ImageGenerationPanel } from '@/components/artists/ImageGenerationPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { RepertoireFilters } from '@/components/artists/RepertoireFilters';
@@ -17,15 +16,6 @@ const ArtistsList = () => {
   const [location, setLocation] = useState('');
   const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
   const [refreshKey, setRefreshKey] = useState(0);
-
-  // Si l'utilisateur n'est pas authentifié, afficher la page marketing
-  if (!loading && !user) {
-    return (
-      <Layout>
-        <ArtistsMarketing />
-      </Layout>
-    );
-  }
 
   // Construire les filtres pour useArtists (seulement les filtres que le hook peut gérer)
   const apiFilters = {
@@ -120,7 +110,7 @@ const ArtistsList = () => {
         </div>
       </section>
 
-      {/* Onglets pour afficher la liste des artistes et la génération d'images */}
+      {/* Onglets pour utilisateurs connectés / Grille simple pour non-connectés */}
       {user ? (
         <div className="container mx-auto px-4 md:px-6 py-8">
           <Tabs defaultValue="artists" className="w-full">
@@ -143,14 +133,16 @@ const ArtistsList = () => {
           </Tabs>
         </div>
       ) : (
-        <ArtistsGrid
-          artists={artists}
-          filteredArtists={filteredArtists}
-          isLoading={isLoading}
-          searchQuery={searchTerm}
-          selectedVoiceTypes={voiceType ? [voiceType] : []}
-          onResetFilters={resetFilters}
-        />
+        <div className="container mx-auto px-4 md:px-6 py-8">
+          <ArtistsGrid
+            artists={artists}
+            filteredArtists={filteredArtists}
+            isLoading={isLoading}
+            searchQuery={searchTerm}
+            selectedVoiceTypes={voiceType ? [voiceType] : []}
+            onResetFilters={resetFilters}
+          />
+        </div>
       )}
     </Layout>
   );
