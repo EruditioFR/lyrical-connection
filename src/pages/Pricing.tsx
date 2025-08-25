@@ -17,41 +17,82 @@ export default function Pricing() {
 
   // Filter plans based on user type
   const getFilteredPlans = () => {
+    const basePlans = [...plans];
+    
+    // Add premium plan for artists
+    const premiumArtistPlan = {
+      id: 'premium-artist',
+      name: 'Premium Artistes',
+      description: 'Visibilité maximale avec toutes les fonctionnalités premium',
+      price_monthly: 29,
+      stripe_price_id: 'price_premium_artist', // Will be handled specially in the payment flow
+      features: [
+        'Toutes les fonctionnalités Artistes',
+        'Visibilité premium avec badge',
+        'Priorité dans les résultats de recherche',
+        'Analytics avancées premium',
+        'Support prioritaire VIP'
+      ],
+      limitations: {
+        castings_per_month: 100,
+        premium_features: true,
+        premium_visibility: true
+      },
+      trial_days: 0,
+      is_active: true,
+      display_order: 3.5 // Between Artistes and Professionnels
+    };
+
     if (!user) {
-      // Not logged in: show all plans
-      return plans;
+      // Not logged in: show all plans except premium
+      return basePlans;
     }
     
     if (userTypeLoading) {
       // Still loading user type: show all plans temporarily
-      return plans;
+      return basePlans;
     }
 
     if (isArtist) {
-      // Artist: show Gratuit, Early Bird, Artistes
-      return plans.filter(plan => 
+      // Artist: show Gratuit, Early Bird, Artistes, Premium Artistes
+      const artistPlans = basePlans.filter(plan => 
         plan.name === 'Gratuit' || 
         plan.name === 'Early Bird' || 
         plan.name === 'Artistes'
       );
+      artistPlans.push(premiumArtistPlan);
+      return artistPlans;
     }
     
     if (isProfessional) {
-      // Professional: show Gratuit, Early Bird, Professionnels
-      return plans.filter(plan => 
+      // Professional: show Gratuit, Early Bird, Professionnels (no premium)
+      return basePlans.filter(plan => 
         plan.name === 'Gratuit' || 
         plan.name === 'Early Bird' || 
         plan.name === 'Professionnels'
       );
     }
     
-    // No profile yet: show all plans
-    return plans;
+    // No profile yet: show all plans except premium
+    return basePlans;
   };
 
   const handleSelectPlan = async (planId: string) => {
     if (!user) {
       window.location.href = '/auth';
+      return;
+    }
+
+    // Handle premium artist plan specially - redirect to profile to add premium visibility
+    if (planId === 'premium-artist') {
+      // First check if user has a paid subscription
+      if (!subscription || subscription.plan_id === 'gratuit') {
+        // Need to get a paid plan first
+        window.location.href = '/subscription';
+        return;
+      }
+      // Redirect to profile to add premium visibility
+      window.location.href = '/profile?tab=premium';
       return;
     }
 
@@ -103,16 +144,31 @@ export default function Pricing() {
         </div>
 
         <div className="mt-12 text-center">
-          <div className="mb-8 p-6 bg-muted/30 rounded-lg max-w-4xl mx-auto">
-            <h3 className="text-lg font-semibold mb-2">Option Visibilité Premium</h3>
-            <p className="text-muted-foreground text-sm mb-3">
-              Tous les abonnés payants peuvent ajouter l'option Visibilité Premium (+29€/mois) 
-              pour apparaître en priorité sur les pages publiques avec un badge premium.
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Disponible depuis votre profil une fois abonné à un plan payant.
-            </p>
-          </div>
+          {isArtist && (
+            <div className="mb-8 p-6 bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-lg max-w-4xl mx-auto">
+              <h3 className="text-lg font-semibold mb-2">🌟 Plan Premium Artistes</h3>
+              <p className="text-muted-foreground text-sm mb-3">
+                Le plan Premium Artistes (29€/mois) inclut toutes les fonctionnalités du plan Artistes 
+                plus la visibilité premium avec badge, priorité dans les résultats et analytics avancées.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Alternative : Vous pouvez aussi prendre le plan Artistes et ajouter la visibilité premium séparément depuis votre profil.
+              </p>
+            </div>
+          )}
+          
+          {!isArtist && (
+            <div className="mb-8 p-6 bg-muted/30 rounded-lg max-w-4xl mx-auto">
+              <h3 className="text-lg font-semibold mb-2">Option Visibilité Premium</h3>
+              <p className="text-muted-foreground text-sm mb-3">
+                Les abonnés payants peuvent ajouter l'option Visibilité Premium (+29€/mois) 
+                pour apparaître en priorité sur les pages publiques avec un badge premium.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Disponible depuis votre profil une fois abonné à un plan payant.
+              </p>
+            </div>
+          )}
 
           <h2 className="text-2xl font-semibold mb-4">Questions fréquentes</h2>
           <div className="max-w-3xl mx-auto space-y-4 text-left">
