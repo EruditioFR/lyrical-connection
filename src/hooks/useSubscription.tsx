@@ -59,13 +59,14 @@ export const useSubscription = () => {
       
       console.log('Fetching subscription for user:', user.id);
       
-      // First, get the subscription
+      // First, get the latest subscription (active or not)
       const { data: subscriptionData, error: subscriptionError } = await supabase
         .from('subscriptions')
         .select('*')
         .eq('user_id', user.id)
-        .eq('status', 'active')
-        .single();
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
       
       if (subscriptionError) {
         if (subscriptionError.code === 'PGRST116') {
