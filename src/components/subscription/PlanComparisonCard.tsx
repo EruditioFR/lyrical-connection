@@ -23,8 +23,8 @@ export const PlanComparisonCard = ({
 }: PlanComparisonCardProps) => {
   const isUpgrade = plan.price_monthly > currentPlanPrice;
   const isDowngrade = plan.price_monthly < currentPlanPrice && !isCurrentPlan;
-  const isPremium = plan.name === "Artistes" || plan.name === "Professionnels";
-  const isArtistPremium = plan.name === "Artistes" && userType === 'artist';
+  const isPremium = plan.name === "Professionnels";
+  const isPremiumPlan = plan.name === "Professionnels";
 
   const getActionButton = () => {
     if (isCurrentPlan) {
@@ -72,12 +72,12 @@ export const PlanComparisonCard = ({
   };
 
   return (
-    <Card className={`relative ${isPremium ? 'border-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isArtistPremium ? 'bg-gradient-to-br from-primary/5 to-primary/10' : ''}`}>
+    <Card className={`relative ${isPremium ? 'border-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isPremiumPlan ? 'bg-gradient-to-br from-primary/5 to-primary/10' : ''}`}>
       {isPremium && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
           <Badge className="bg-primary text-primary-foreground">
             <Crown className="h-3 w-3 mr-1" />
-            {isArtistPremium ? 'Recommandé' : 'Populaire'}
+            Premium
           </Badge>
         </div>
       )}
@@ -102,7 +102,7 @@ export const PlanComparisonCard = ({
         </div>
         <p className="text-muted-foreground">{plan.description}</p>
         
-        {isArtistPremium && (
+        {isPremiumPlan && (
           <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
             <div className="flex items-center gap-2 text-primary font-semibold mb-2">
               <Star className="h-4 w-4" />
@@ -111,7 +111,7 @@ export const PlanComparisonCard = ({
             <div className="space-y-1 text-sm">
               <div className="flex items-center gap-2">
                 <Eye className="h-3 w-3 text-primary" />
-                <span>Profil mis en avant sur la page artistes</span>
+                <span>Profil mis en avant sur toutes les pages</span>
               </div>
               <div className="flex items-center gap-2">
                 <Crown className="h-3 w-3 text-primary" />
