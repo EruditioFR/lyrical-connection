@@ -2,16 +2,52 @@ import Layout from "@/components/layout/Layout";
 import { PricingCard } from "@/components/subscription/PricingCard";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserType } from "@/hooks/useUserType";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function Pricing() {
   const { user } = useAuth();
+  const { isArtist, isProfessional, isLoading: userTypeLoading } = useUserType();
   const { 
     plans, 
     plansLoading, 
     subscription, 
     createCheckoutSession 
   } = useSubscription();
+
+  // Filter plans based on user type
+  const getFilteredPlans = () => {
+    if (!user) {
+      // Not logged in: show all plans
+      return plans;
+    }
+    
+    if (userTypeLoading) {
+      // Still loading user type: show all plans temporarily
+      return plans;
+    }
+
+    if (isArtist) {
+      // Artist: show Gratuit, Early Bird, Artistes
+      return plans.filter(plan => 
+        plan.name === 'Gratuit' || 
+        plan.name === 'Early Bird' || 
+        plan.name === 'Artistes'
+      );
+    }
+    
+    if (isProfessional) {
+      // Professional: show Gratuit, Early Bird, Professionnels
+      return plans.filter(plan => 
+        plan.name === 'Gratuit' || 
+        plan.name === 'Early Bird' || 
+        plan.name === 'Professionnels'
+      );
+    }
+    
+    // No profile yet: show all plans
+    return plans;
+  };
 
   const handleSelectPlan = async (planId: string) => {
     if (!user) {
@@ -53,7 +89,7 @@ export default function Pricing() {
 
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {plans
+          {getFilteredPlans()
             .sort((a, b) => a.display_order - b.display_order)
             .map((plan) => (
             <PricingCard
