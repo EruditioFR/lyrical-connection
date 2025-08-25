@@ -28,6 +28,7 @@ import ProfessionalMessages from '@/pages/ProfessionalMessages';
 import Pricing from '@/pages/Pricing';
 import Subscription from '@/pages/Subscription';
 import SubscriptionSuccess from '@/pages/SubscriptionSuccess';
+import SubscriptionError from '@/pages/SubscriptionError';
 import ChangePassword from '@/pages/ChangePassword';
 import About from '@/pages/About';
 import Admin from '@/pages/Admin';
@@ -110,6 +111,7 @@ export const AppRouter = () => {
       <Route path="/notifications" element={<AuthGuard><Notifications /></AuthGuard>} />
       <Route path="/subscription" element={<AuthGuard><Subscription /></AuthGuard>} />
       <Route path="/subscription/success" element={<AuthGuard><SubscriptionSuccess /></AuthGuard>} />
+      <Route path="/subscription/error" element={<AuthGuard><SubscriptionError /></AuthGuard>} />
       <Route path="/change-password" element={<AuthGuard><ChangePassword /></AuthGuard>} />
       <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
       <Route path="*" element={<NotFound />} />
