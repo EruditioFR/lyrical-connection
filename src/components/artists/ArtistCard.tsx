@@ -11,12 +11,14 @@ interface ArtistCardProps {
   artist: Artist;
   onClick?: () => void;
   showContactInfo?: boolean;
+  isUserAuthenticated?: boolean;
 }
 
 const ArtistCard: React.FC<ArtistCardProps> = ({ 
   artist, 
   onClick, 
-  showContactInfo = false 
+  showContactInfo = false,
+  isUserAuthenticated = true
 }) => {
   const navigate = useNavigate();
 
@@ -91,7 +93,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
           )}
         </div>
 
-        {showContactInfo && (
+        {showContactInfo && isUserAuthenticated && (
           <div className="space-y-2 mb-4 p-3 bg-gray-50 rounded-lg">
             {artist.contact_email && (
               <div className="flex items-center text-sm text-gray-600">
@@ -136,27 +138,43 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
           </div>
         )}
 
-        <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleViewProfile}
-          >
-            Voir le profil
-          </Button>
+        {!isUserAuthenticated && (
+          <div className="mb-4 p-3 bg-muted/50 rounded-lg text-center">
+            <p className="text-sm text-muted-foreground">
+              Connectez-vous pour voir les coordonnées et contacter cet artiste
+            </p>
+          </div>
+        )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log('Contact artist:', artist.stage_name);
-            }}
-          >
-            <MessageCircle className="w-4 w-4 mr-1" />
-            Contacter
-          </Button>
-        </div>
+        {isUserAuthenticated ? (
+          <div className="flex justify-between items-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleViewProfile}
+            >
+              Voir le profil
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('Contact artist:', artist.stage_name);
+              }}
+            >
+              <MessageCircle className="w-4 w-4 mr-1" />
+              Contacter
+            </Button>
+          </div>
+        ) : (
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground">
+              Aperçu limité - Inscrivez-vous pour plus d'informations
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

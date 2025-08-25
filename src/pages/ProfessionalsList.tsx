@@ -30,15 +30,6 @@ const ProfessionalsList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  // Si l'utilisateur n'est pas authentifié, afficher la page marketing
-  if (!loading && !user) {
-    return (
-      <Layout>
-        <ProfessionalsMarketing />
-      </Layout>
-    );
-  }
-
   const { data: professionals = [], isLoading, error } = useQuery({
     queryKey: ['professionals'],
     queryFn: async () => {
@@ -67,7 +58,10 @@ const ProfessionalsList = () => {
     return <Layout><div>Error: {error.message}</div></Layout>;
   }
 
-  const ProfessionalCard = ({ professional }: { professional: Professional }) => {
+  const ProfessionalCard = ({ professional, isUserAuthenticated = true }: { 
+    professional: Professional;
+    isUserAuthenticated?: boolean;
+  }) => {
     const navigate = useNavigate();
 
     const handleViewProfile = () => {
@@ -97,10 +91,12 @@ const ProfessionalsList = () => {
                 {professional.location || 'Lieu non spécifié'}
               </div>
               
-              <div className="flex items-center text-gray-600 text-sm">
-                <Target className="w-4 h-4 mr-1" />
-                Rayon: {professional.intervention_radius || 50} km
-              </div>
+              {isUserAuthenticated && (
+                <div className="flex items-center text-gray-600 text-sm">
+                  <Target className="w-4 h-4 mr-1" />
+                  Rayon: {professional.intervention_radius || 50} km
+                </div>
+              )}
             </div>
 
             <div className="ml-4">
@@ -133,24 +129,40 @@ const ProfessionalsList = () => {
             )}
           </div>
 
-          <div className="flex justify-between items-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleViewProfile}
-            >
-              Voir le profil
-            </Button>
+          {!isUserAuthenticated && (
+            <div className="mb-4 p-3 bg-muted/50 rounded-lg text-center">
+              <p className="text-sm text-muted-foreground">
+                Connectez-vous pour voir les détails et contacter ce professionnel
+              </p>
+            </div>
+          )}
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => console.log('Contact professional:', professional.company_name)}
-            >
-              <MessageCircle className="w-4 h-4 mr-1" />
-              Contacter
-            </Button>
-          </div>
+          {isUserAuthenticated ? (
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleViewProfile}
+              >
+                Voir le profil
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => console.log('Contact professional:', professional.company_name)}
+              >
+                <MessageCircle className="w-4 h-4 mr-1" />
+                Contacter
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground">
+                Aperçu limité - Inscrivez-vous pour plus d'informations
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -173,7 +185,11 @@ const ProfessionalsList = () => {
         <ScrollArea className="rounded-md border">
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
             {filteredProfessionals.map(professional => (
-              <ProfessionalCard key={professional.id} professional={professional} />
+              <ProfessionalCard 
+                key={professional.id} 
+                professional={professional} 
+                isUserAuthenticated={!!user}
+              />
             ))}
           </div>
         </ScrollArea>

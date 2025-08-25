@@ -122,6 +122,7 @@ const ArtistsList = () => {
                 searchQuery={searchTerm}
                 selectedVoiceTypes={voiceType ? [voiceType] : []}
                 onResetFilters={resetFilters}
+                isUserAuthenticated={!!user}
               />
             </TabsContent>
             <TabsContent value="generate-images" className="mt-6">
@@ -141,6 +142,7 @@ const ArtistsList = () => {
             searchQuery={searchTerm}
             selectedVoiceTypes={voiceType ? [voiceType] : []}
             onResetFilters={resetFilters}
+            isUserAuthenticated={false}
           />
         </div>
       )}
