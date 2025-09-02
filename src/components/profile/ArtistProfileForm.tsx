@@ -91,18 +91,18 @@ const ArtistProfileForm = () => {
   const isLoading = isCreating || isUpdating;
 
   return (
-    <div className="space-y-6">
+    <div className="content-spacing">
       {/* En-tête avec nom de scène */}
       {profile?.stage_name && (
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="text-center card-spacing">
+          <h1 className="title-main mb-2">
             {profile.stage_name}
           </h1>
-          <p className="text-gray-600 mb-4">Édition du profil artiste</p>
+          <p className="body-text text-muted-foreground mb-4">Édition du profil artiste</p>
           <Button 
             onClick={handleSubmit}
             disabled={isLoading}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 body-text"
           >
             <Save className="w-4 h-4 mr-2" />
             {isLoading ? "Mise à jour..." : "Mettre à jour le profil"}
@@ -112,35 +112,35 @@ const ArtistProfileForm = () => {
       
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
-          <CardTitle>Mon Profil Artiste</CardTitle>
-          <CardDescription>
+          <CardTitle className="title-main">Mon Profil Artiste</CardTitle>
+          <CardDescription className="body-text">
             Gérez vos informations professionnelles et votre contenu artistique
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="profile" className="flex items-center gap-2">
+              <TabsTrigger value="profile" className="flex items-center gap-2 body-text">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profil</span>
               </TabsTrigger>
-              <TabsTrigger value="contact" className="flex items-center gap-2">
+              <TabsTrigger value="contact" className="flex items-center gap-2 body-text">
                 <Phone className="h-4 w-4" />
                 <span className="hidden sm:inline">Contact</span>
               </TabsTrigger>
-              <TabsTrigger value="repertoire" className="flex items-center gap-2" disabled={!profile}>
+              <TabsTrigger value="repertoire" className="flex items-center gap-2 body-text" disabled={!profile}>
                 <Music className="h-4 w-4" />
                 <span className="hidden sm:inline">Répertoire</span>
               </TabsTrigger>
-              <TabsTrigger value="photos" className="flex items-center gap-2" disabled={!profile}>
+              <TabsTrigger value="photos" className="flex items-center gap-2 body-text" disabled={!profile}>
                 <ImageIcon className="h-4 w-4" />
                 <span className="hidden sm:inline">Photos</span>
               </TabsTrigger>
-              <TabsTrigger value="audio" className="flex items-center gap-2" disabled={!profile}>
+              <TabsTrigger value="audio" className="flex items-center gap-2 body-text" disabled={!profile}>
                 <Mic className="h-4 w-4" />
                 <span className="hidden sm:inline">Vos médias</span>
               </TabsTrigger>
-              <TabsTrigger value="premium" className="flex items-center gap-2" disabled={!profile}>
+              <TabsTrigger value="premium" className="flex items-center gap-2 body-text" disabled={!profile}>
                 <Crown className="h-4 w-4" />
                 <span className="hidden sm:inline">Premium</span>
               </TabsTrigger>
@@ -173,8 +173,8 @@ const ArtistProfileForm = () => {
               {profile ? (
                 <RepertoireTab artistProfileId={profile.id} />
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                <div className="text-center py-8">
+                  <p className="secondary-text">Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
                 </div>
               )}
             </TabsContent>
@@ -183,8 +183,8 @@ const ArtistProfileForm = () => {
               {profile ? (
                 <PhotosTab artistProfileId={profile.id} />
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                <div className="text-center py-8">
+                  <p className="secondary-text">Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
                 </div>
               )}
             </TabsContent>
@@ -193,15 +193,15 @@ const ArtistProfileForm = () => {
               {profile ? (
                 <AudioTab artistProfileId={profile.id} />
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                <div className="text-center py-8">
+                  <p className="secondary-text">Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="premium" className="mt-6">
               {profile ? (
-                <div className="max-w-2xl mx-auto space-y-6">
+                <div className="max-w-2xl mx-auto content-spacing">
                   <SubscriptionSummary 
                     profileType="artist" 
                     profileId={profile.id}
@@ -213,8 +213,8 @@ const ArtistProfileForm = () => {
                   />
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <p>Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                <div className="text-center py-8">
+                  <p className="secondary-text">Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
                 </div>
               )}
             </TabsContent>

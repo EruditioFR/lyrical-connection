@@ -213,9 +213,9 @@ const AirManager: React.FC<AirManagerProps> = ({
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Mes Airs</CardTitle>
-              <CardDescription className="my-[10px]">
+            <div className="content-spacing">
+              <CardTitle className="title-section">Mes Airs</CardTitle>
+              <CardDescription className="body-text">
                 Gérez vos enregistrements audio, vidéos et liens
               </CardDescription>
             </div>
@@ -228,10 +228,10 @@ const AirManager: React.FC<AirManagerProps> = ({
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>
+                  <DialogTitle className="title-section">
                     {editingAir ? 'Modifier l\'air' : 'Ajouter un air'}
                   </DialogTitle>
-                  <DialogDescription>
+                  <DialogDescription className="body-text">
                     Choisissez d'uploader un fichier ou d'ajouter un lien
                   </DialogDescription>
                 </DialogHeader>
@@ -257,36 +257,40 @@ const AirManager: React.FC<AirManagerProps> = ({
 
                   <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                     {/* Champs communs */}
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Titre *</Label>
-                      <Input 
-                        id="title" 
-                        value={formData.title} 
-                        onChange={e => setFormData({ ...formData, title: e.target.value })} 
-                        required 
-                      />
-                    </div>
+                    <div className="card-spacing">
+                      <div className="space-y-2">
+                        <Label htmlFor="title" className="body-text font-medium">Titre *</Label>
+                        <Input 
+                          id="title" 
+                          value={formData.title} 
+                          onChange={e => setFormData({ ...formData, title: e.target.value })} 
+                          required 
+                          className="body-text"
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea 
-                        id="description" 
-                        value={formData.description} 
-                        onChange={e => setFormData({ ...formData, description: e.target.value })} 
-                        rows={3} 
-                      />
+                      <div className="space-y-2">
+                        <Label htmlFor="description" className="body-text font-medium">Description</Label>
+                        <Textarea 
+                          id="description" 
+                          value={formData.description} 
+                          onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                          rows={3}
+                          className="body-text"
+                        />
+                      </div>
                     </div>
 
                     <TabsContent value="file" className="space-y-4 mt-0">
                       {/* Sélection du type de média pour les fichiers */}
-                      <div className="space-y-3">
-                        <Label>Type de média *</Label>
+                      <div className="card-spacing">
+                        <Label className="body-text font-medium">Type de média *</Label>
                         <div className="grid grid-cols-2 gap-3">
                           <Button
                             type="button"
                             variant={formData.type === 'audio' ? 'default' : 'outline'}
                             onClick={() => setFormData({ ...formData, type: 'audio' })}
-                            className="flex items-center gap-2 h-12"
+                            className="flex items-center gap-2 h-12 body-text"
                           >
                             <Music className="h-5 w-5" />
                             Audio
@@ -295,7 +299,7 @@ const AirManager: React.FC<AirManagerProps> = ({
                             type="button"
                             variant={formData.type === 'video' ? 'default' : 'outline'}
                             onClick={() => setFormData({ ...formData, type: 'video' })}
-                            className="flex items-center gap-2 h-12"
+                            className="flex items-center gap-2 h-12 body-text"
                           >
                             <Video className="h-5 w-5" />
                             Vidéo
@@ -305,9 +309,9 @@ const AirManager: React.FC<AirManagerProps> = ({
 
                       {/* Upload de fichier */}
                       <div className="space-y-2">
-                        <Label htmlFor="file">Fichier *</Label>
+                        <Label htmlFor="file" className="body-text font-medium">Fichier *</Label>
                         {editingAir && editingAir.file_path ? (
-                          <div className="p-3 bg-muted rounded-md text-sm text-muted-foreground">
+                          <div className="p-3 bg-muted rounded-md secondary-text">
                             Le fichier ne peut pas être modifié. Supprimez et recréez l'air pour changer le fichier.
                           </div>
                         ) : (
@@ -317,6 +321,7 @@ const AirManager: React.FC<AirManagerProps> = ({
                             onChange={handleFileChange} 
                             accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} 
                             required={!editingAir}
+                            className="body-text"
                           />
                         )}
                       </div>
@@ -324,7 +329,7 @@ const AirManager: React.FC<AirManagerProps> = ({
 
                     <TabsContent value="link" className="space-y-4 mt-0">
                       <div className="space-y-2">
-                        <Label htmlFor="external_url">URL *</Label>
+                        <Label htmlFor="external_url" className="body-text font-medium">URL *</Label>
                         <Input 
                           id="external_url" 
                           type="url" 
@@ -332,15 +337,16 @@ const AirManager: React.FC<AirManagerProps> = ({
                           onChange={e => setFormData({ ...formData, external_url: e.target.value })} 
                           placeholder="https://..." 
                           required={sourceType === 'link'}
+                          className="body-text"
                         />
                       </div>
                     </TabsContent>
 
-                    <div className="flex gap-2 pt-4">
-                      <Button type="submit" disabled={uploading || isCreating} className="flex-1">
+                    <div className="flex gap-2 pt-6">
+                      <Button type="submit" disabled={uploading || isCreating} className="flex-1 body-text">
                         {uploading ? 'Upload...' : editingAir ? 'Modifier' : 'Ajouter'}
                       </Button>
-                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="body-text">
                         Annuler
                       </Button>
                     </div>
@@ -350,31 +356,31 @@ const AirManager: React.FC<AirManagerProps> = ({
             </Dialog>
           </div>
         </CardHeader>
-        <CardContent>
-          {airs.length === 0 ? <p className="text-muted-foreground text-center py-8">
+        <CardContent className="content-spacing">
+          {airs.length === 0 ? <p className="secondary-text text-center py-8">
               Aucun air ajouté pour le moment
-            </p> : <div className="space-y-3">
+            </p> : <div className="list-spacing">
               {airs.map(air => {
             const IconComponent = getAirIcon(air.type);
-            return <div key={air.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <IconComponent className="h-5 w-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">{air.title}</p>
-                        {air.description && <p className="text-sm text-muted-foreground">{air.description}</p>}
-                        <p className="text-xs text-muted-foreground capitalize">
-                          {air.type === 'url' ? 'Lien' : `Fichier ${air.type}`}
+            return <div key={air.id} className="flex items-start justify-between p-4 border rounded-lg card-hover">
+                    <div className="flex items-start space-x-4 flex-1">
+                      <IconComponent className="h-5 w-5 text-muted-foreground mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="work-title mb-1">{air.title}</h3>
+                        {air.description && <p className="body-text text-muted-foreground mb-2 line-clamp-2">{air.description}</p>}
+                        <p className="secondary-text">
+                          {air.type === 'url' ? 'Lien externe' : `Fichier ${air.type}`}
                         </p>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-wrap gap-2 ml-4">
                       {/* Boutons de lecture/visualisation */}
                       {air.type === 'audio' && (
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handlePlayPause(air)}
-                          className="flex items-center space-x-2"
+                          className="flex items-center space-x-2 body-text"
                         >
                           {currentPlayingAir === air.id ? (
                             <>
@@ -395,7 +401,7 @@ const AirManager: React.FC<AirManagerProps> = ({
                           variant="outline"
                           size="sm"
                           onClick={() => handleVideoPlay(air)}
-                          className="flex items-center space-x-2"
+                          className="flex items-center space-x-2 body-text"
                         >
                           <Play className="h-4 w-4" />
                           <span>Voir la vidéo</span>
@@ -420,7 +426,7 @@ const AirManager: React.FC<AirManagerProps> = ({
                               openExternalLink(air.external_url!);
                             }
                           }}
-                          className="flex items-center space-x-2"
+                          className="flex items-center space-x-2 body-text"
                         >
                           {air.external_url && (
                             air.external_url.includes('youtube') ||
@@ -444,25 +450,25 @@ const AirManager: React.FC<AirManagerProps> = ({
                       )}
 
                       {/* Boutons de gestion */}
-                      <Button variant="outline" size="sm" onClick={() => handleEdit(air)}>
+                      <Button variant="outline" size="sm" onClick={() => handleEdit(air)} className="body-text">
                         <Edit className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" className="body-text">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer l'air</AlertDialogTitle>
-                            <AlertDialogDescription>
+                            <AlertDialogTitle className="subtitle">Supprimer l'air</AlertDialogTitle>
+                            <AlertDialogDescription className="body-text">
                               Êtes-vous sûr de vouloir supprimer "{air.title}" ? Cette action est irréversible.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(air)}>
+                            <AlertDialogCancel className="body-text">Annuler</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(air)} className="body-text">
                               Supprimer
                             </AlertDialogAction>
                           </AlertDialogFooter>

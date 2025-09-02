@@ -20,8 +20,19 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ["Inter", "sans-serif"],
-				serif: ["Playfair Display", "serif"],
+				sans: ["Inter", "Open Sans", "sans-serif"],
+				serif: ["Playfair Display", "Merriweather", "serif"],
+				body: ["Open Sans", "Inter", "sans-serif"],
+			},
+			fontSize: {
+				'title-main': ['2rem', { lineHeight: '2.5rem', fontWeight: '600' }],       // 32px
+				'title-section': ['1.5rem', { lineHeight: '2rem', fontWeight: '600' }],    // 24px
+				'subtitle': ['1.25rem', { lineHeight: '1.75rem', fontWeight: '500' }],     // 20px
+				'body-lg': ['1rem', { lineHeight: '1.75rem', fontWeight: '400' }],         // 16px
+				'body': ['0.875rem', { lineHeight: '1.5rem', fontWeight: '400' }],         // 14px
+				'body-sm': ['0.75rem', { lineHeight: '1.25rem', fontWeight: '400' }],      // 12px
+				'work-title': ['0.9375rem', { lineHeight: '1.375rem', fontWeight: '600' }], // 15px
+				'composer': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '400', fontStyle: 'italic' }], // 14px italic
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -92,7 +103,9 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				composer: 'hsl(var(--composer-text))',
+				'secondary-text': 'hsl(var(--secondary-text))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
