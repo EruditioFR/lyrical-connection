@@ -30,21 +30,20 @@ export const SubscriptionManager = () => {
 
   // Filter plans based on user type
   const getFilteredPlans = () => {
-    // Always exclude Early Bird from public display
-    let filtered = plans.filter(plan => plan.name !== 'Early Bird');
+    // Always exclude Early Bird and Gratuit from public display
+    let filtered = plans.filter(plan => plan.name !== 'Early Bird' && plan.name !== 'Gratuit');
     
     if (userType === 'artist') {
       // Show all plans except "Professionnels" for artists
       return filtered.filter(plan => plan.name !== 'Professionnels');
     } else if (userType === 'professional') {
-      // Show only "Gratuit", "Premium Visibilité" and "Professionnels" for professionals
+      // Show only "Premium Visibilité" and "Professionnels" for professionals
       return filtered.filter(plan => 
-        plan.name === 'Gratuit' || 
         plan.name === 'Premium Visibilité' || 
         plan.name === 'Professionnels'
       );
     }
-    // Show all plans except Early Bird for unknown users
+    // Show all plans except Early Bird and Gratuit for unknown users
     return filtered;
   };
 
