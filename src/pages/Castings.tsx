@@ -18,6 +18,10 @@ const Castings = () => {
   const { userType } = useUserType();
   const [filters, setFilters] = useState({});
   
+  // Tous les hooks doivent être appelés AVANT toute condition
+  const { castings: allCastings, isLoading: allCastingsLoading } = useCastings(filters);
+  const { castings: myCastings, isLoading: myCastingsLoading } = useMyCastings();
+  
   // Si l'utilisateur n'est pas connecté, afficher la page marketing
   if (!user) {
     return (
@@ -28,9 +32,6 @@ const Castings = () => {
   }
   
   // Utiliser le bon hook selon le type d'utilisateur
-  const { castings: allCastings, isLoading: allCastingsLoading } = useCastings(filters);
-  const { castings: myCastings, isLoading: myCastingsLoading } = useMyCastings();
-  
   const isProfessional = userType === 'professional';
   const castings = isProfessional ? myCastings : allCastings;
   const isLoading = isProfessional ? myCastingsLoading : allCastingsLoading;
