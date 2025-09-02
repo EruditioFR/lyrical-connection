@@ -43,12 +43,14 @@ const EventsMarketing = () => {
   const displayEvents = events.map(event => ({
     id: event.id,
     title: event.title,
-    type: event.event_type === 'masterclass' ? 'Masterclass' : 
-          event.event_type === 'workshop' ? 'Stage' : 'Événement',
+    type: event.event_type === 'stage' ? 'Stage' : 
+          event.event_type === 'atelier' ? 'Atelier' :
+          event.event_type === 'concours' ? 'Concours' :
+          event.event_type === 'conference' ? 'Conférence' : 'Événement',
     date: new Date(event.start_date).toLocaleDateString('fr-FR'),
     location: event.location || event.venue || 'Lieu à confirmer',
     instructor: 'Professionnel', // TODO: Récupérer depuis professional_profiles
-    price: event.price ? `${event.price}${event.currency}` : 'Gratuit',
+    price: event.price ? `${event.price}${event.currency || '€'}` : 'Gratuit',
     difficulty: 'Tous niveaux' // TODO: Ajouter un champ difficulty aux événements
   }));
 
