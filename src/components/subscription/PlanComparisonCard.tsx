@@ -63,7 +63,7 @@ export const PlanComparisonCard = ({
               <span className="text-sm font-normal text-muted-foreground">/mois</span>
             </>}
         </div>
-        <p className="text-muted-foreground">{plan.description}</p>
+        <p className="text-muted-foreground">Notre meilleure offre, pour une visibilité maximale de votre talent</p>
         
         {isPremiumVisibility}
       </CardHeader>
