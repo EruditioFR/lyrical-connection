@@ -65,30 +65,7 @@ export const PlanComparisonCard = ({
         </div>
         <p className="text-muted-foreground">{plan.description}</p>
         
-        {isPremiumVisibility && <div className="mt-4 p-4 bg-primary/15 rounded-lg border border-primary/30">
-            <div className="flex items-center gap-2 text-primary font-bold mb-3">
-              <Star className="h-5 w-5" />
-              Votre profil affiché et mis en valeur pour tous les visiteurs
-            </div>
-            <p className="text-sm text-foreground/80 mb-3">
-              Cette option premium transforme la visibilité de votre profil sur toute la plateforme. 
-              Idéale pour les artistes qui souhaitent maximiser leur exposition et attirer plus d&apos;opportunités.
-            </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Eye className="h-4 w-4 text-primary" />
-                <span className="font-medium">Profil affiché en premier dans toutes les recherches</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Crown className="h-4 w-4 text-primary" />
-                <span className="font-medium">Badge "Premium" visible partout sur votre profil</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Star className="h-4 w-4 text-primary" />
-                <span className="font-medium">Mise en avant sur la page d&apos;accueil et pages artistes</span>
-              </div>
-            </div>
-          </div>}
+        {isPremiumVisibility}
       </CardHeader>
 
       <CardContent className="space-y-4">
