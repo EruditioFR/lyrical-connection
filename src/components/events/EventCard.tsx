@@ -2,7 +2,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Calendar, MapPin, Users, Euro, Clock } from 'lucide-react';
+import { Calendar, MapPin, Users, Euro, Clock, Check } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -153,16 +153,18 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
       {showApplyButton && (
         <CardFooter className="flex-shrink-0">
           {application ? (
-            <div className="w-full space-y-2">
-              <div className="text-sm text-gray-600">
-                Inscrit le {format(new Date(application.applied_at), 'dd MMMM yyyy', { locale: fr })}
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={() => {/* Naviger vers les détails de l'événement */}}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Check className="h-4 w-4" />
+                <div className="flex flex-col items-center">
+                  <span className="font-medium">Inscrit(e)</span>
+                  <span className="text-xs opacity-90">Voir ma candidature</span>
+                </div>
               </div>
-              {event.results_published && (
-                <Badge className={getStatusColor(application.status)}>
-                  {getStatusLabel(application.status)}
-                </Badge>
-              )}
-            </div>
+            </Button>
           ) : (
             <EventApplicationDialog event={event}>
               <Button 

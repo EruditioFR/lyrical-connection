@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Euro, Eye } from 'lucide-react';
+import { Calendar, MapPin, Users, Euro, Eye, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -166,15 +166,33 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
         )}
 
         <div className="pt-2">
-          <Button 
-            className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/castings/${casting.id}`);
-            }}
-          >
-            {isArtist && user && application ? 'Voir ma candidature' : 'Voir les détails'}
-          </Button>
+          {isArtist && user && application ? (
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/castings/${casting.id}`);
+              }}
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Check className="h-4 w-4" />
+                <div className="flex flex-col items-center">
+                  <span className="font-medium">Inscrit(e)</span>
+                  <span className="text-xs opacity-90">Voir ma candidature</span>
+                </div>
+              </div>
+            </Button>
+          ) : (
+            <Button 
+              className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/castings/${casting.id}`);
+              }}
+            >
+              Voir les détails
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
