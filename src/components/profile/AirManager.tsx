@@ -184,7 +184,6 @@ const AirManager: React.FC<AirManagerProps> = ({
                   </div> : <div className="space-y-2">
                     <Label htmlFor="file">Fichier *</Label>
                     <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required={!editingAir} />
-                    {editingAir}
                   </div>}
 
                 <div className="flex gap-2">
