@@ -118,76 +118,83 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
           />
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Catégorie" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les catégories</SelectItem>
-              {categories.map((category: string) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <h4 className="text-sm font-medium text-muted-foreground">Filtrer par</h4>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Catégorie" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border z-50">
+                <SelectItem value="all">-</SelectItem>
+                {categories.map((category: string) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={selectedComposer} onValueChange={setSelectedComposer}>
-            <SelectTrigger>
-              <SelectValue placeholder="Compositeur" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous les compositeurs</SelectItem>
-              {composers.map((composer: string) => (
-                <SelectItem key={composer} value={composer}>
-                  {composer}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={selectedComposer} onValueChange={setSelectedComposer}>
+              <SelectTrigger>
+                <SelectValue placeholder="Compositeur" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border z-50">
+                <SelectItem value="all">-</SelectItem>
+                {composers.map((composer: string) => (
+                  <SelectItem key={composer} value={composer}>
+                    {composer}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={selectedRole} onValueChange={setSelectedRole}>
-            <SelectTrigger>
-              <SelectValue placeholder="Rôle" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous les rôles</SelectItem>
-              {roles.map((role: string) => (
-                <SelectItem key={role} value={role}>
-                  {role}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={selectedRole} onValueChange={setSelectedRole}>
+              <SelectTrigger>
+                <SelectValue placeholder="Rôle" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border z-50">
+                <SelectItem value="all">-</SelectItem>
+                {roles.map((role: string) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={selectedYear} onValueChange={setSelectedYear}>
-            <SelectTrigger>
-              <SelectValue placeholder="Année" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Toutes les années</SelectItem>
-              {years.map((year: number) => (
-                <SelectItem key={year} value={year.toString()}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={selectedYear} onValueChange={setSelectedYear}>
+              <SelectTrigger>
+                <SelectValue placeholder="Année" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border z-50">
+                <SelectItem value="all">-</SelectItem>
+                {years.map((year: number) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-          <Select value={selectedVenue} onValueChange={setSelectedVenue}>
-            <SelectTrigger>
-              <SelectValue placeholder="Lieu" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tous les lieux</SelectItem>
-              {venues.map((venue: string) => (
-                <SelectItem key={venue} value={venue}>
-                  {venue}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select value={selectedVenue} onValueChange={setSelectedVenue}>
+              <SelectTrigger>
+                <SelectValue placeholder="Lieu" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border z-50">
+                <SelectItem value="all">-</SelectItem>
+                {venues.map((venue: string) => (
+                  <SelectItem key={venue} value={venue}>
+                    {venue}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         
         {(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || 
