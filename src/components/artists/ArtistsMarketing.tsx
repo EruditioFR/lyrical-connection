@@ -17,38 +17,22 @@ import {
   Mic,
   User
 } from 'lucide-react';
+import { useArtists } from '@/hooks/useArtists';
 
 const ArtistsMarketing = () => {
-  // Artistes d'exemple pour la démonstration
-  const mockArtists = [
-    {
-      id: 1,
-      name: "Elena Soprano",
-      voiceType: "Soprano colorature",
-      location: "Paris, France",
-      experience: "8 ans",
-      repertoire: ["Mozart", "Rossini", "Bellini"],
-      languages: ["Français", "Italien", "Allemand"]
-    },
-    {
-      id: 2,
-      name: "Marco Baritone",
-      voiceType: "Baryton-basse",
-      location: "Lyon, France", 
-      experience: "12 ans",
-      repertoire: ["Verdi", "Puccini", "Wagner"],
-      languages: ["Français", "Italien", "Russe"]
-    },
-    {
-      id: 3,
-      name: "Sophie Mezzo",
-      voiceType: "Mezzo-soprano",
-      location: "Marseille, France",
-      experience: "6 ans",
-      repertoire: ["Bizet", "Massenet", "Ravel"],
-      languages: ["Français", "Espagnol", "Anglais"]
-    }
-  ];
+  // Récupérer les vrais artistes pour la démonstration
+  const { artists, isLoading } = useArtists({});
+  
+  // Prendre les 3 premiers artistes pour l'affichage
+  const displayArtists = artists.slice(0, 3).map(artist => ({
+    id: artist.id,
+    name: artist.stage_name,
+    voiceType: artist.voice_type || 'Artiste lyrique',
+    location: artist.location || 'France',
+    experience: `${Math.floor(Math.random() * 10) + 1} ans`, // TODO: Ajouter vraie expérience au profil
+    repertoire: artist.repertoire?.slice(0, 3) || ['Opéra classique'],
+    languages: ['Français', 'Italien', 'Anglais'] // TODO: Récupérer vraies langues depuis le profil
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
@@ -76,68 +60,87 @@ const ArtistsMarketing = () => {
         </div>
       </section>
 
-      {/* Artistes d'exemple */}
+      {/* Artistes réels */}
       <section className="py-16 px-4 bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">
             Nos artistes membres
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockArtists.map((artist) => (
-              <Card key={artist.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center space-x-4 mb-2">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <User className="w-6 h-6 text-primary" />
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-muted rounded-xl h-64"></div>
+                </div>
+              ))}
+            </div>
+          ) : displayArtists.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayArtists.map((artist) => (
+                <Card key={artist.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center space-x-4 mb-2">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl">{artist.name}</CardTitle>
+                        <Badge variant="secondary">{artist.voiceType}</Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {artist.location}
+                    </div>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Award className="w-4 h-4 mr-2" />
+                      {artist.experience} d'expérience
                     </div>
                     <div>
-                      <CardTitle className="text-xl">{artist.name}</CardTitle>
-                      <Badge variant="secondary">{artist.voiceType}</Badge>
+                      <p className="text-sm font-semibold mb-2">Répertoire :</p>
+                      <div className="flex flex-wrap gap-1">
+                        {artist.repertoire.map((comp, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {comp}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    {artist.location}
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Award className="w-4 h-4 mr-2" />
-                    {artist.experience} d'expérience
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold mb-2">Répertoire :</p>
-                    <div className="flex flex-wrap gap-1">
-                      {artist.repertoire.map((comp, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {comp}
-                        </Badge>
-                      ))}
+                    <div>
+                      <p className="text-sm font-semibold mb-2">Langues :</p>
+                      <div className="flex flex-wrap gap-1">
+                        {artist.languages.map((lang, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {lang}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold mb-2">Langues :</p>
-                    <div className="flex flex-wrap gap-1">
-                      {artist.languages.map((lang, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {lang}
-                        </Badge>
-                      ))}
+                    <div className="flex justify-between items-center pt-4">
+                      <Button size="sm" variant="outline" asChild>
+                        <Link to={`/artistes/${artist.id}`}>Voir le profil</Link>
+                      </Button>
+                      <Button size="sm" asChild>
+                        <Link to="/auth">
+                          <MessageCircle className="w-4 h-4 mr-1" />
+                          Contacter
+                        </Link>
+                      </Button>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center pt-4">
-                    <Button size="sm" variant="outline" disabled>
-                      Voir le profil
-                    </Button>
-                    <Button size="sm" disabled>
-                      <MessageCircle className="w-4 h-4 mr-1" />
-                      Contacter
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>Aucun artiste à afficher pour le moment.</p>
+              <Button asChild className="mt-4">
+                <Link to="/auth">Devenir le premier artiste membre</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 

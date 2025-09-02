@@ -45,41 +45,37 @@ const PaymentManager = () => {
   const { toast } = useToast();
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
-  // Récupérer les données de paiement (simulées pour l'exemple)
+  // Récupérer les données de paiement réelles
   const { data: payments = [], isLoading } = useQuery({
     queryKey: ['admin-payments'],
     queryFn: async () => {
-      // Simulation de données de paiement
-      const mockPayments: PaymentRecord[] = [
-        {
-          id: '1',
-          user_id: 'user1',
-          profile_id: 'profile1',
-          profile_type: 'artist',
-          amount: 900, // 9€ en centimes
-          currency: 'EUR',
-          status: 'completed',
-          stripe_payment_id: 'pi_1234567890',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          completed_at: new Date(Date.now() - 86400000 + 3600000).toISOString(),
-          user_name: 'Marie Dubois',
-          profile_name: 'Marie Soprano'
-        },
-        {
-          id: '2',
-          user_id: 'user2',
-          profile_id: 'profile2',
-          profile_type: 'professional',
-          amount: 4900, // 49€ en centimes
-          currency: 'EUR',
-          status: 'pending',
-          stripe_payment_id: 'pi_0987654321',
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-          user_name: 'Jean Martin',
-          profile_name: 'Opéra de Lyon'
-        }
-      ];
-      return mockPayments;
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Erreur lors de la récupération des paiements:', error);
+        throw error;
+      }
+
+      // Transformer les données pour correspondre à l'interface PaymentRecord
+      const transformedPayments: PaymentRecord[] = data?.map(payment => ({
+        id: payment.id,
+        user_id: payment.user_id,
+        profile_id: payment.related_id || '',
+        profile_type: payment.payment_type === 'premium_visibility' ? 'artist' : 'professional',
+        amount: payment.amount,
+        currency: payment.currency.toUpperCase(),
+        status: payment.status as any,
+        stripe_payment_id: payment.stripe_payment_id || '',
+        created_at: payment.created_at,
+        completed_at: payment.status === 'completed' ? payment.updated_at : undefined,
+        user_name: 'Utilisateur', // TODO: récupérer les données utilisateur si nécessaire
+        profile_name: 'Profil' // TODO: récupérer les données de profil si nécessaire
+      })) || [];
+
+      return transformedPayments;
     }
   });
 

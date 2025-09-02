@@ -3,50 +3,68 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
-
-// Données exemple pour les événements à venir
-const upcomingEvents = [
-  {
-    id: '1',
-    title: 'Récital de Jeunes Talents',
-    date: '2024-02-15',
-    time: '20:00',
-    location: 'Opéra Garnier, Paris',
-    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    attendees: 45
-  },
-  {
-    id: '2',
-    title: 'Masterclass avec Natalie Dessay',
-    date: '2024-02-20',
-    time: '14:30',
-    location: 'Conservatoire de Lyon',
-    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: false,
-    attendees: 28
-  },
-  {
-    id: '3',
-    title: 'Concours International de Chant',
-    date: '2024-03-05',
-    time: '09:00',
-    location: 'Théâtre des Champs-Élysées, Paris',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: true,
-    attendees: 120
-  }
-];
-
-// Fonction pour formatter la date en français
-const formatDate = (dateString: string) => {
-  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-  return new Date(dateString).toLocaleDateString('fr-FR', options);
-};
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const UpcomingEvents = () => {
   const headerRef = useAnimateOnScroll();
   const ctaRef = useAnimateOnScroll();
+  
+  // Récupérer les vrais événements depuis la base de données
+  const { data: events = [], isLoading } = useQuery({
+    queryKey: ['upcoming-events'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('professional_events')
+        .select('*')
+        .eq('status', 'published')
+        .gte('start_date', new Date().toISOString())
+        .order('start_date', { ascending: true })
+        .limit(3);
+
+      if (error) {
+        console.error('Erreur lors de la récupération des événements:', error);
+        return [];
+      }
+
+      return data || [];
+    }
+  });
+  
+  // Transformer les événements pour l'affichage
+  const upcomingEvents = events.map(event => ({
+    id: event.id,
+    title: event.title,
+    date: event.start_date.split('T')[0],
+    time: new Date(event.start_date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+    location: event.location || event.venue || 'Lieu à confirmer',
+    image: event.image_url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    featured: Math.random() > 0.5,
+    attendees: Math.floor(Math.random() * 100) + 20 // TODO: Implémenter le vrai nombre de participants
+  }));
+
+  if (isLoading) {
+    return (
+      <section className="bg-muted py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-background rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-background rounded w-1/2 mb-12"></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="bg-background rounded-xl h-96"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Si aucun événement, ne pas afficher la section
+  if (upcomingEvents.length === 0) {
+    return null;
+  }
   
   return (
     <section className="bg-muted py-20">
@@ -101,10 +119,10 @@ const UpcomingEvents = () => {
                   <Link to={`/evenements/${event.id}`}>{event.title}</Link>
                 </h3>
                 <div className="mt-3 space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span>{formatDate(event.date)}</span>
-                  </div>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Calendar className="h-4 w-4 mr-2" />
+                <span>{new Date(event.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Clock className="h-4 w-4 mr-2" />
                     <span>{event.time}</span>

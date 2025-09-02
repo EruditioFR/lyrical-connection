@@ -15,41 +15,42 @@ import {
   BookOpen,
   Target
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const EventsMarketing = () => {
-  // Événements d'exemple pour la démonstration
-  const mockEvents = [
-    {
-      id: 1,
-      title: "Masterclass de Chant Lyrique",
-      type: "Masterclass",
-      date: "15 Mars 2024",
-      location: "Opéra de Paris",
-      instructor: "Maria Soprano",
-      price: "150€",
-      difficulty: "Avancé"
-    },
-    {
-      id: 2,
-      title: "Stage d'Été - Technique Vocale",
-      type: "Stage",
-      date: "Du 1er au 15 Juillet",
-      location: "Conservatoire de Lyon",
-      instructor: "Giuseppe Tenor",
-      price: "850€",
-      difficulty: "Intermédiaire"
-    },
-    {
-      id: 3,
-      title: "Concours International de Chant",
-      type: "Concours",
-      date: "20 Septembre 2024",
-      location: "Théâtre des Champs-Élysées",
-      instructor: "Jury International",
-      price: "75€",
-      difficulty: "Tous niveaux"
+  // Récupérer les vrais événements pour la démonstration
+  const { data: events = [], isLoading } = useQuery({
+    queryKey: ['marketing-events'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('professional_events')
+        .select('*')
+        .eq('status', 'published')
+        .order('start_date', { ascending: true })
+        .limit(3);
+
+      if (error) {
+        console.error('Erreur lors de la récupération des événements:', error);
+        return [];
+      }
+
+      return data || [];
     }
-  ];
+  });
+  
+  // Transformer les événements pour l'affichage
+  const displayEvents = events.map(event => ({
+    id: event.id,
+    title: event.title,
+    type: event.event_type === 'masterclass' ? 'Masterclass' : 
+          event.event_type === 'workshop' ? 'Stage' : 'Événement',
+    date: new Date(event.start_date).toLocaleDateString('fr-FR'),
+    location: event.location || event.venue || 'Lieu à confirmer',
+    instructor: 'Professionnel', // TODO: Récupérer depuis professional_profiles
+    price: event.price ? `${event.price}${event.currency}` : 'Gratuit',
+    difficulty: 'Tous niveaux' // TODO: Ajouter un champ difficulty aux événements
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
@@ -77,45 +78,62 @@ const EventsMarketing = () => {
         </div>
       </section>
 
-      {/* Événements d'exemple */}
+      {/* Événements réels */}
       <section className="py-16 px-4 bg-white">
         <div className="container mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">
             Événements à venir
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mockEvents.map((event) => (
-              <Card key={event.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <Badge variant="secondary">{event.type}</Badge>
-                    <Badge variant="outline">{event.difficulty}</Badge>
-                  </div>
-                  <CardTitle className="text-xl">{event.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    {event.date}
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    {event.location}
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Users className="w-4 h-4 mr-2" />
-                    {event.instructor}
-                  </div>
-                  <div className="flex justify-between items-center pt-4">
-                    <span className="text-lg font-semibold text-primary">{event.price}</span>
-                    <Button size="sm" disabled>
-                      S'inscrire
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-muted rounded-xl h-64"></div>
+                </div>
+              ))}
+            </div>
+          ) : displayEvents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayEvents.map((event) => (
+                <Card key={event.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex justify-between items-start mb-2">
+                      <Badge variant="secondary">{event.type}</Badge>
+                      <Badge variant="outline">{event.difficulty}</Badge>
+                    </div>
+                    <CardTitle className="text-xl">{event.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4 mr-2" />
+                      {event.date}
+                    </div>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <MapPin className="w-4 h-4 mr-2" />
+                      {event.location}
+                    </div>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Users className="w-4 h-4 mr-2" />
+                      {event.instructor}
+                    </div>
+                    <div className="flex justify-between items-center pt-4">
+                      <span className="text-lg font-semibold text-primary">{event.price}</span>
+                      <Button size="sm" asChild>
+                        <Link to={`/evenements/${event.id}`}>S'inscrire</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <p>Aucun événement programmé pour le moment.</p>
+              <Button asChild className="mt-4">
+                <Link to="/auth">Créer le premier événement</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 

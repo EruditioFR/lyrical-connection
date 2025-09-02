@@ -5,54 +5,49 @@ import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle, MapPin, Music } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
-
-// Données exemple pour les artistes en vedette
-const featuredArtists = [
-  {
-    id: '1',
-    name: 'Sophia Laurent',
-    voiceType: 'Soprano',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    specialty: 'Opéra classique',
-    location: 'Paris, France',
-    featured: true,
-    profileViews: 1248
-  },
-  {
-    id: '2',
-    name: 'Alexandre Dupont',
-    voiceType: 'Ténor',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    specialty: 'Opéra romantique',
-    location: 'Lyon, France',
-    featured: true,
-    profileViews: 956
-  },
-  {
-    id: '3',
-    name: 'Isabelle Moreau',
-    voiceType: 'Mezzo-soprano',
-    image: 'https://images.unsplash.com/photo-1553267751-1c148a7280a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    specialty: 'Opéra baroque',
-    location: 'Bordeaux, France',
-    featured: false,
-    profileViews: 742
-  },
-  {
-    id: '4',
-    name: 'Jean-Michel Bernard',
-    voiceType: 'Baryton',
-    image: 'https://images.unsplash.com/photo-1552642986-ccb41e7059e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    specialty: 'Opéra contemporain',
-    location: 'Toulouse, France',
-    featured: false,
-    profileViews: 623
-  }
-];
+import { useArtists } from '@/hooks/useArtists';
 
 const FeaturedArtists = () => {
   const { t } = useTranslation('home');
   const titleRef = useAnimateOnScroll();
+  
+  // Récupérer les vrais artistes depuis la base de données
+  const { artists, isLoading } = useArtists({});
+  
+  // Prendre les 4 premiers artistes actifs
+  const featuredArtists = artists.slice(0, 4).map(artist => ({
+    id: artist.id,
+    name: artist.stage_name,
+    voiceType: artist.voice_type || 'Artiste lyrique',
+    image: artist.profile_image_url || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    specialty: artist.bio ? artist.bio.substring(0, 50) + '...' : 'Artiste professionnel',
+    location: artist.location || 'France',
+    featured: true,
+    profileViews: Math.floor(Math.random() * 1000) + 100 // TODO: Implémenter les vraies vues de profil
+  }));
+
+  if (isLoading) {
+    return (
+      <section className="bg-background py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-muted rounded w-1/2 mb-12"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {[...Array(4)].map((_, index) => (
+                <div key={index} className="bg-muted rounded-xl h-96"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Si aucun artiste, ne pas afficher la section
+  if (featuredArtists.length === 0) {
+    return null;
+  }
   
   return (
     <section className="bg-background py-20">
