@@ -103,15 +103,52 @@ serve(async (req) => {
         
         // If no plan found by stripe_price_id and we're in test mode, use a default plan
         if (!plan && isTestMode) {
-          const { data: defaultPlan } = await supabaseClient
-            .from('subscription_plans')
-            .select('*')
-            .eq('name', 'Artistes')
-            .single();
+          // Try to get the plan by matching the product name or metadata
+          try {
+            const priceObject = await stripe.prices.retrieve(priceId, { expand: ['product'] });
+            if (priceObject.product && typeof priceObject.product === 'object') {
+              const productName = priceObject.product.name;
+              logStep("Product name from Stripe", { productName, priceId });
+              
+              // Try to find plan by name matching
+              let planByName = null;
+              if (productName.includes('Premium') || productName.includes('Visibilité')) {
+                const { data: premiumPlan } = await supabaseClient
+                  .from('subscription_plans')
+                  .select('*')
+                  .eq('name', 'Premium Visibilité')
+                  .single();
+                planByName = premiumPlan;
+              } else {
+                const { data: defaultPlan } = await supabaseClient
+                  .from('subscription_plans')
+                  .select('*')
+                  .eq('name', 'Artistes')
+                  .single();
+                planByName = defaultPlan;
+              }
+              
+              if (planByName) {
+                plan = planByName;
+                logStep("Found plan by product name match", { planId: plan.id, planName: plan.name });
+              }
+            }
+          } catch (stripeError) {
+            logStep("Error retrieving price details from Stripe", { error: stripeError.message });
+          }
           
-          if (defaultPlan) {
-            plan = defaultPlan;
-            logStep("Using default plan for test mode", { planId: plan.id, planName: plan.name });
+          // Final fallback to default plan
+          if (!plan) {
+            const { data: defaultPlan } = await supabaseClient
+              .from('subscription_plans')
+              .select('*')
+              .eq('name', 'Artistes')
+              .single();
+            
+            if (defaultPlan) {
+              plan = defaultPlan;
+              logStep("Using default plan for test mode", { planId: plan.id, planName: plan.name });
+            }
           }
         }
 
@@ -156,6 +193,81 @@ serve(async (req) => {
             logStep("Update error", { error: updateError });
           } else {
             logStep("Subscription updated successfully", updateResult);
+            
+            // Check if this is a Premium Visibilité subscription and create premium visibility record
+            if (plan && plan.name === 'Premium Visibilité') {
+              logStep("Detected Premium Visibilité subscription, creating premium record");
+              
+              // Get user's profile to determine profile type and ID
+              let profileType = 'artist';
+              let profileId = null;
+              
+              // Try to find artist profile first
+              const { data: artistProfile } = await supabaseClient
+                .from('artist_profiles')
+                .select('id')
+                .eq('user_id', user.id)
+                .maybeSingle();
+              
+              if (artistProfile) {
+                profileType = 'artist';
+                profileId = artistProfile.id;
+              } else {
+                // Try professional profile
+                const { data: professionalProfile } = await supabaseClient
+                  .from('professional_profiles')
+                  .select('id')
+                  .eq('user_id', user.id)
+                  .maybeSingle();
+                
+                if (professionalProfile) {
+                  profileType = 'professional';
+                  profileId = professionalProfile.id;
+                }
+              }
+              
+              if (profileId) {
+                // Create or update premium visibility subscription record
+                const premiumRecord = {
+                  user_id: user.id,
+                  profile_type: profileType,
+                  profile_id: profileId,
+                  stripe_subscription_id: stripeSubscription.id,
+                  status: stripeSubscription.status === 'trialing' || isTestMode ? 'active' : stripeSubscription.status,
+                  current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+                  current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                };
+                
+                const { error: premiumError } = await supabaseClient
+                  .from('premium_visibility_subscriptions')
+                  .upsert(premiumRecord, { 
+                    onConflict: 'stripe_subscription_id',
+                    ignoreDuplicates: false 
+                  });
+                
+                if (premiumError) {
+                  logStep("ERROR creating premium visibility record", premiumError);
+                } else {
+                  logStep("Premium visibility record created successfully");
+                  
+                  // Update profile with premium status
+                  const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
+                  const { error: profileError } = await supabaseClient
+                    .from(tableName)
+                    .update({
+                      public_visibility_premium: true,
+                      premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                    })
+                    .eq('id', profileId);
+                  
+                  if (profileError) {
+                    logStep("ERROR updating profile premium status", profileError);
+                  } else {
+                    logStep("Profile premium status updated successfully");
+                  }
+                }
+              }
+            }
           }
         } else {
           // Insert new subscription
@@ -169,6 +281,81 @@ serve(async (req) => {
             logStep("Insert error", { error: insertError });
           } else {
             logStep("Subscription inserted successfully", insertResult);
+            
+            // Check if this is a Premium Visibilité subscription and create premium visibility record
+            if (plan && plan.name === 'Premium Visibilité') {
+              logStep("Detected Premium Visibilité subscription, creating premium record");
+              
+              // Get user's profile to determine profile type and ID
+              let profileType = 'artist';
+              let profileId = null;
+              
+              // Try to find artist profile first
+              const { data: artistProfile } = await supabaseClient
+                .from('artist_profiles')
+                .select('id')
+                .eq('user_id', user.id)
+                .maybeSingle();
+              
+              if (artistProfile) {
+                profileType = 'artist';
+                profileId = artistProfile.id;
+              } else {
+                // Try professional profile
+                const { data: professionalProfile } = await supabaseClient
+                  .from('professional_profiles')
+                  .select('id')
+                  .eq('user_id', user.id)
+                  .maybeSingle();
+                
+                if (professionalProfile) {
+                  profileType = 'professional';
+                  profileId = professionalProfile.id;
+                }
+              }
+              
+              if (profileId) {
+                // Create or update premium visibility subscription record
+                const premiumRecord = {
+                  user_id: user.id,
+                  profile_type: profileType,
+                  profile_id: profileId,
+                  stripe_subscription_id: stripeSubscription.id,
+                  status: stripeSubscription.status === 'trialing' || isTestMode ? 'active' : stripeSubscription.status,
+                  current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+                  current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                };
+                
+                const { error: premiumError } = await supabaseClient
+                  .from('premium_visibility_subscriptions')
+                  .upsert(premiumRecord, { 
+                    onConflict: 'stripe_subscription_id',
+                    ignoreDuplicates: false 
+                  });
+                
+                if (premiumError) {
+                  logStep("ERROR creating premium visibility record", premiumError);
+                } else {
+                  logStep("Premium visibility record created successfully");
+                  
+                  // Update profile with premium status
+                  const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
+                  const { error: profileError } = await supabaseClient
+                    .from(tableName)
+                    .update({
+                      public_visibility_premium: true,
+                      premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                    })
+                    .eq('id', profileId);
+                  
+                  if (profileError) {
+                    logStep("ERROR updating profile premium status", profileError);
+                  } else {
+                    logStep("Profile premium status updated successfully");
+                  }
+                }
+              }
+            }
           }
         }
 
