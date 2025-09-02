@@ -73,12 +73,35 @@ serve(async (req) => {
       logStep("Created new customer", { customerId });
     }
 
+    // Check if user already has an active premium visibility subscription for this profile
+    const { data: existingPremium } = await supabaseClient
+      .from('premium_visibility_subscriptions')
+      .select('id, stripe_subscription_id, status')
+      .eq('user_id', user.id)
+      .eq('profile_id', profileId)
+      .eq('profile_type', profileType)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    if (existingPremium) {
+      logStep("User already has active premium visibility for this profile", existingPremium);
+      return new Response(JSON.stringify({
+        error: "Vous avez déjà une souscription premium active pour ce profil",
+        existing_subscription_id: existingPremium.stripe_subscription_id
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
     // Check if user already has an active subscription (standard plan)
     const existingSubscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: 'active',
-      limit: 1
+      limit: 10
     });
+
+    logStep("Existing subscriptions found", { count: existingSubscriptions.data.length });
 
     let subscriptionToModify = null;
     if (existingSubscriptions.data.length > 0) {
@@ -185,10 +208,10 @@ serve(async (req) => {
       throw new Error(`Failed to update profile: ${updateError.message}`);
     }
 
-    // Create subscription record
+    // Create subscription record - use upsert to handle potential duplicates
     const { error: subError } = await supabaseClient
       .from('premium_visibility_subscriptions')
-      .insert({
+      .upsert({
         user_id: user.id,
         profile_type: profileType,
         profile_id: profileId,
@@ -196,6 +219,9 @@ serve(async (req) => {
         status: 'active',
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString()
+      }, {
+        onConflict: 'stripe_subscription_id',
+        ignoreDuplicates: false
       });
 
     if (subError) {

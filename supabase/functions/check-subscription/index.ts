@@ -172,99 +172,163 @@ serve(async (req) => {
         // Check if subscription already exists for this user
         const { data: existingSubscription, error: checkError } = await supabaseClient
           .from('subscriptions')
-          .select('id')
+          .select('id, status, stripe_subscription_id')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (checkError && checkError.code !== 'PGRST116') {
           logStep("Error checking existing subscription", { error: checkError });
         }
 
-        if (existingSubscription) {
-          // Update existing subscription
-          const { data: updateResult, error: updateError } = await supabaseClient
+        // Also check for existing active subscriptions for the same plan
+        let existingPlanSubscription = null;
+        if (plan?.id) {
+          const { data: planSub } = await supabaseClient
             .from('subscriptions')
-            .update(subscriptionRecord)
+            .select('id, status, stripe_subscription_id')
             .eq('user_id', user.id)
-            .select()
-            .single();
+            .eq('plan_id', plan.id)
+            .in('status', ['active', 'trialing'])
+            .maybeSingle();
+          existingPlanSubscription = planSub;
+        }
 
-          if (updateError) {
-            logStep("Update error", { error: updateError });
-          } else {
-            logStep("Subscription updated successfully", updateResult);
+        logStep("Existing subscription check", { 
+          existingSubscription, 
+          existingPlanSubscription, 
+          newStripeSubscriptionId: stripeSubscription.id 
+        });
+
+        if (existingSubscription) {
+          // Check if it's the same Stripe subscription or a different one
+          if (existingSubscription.stripe_subscription_id === stripeSubscription.id) {
+            // Update existing subscription with same Stripe ID
+            const { data: updateResult, error: updateError } = await supabaseClient
+              .from('subscriptions')
+              .update(subscriptionRecord)
+              .eq('user_id', user.id)
+              .select()
+              .single();
+
+            if (updateError) {
+              logStep("Update error", { error: updateError });
+            } else {
+              logStep("Subscription updated successfully", updateResult);
+            }
+          } else if (existingPlanSubscription && existingPlanSubscription.stripe_subscription_id !== stripeSubscription.id) {
+            // User has a different active subscription for the same plan - this shouldn't happen
+            logStep("WARNING: User has multiple active subscriptions for the same plan", {
+              existing: existingPlanSubscription,
+              new: stripeSubscription.id
+            });
             
-            // Check if this is a Premium Visibilité subscription and create premium visibility record
-            if (plan && plan.name === 'Premium Visibilité') {
-              logStep("Detected Premium Visibilité subscription, creating premium record");
-              
-              // Get user's profile to determine profile type and ID
-              let profileType = 'artist';
-              let profileId = null;
-              
-              // Try to find artist profile first
-              const { data: artistProfile } = await supabaseClient
-                .from('artist_profiles')
+            // Cancel the older subscription in Stripe if it's different
+            try {
+              await stripe.subscriptions.cancel(existingPlanSubscription.stripe_subscription_id);
+              logStep("Cancelled older subscription in Stripe", { id: existingPlanSubscription.stripe_subscription_id });
+            } catch (cancelError) {
+              logStep("Error cancelling old subscription", { error: cancelError });
+            }
+            
+            // Update with the new subscription
+            const { data: updateResult, error: updateError } = await supabaseClient
+              .from('subscriptions')
+              .update(subscriptionRecord)
+              .eq('user_id', user.id)
+              .select()
+              .single();
+
+            if (updateError) {
+              logStep("Update error", { error: updateError });
+            } else {
+              logStep("Subscription updated with new Stripe subscription", updateResult);
+            }
+          } else {
+            // Update existing subscription
+            const { data: updateResult, error: updateError } = await supabaseClient
+              .from('subscriptions')
+              .update(subscriptionRecord)
+              .eq('user_id', user.id)
+              .select()
+              .single();
+
+            if (updateError) {
+              logStep("Update error", { error: updateError });
+            } else {
+              logStep("Subscription updated successfully", updateResult);
+            }
+          }
+          
+          // Check if this is a Premium Visibilité subscription and create premium visibility record
+          if (plan && plan.name === 'Premium Visibilité') {
+            logStep("Detected Premium Visibilité subscription, creating premium record");
+            
+            // Get user's profile to determine profile type and ID
+            let profileType = 'artist';
+            let profileId = null;
+            
+            // Try to find artist profile first
+            const { data: artistProfile } = await supabaseClient
+              .from('artist_profiles')
+              .select('id')
+              .eq('user_id', user.id)
+              .maybeSingle();
+            
+            if (artistProfile) {
+              profileType = 'artist';
+              profileId = artistProfile.id;
+            } else {
+              // Try professional profile
+              const { data: professionalProfile } = await supabaseClient
+                .from('professional_profiles')
                 .select('id')
                 .eq('user_id', user.id)
                 .maybeSingle();
               
-              if (artistProfile) {
-                profileType = 'artist';
-                profileId = artistProfile.id;
-              } else {
-                // Try professional profile
-                const { data: professionalProfile } = await supabaseClient
-                  .from('professional_profiles')
-                  .select('id')
-                  .eq('user_id', user.id)
-                  .maybeSingle();
-                
-                if (professionalProfile) {
-                  profileType = 'professional';
-                  profileId = professionalProfile.id;
-                }
+              if (professionalProfile) {
+                profileType = 'professional';
+                profileId = professionalProfile.id;
               }
+            }
+            
+            if (profileId) {
+              // Create or update premium visibility subscription record
+              const premiumRecord = {
+                user_id: user.id,
+                profile_type: profileType,
+                profile_id: profileId,
+                stripe_subscription_id: stripeSubscription.id,
+                status: stripeSubscription.status === 'trialing' || isTestMode ? 'active' : stripeSubscription.status,
+                current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+                current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+              };
               
-              if (profileId) {
-                // Create or update premium visibility subscription record
-                const premiumRecord = {
-                  user_id: user.id,
-                  profile_type: profileType,
-                  profile_id: profileId,
-                  stripe_subscription_id: stripeSubscription.id,
-                  status: stripeSubscription.status === 'trialing' || isTestMode ? 'active' : stripeSubscription.status,
-                  current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
-                  current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
-                };
+              const { error: premiumError } = await supabaseClient
+                .from('premium_visibility_subscriptions')
+                .upsert(premiumRecord, { 
+                  onConflict: 'stripe_subscription_id',
+                  ignoreDuplicates: false 
+                });
+              
+              if (premiumError) {
+                logStep("ERROR creating premium visibility record", premiumError);
+              } else {
+                logStep("Premium visibility record created successfully");
                 
-                const { error: premiumError } = await supabaseClient
-                  .from('premium_visibility_subscriptions')
-                  .upsert(premiumRecord, { 
-                    onConflict: 'stripe_subscription_id',
-                    ignoreDuplicates: false 
-                  });
+                // Update profile with premium status
+                const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
+                const { error: profileError } = await supabaseClient
+                  .from(tableName)
+                  .update({
+                    public_visibility_premium: true,
+                    premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                  })
+                  .eq('id', profileId);
                 
-                if (premiumError) {
-                  logStep("ERROR creating premium visibility record", premiumError);
+                if (profileError) {
+                  logStep("ERROR updating profile premium status", profileError);
                 } else {
-                  logStep("Premium visibility record created successfully");
-                  
-                  // Update profile with premium status
-                  const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
-                  const { error: profileError } = await supabaseClient
-                    .from(tableName)
-                    .update({
-                      public_visibility_premium: true,
-                      premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
-                    })
-                    .eq('id', profileId);
-                  
-                  if (profileError) {
-                    logStep("ERROR updating profile premium status", profileError);
-                  } else {
-                    logStep("Profile premium status updated successfully");
-                  }
+                  logStep("Profile premium status updated successfully");
                 }
               }
             }
