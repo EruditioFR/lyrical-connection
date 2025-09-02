@@ -127,7 +127,9 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Par catégorie" />
+                <SelectValue placeholder="Catégorie">
+                  {selectedCategory === 'all' ? 'Catégorie' : `Catégorie: ${selectedCategory}`}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
@@ -141,7 +143,9 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
 
             <Select value={selectedComposer} onValueChange={setSelectedComposer}>
               <SelectTrigger>
-                <SelectValue placeholder="Par compositeur" />
+                <SelectValue placeholder="Compositeur">
+                  {selectedComposer === 'all' ? 'Compositeur' : `Compositeur: ${selectedComposer}`}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
@@ -155,7 +159,9 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
 
             <Select value={selectedRole} onValueChange={setSelectedRole}>
               <SelectTrigger>
-                <SelectValue placeholder="Par rôle" />
+                <SelectValue placeholder="Rôle">
+                  {selectedRole === 'all' ? 'Rôle' : `Rôle: ${selectedRole}`}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
@@ -169,7 +175,9 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
 
             <Select value={selectedYear} onValueChange={setSelectedYear}>
               <SelectTrigger>
-                <SelectValue placeholder="Par année" />
+                <SelectValue placeholder="Année">
+                  {selectedYear === 'all' ? 'Année' : `Année: ${selectedYear}`}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
@@ -183,7 +191,9 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
 
             <Select value={selectedVenue} onValueChange={setSelectedVenue}>
               <SelectTrigger>
-                <SelectValue placeholder="Par lieu" />
+                <SelectValue placeholder="Lieu">
+                  {selectedVenue === 'all' ? 'Lieu' : `Lieu: ${selectedVenue}`}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
