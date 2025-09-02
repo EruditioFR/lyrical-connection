@@ -12,7 +12,7 @@ const RepertoireTab = ({ artistProfileId }: RepertoireTabProps) => {
       <div>
         <h3 className="text-lg font-medium mb-2">Répertoire lyrique structuré</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Ajoutez vos airs spécifiques du répertoire lyrique classique
+          Présentez votre répertoire déjà interprété : airs d'opéra, mélodies, oratorios et œuvres lyriques que vous maîtrisez et avez déjà chantés en concert ou sur scène
         </p>
         <RepertoireManager artistProfileId={artistProfileId} />
       </div>
