@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useUserRoles } from './useUserRoles';
 import { toast } from '@/hooks/use-toast';
 
 export interface VerificationRequest {
@@ -92,6 +93,7 @@ export const useCreateVerificationRequest = () => {
 // Admin hooks for managing verification requests
 export const useAllVerificationRequests = () => {
   const { user } = useAuth();
+  const { hasRole } = useUserRoles();
 
   return useQuery({
     queryKey: ['all-verification-requests'],
@@ -108,7 +110,7 @@ export const useAllVerificationRequests = () => {
       if (error) throw error;
       return data as VerificationRequest[];
     },
-    enabled: !!user // TODO: Add admin role check
+    enabled: !!user && hasRole('admin')
   });
 };
 
