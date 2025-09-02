@@ -11,3 +11,12 @@ verify_jwt = true
 
 [functions.import-openopus-data]
 verify_jwt = true
+
+[functions.send-upgrade-request]
+verify_jwt = true
+
+[functions.send-upgrade-reminder]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = true

@@ -1,6 +1,6 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import Stripe from "https://esm.sh/stripe@14.21.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,13 +18,12 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Récupérer les données de la requête
+    // Vérifier l'authentification
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
       throw new Error('Authorization header required');
     }
 
-    // Vérifier l'utilisateur authentifié
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(
       authHeader.replace('Bearer ', '')
     );
@@ -36,6 +35,11 @@ serve(async (req) => {
     const { profile_id, profile_type, user_id } = await req.json();
 
     console.log('Creating upgrade request:', { profile_id, profile_type, user_id });
+
+    // Initialiser Stripe
+    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+      apiVersion: "2023-10-16",
+    });
 
     // Créer la demande d'upgrade
     const { data: upgradeRequest, error: upgradeError } = await supabaseClient
@@ -55,15 +59,51 @@ serve(async (req) => {
       throw upgradeError;
     }
 
-    // TODO: Intégrer avec Stripe pour générer un lien de paiement
-    // Pour l'instant, on simule la création d'un lien
-    const paymentLink = `https://stripe.com/payment-link-placeholder-${upgradeRequest.id}`;
+    // Créer un lien de paiement Stripe selon le type de profil
+    let priceData;
+    if (profile_type === 'artist') {
+      priceData = {
+        currency: 'eur',
+        product_data: {
+          name: 'Visibilité Premium - Profil Artiste',
+          description: 'Améliorez la visibilité de votre profil artiste'
+        },
+        unit_amount: 2999, // 29.99€
+      };
+    } else if (profile_type === 'professional') {
+      priceData = {
+        currency: 'eur',
+        product_data: {
+          name: 'Visibilité Premium - Profil Professionnel',
+          description: 'Améliorez la visibilité de votre profil professionnel'
+        },
+        unit_amount: 4999, // 49.99€
+      };
+    } else {
+      throw new Error('Type de profil non supporté');
+    }
+
+    // Créer le Payment Link Stripe
+    const paymentLink = await stripe.paymentLinks.create({
+      line_items: [
+        {
+          price_data: priceData,
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        upgrade_request_id: upgradeRequest.id,
+        user_id: user_id,
+        profile_id: profile_id,
+        profile_type: profile_type,
+      },
+    });
 
     // Mettre à jour la demande avec le lien de paiement
     const { error: updateError } = await supabaseClient
       .from('upgrade_requests')
       .update({ 
-        payment_link: paymentLink,
+        payment_link: paymentLink.url,
         status: 'sent' 
       })
       .eq('id', upgradeRequest.id);
@@ -79,7 +119,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         upgrade_request_id: upgradeRequest.id,
-        payment_link: paymentLink
+        payment_link: paymentLink.url
       }),
       { 
         headers: { 
