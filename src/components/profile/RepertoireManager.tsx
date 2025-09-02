@@ -262,14 +262,14 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredRepertoire.map((item) => (
-            <Card key={item.id} className="border-2 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 bg-card/80 backdrop-blur-sm">
+            <Card key={item.id} className="border-2 hover:border-amber-400/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 bg-gradient-to-br from-amber-900/95 to-amber-800/95 text-amber-50 border-amber-700/50">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-lg line-clamp-2 mb-1">
+                    <CardTitle className="text-lg line-clamp-2 mb-1 text-amber-50">
                       {item.lyrical_works?.title}
                     </CardTitle>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-amber-200/80">
                       {item.lyrical_works?.composer}
                     </p>
                   </div>
@@ -279,34 +279,34 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
               <CardContent className="pt-0">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs border-amber-400/50 text-amber-200 bg-amber-800/50">
                       {item.lyrical_works?.category}
                     </Badge>
-                    <Badge className={`text-xs ${getMasteryColor(item.mastery_level || 'intermediate')}`}>
+                    <Badge className={`text-xs border-amber-500/50 bg-amber-700/70 text-amber-100 ${getMasteryColor(item.mastery_level || 'intermediate')}`}>
                       {item.mastery_level}
                     </Badge>
                   </div>
                   
                   {item.work_roles && (
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Rôle:</strong> {item.work_roles.role_name}
+                    <p className="text-sm text-amber-200/90">
+                      <strong className="text-amber-100">Rôle:</strong> {item.work_roles.role_name}
                     </p>
                   )}
                   
                   {item.performance_year && (
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Année:</strong> {item.performance_year}
+                    <p className="text-sm text-amber-200/90">
+                      <strong className="text-amber-100">Année:</strong> {item.performance_year}
                     </p>
                   )}
                   
                   {item.venue && (
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Lieu:</strong> {item.venue}
+                    <p className="text-sm text-amber-200/90">
+                      <strong className="text-amber-100">Lieu:</strong> {item.venue}
                     </p>
                   )}
                   
                   {item.notes && (
-                    <p className="text-xs text-muted-foreground line-clamp-2 mt-2">
+                    <p className="text-xs text-amber-200/80 line-clamp-2 mt-2">
                       {item.notes}
                     </p>
                   )}
