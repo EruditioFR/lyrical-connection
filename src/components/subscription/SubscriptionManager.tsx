@@ -114,7 +114,7 @@ export const SubscriptionManager = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h3 className="font-semibold text-lg">{subscription.plan?.name}</h3>
-              <p className="text-muted-foreground">{subscription.plan?.description}</p>
+              <p className="text-muted-foreground">Notre meilleure offre, pour une visibilité maximale de votre talent</p>
               <p className="text-2xl font-bold mt-2">
                 {subscription.plan?.price_monthly === 0 ? 'Gratuit' : `${subscription.plan?.price_monthly}€/mois`}
               </p>
