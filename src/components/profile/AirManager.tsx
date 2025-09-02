@@ -178,7 +178,7 @@ const AirManager: React.FC<AirManagerProps> = ({
                   <Select value={formData.type} onValueChange={(value: any) => setFormData({
                   ...formData,
                   type: value
-                })}>
+                })} disabled={!!editingAir}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -195,13 +195,21 @@ const AirManager: React.FC<AirManagerProps> = ({
                     <Input id="external_url" type="url" value={formData.external_url} onChange={e => setFormData({
                   ...formData,
                   external_url: e.target.value
-                })} placeholder="https://..." required />
+                })} placeholder="https://..." required disabled={!!editingAir} />
+                    {editingAir && <p className="text-sm text-muted-foreground">
+                        L'URL ne peut pas être modifiée
+                      </p>}
                   </div> : <div className="space-y-2">
                     <Label htmlFor="file">Fichier *</Label>
-                    <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required={!editingAir} />
-                    {editingAir && <p className="text-sm text-muted-foreground">
-                        Laissez vide pour garder le fichier actuel
-                      </p>}
+                    {editingAir ? (
+                      <div className="p-3 bg-muted rounded-md">
+                        <p className="text-sm text-muted-foreground">
+                          Le fichier ne peut pas être modifié
+                        </p>
+                      </div>
+                    ) : (
+                      <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required />
+                    )}
                   </div>}
 
                 <div className="flex gap-2">
