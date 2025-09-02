@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Search, Filter, Music, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,12 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useArtistRepertoire } from '@/hooks/useArtistRepertoire';
 import { useLyricalWorks } from '@/hooks/useLyricalWorks';
 import RepertoireAddForm from './repertoire/RepertoireAddForm';
+
 interface RepertoireManagerProps {
   artistProfileId: string;
 }
-export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
-  artistProfileId
-}) => {
+
+export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProfileId }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedComposer, setSelectedComposer] = useState<string>('all');
@@ -22,13 +23,9 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
   const [selectedYear, setSelectedYear] = useState<string>('all');
   const [selectedVenue, setSelectedVenue] = useState<string>('all');
   const [showAddForm, setShowAddForm] = useState(false);
-  const {
-    repertoire = [],
-    isLoading
-  } = useArtistRepertoire(artistProfileId);
-  const {
-    works = []
-  } = useLyricalWorks();
+
+  const { repertoire = [], isLoading } = useArtistRepertoire(artistProfileId);
+  const { works = [] } = useLyricalWorks();
 
   // Extract unique values for filters
   const categories = Array.from(new Set(works.map(work => work.category)));
@@ -36,50 +33,89 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
   const roles = Array.from(new Set(repertoire.map(item => item.work_roles?.role_name).filter(Boolean)));
   const years = Array.from(new Set(repertoire.map(item => item.performance_year).filter(Boolean))).sort((a, b) => b - a);
   const venues = Array.from(new Set(repertoire.map(item => item.venue).filter(Boolean)));
+
   const filteredRepertoire = repertoire.filter(item => {
-    const matchesSearch = item.lyrical_works?.title?.toLowerCase().includes(searchQuery.toLowerCase()) || item.lyrical_works?.composer?.toLowerCase().includes(searchQuery.toLowerCase()) || item.work_roles?.role_name?.toLowerCase().includes(searchQuery.toLowerCase()) || item.venue?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = item.lyrical_works?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.lyrical_works?.composer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.work_roles?.role_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.venue?.toLowerCase().includes(searchQuery.toLowerCase());
+    
     const matchesCategory = selectedCategory === 'all' || item.lyrical_works?.category === selectedCategory;
     const matchesComposer = selectedComposer === 'all' || item.lyrical_works?.composer === selectedComposer;
     const matchesRole = selectedRole === 'all' || item.work_roles?.role_name === selectedRole;
     const matchesYear = selectedYear === 'all' || item.performance_year?.toString() === selectedYear;
     const matchesVenue = selectedVenue === 'all' || item.venue === selectedVenue;
+    
     return matchesSearch && matchesCategory && matchesComposer && matchesRole && matchesYear && matchesVenue;
   });
+
   const getMasteryColor = (level: string) => {
     switch (level) {
-      case 'beginner':
-        return 'bg-red-100 text-red-800';
-      case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'advanced':
-        return 'bg-green-100 text-green-800';
-      case 'expert':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+      case 'beginner': return 'bg-red-100 text-red-800';
+      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
+      case 'advanced': return 'bg-green-100 text-green-800';
+      case 'expert': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
+
   const handleCloseForm = () => {
     setShowAddForm(false);
   };
+
   if (isLoading) {
-    return <Card>
+    return (
+      <Card>
         <CardContent className="p-6">
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         </CardContent>
-      </Card>;
+      </Card>
+    );
   }
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       {/* Header with actions */}
-      
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Music className="h-5 w-5 text-primary" />
+          <h3 className="text-lg font-semibold">Mon Répertoire</h3>
+          <Badge variant="secondary">{repertoire.length} œuvres</Badge>
+        </div>
+        
+        <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Ajouter une œuvre
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>
+                Ajouter une œuvre au répertoire
+              </DialogTitle>
+            </DialogHeader>
+            <RepertoireAddForm 
+              artistProfileId={artistProfileId}
+              onClose={handleCloseForm}
+            />
+          </DialogContent>
+        </Dialog>
+      </div>
 
       {/* Filters */}
       <div className="space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Rechercher par œuvre, compositeur, rôle ou lieu..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
+          <Input
+            placeholder="Rechercher par œuvre, compositeur, rôle ou lieu..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
         </div>
         
         <div className="space-y-3">
@@ -97,9 +133,11 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
-                {categories.map((category: string) => <SelectItem key={category} value={category}>
+                {categories.map((category: string) => (
+                  <SelectItem key={category} value={category}>
                     {category}
-                  </SelectItem>)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -111,9 +149,11 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
-                {composers.map((composer: string) => <SelectItem key={composer} value={composer}>
+                {composers.map((composer: string) => (
+                  <SelectItem key={composer} value={composer}>
                     {composer}
-                  </SelectItem>)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -125,9 +165,11 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
-                {roles.map((role: string) => <SelectItem key={role} value={role}>
+                {roles.map((role: string) => (
+                  <SelectItem key={role} value={role}>
                     {role}
-                  </SelectItem>)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -139,9 +181,11 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
-                {years.map((year: number) => <SelectItem key={year} value={year.toString()}>
+                {years.map((year: number) => (
+                  <SelectItem key={year} value={year.toString()}>
                     {year}
-                  </SelectItem>)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -153,48 +197,72 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
               </SelectTrigger>
               <SelectContent className="bg-background border z-50">
                 <SelectItem value="all">-</SelectItem>
-                {venues.map((venue: string) => <SelectItem key={venue} value={venue}>
+                {venues.map((venue: string) => (
+                  <SelectItem key={venue} value={venue}>
                     {venue}
-                  </SelectItem>)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
         
-        {(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all') && <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => {
-          setSearchQuery('');
-          setSelectedCategory('all');
-          setSelectedComposer('all');
-          setSelectedRole('all');
-          setSelectedYear('all');
-          setSelectedVenue('all');
-        }}>
+        {(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || 
+          selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all') && (
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('all');
+                setSelectedComposer('all');
+                setSelectedRole('all');
+                setSelectedYear('all');
+                setSelectedVenue('all');
+              }}
+            >
               Effacer tous les filtres
             </Button>
             <span className="text-sm text-muted-foreground">
               {filteredRepertoire.length} résultat{filteredRepertoire.length > 1 ? 's' : ''}
             </span>
-          </div>}
+          </div>
+        )}
       </div>
 
       {/* Repertoire list */}
-      {filteredRepertoire.length === 0 ? <Card>
+      {filteredRepertoire.length === 0 ? (
+        <Card>
           <CardContent className="p-12 text-center">
             <Music className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium text-muted-foreground mb-2">
-              {searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all' ? 'Aucune œuvre trouvée' : 'Votre répertoire est vide'}
+              {(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || 
+                selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all')
+                ? 'Aucune œuvre trouvée' 
+                : 'Votre répertoire est vide'
+              }
             </h3>
             <p className="text-muted-foreground mb-4">
-              {searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all' ? 'Essayez de modifier vos critères de recherche' : 'Commencez par ajouter vos premières œuvres'}
+              {(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || 
+                selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all')
+                ? 'Essayez de modifier vos critères de recherche'
+                : 'Commencez par ajouter vos premières œuvres'
+              }
             </p>
-            {!(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all') && <Button onClick={() => setShowAddForm(true)} className="mt-2">
+            {!(searchQuery || selectedCategory !== 'all' || selectedComposer !== 'all' || 
+               selectedRole !== 'all' || selectedYear !== 'all' || selectedVenue !== 'all') && (
+              <Button onClick={() => setShowAddForm(true)} className="mt-2">
                 <Plus className="h-4 w-4 mr-2" />
                 Ajouter ma première œuvre
-              </Button>}
+              </Button>
+            )}
           </CardContent>
-        </Card> : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredRepertoire.map(item => <Card key={item.id} className="border-2 hover:border-amber-400/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 bg-gradient-to-br from-amber-900/95 to-amber-800/95 text-amber-50 border-amber-700/50">
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredRepertoire.map((item) => (
+            <Card key={item.id} className="border-2 hover:border-amber-400/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 bg-gradient-to-br from-amber-900/95 to-amber-800/95 text-amber-50 border-amber-700/50">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -219,25 +287,37 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({
                     </Badge>
                   </div>
                   
-                  {item.work_roles && <p className="text-sm text-amber-200/90">
+                  {item.work_roles && (
+                    <p className="text-sm text-amber-200/90">
                       <strong className="text-amber-100">Rôle:</strong> {item.work_roles.role_name}
-                    </p>}
+                    </p>
+                  )}
                   
-                  {item.performance_year && <p className="text-sm text-amber-200/90">
+                  {item.performance_year && (
+                    <p className="text-sm text-amber-200/90">
                       <strong className="text-amber-100">Année:</strong> {item.performance_year}
-                    </p>}
+                    </p>
+                  )}
                   
-                  {item.venue && <p className="text-sm text-amber-200/90">
+                  {item.venue && (
+                    <p className="text-sm text-amber-200/90">
                       <strong className="text-amber-100">Lieu:</strong> {item.venue}
-                    </p>}
+                    </p>
+                  )}
                   
-                  {item.notes && <p className="text-xs text-amber-200/80 line-clamp-2 mt-2">
+                  {item.notes && (
+                    <p className="text-xs text-amber-200/80 line-clamp-2 mt-2">
                       {item.notes}
-                    </p>}
+                    </p>
+                  )}
                 </div>
               </CardContent>
-            </Card>)}
-        </div>}
-    </div>;
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default RepertoireManager;
