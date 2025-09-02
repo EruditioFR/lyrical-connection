@@ -89,22 +89,25 @@ serve(async (req) => {
     let subscription;
 
     if (subscriptionToModify) {
+      // Create a price for the premium visibility add-on
+      const premiumPrice = await stripe.prices.create({
+        currency: 'eur',
+        product_data: {
+          name: 'Visibilité Premium Add-on',
+          description: 'Option premium pour apparaître en page publique'
+        },
+        unit_amount: 2900, // 29.00 EUR in cents
+        recurring: {
+          interval: 'month'
+        }
+      });
+
       // Add premium visibility as an additional line item to existing subscription
       subscription = await stripe.subscriptions.update(subscriptionToModify.id, {
         items: [
           ...subscriptionToModify.items.data.map(item => ({ id: item.id })),
           {
-            price_data: {
-              currency: 'eur',
-              product_data: {
-                name: 'Visibilité Premium Add-on',
-                description: 'Option premium pour apparaître en page publique'
-              },
-              unit_amount: 2900, // 29.00 EUR in cents
-              recurring: {
-                interval: 'month'
-              }
-            }
+            price: premiumPrice.id
           }
         ],
         metadata: {
