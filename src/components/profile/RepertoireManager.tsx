@@ -262,7 +262,7 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredRepertoire.map((item) => (
-            <Card key={item.id} className="hover:shadow-md transition-shadow">
+            <Card key={item.id} className="border-2 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200 bg-card/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
