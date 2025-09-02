@@ -130,11 +130,18 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                       variant="outline"
                       size="sm"
                       onClick={() => handlePlayPause(air)}
+                      className="flex items-center space-x-2"
                     >
                       {isPlaying ? (
-                        <Pause className="h-4 w-4" />
+                        <>
+                          <Pause className="h-4 w-4" />
+                          <span>Pause</span>
+                        </>
                       ) : (
-                        <Play className="h-4 w-4" />
+                        <>
+                          <Play className="h-4 w-4" />
+                          <span>Écouter</span>
+                        </>
                       )}
                     </Button>
                   )}
@@ -144,8 +151,10 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                       variant="outline"
                       size="sm"
                       onClick={() => handleVideoPlay(air)}
+                      className="flex items-center space-x-2"
                     >
                       <Play className="h-4 w-4" />
+                      <span>Voir la vidéo</span>
                     </Button>
                   )}
                   
@@ -170,8 +179,9 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                           openExternalLink(air.external_url!);
                         }
                       }}
+                      className="flex items-center space-x-2"
                     >
-                      {/* Afficher l'icône appropriée selon le type de contenu */}
+                      {/* Afficher le texte approprié selon le type de contenu */}
                       {air.external_url && (
                         air.external_url.includes('youtube') ||
                         air.external_url.includes('vimeo') ||
@@ -180,9 +190,15 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                         air.external_url.includes('.webm') ||
                         air.external_url.includes('.mov')
                       ) ? (
-                        <Play className="h-4 w-4" />
+                        <>
+                          <Play className="h-4 w-4" />
+                          <span>Voir la vidéo</span>
+                        </>
                       ) : (
-                        <ExternalLink className="h-4 w-4" />
+                        <>
+                          <ExternalLink className="h-4 w-4" />
+                          <span>Consulter</span>
+                        </>
                       )}
                     </Button>
                   )}
