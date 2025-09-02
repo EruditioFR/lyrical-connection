@@ -1,6 +1,5 @@
 import Layout from "@/components/layout/Layout";
 import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
-import SubscriptionSummary from "@/components/subscription/SubscriptionSummary";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserType } from "@/hooks/useUserType";
 import { Card, CardContent } from "@/components/ui/card";
@@ -52,17 +51,8 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <SubscriptionManager />
-          </div>
-          <div className="space-y-6">
-            {/* Résumé des abonnements */}
-            <SubscriptionSummary 
-              profileType={userType === 'artist' ? 'artist' : userType === 'professional' ? 'professional' : undefined}
-              profileId={artistProfile?.id || professionalProfile?.id}
-            />
-          </div>
+        <div className="w-full">
+          <SubscriptionManager />
         </div>
       </div>
     </Layout>
