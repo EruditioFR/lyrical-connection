@@ -99,19 +99,18 @@ export const useArtists = (filters?: ArtistFilters) => {
 
       let filteredArtists = artistsData || [];
 
-      // Si l'utilisateur n'est pas connecté, filtrer pour ne garder que les artistes avec premium_visibility_subscription actif
+      // Filtrer pour ne garder que les artistes ayant un abonnement en cours
       if (!filters?.isUserAuthenticated) {
+        // Utilisateurs non connectés : seuls les artistes avec un abonnement premium_visibility actif sont visibles
         filteredArtists = filteredArtists.filter(artist => {
-          // Seuls les artistes avec un abonnement premium_visibility actif sont visibles
           return premiumVisibilityUserIds.has(artist.user_id);
         });
-      } else if (filters?.isUserAuthenticated) {
-        // Si l'utilisateur est connecté, filtrer pour ne garder que les artistes avec un abonnement actif
+      } else {
+        // Utilisateurs connectés : seuls les artistes avec un abonnement actif (général ou premium visibility) sont visibles
         filteredArtists = filteredArtists.filter(artist => {
-          return activeSubscriptionUserIds.has(artist.user_id);
+          return activeSubscriptionUserIds.has(artist.user_id) || premiumVisibilityUserIds.has(artist.user_id);
         });
       }
-      // Si l'utilisateur est connecté et qu'on n'a pas de filtres spécifiques, on garde tous les artistes actifs
 
       // Apply search term filter
       if (filters?.searchTerm) {
