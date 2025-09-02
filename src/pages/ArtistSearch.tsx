@@ -30,7 +30,10 @@ const ArtistSearch = () => {
     repertoire: repertoireFilters,
   };
 
-  const { artists, isLoading } = useArtists(filters);
+  const { artists, isLoading } = useArtists({
+    ...filters,
+    isUserAuthenticated: true
+  });
   const saveSearchMutation = useSaveSearch();
 
   // Filter artists based on current criteria
