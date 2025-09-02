@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Euro, Eye, Check } from 'lucide-react';
+import { Calendar, MapPin, Users, Euro, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -174,12 +174,9 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
                 navigate(`/castings/${casting.id}`);
               }}
             >
-              <div className="flex items-center justify-center gap-2">
-                <Check className="h-4 w-4" />
-                <div className="flex flex-col items-center">
-                  <span className="font-medium">Inscrit(e)</span>
-                  <span className="text-xs opacity-90">Voir ma candidature</span>
-                </div>
+              <div className="flex flex-col items-center">
+                <span className="font-medium">Inscrit(e)</span>
+                <span className="text-xs opacity-90">Voir ma candidature</span>
               </div>
             </Button>
           ) : (
