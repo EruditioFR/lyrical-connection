@@ -259,90 +259,57 @@ serve(async (req) => {
             }
           }
           
-            // Check if this is a Premium Visibilité subscription and create premium visibility record ONLY if it doesn't exist yet
+            // Pour les plans Premium Visibilité complets, on ne crée PAS d'enregistrement séparé
+            // car cela évite la duplication logique entre subscriptions et premium_visibility_subscriptions
             if (plan && plan.name === 'Premium Visibilité') {
-              logStep("Detected Premium Visibilité subscription, checking for existing premium record");
+              logStep("Plan Premium Visibilité complet détecté - pas de création d'enregistrement séparé pour éviter les doublons");
               
-              // First check if a premium record already exists
-              const { data: existingPremium } = await supabaseClient
-                .from('premium_visibility_subscriptions')
+              // Mise à jour directe du profil avec le statut premium
+              let profileType = 'artist';
+              let profileId = null;
+              
+              // Try to find artist profile first
+              const { data: artistProfile } = await supabaseClient
+                .from('artist_profiles')
                 .select('id')
-                .eq('stripe_subscription_id', stripeSubscription.id)
+                .eq('user_id', user.id)
                 .maybeSingle();
               
-              if (!existingPremium) {
-                logStep("No existing premium record found, creating new one");
-                
-                // Get user's profile to determine profile type and ID
-                let profileType = 'artist';
-                let profileId = null;
-                
-                // Try to find artist profile first
-                const { data: artistProfile } = await supabaseClient
-                  .from('artist_profiles')
+              if (artistProfile) {
+                profileType = 'artist';
+                profileId = artistProfile.id;
+              } else {
+                // Try professional profile
+                const { data: professionalProfile } = await supabaseClient
+                  .from('professional_profiles')
                   .select('id')
                   .eq('user_id', user.id)
                   .maybeSingle();
                 
-                if (artistProfile) {
-                  profileType = 'artist';
-                  profileId = artistProfile.id;
-                } else {
-                  // Try professional profile
-                  const { data: professionalProfile } = await supabaseClient
-                    .from('professional_profiles')
-                    .select('id')
-                    .eq('user_id', user.id)
-                    .maybeSingle();
-                  
-                  if (professionalProfile) {
-                    profileType = 'professional';
-                    profileId = professionalProfile.id;
-                  }
+                if (professionalProfile) {
+                  profileType = 'professional';
+                  profileId = professionalProfile.id;
                 }
+              }
+              
+              if (profileId) {
+                // Update profile directly with premium status (no separate record needed)
+                const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
+                const { error: profileError } = await supabaseClient
+                  .from(tableName)
+                  .update({
+                    public_visibility_premium: true,
+                    premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                  })
+                  .eq('id', profileId);
                 
-                if (profileId) {
-                  // Create premium visibility subscription record
-                  const premiumRecord = {
-                    user_id: user.id,
-                    profile_type: profileType,
-                    profile_id: profileId,
-                    stripe_subscription_id: stripeSubscription.id,
-                    status: stripeSubscription.status === 'trialing' || isTestMode ? 'active' : stripeSubscription.status,
-                    current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
-                    current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
-                  };
-                  
-                  const { error: premiumError } = await supabaseClient
-                    .from('premium_visibility_subscriptions')
-                    .insert(premiumRecord);
-                  
-                  if (premiumError) {
-                    logStep("ERROR creating premium visibility record", premiumError);
-                  } else {
-                    logStep("Premium visibility record created successfully");
-                    
-                    // Update profile with premium status
-                    const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
-                    const { error: profileError } = await supabaseClient
-                      .from(tableName)
-                      .update({
-                        public_visibility_premium: true,
-                        premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
-                      })
-                      .eq('id', profileId);
-                    
-                    if (profileError) {
-                      logStep("ERROR updating profile premium status", profileError);
-                    } else {
-                      logStep("Profile premium status updated successfully");
-                    }
-                  }
+                if (profileError) {
+                  logStep("ERROR updating profile premium status", profileError);
                 } else {
-                  logStep("No profile found for user, cannot create premium record");
+                  logStep("Profile premium status updated successfully (direct from Premium Visibilité plan)");
                 }
               } else {
-                logStep("Premium visibility record already exists, skipping creation", existingPremium);
+                logStep("No profile found for user, cannot update premium status");
               }
           }
         } else {
@@ -358,90 +325,57 @@ serve(async (req) => {
           } else {
             logStep("Subscription inserted successfully", insertResult);
             
-            // Check if this is a Premium Visibilité subscription and create premium visibility record ONLY if it doesn't exist yet
+            // Pour les plans Premium Visibilité complets, on ne crée PAS d'enregistrement séparé  
+            // car cela évite la duplication logique entre subscriptions et premium_visibility_subscriptions
             if (plan && plan.name === 'Premium Visibilité') {
-              logStep("Detected Premium Visibilité subscription, checking for existing premium record");
+              logStep("Plan Premium Visibilité complet détecté - pas de création d'enregistrement séparé pour éviter les doublons");
               
-              // First check if a premium record already exists
-              const { data: existingPremium } = await supabaseClient
-                .from('premium_visibility_subscriptions')
+              // Mise à jour directe du profil avec le statut premium
+              let profileType = 'artist';
+              let profileId = null;
+              
+              // Try to find artist profile first
+              const { data: artistProfile } = await supabaseClient
+                .from('artist_profiles')
                 .select('id')
-                .eq('stripe_subscription_id', stripeSubscription.id)
+                .eq('user_id', user.id)
                 .maybeSingle();
               
-              if (!existingPremium) {
-                logStep("No existing premium record found, creating new one");
-                
-                // Get user's profile to determine profile type and ID
-                let profileType = 'artist';
-                let profileId = null;
-                
-                // Try to find artist profile first
-                const { data: artistProfile } = await supabaseClient
-                  .from('artist_profiles')
+              if (artistProfile) {
+                profileType = 'artist';
+                profileId = artistProfile.id;
+              } else {
+                // Try professional profile
+                const { data: professionalProfile } = await supabaseClient
+                  .from('professional_profiles')
                   .select('id')
                   .eq('user_id', user.id)
                   .maybeSingle();
                 
-                if (artistProfile) {
-                  profileType = 'artist';
-                  profileId = artistProfile.id;
-                } else {
-                  // Try professional profile
-                  const { data: professionalProfile } = await supabaseClient
-                    .from('professional_profiles')
-                    .select('id')
-                    .eq('user_id', user.id)
-                    .maybeSingle();
-                  
-                  if (professionalProfile) {
-                    profileType = 'professional';
-                    profileId = professionalProfile.id;
-                  }
+                if (professionalProfile) {
+                  profileType = 'professional';
+                  profileId = professionalProfile.id;
                 }
+              }
+              
+              if (profileId) {
+                // Update profile directly with premium status (no separate record needed)
+                const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
+                const { error: profileError } = await supabaseClient
+                  .from(tableName)
+                  .update({
+                    public_visibility_premium: true,
+                    premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
+                  })
+                  .eq('id', profileId);
                 
-                if (profileId) {
-                  // Create premium visibility subscription record
-                  const premiumRecord = {
-                    user_id: user.id,
-                    profile_type: profileType,
-                    profile_id: profileId,
-                    stripe_subscription_id: stripeSubscription.id,
-                    status: stripeSubscription.status === 'trialing' || isTestMode ? 'active' : stripeSubscription.status,
-                    current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
-                    current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
-                  };
-                  
-                  const { error: premiumError } = await supabaseClient
-                    .from('premium_visibility_subscriptions')
-                    .insert(premiumRecord);
-                  
-                  if (premiumError) {
-                    logStep("ERROR creating premium visibility record", premiumError);
-                  } else {
-                    logStep("Premium visibility record created successfully");
-                    
-                    // Update profile with premium status
-                    const tableName = profileType === 'artist' ? 'artist_profiles' : 'professional_profiles';
-                    const { error: profileError } = await supabaseClient
-                      .from(tableName)
-                      .update({
-                        public_visibility_premium: true,
-                        premium_subscription_end: new Date(stripeSubscription.current_period_end * 1000).toISOString()
-                      })
-                      .eq('id', profileId);
-                    
-                    if (profileError) {
-                      logStep("ERROR updating profile premium status", profileError);
-                    } else {
-                      logStep("Profile premium status updated successfully");
-                    }
-                  }
+                if (profileError) {
+                  logStep("ERROR updating profile premium status", profileError);
                 } else {
-                  logStep("No profile found for user, cannot create premium record");
+                  logStep("Profile premium status updated successfully (direct from Premium Visibilité plan)");
                 }
               } else {
-                logStep("Premium visibility record already exists, skipping creation", existingPremium);
+                logStep("No profile found for user, cannot update premium status");
               }
             }
           }
