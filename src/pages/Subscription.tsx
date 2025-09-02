@@ -1,13 +1,16 @@
 import Layout from "@/components/layout/Layout";
 import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
+import SubscriptionSummary from "@/components/subscription/SubscriptionSummary";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserType } from "@/hooks/useUserType";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function Subscription() {
   const { user, loading } = useAuth();
+  const { userType, artistProfile, professionalProfile, isLoading: userTypeLoading } = useUserType();
 
-  if (loading) {
+  if (loading || userTypeLoading) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8">
@@ -49,7 +52,18 @@ export default function Subscription() {
           </p>
         </div>
 
-        <SubscriptionManager />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <SubscriptionManager />
+          </div>
+          <div className="space-y-6">
+            {/* Résumé des abonnements */}
+            <SubscriptionSummary 
+              profileType={userType === 'artist' ? 'artist' : userType === 'professional' ? 'professional' : undefined}
+              profileId={artistProfile?.id || professionalProfile?.id}
+            />
+          </div>
+        </div>
       </div>
     </Layout>
   );

@@ -89,13 +89,22 @@ serve(async (req) => {
     let subscription;
 
     if (subscriptionToModify) {
+      // Create or get premium visibility product
+      let product;
+      try {
+        product = await stripe.products.retrieve('prod_premium_visibility');
+      } catch {
+        product = await stripe.products.create({
+          id: 'prod_premium_visibility',
+          name: 'Visibilité Premium Add-on',
+          description: 'Option premium pour apparaître en page publique'
+        });
+      }
+
       // Create a price for the premium visibility add-on
       const premiumPrice = await stripe.prices.create({
         currency: 'eur',
-        product_data: {
-          name: 'Visibilité Premium Add-on',
-          description: 'Option premium pour apparaître en page publique'
-        },
+        product: product.id,
         unit_amount: 2900, // 29.00 EUR in cents
         recurring: {
           interval: 'month'
@@ -119,21 +128,33 @@ serve(async (req) => {
       });
       logStep("Updated existing subscription with premium visibility", { subscriptionId: subscription.id });
     } else {
+      // Create or get premium visibility product
+      let product;
+      try {
+        product = await stripe.products.retrieve('prod_premium_visibility');
+      } catch {
+        product = await stripe.products.create({
+          id: 'prod_premium_visibility',
+          name: 'Visibilité Premium',
+          description: 'Apparaître en page publique et booster votre visibilité'
+        });
+      }
+
+      // Create price for the standalone premium subscription
+      const premiumPrice = await stripe.prices.create({
+        currency: 'eur',
+        product: product.id,
+        unit_amount: 2900, // 29.00 EUR in cents
+        recurring: {
+          interval: 'month'
+        }
+      });
+
       // Create new subscription for premium visibility only
       subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{
-          price_data: {
-            currency: 'eur',
-            product_data: {
-              name: 'Visibilité Premium',
-              description: 'Apparaître en page publique et booster votre visibilité'
-            },
-            unit_amount: 2900, // 29.00 EUR in cents
-            recurring: {
-              interval: 'month'
-            }
-          }
+          price: premiumPrice.id
         }],
         metadata: {
           user_id: user.id,
