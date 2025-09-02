@@ -68,11 +68,11 @@ export const useArtists = (filters?: ArtistFilters) => {
         throw artistsError;
       }
 
-      // Récupérer les abonnements premium actifs
+      // Récupérer les abonnements premium actifs et en test
       const { data: subscriptions, error: subscriptionsError } = await supabase
         .from('subscriptions')
         .select('user_id, status, current_period_end')
-        .eq('status', 'active');
+        .in('status', ['active', 'trialing']);
 
       if (subscriptionsError) {
         console.error('Error fetching subscriptions:', subscriptionsError);
