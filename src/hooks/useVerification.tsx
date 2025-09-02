@@ -93,7 +93,7 @@ export const useCreateVerificationRequest = () => {
 // Admin hooks for managing verification requests
 export const useAllVerificationRequests = () => {
   const { user } = useAuth();
-  const { hasRole } = useUserRoles();
+  const { isAdmin } = useUserRoles();
 
   return useQuery({
     queryKey: ['all-verification-requests'],
@@ -110,7 +110,7 @@ export const useAllVerificationRequests = () => {
       if (error) throw error;
       return data as VerificationRequest[];
     },
-    enabled: !!user && hasRole('admin')
+    enabled: !!user && isAdmin
   });
 };
 
