@@ -181,10 +181,16 @@ const AirManager: React.FC<AirManagerProps> = ({
                   ...formData,
                   external_url: e.target.value
                 })} placeholder="https://..." required />
-                  </div> : <div className="space-y-2">
-                    <Label htmlFor="file">Fichier *</Label>
-                    <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required={!editingAir} />
-                  </div>}
+                   </div> : <div className="space-y-2">
+                     <Label htmlFor="file">Fichier *</Label>
+                     {editingAir ? (
+                       <div className="p-3 bg-muted rounded-md text-sm text-muted-foreground">
+                         Le fichier ne peut pas être modifié. Supprimez et recréez l'air pour changer le fichier.
+                       </div>
+                     ) : (
+                       <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required />
+                     )}
+                   </div>}
 
                 <div className="flex gap-2">
                   <Button type="submit" disabled={uploading || isCreating} className="flex-1">
