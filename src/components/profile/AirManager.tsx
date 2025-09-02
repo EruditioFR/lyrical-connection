@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Edit, Trash2, Upload, Link, Music, Video, Play, Pause, ExternalLink } from 'lucide-react';
 import { useArtistAirs } from '@/hooks/useArtistAirs';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,6 +41,7 @@ const AirManager: React.FC<AirManagerProps> = ({
     external_url: '',
     file: null as File | null
   });
+  const [sourceType, setSourceType] = useState<'file' | 'link'>('link');
 
   // États pour la lecture audio et vidéo
   const [currentPlayingAir, setCurrentPlayingAir] = useState<string | null>(null);
@@ -120,6 +122,7 @@ const AirManager: React.FC<AirManagerProps> = ({
       external_url: '',
       file: null
     });
+    setSourceType('link');
     setEditingAir(null);
   };
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,6 +173,7 @@ const AirManager: React.FC<AirManagerProps> = ({
       external_url: air.external_url || '',
       file: null
     });
+    setSourceType(air.type === 'url' ? 'link' : 'file');
     setIsDialogOpen(true);
   };
   const handleDelete = async (air: any) => {
@@ -222,60 +226,126 @@ const AirManager: React.FC<AirManagerProps> = ({
                   Ajouter un air
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
+              <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle>
                     {editingAir ? 'Modifier l\'air' : 'Ajouter un air'}
                   </DialogTitle>
                   <DialogDescription>
-                    Ajoutez un fichier audio, vidéo ou un lien vers votre répertoire
+                    Choisissez d'uploader un fichier ou d'ajouter un lien
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Titre *</Label>
-                    <Input id="title" value={formData.title} onChange={e => setFormData({
-                    ...formData,
-                    title: e.target.value
-                  })} required />
-                  </div>
+                
+                <Tabs value={sourceType} onValueChange={(value) => {
+                  setSourceType(value as 'file' | 'link');
+                  if (value === 'link') {
+                    setFormData({ ...formData, type: 'url', file: null });
+                  } else {
+                    setFormData({ ...formData, type: 'audio', external_url: '' });
+                  }
+                }}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="file" className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      Fichier
+                    </TabsTrigger>
+                    <TabsTrigger value="link" className="flex items-center gap-2">
+                      <Link className="h-4 w-4" />
+                      Lien
+                    </TabsTrigger>
+                  </TabsList>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea id="description" value={formData.description} onChange={e => setFormData({
-                    ...formData,
-                    description: e.target.value
-                  })} rows={3} />
-                  </div>
+                  <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                    {/* Champs communs */}
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Titre *</Label>
+                      <Input 
+                        id="title" 
+                        value={formData.title} 
+                        onChange={e => setFormData({ ...formData, title: e.target.value })} 
+                        required 
+                      />
+                    </div>
 
-                  
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea 
+                        id="description" 
+                        value={formData.description} 
+                        onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                        rows={3} 
+                      />
+                    </div>
 
-                  {formData.type === 'url' ? <div className="space-y-2">
-                      <Label htmlFor="external_url">URL *</Label>
-                      <Input id="external_url" type="url" value={formData.external_url} onChange={e => setFormData({
-                    ...formData,
-                    external_url: e.target.value
-                  })} placeholder="https://..." required />
-                     </div> : <div className="space-y-2">
+                    <TabsContent value="file" className="space-y-4 mt-0">
+                      {/* Sélection du type de média pour les fichiers */}
+                      <div className="space-y-3">
+                        <Label>Type de média *</Label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <Button
+                            type="button"
+                            variant={formData.type === 'audio' ? 'default' : 'outline'}
+                            onClick={() => setFormData({ ...formData, type: 'audio' })}
+                            className="flex items-center gap-2 h-12"
+                          >
+                            <Music className="h-5 w-5" />
+                            Audio
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={formData.type === 'video' ? 'default' : 'outline'}
+                            onClick={() => setFormData({ ...formData, type: 'video' })}
+                            className="flex items-center gap-2 h-12"
+                          >
+                            <Video className="h-5 w-5" />
+                            Vidéo
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Upload de fichier */}
+                      <div className="space-y-2">
                         <Label htmlFor="file">Fichier *</Label>
-                        {editingAir ? (
+                        {editingAir && editingAir.file_path ? (
                           <div className="p-3 bg-muted rounded-md text-sm text-muted-foreground">
                             Le fichier ne peut pas être modifié. Supprimez et recréez l'air pour changer le fichier.
                           </div>
                         ) : (
-                          <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required />
+                          <Input 
+                            id="file" 
+                            type="file" 
+                            onChange={handleFileChange} 
+                            accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} 
+                            required={!editingAir}
+                          />
                         )}
-                      </div>}
+                      </div>
+                    </TabsContent>
 
-                  <div className="flex gap-2">
-                    <Button type="submit" disabled={uploading || isCreating} className="flex-1">
-                      {uploading ? 'Upload...' : editingAir ? 'Modifier' : 'Ajouter'}
-                    </Button>
-                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Annuler
-                    </Button>
-                  </div>
-                </form>
+                    <TabsContent value="link" className="space-y-4 mt-0">
+                      <div className="space-y-2">
+                        <Label htmlFor="external_url">URL *</Label>
+                        <Input 
+                          id="external_url" 
+                          type="url" 
+                          value={formData.external_url} 
+                          onChange={e => setFormData({ ...formData, external_url: e.target.value })} 
+                          placeholder="https://..." 
+                          required={sourceType === 'link'}
+                        />
+                      </div>
+                    </TabsContent>
+
+                    <div className="flex gap-2 pt-4">
+                      <Button type="submit" disabled={uploading || isCreating} className="flex-1">
+                        {uploading ? 'Upload...' : editingAir ? 'Modifier' : 'Ajouter'}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        Annuler
+                      </Button>
+                    </div>
+                  </form>
+                </Tabs>
               </DialogContent>
             </Dialog>
           </div>
