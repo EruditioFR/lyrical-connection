@@ -173,43 +173,18 @@ const AirManager: React.FC<AirManagerProps> = ({
                 })} rows={3} />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="type">Type *</Label>
-                  <Select value={formData.type} onValueChange={(value: any) => setFormData({
-                  ...formData,
-                  type: value
-                })} disabled={!!editingAir}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="audio">Fichier Audio</SelectItem>
-                      <SelectItem value="video">Fichier Vidéo</SelectItem>
-                      <SelectItem value="url">Lien URL</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                
 
                 {formData.type === 'url' ? <div className="space-y-2">
                     <Label htmlFor="external_url">URL *</Label>
                     <Input id="external_url" type="url" value={formData.external_url} onChange={e => setFormData({
                   ...formData,
                   external_url: e.target.value
-                })} placeholder="https://..." required disabled={!!editingAir} />
-                    {editingAir && <p className="text-sm text-muted-foreground">
-                        L'URL ne peut pas être modifiée
-                      </p>}
+                })} placeholder="https://..." required />
                   </div> : <div className="space-y-2">
                     <Label htmlFor="file">Fichier *</Label>
-                    {editingAir ? (
-                      <div className="p-3 bg-muted rounded-md">
-                        <p className="text-sm text-muted-foreground">
-                          Le fichier ne peut pas être modifié
-                        </p>
-                      </div>
-                    ) : (
-                      <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required />
-                    )}
+                    <Input id="file" type="file" onChange={handleFileChange} accept={formData.type === 'audio' ? 'audio/*' : 'video/*'} required={!editingAir} />
+                    {editingAir}
                   </div>}
 
                 <div className="flex gap-2">
