@@ -143,22 +143,6 @@ export const PlanComparisonCard = ({
           </ul>
         </div>
 
-        {plan.limitations && Object.keys(plan.limitations).length > 0 && (
-          <div className="space-y-2">
-            <h4 className="font-semibold">Limites :</h4>
-            <div className="space-y-1">
-              {Object.entries(plan.limitations).map(([key, value]) => (
-                <div key={key} className="flex justify-between text-sm">
-                  <span className="capitalize">{key.replace('_', ' ')}</span>
-                  <span className="font-medium">
-                    {typeof value === 'boolean' ? (value ? 'Oui' : 'Non') : String(value)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {plan.trial_days > 0 && !isCurrentPlan && (
           <div className="bg-muted p-3 rounded-lg">
             <p className="text-sm font-medium">🎯 Essai gratuit de {plan.trial_days} jours</p>
