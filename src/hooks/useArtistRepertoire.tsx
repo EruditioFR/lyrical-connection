@@ -63,13 +63,23 @@ export const useArtistRepertoire = (artistProfileId?: string) => {
         description: "L'œuvre a été ajoutée à votre répertoire avec succès.",
       });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error adding to repertoire:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter l'œuvre au répertoire.",
-        variant: "destructive",
-      });
+      
+      // Gestion spécifique de l'erreur de contrainte d'unicité
+      if (error?.code === '23505' && error?.message?.includes('artist_repertoire_unique_performance')) {
+        toast({
+          title: "Interprétation déjà existante",
+          description: "Cette œuvre avec la même année et le même lieu existe déjà dans votre répertoire. Modifiez l'année ou le lieu pour ajouter une nouvelle interprétation.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter l'œuvre au répertoire.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -132,6 +142,18 @@ export const useArtistRepertoire = (artistProfileId?: string) => {
     },
   });
 
+  // Fonction pour vérifier les doublons
+  const checkDuplicate = (workId: string, roleId: string | null, performanceYear: number | null, venue: string | null) => {
+    if (!repertoire) return false;
+    
+    return repertoire.some(item => 
+      item.work_id === workId && 
+      item.role_id === roleId && 
+      item.performance_year === performanceYear && 
+      item.venue === venue
+    );
+  };
+
   // Wrapper function to match the expected signature
   const updateRepertoire = (id: string, data: {
     performance_year: number | null;
@@ -148,6 +170,7 @@ export const useArtistRepertoire = (artistProfileId?: string) => {
     addToRepertoire: addMutation.mutate,
     updateRepertoire,
     deleteFromRepertoire: deleteMutation.mutate,
+    checkDuplicate,
     isAdding: addMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,

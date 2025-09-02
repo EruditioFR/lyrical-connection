@@ -27,7 +27,7 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
 
   const { works } = useLyricalWorks(searchTerm);
   const { data: venues = [] } = useSearchVenues(venueSearch);
-  const { addToRepertoire, isAdding } = useArtistRepertoire(artistProfileId);
+  const { addToRepertoire, isAdding, checkDuplicate, repertoire } = useArtistRepertoire(artistProfileId);
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -45,6 +45,11 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
     works.forEach(work => {
       if (work.work_roles && work.work_roles.length > 0) {
         work.work_roles.forEach(role => {
+          // Compter les interprétations existantes pour cette œuvre/rôle
+          const existingCount = repertoire?.filter(item => 
+            item.work_id === work.id && item.role_id === role.id
+          ).length || 0;
+
           if (role.aria_title) {
             airsList.push({
               id: work.id,
@@ -55,7 +60,8 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
               displayTitle: role.aria_title,
               roleId: role.id,
               roleName: role.role_name,
-              voiceType: role.voice_type
+              voiceType: role.voice_type,
+              existingCount: existingCount
             });
           }
         });
@@ -79,6 +85,14 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
 
   const handleAdd = async () => {
     if (!selectedWork || !selectedRole) return;
+
+    // Vérification préventive des doublons
+    const isDuplicate = checkDuplicate(selectedWork, selectedRole, performanceYear, venue || null);
+
+    if (isDuplicate) {
+      alert("Cette œuvre avec la même année et le même lieu existe déjà dans votre répertoire. Modifiez l'année ou le lieu pour ajouter une nouvelle interprétation.");
+      return;
+    }
 
     try {
       await addToRepertoire({
@@ -141,6 +155,11 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
                       {air.voiceType && (
                         <Badge variant="outline" className="text-xs mt-1">
                           {air.voiceType}
+                        </Badge>
+                      )}
+                      {air.existingCount > 0 && (
+                        <Badge variant="default" className="text-xs mt-1 ml-2 bg-primary/10 text-primary">
+                          {air.existingCount} interprétation{air.existingCount > 1 ? 's' : ''}
                         </Badge>
                       )}
                     </div>
