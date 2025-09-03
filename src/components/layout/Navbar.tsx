@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageSelector } from '@/components/ui/language-selector';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings, CreditCard, Shield, ChevronDown, Menu, X, HelpCircle } from 'lucide-react';
+import { LogOut, User, Settings, CreditCard, Shield, ChevronDown, Menu, X } from 'lucide-react';
 import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { MegaMenu } from './MegaMenu';
@@ -19,8 +19,7 @@ const Navbar = () => {
   } = useTranslation(['navigation', 'common']);
   const {
     user,
-    signOut,
-    hasActiveSubscription
+    signOut
   } = useAuth();
   const {
     artistProfile,
@@ -112,31 +111,21 @@ const Navbar = () => {
         {/* Navigation principale */}
         <div className="hidden md:flex items-center space-x-8">
           {user ? <>
-              {/* Tant qu'il n'y a pas d'abonnement actif, afficher seulement "Support" */}
-              {!hasActiveSubscription ? (
-                <Link to="/contact" className="text-gray-700 hover:text-lyrical-600 font-medium transition-colors flex items-center gap-1">
-                  <HelpCircle className="h-4 w-4" />
-                  Support
-                </Link>
-              ) : (
-                <>
-                  {/* Menu Artiste */}
-                  {isArtist && <div className="relative" onMouseEnter={() => handleMouseEnter('artist')} onMouseLeave={handleMouseLeave}>
-                      <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
-                        Menu
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      </button>
-                    </div>}
+              {/* Menu Artiste */}
+              {isArtist && <div className="relative" onMouseEnter={() => handleMouseEnter('artist')} onMouseLeave={handleMouseLeave}>
+                  <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
+                    Menu
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                </div>}
 
-                  {/* Menu Professionnel */}
-                  {isProfessional && <div className="relative" onMouseEnter={() => handleMouseEnter('professional')} onMouseLeave={handleMouseLeave}>
-                      <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
-                        Menu
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      </button>
-                    </div>}
-                </>
-              )}
+              {/* Menu Professionnel */}
+              {isProfessional && <div className="relative" onMouseEnter={() => handleMouseEnter('professional')} onMouseLeave={handleMouseLeave}>
+                  <button className="flex items-center text-gray-700 hover:text-lyrical-600 font-medium transition-colors">
+                    Menu
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                </div>}
 
               {/* Lien d'administration pour les admins */}
               {isAdmin && <Link to="/admin" className="text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-1">
@@ -233,101 +222,87 @@ const Navbar = () => {
       {isMobile && isMobileMenuOpen && user && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
           <div className="px-4 py-3 space-y-3">
-            {hasActiveSubscription ? (
+            {isProfessional && (
               <>
-                {isProfessional && (
-                  <>
-                    <div className="text-sm font-semibold text-gray-900 border-b pb-2">
-                      Menu Professionnel
-                    </div>
-                    <Link
-                      to="/professional-events"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Mes événements
-                    </Link>
-                    <Link
-                      to="/castings"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Castings
-                    </Link>
-                    <Link
-                      to="/received-applications"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Candidatures reçues
-                    </Link>
-                    <Link
-                      to="/professional-messages"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Messages
-                    </Link>
-                    <Link
-                      to="/artists"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Trouver des artistes
-                    </Link>
-                  </>
-                )}
-                
-                {isArtist && (
-                  <>
-                    <div className="text-sm font-semibold text-gray-900 border-b pb-2">
-                      Menu Artiste
-                    </div>
-                    <Link
-                      to="/events"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Événements
-                    </Link>
-                    <Link
-                      to="/castings"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Castings
-                    </Link>
-                    <Link
-                      to="/my-applications"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Mes candidatures
-                    </Link>
-                    <Link
-                      to="/messages"
-                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      Messages
-                    </Link>
-                  </>
-                )}
+                <div className="text-sm font-semibold text-gray-900 border-b pb-2">
+                  Menu Professionnel
+                </div>
+                <Link
+                  to="/professional-events"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Mes événements
+                </Link>
+                <Link
+                  to="/castings"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Castings
+                </Link>
+                <Link
+                  to="/received-applications"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Candidatures reçues
+                </Link>
+                <Link
+                  to="/professional-messages"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Messages
+                </Link>
+                <Link
+                  to="/artists"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Trouver des artistes
+                </Link>
               </>
-            ) : (
-              // Tant qu'il n'y a pas d'abonnement actif, afficher seulement "Support"
-              <Link
-                to="/contact"
-                className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md flex items-center gap-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <HelpCircle className="h-4 w-4" />
-                Support
-              </Link>
+            )}
+            
+            {isArtist && (
+              <>
+                <div className="text-sm font-semibold text-gray-900 border-b pb-2">
+                  Menu Artiste
+                </div>
+                <Link
+                  to="/events"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Événements
+                </Link>
+                <Link
+                  to="/castings"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Castings
+                </Link>
+                <Link
+                  to="/my-applications"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Mes candidatures
+                </Link>
+                <Link
+                  to="/messages"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Messages
+                </Link>
+              </>
             )}
 
             {/* Notifications pour artistes sur mobile */}
-            {isArtist && hasActiveSubscription && (
+            {isArtist && (
               <div className="border-t pt-3 mt-3">
                 <NotificationBell />
               </div>
@@ -342,7 +317,7 @@ const Navbar = () => {
       )}
 
       {/* Mega Menu Desktop */}
-      {!isMobile && hasActiveSubscription && (
+      {!isMobile && (
         <MegaMenu isOpen={activeMegaMenu !== null} onClose={closeMegaMenu} menuType={activeMegaMenu || 'discover'} onMouseEnter={handleMegaMenuMouseEnter} onMouseLeave={handleMegaMenuMouseLeave} />
       )}
     </nav>;
