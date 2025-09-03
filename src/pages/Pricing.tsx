@@ -22,6 +22,7 @@ export default function Pricing() {
   const navigate = useNavigate();
   
   const source = searchParams.get('source');
+  const userTypeParam = searchParams.get('type');
   const isPostRegistration = source === 'login' || source === 'signup';
   const isRequired = source === 'required';
 
@@ -62,17 +63,20 @@ export default function Pricing() {
       display_order: 3.5 // Between Artistes and Professionnels
     };
 
+    // Use URL parameter for new signup flow
+    const effectiveUserType = userTypeParam || (isArtist ? 'artist' : isProfessional ? 'professional' : null);
+
     if (!user) {
       // Not logged in: show base plans (no Early Bird, no premium)
       return basePlans;
     }
     
-    if (userTypeLoading) {
-      // Still loading user type: show base plans temporarily
+    if (userTypeLoading && !userTypeParam) {
+      // Still loading user type and no URL param: show base plans temporarily
       return basePlans;
     }
 
-    if (isArtist) {
+    if (effectiveUserType === 'artist' || isArtist) {
       // Artist: show Gratuit, Artistes, Premium Artistes
       const artistPlans = basePlans.filter(plan => 
         plan.name === 'Gratuit' || 
@@ -82,7 +86,7 @@ export default function Pricing() {
       return artistPlans;
     }
     
-    if (isProfessional) {
+    if (effectiveUserType === 'professional' || isProfessional) {
       // Professional: show Gratuit, Professionnels (no premium)
       return basePlans.filter(plan => 
         plan.name === 'Gratuit' || 
@@ -150,14 +154,24 @@ export default function Pricing() {
       <div className="container mx-auto px-4 py-8">
         {(isPostRegistration || isRequired) && (
           <div className="mb-8 max-w-4xl mx-auto">
-            <Alert className={isRequired ? "border-orange-200 bg-orange-50" : "border-blue-200 bg-blue-50"}>
-              <AlertCircle className={`h-4 w-4 ${isRequired ? "text-orange-600" : "text-blue-600"}`} />
-              <AlertDescription className={isRequired ? "text-orange-800" : "text-blue-800"}>
+            <Alert className={isRequired ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}>
+              <CheckCircle className={`h-4 w-4 ${isRequired ? "text-orange-600" : "text-green-600"}`} />
+              <AlertDescription className={isRequired ? "text-orange-800" : "text-green-800"}>
                 {isRequired ? (
                   <strong>Abonnement requis :</strong>
                 ) : (
-                  <strong>Bienvenue !</strong>
-                )} Choisissez votre plan pour accéder à toutes les fonctionnalités de la plateforme.
+                  <strong>Félicitations ! Votre compte a été créé avec succès.</strong>
+                )} Choisissez maintenant votre plan pour accéder à toutes les fonctionnalités de la plateforme.
+                {userTypeParam === 'artist' && (
+                  <span className="block mt-2 text-sm">
+                    En tant qu'artiste, nous vous recommandons le plan Artistes (9€/mois) ou Premium Artistes (29€/mois) pour une visibilité maximale.
+                  </span>
+                )}
+                {userTypeParam === 'professional' && (
+                  <span className="block mt-2 text-sm">
+                    En tant que professionnel, le plan Professionnels (49€/mois) vous donne accès à tous les outils de gestion avancés.
+                  </span>
+                )}
               </AlertDescription>
             </Alert>
           </div>

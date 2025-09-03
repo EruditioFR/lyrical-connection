@@ -52,6 +52,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         setLoading(false);
         
+        // Gestion de la redirection après confirmation d'email
+        if (event === 'SIGNED_IN' && session?.user) {
+          const userType = session.user.user_metadata?.user_type;
+          const isEmailConfirmation = session.user.email_confirmed_at && !session.user.last_sign_in_at;
+          
+          // Si c'est une première connexion après confirmation d'email, rediriger vers pricing
+          if (isEmailConfirmation || (userType && window.location.pathname === '/')) {
+            setTimeout(() => {
+              window.location.href = `/pricing?source=signup&type=${userType}`;
+            }, 500);
+          }
+        }
+        
         // Vérifier l'abonnement quand l'utilisateur se connecte
         if (session?.user) {
           setTimeout(() => {
