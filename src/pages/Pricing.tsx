@@ -188,7 +188,7 @@ export default function Pricing() {
         </div>
 
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
           {getFilteredPlans()
             .sort((a, b) => a.display_order - b.display_order)
             .map((plan) => (
