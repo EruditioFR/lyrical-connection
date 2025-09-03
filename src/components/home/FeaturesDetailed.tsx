@@ -70,14 +70,12 @@ const FeaturesDetailed = () => {
   const artistsSectionRef = useAnimateOnScroll();
   const professionalsSectionRef = useAnimateOnScroll();
   const ctaRef = useAnimateOnScroll();
-  
   return <section className="py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
         {/* Introduction */}
         <div ref={introRef} className="text-center max-w-4xl mx-auto mb-20 text-appear">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
-            Une plateforme pensée pour tous les acteurs du lyrique
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Une plateforme pensée
+pour tous les acteurs du lyrique</h2>
           <p className="text-lg text-muted-foreground">
             Découvrez comment Lyrisphere révolutionne la façon dont les artistes 
             et les professionnels interagissent dans le monde de l'opéra
@@ -105,24 +103,18 @@ const FeaturesDetailed = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {artistFeatures.map((feature, index) => {
-              const FeatureCard = () => {
-                const cardRef = useAnimateOnScroll();
-                return (
-                  <div 
-                    ref={cardRef}
-                    key={index} 
-                    className="bg-card rounded-xl p-6 border border-border hover:border-lyrical-200 transition-all duration-300 hover:shadow-lg text-appear"
-                  >
+            const FeatureCard = () => {
+              const cardRef = useAnimateOnScroll();
+              return <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border hover:border-lyrical-200 transition-all duration-300 hover:shadow-lg text-appear">
                     <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
                       <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
                     </div>
                     <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
                     <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-                  </div>
-                );
-              };
-              return <FeatureCard key={index} />;
-            })}
+                  </div>;
+            };
+            return <FeatureCard key={index} />;
+          })}
           </div>
           
           <div className="md:hidden mt-8 text-center">
@@ -153,24 +145,18 @@ const FeaturesDetailed = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {professionalFeatures.map((feature, index) => {
-              const ProfessionalFeatureCard = () => {
-                const cardRef = useAnimateOnScroll();
-                return (
-                  <div 
-                    ref={cardRef}
-                    key={index} 
-                    className="bg-card rounded-xl p-6 border border-border hover:border-gold-200 transition-all duration-300 hover:shadow-lg text-appear"
-                  >
+            const ProfessionalFeatureCard = () => {
+              const cardRef = useAnimateOnScroll();
+              return <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border hover:border-gold-200 transition-all duration-300 hover:shadow-lg text-appear">
                     <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
                       <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
                     </div>
                     <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
                     <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-                  </div>
-                );
-              };
-              return <ProfessionalFeatureCard key={index} />;
-            })}
+                  </div>;
+            };
+            return <ProfessionalFeatureCard key={index} />;
+          })}
           </div>
           
           <div className="md:hidden mt-8 text-center">
