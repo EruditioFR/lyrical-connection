@@ -66,8 +66,14 @@ export default function Pricing() {
     // Use URL parameter for new signup flow
     const effectiveUserType = userTypeParam || (isArtist ? 'artist' : isProfessional ? 'professional' : null);
 
+    console.log('=== PRICING FILTER DEBUG ===');
+    console.log('userTypeParam:', userTypeParam);
+    console.log('isArtist:', isArtist);  
+    console.log('isProfessional:', isProfessional);
+    console.log('effectiveUserType:', effectiveUserType);
+
     if (!user) {
-      // Not logged in: show base plans (no Early Bird, no premium)
+      // Not logged in: show all base plans for public
       return basePlans;
     }
     
@@ -78,6 +84,7 @@ export default function Pricing() {
 
     if (effectiveUserType === 'artist' || isArtist) {
       // Artist: show only Artistes, Premium Artistes (no Gratuit)
+      console.log('Showing artist plans');
       const artistPlans = basePlans.filter(plan => 
         plan.name === 'Artistes'
       );
@@ -86,13 +93,15 @@ export default function Pricing() {
     }
     
     if (effectiveUserType === 'professional' || isProfessional) {
-      // Professional: show only Professionnels (no Gratuit)
+      // Professional: show only Professionnels (no Gratuit, no Artistes, no Premium)
+      console.log('Showing professional plans');
       return basePlans.filter(plan => 
         plan.name === 'Professionnels'
       );
     }
     
-    // No profile yet: show base plans (no premium)
+    // No profile yet or unknown: show all base plans (no premium artist plan)
+    console.log('Showing base plans for unknown user type');
     return basePlans;
   };
 
