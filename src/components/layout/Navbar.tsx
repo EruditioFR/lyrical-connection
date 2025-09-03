@@ -211,7 +211,7 @@ const Navbar = () => {
               <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
                 {t('navigation:login')}
               </Button>
-              <Button size="sm" onClick={() => navigate('/auth')}>
+              <Button size="sm" onClick={() => navigate('/auth?tab=signup')}>
                 {t('navigation:register')}
               </Button>
             </>}
