@@ -415,7 +415,7 @@ const Auth = () => {
                           <span className="font-medium">Artiste</span>
                         </div>
                         <span className="text-xs text-muted-foreground text-center leading-tight">
-                          Chanteurs, instrumentistes
+                          Chanteurs
                         </span>
                       </TabsTrigger>
                       <TabsTrigger value="professional" className="flex flex-col items-center gap-2 h-auto py-4 px-3">
