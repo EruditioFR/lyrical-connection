@@ -471,10 +471,7 @@ const Auth = () => {
                               Recruteurs, agents, directeurs : trouvez et contactez les talents pour vos projets.
                             </p>
                             <div className="text-xs text-muted-foreground space-y-1">
-                              <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 bg-accent rounded-full"></div>
-                                <span>Exemples : Opéra de Paris, Vienna State Opera</span>
-                              </div>
+                              
                             </div>
                           </div>
                         </div>
