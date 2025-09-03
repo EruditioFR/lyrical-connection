@@ -200,20 +200,19 @@ export const SubscriptionManager = () => {
       </Card>
 
       {/* Quick Actions Section */}
-      <SubscriptionActions
-        subscription={subscription}
-        onManageSubscription={() => manageSubscription.mutate()}
-        onUpgradeToPremium={() => {
-          // For professionals, upgrade to "Professionnels" plan
-          // For artists, upgrade to "Premium Visibilité" 
-          const premiumPlan = userType === 'professional' 
-            ? plans.find(p => p.name === "Professionnels")
-            : plans.find(p => p.name === "Premium Visibilité");
-          if (premiumPlan) {
-            createCheckoutSession.mutate(premiumPlan.id);
-          }
-        }}
-        isLoading={manageSubscription.isPending || createCheckoutSession.isPending}
-      />
+      {userType !== 'professional' && (
+        <SubscriptionActions
+          subscription={subscription}
+          onManageSubscription={() => manageSubscription.mutate()}
+          onUpgradeToPremium={() => {
+            // For artists, upgrade to "Premium Visibilité" 
+            const premiumPlan = plans.find(p => p.name === "Premium Visibilité");
+            if (premiumPlan) {
+              createCheckoutSession.mutate(premiumPlan.id);
+            }
+          }}
+          isLoading={manageSubscription.isPending || createCheckoutSession.isPending}
+        />
+      )}
     </div>;
 };

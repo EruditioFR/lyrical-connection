@@ -198,7 +198,7 @@ export default function Pricing() {
                isCurrentPlan={subscription?.plan_id === plan.id}
                onSelectPlan={handleSelectPlan}
                isLoading={createCheckoutSession.isPending}
-               userType={effectiveUserType || (isArtist ? 'artist' : isProfessional ? 'professional' : 'unknown')}
+               userType={(userTypeParam === 'artist' || userTypeParam === 'professional') ? userTypeParam : (isArtist ? 'artist' : isProfessional ? 'professional' : 'unknown')}
              />
           ))}
         </div>
