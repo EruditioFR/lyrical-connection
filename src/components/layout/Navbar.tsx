@@ -233,17 +233,7 @@ const Navbar = () => {
       {isMobile && isMobileMenuOpen && user && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
           <div className="px-4 py-3 space-y-3">
-            {!hasActiveSubscription ? (
-              // Tant qu'il n'y a pas d'abonnement actif, afficher seulement "Support"
-              <Link
-                to="/contact"
-                className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md flex items-center gap-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <HelpCircle className="h-4 w-4" />
-                Support
-              </Link>
-            ) : (
+            {hasActiveSubscription ? (
               <>
                 {isProfessional && (
                   <>
@@ -324,6 +314,16 @@ const Navbar = () => {
                   </>
                 )}
               </>
+            ) : (
+              // Tant qu'il n'y a pas d'abonnement actif, afficher seulement "Support"
+              <Link
+                to="/contact"
+                className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md flex items-center gap-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <HelpCircle className="h-4 w-4" />
+                Support
+              </Link>
             )}
 
             {/* Notifications pour artistes sur mobile */}
