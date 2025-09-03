@@ -34,14 +34,11 @@ export const SubscriptionManager = () => {
     let filtered = plans.filter(plan => plan.name !== 'Early Bird' && plan.name !== 'Gratuit');
     
     if (userType === 'artist') {
-      // Show all plans except "Professionnels" for artists
-      return filtered.filter(plan => plan.name !== 'Professionnels');
+      // Show only "Artistes" plan for artists (no Gratuit, no Professionnels)
+      return filtered.filter(plan => plan.name === 'Artistes');
     } else if (userType === 'professional') {
-      // Show only "Premium Visibilité" and "Professionnels" for professionals
-      return filtered.filter(plan => 
-        plan.name === 'Premium Visibilité' || 
-        plan.name === 'Professionnels'
-      );
+      // Show only "Professionnels" plan for professionals (no Gratuit, no Artistes)
+      return filtered.filter(plan => plan.name === 'Professionnels');
     }
     // Show all plans except Early Bird and Gratuit for unknown users
     return filtered;

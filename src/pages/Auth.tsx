@@ -128,7 +128,7 @@ const Auth = () => {
         email: artistSignupForm.email,
         password: artistSignupForm.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/pricing?source=signup`,
+          emailRedirectTo: `${window.location.origin}/pricing?source=signup&type=artist`,
           data: {
             user_type: 'artist',
             stage_name: artistSignupForm.stageName
@@ -185,7 +185,7 @@ const Auth = () => {
         email: professionalSignupForm.email,
         password: professionalSignupForm.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/pricing?source=signup`,
+          emailRedirectTo: `${window.location.origin}/pricing?source=signup&type=professional`,
           data: {
             user_type: 'professional',
             company_name: professionalSignupForm.companyName,

@@ -77,9 +77,8 @@ export default function Pricing() {
     }
 
     if (effectiveUserType === 'artist' || isArtist) {
-      // Artist: show Gratuit, Artistes, Premium Artistes
+      // Artist: show only Artistes, Premium Artistes (no Gratuit)
       const artistPlans = basePlans.filter(plan => 
-        plan.name === 'Gratuit' || 
         plan.name === 'Artistes'
       );
       artistPlans.push(premiumArtistPlan);
@@ -87,9 +86,8 @@ export default function Pricing() {
     }
     
     if (effectiveUserType === 'professional' || isProfessional) {
-      // Professional: show Gratuit, Professionnels (no premium)
+      // Professional: show only Professionnels (no Gratuit)
       return basePlans.filter(plan => 
-        plan.name === 'Gratuit' || 
         plan.name === 'Professionnels'
       );
     }
