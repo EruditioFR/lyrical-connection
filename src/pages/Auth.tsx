@@ -6,22 +6,40 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
-import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle } from 'lucide-react';
+import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle, Shield, Clock, ArrowRight, Mic, Users, Award } from 'lucide-react';
 
-const professionalRoles = [
-  { value: 'casting_director', label: 'Directeur de casting / Directeur artistique' },
-  { value: 'vocal_coach', label: 'Chef de chant / Coach vocal' },
-  { value: 'conductor', label: 'Chef d\'orchestre' },
-  { value: 'opera_house_manager', label: 'Responsable de maison d\'opéra' },
-  { value: 'voice_teacher', label: 'Professeur de chant / Pédagogue' },
-  { value: 'artistic_agent', label: 'Agent artistique / Manager' },
-  { value: 'producer', label: 'Producteur de spectacle / festival' },
-  { value: 'competition_director', label: 'Directeur de concours / jury' }
-];
+const professionalRoleCategories = {
+  direction: {
+    label: "Direction artistique",
+    roles: [
+      { value: 'casting_director', label: 'Directeur de casting / Directeur artistique' },
+      { value: 'conductor', label: 'Chef d\'orchestre' },
+      { value: 'opera_house_manager', label: 'Responsable de maison d\'opéra' },
+      { value: 'competition_director', label: 'Directeur de concours / jury' }
+    ]
+  },
+  formation: {
+    label: "Formation & coaching", 
+    roles: [
+      { value: 'vocal_coach', label: 'Chef de chant / Coach vocal' },
+      { value: 'voice_teacher', label: 'Professeur de chant / Pédagogue' }
+    ]
+  },
+  production: {
+    label: "Production & representation",
+    roles: [
+      { value: 'artistic_agent', label: 'Agent artistique / Manager' },
+      { value: 'producer', label: 'Producteur de spectacle / festival' }
+    ]
+  }
+};
+
+const allProfessionalRoles = Object.values(professionalRoleCategories).flatMap(category => category.roles);
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -220,12 +238,12 @@ const Auth = () => {
           <div className="max-w-md mx-auto">
             <Card className="text-center">
               <CardHeader>
-                <div className="flex items-center justify-center mb-4">
-                  <div className="relative">
-                    <CheckCircle className="h-16 w-16 text-green-500" />
-                    <Mail className="h-8 w-8 text-lyrical-600 absolute -bottom-1 -right-1 bg-white rounded-full p-1" />
-                  </div>
-                </div>
+                 <div className="flex items-center justify-center mb-4">
+                   <div className="relative">
+                     <CheckCircle className="h-16 w-16 text-green-500" />
+                     <Mail className="h-8 w-8 text-primary absolute -bottom-1 -right-1 bg-background rounded-full p-1" />
+                   </div>
+                 </div>
                 <CardTitle className="text-2xl font-serif font-bold mb-2">
                   Inscription réussie !
                 </CardTitle>
@@ -286,9 +304,9 @@ const Auth = () => {
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <Music className="h-12 w-12 text-lyrical-600" />
-            </div>
+             <div className="flex items-center justify-center mb-4">
+               <Music className="h-12 w-12 text-primary" />
+             </div>
             <h1 className="text-3xl font-serif font-bold mb-2">Espace Connexion</h1>
             <p className="text-muted-foreground">
               Connectez-vous ou créez votre compte
@@ -338,13 +356,13 @@ const Auth = () => {
                         required
                       />
                     </div>
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
-                      disabled={loading}
-                    >
-                      {loading ? 'Connexion...' : 'Se connecter'}
-                    </Button>
+                     <Button 
+                       type="submit" 
+                       className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                       disabled={loading}
+                     >
+                       {loading ? 'Connexion...' : 'Se connecter'}
+                     </Button>
                   </form>
                 </CardContent>
               </Card>
@@ -353,36 +371,88 @@ const Auth = () => {
             <TabsContent value="signup">
               <Card>
                 <CardHeader>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      Étape 1/4 : Création du compte
+                    </div>
+                  </div>
+                  <Progress value={25} className="mb-4" />
                   <CardTitle>Créer mon compte</CardTitle>
                   <CardDescription>
-                    Choisissez votre type de compte
+                    Rejoignez la communauté lyrique et accédez aux meilleures opportunités artistiques
                   </CardDescription>
+                  
+                  {/* Pricing transparency */}
+                  <div className="bg-accent/20 border border-accent/30 rounded-lg p-3 mt-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Award className="h-4 w-4 text-accent-foreground" />
+                      <span className="font-medium">Après inscription :</span>
+                      <span>Choisissez votre plan (à partir de 9€/mois)</span>
+                      <Button
+                        variant="link" 
+                        size="sm"
+                        className="h-auto p-0 text-accent-foreground"
+                        onClick={() => navigate('/pricing')}
+                      >
+                        Voir les tarifs
+                      </Button>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="artist" className="w-full">
                     <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="artist" className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        Artiste
+                      <TabsTrigger value="artist" className="flex flex-col items-center gap-1 h-auto py-3">
+                        <div className="flex items-center gap-2">
+                          <Mic className="h-4 w-4" />
+                          <span>Artiste</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground text-center">
+                          Chanteurs, instrumentistes cherchant des opportunités
+                        </span>
                       </TabsTrigger>
-                      <TabsTrigger value="professional" className="flex items-center gap-2">
-                        <Briefcase className="h-4 w-4" />
-                        Professionnel
+                      <TabsTrigger value="professional" className="flex flex-col items-center gap-1 h-auto py-3">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          <span>Professionnel</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground text-center">
+                          Directeurs artistiques, coachs, producteurs recrutant
+                        </span>
                       </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="artist" className="mt-4">
+                    <TabsContent value="artist" className="mt-6">
+                      <div className="mb-4 p-3 bg-primary/5 rounded-lg border">
+                        <div className="flex items-start gap-2">
+                          <Mic className="h-5 w-5 text-primary mt-0.5" />
+                          <div>
+                            <h4 className="font-medium text-primary">Compte Artiste</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Créez votre profil, partagez votre répertoire et postulez aux auditions. 
+                              Exemples : soprano lyrique, pianiste concertiste, chef de chœur.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
                       <form onSubmit={handleArtistSignup} className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="artist-stage-name">Nom de scène</Label>
+                          <Label htmlFor="artist-stage-name">
+                            Nom de scène ou nom professionnel
+                          </Label>
                           <Input
                             id="artist-stage-name"
                             type="text"
-                            placeholder="Votre nom d'artiste"
+                            placeholder="ex: Maria Soprano, Jean Pianiste"
                             value={artistSignupForm.stageName}
                             onChange={(e) => setArtistSignupForm({ ...artistSignupForm, stageName: e.target.value })}
                             required
                           />
+                          <p className="text-xs text-muted-foreground">
+                            Le nom sous lequel vous serez visible publiquement
+                          </p>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="artist-email">Email</Label>
@@ -415,24 +485,47 @@ const Auth = () => {
                             required
                           />
                         </div>
+                        
+                        {/* Reassurance elements */}
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                          <Shield className="h-4 w-4" />
+                          <span>Vos données sont sécurisées • Aucun engagement</span>
+                        </div>
+                        
                         <Button 
                           type="submit" 
-                          className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                          className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
                           disabled={loading}
                         >
-                          {loading ? 'Inscription...' : "S'inscrire comme artiste"}
+                          <div className="flex items-center gap-2">
+                            {loading ? 'Inscription...' : "Créer mon compte artiste"}
+                            {!loading && <ArrowRight className="h-4 w-4" />}
+                          </div>
                         </Button>
                       </form>
                     </TabsContent>
 
-                    <TabsContent value="professional" className="mt-4">
+                    <TabsContent value="professional" className="mt-6">
+                      <div className="mb-4 p-3 bg-secondary/10 rounded-lg border">
+                        <div className="flex items-start gap-2">
+                          <Users className="h-5 w-5 text-secondary mt-0.5" />
+                          <div>
+                            <h4 className="font-medium text-secondary">Compte Professionnel</h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Recrutez des talents, gérez vos auditions et développez votre réseau. 
+                              Exemples : directeur d'opéra, coach vocal, agent artistique.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      
                       <form onSubmit={handleProfessionalSignup} className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="pro-company-name">Nom de société / organisation</Label>
                           <Input
                             id="pro-company-name"
                             type="text"
-                            placeholder="Nom de votre société"
+                            placeholder="ex: Opéra de Paris, Studio Vocal, etc."
                             value={professionalSignupForm.companyName}
                             onChange={(e) => setProfessionalSignupForm({ ...professionalSignupForm, companyName: e.target.value })}
                             required
@@ -445,13 +538,20 @@ const Auth = () => {
                             onValueChange={(value) => setProfessionalSignupForm({ ...professionalSignupForm, professionalRole: value })}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Sélectionnez votre métier" />
+                              <SelectValue placeholder="Sélectionnez votre domaine d'activité" />
                             </SelectTrigger>
                             <SelectContent>
-                              {professionalRoles.map((role) => (
-                                <SelectItem key={role.value} value={role.value}>
-                                  {role.label}
-                                </SelectItem>
+                              {Object.entries(professionalRoleCategories).map(([categoryKey, category]) => (
+                                <div key={categoryKey}>
+                                  <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
+                                    {category.label}
+                                  </div>
+                                  {category.roles.map((role) => (
+                                    <SelectItem key={role.value} value={role.value}>
+                                      {role.label}
+                                    </SelectItem>
+                                  ))}
+                                </div>
                               ))}
                             </SelectContent>
                           </Select>
@@ -487,12 +587,22 @@ const Auth = () => {
                             required
                           />
                         </div>
+                        
+                        {/* Reassurance elements */}
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
+                          <Shield className="h-4 w-4" />
+                          <span>Vos données sont sécurisées • Résiliation simple</span>
+                        </div>
+                        
                         <Button 
                           type="submit" 
-                          className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                          className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
                           disabled={loading}
                         >
-                          {loading ? 'Inscription...' : "S'inscrire comme professionnel"}
+                          <div className="flex items-center gap-2">
+                            {loading ? 'Inscription...' : "Créer mon compte professionnel"}
+                            {!loading && <ArrowRight className="h-4 w-4" />}
+                          </div>
                         </Button>
                       </form>
                     </TabsContent>
