@@ -375,10 +375,7 @@ const Auth = () => {
                               Chanteurs : créez votre profil artistique, partagez votre répertoire et postulez aux auditions.
                             </p>
                             <div className="text-xs text-muted-foreground space-y-1">
-                              <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 bg-primary rounded-full"></div>
-                                <span>Exemples : Maria Callas, Luciano Pavarotti</span>
-                              </div>
+                              
                             </div>
                           </div>
                         </div>
@@ -389,64 +386,32 @@ const Auth = () => {
                           <Label htmlFor="artist-stage-name" className="text-sm font-medium">
                             Nom de scène ou nom professionnel
                           </Label>
-                          <Input 
-                            id="artist-stage-name" 
-                            type="text" 
-                            placeholder="ex: Maria Soprano, Jean Ténor..." 
-                            value={artistSignupForm.stageName} 
-                            onChange={e => setArtistSignupForm({
-                              ...artistSignupForm,
-                              stageName: e.target.value
-                            })} 
-                            required 
-                            className="h-11"
-                          />
+                          <Input id="artist-stage-name" type="text" placeholder="ex: Maria Soprano, Jean Ténor..." value={artistSignupForm.stageName} onChange={e => setArtistSignupForm({
+                          ...artistSignupForm,
+                          stageName: e.target.value
+                        })} required className="h-11" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="artist-email" className="text-sm font-medium">Email professionnel</Label>
-                          <Input 
-                            id="artist-email" 
-                            type="email" 
-                            placeholder="votre@email.com" 
-                            value={artistSignupForm.email} 
-                            onChange={e => setArtistSignupForm({
-                              ...artistSignupForm,
-                              email: e.target.value
-                            })} 
-                            required 
-                            className="h-11"
-                          />
+                          <Input id="artist-email" type="email" placeholder="votre@email.com" value={artistSignupForm.email} onChange={e => setArtistSignupForm({
+                          ...artistSignupForm,
+                          email: e.target.value
+                        })} required className="h-11" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="artist-password" className="text-sm font-medium">Mot de passe</Label>
-                            <Input 
-                              id="artist-password" 
-                              type="password" 
-                              placeholder="Min. 8 caractères"
-                              value={artistSignupForm.password} 
-                              onChange={e => setArtistSignupForm({
-                                ...artistSignupForm,
-                                password: e.target.value
-                              })} 
-                              required 
-                              className="h-11"
-                            />
+                            <Input id="artist-password" type="password" placeholder="Min. 8 caractères" value={artistSignupForm.password} onChange={e => setArtistSignupForm({
+                            ...artistSignupForm,
+                            password: e.target.value
+                          })} required className="h-11" />
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="artist-confirm-password" className="text-sm font-medium">Confirmer</Label>
-                            <Input 
-                              id="artist-confirm-password" 
-                              type="password" 
-                              placeholder="Répétez le mot de passe"
-                              value={artistSignupForm.confirmPassword} 
-                              onChange={e => setArtistSignupForm({
-                                ...artistSignupForm,
-                                confirmPassword: e.target.value
-                              })} 
-                              required 
-                              className="h-11"
-                            />
+                            <Input id="artist-confirm-password" type="password" placeholder="Répétez le mot de passe" value={artistSignupForm.confirmPassword} onChange={e => setArtistSignupForm({
+                            ...artistSignupForm,
+                            confirmPassword: e.target.value
+                          })} required className="h-11" />
                           </div>
                         </div>
 
@@ -461,33 +426,21 @@ const Auth = () => {
                               <p className="text-xs text-amber-700 mb-2">
                                 À partir de 9€/mois pour accéder aux opportunités
                               </p>
-                              <button 
-                                type="button"
-                                className="text-xs text-amber-700 hover:text-amber-800 underline flex items-center gap-1"
-                                onClick={() => window.open('/pricing', '_blank')}
-                              >
+                              <button type="button" className="text-xs text-amber-700 hover:text-amber-800 underline flex items-center gap-1" onClick={() => window.open('/pricing', '_blank')}>
                                 Voir les tarifs <ExternalLink className="h-3 w-3" />
                               </button>
                             </div>
                           </div>
                         </div>
 
-                        <Button 
-                          type="submit" 
-                          className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-base font-medium" 
-                          disabled={loading}
-                        >
-                          {loading ? (
-                            <span className="flex items-center gap-2">
+                        <Button type="submit" className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-base font-medium" disabled={loading}>
+                          {loading ? <span className="flex items-center gap-2">
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                               Création en cours...
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-2">
+                            </span> : <span className="flex items-center gap-2">
                               Créer mon compte et choisir mon abonnement
                               <ArrowRight className="h-4 w-4" />
-                            </span>
-                          )}
+                            </span>}
                         </Button>
 
                         {/* Éléments de réassurance */}
@@ -532,28 +485,17 @@ const Auth = () => {
                           <Label htmlFor="pro-company-name" className="text-sm font-medium">
                             Nom de société / organisation
                           </Label>
-                          <Input 
-                            id="pro-company-name" 
-                            type="text" 
-                            placeholder="ex: Opéra National, Festival International..." 
-                            value={professionalSignupForm.companyName} 
-                            onChange={e => setProfessionalSignupForm({
-                              ...professionalSignupForm,
-                              companyName: e.target.value
-                            })} 
-                            required 
-                            className="h-11"
-                          />
+                          <Input id="pro-company-name" type="text" placeholder="ex: Opéra National, Festival International..." value={professionalSignupForm.companyName} onChange={e => setProfessionalSignupForm({
+                          ...professionalSignupForm,
+                          companyName: e.target.value
+                        })} required className="h-11" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="pro-role" className="text-sm font-medium">Votre métier</Label>
-                          <Select 
-                            value={professionalSignupForm.professionalRole} 
-                            onValueChange={value => setProfessionalSignupForm({
-                              ...professionalSignupForm,
-                              professionalRole: value
-                            })}
-                          >
+                          <Select value={professionalSignupForm.professionalRole} onValueChange={value => setProfessionalSignupForm({
+                          ...professionalSignupForm,
+                          professionalRole: value
+                        })}>
                             <SelectTrigger className="h-11">
                               <SelectValue placeholder="Sélectionnez votre domaine d'activité" />
                             </SelectTrigger>
@@ -578,49 +520,25 @@ const Auth = () => {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="pro-email" className="text-sm font-medium">Email professionnel</Label>
-                          <Input 
-                            id="pro-email" 
-                            type="email" 
-                            placeholder="votre@email.com" 
-                            value={professionalSignupForm.email} 
-                            onChange={e => setProfessionalSignupForm({
-                              ...professionalSignupForm,
-                              email: e.target.value
-                            })} 
-                            required 
-                            className="h-11"
-                          />
+                          <Input id="pro-email" type="email" placeholder="votre@email.com" value={professionalSignupForm.email} onChange={e => setProfessionalSignupForm({
+                          ...professionalSignupForm,
+                          email: e.target.value
+                        })} required className="h-11" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <Label htmlFor="pro-password" className="text-sm font-medium">Mot de passe</Label>
-                            <Input 
-                              id="pro-password" 
-                              type="password" 
-                              placeholder="Min. 8 caractères"
-                              value={professionalSignupForm.password} 
-                              onChange={e => setProfessionalSignupForm({
-                                ...professionalSignupForm,
-                                password: e.target.value
-                              })} 
-                              required 
-                              className="h-11"
-                            />
+                            <Input id="pro-password" type="password" placeholder="Min. 8 caractères" value={professionalSignupForm.password} onChange={e => setProfessionalSignupForm({
+                            ...professionalSignupForm,
+                            password: e.target.value
+                          })} required className="h-11" />
                           </div>
                           <div className="space-y-2">
                             <Label htmlFor="pro-confirm-password" className="text-sm font-medium">Confirmer</Label>
-                            <Input 
-                              id="pro-confirm-password" 
-                              type="password" 
-                              placeholder="Répétez le mot de passe"
-                              value={professionalSignupForm.confirmPassword} 
-                              onChange={e => setProfessionalSignupForm({
-                                ...professionalSignupForm,
-                                confirmPassword: e.target.value
-                              })} 
-                              required 
-                              className="h-11"
-                            />
+                            <Input id="pro-confirm-password" type="password" placeholder="Répétez le mot de passe" value={professionalSignupForm.confirmPassword} onChange={e => setProfessionalSignupForm({
+                            ...professionalSignupForm,
+                            confirmPassword: e.target.value
+                          })} required className="h-11" />
                           </div>
                         </div>
 
@@ -635,33 +553,21 @@ const Auth = () => {
                               <p className="text-xs text-blue-700 mb-2">
                                 À partir de 29€/mois pour recruter et contacter les artistes
                               </p>
-                              <button 
-                                type="button"
-                                className="text-xs text-blue-700 hover:text-blue-800 underline flex items-center gap-1"
-                                onClick={() => window.open('/pricing', '_blank')}
-                              >
+                              <button type="button" className="text-xs text-blue-700 hover:text-blue-800 underline flex items-center gap-1" onClick={() => window.open('/pricing', '_blank')}>
                                 Voir les tarifs <ExternalLink className="h-3 w-3" />
                               </button>
                             </div>
                           </div>
                         </div>
 
-                        <Button 
-                          type="submit" 
-                          className="w-full h-12 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-base font-medium" 
-                          disabled={loading}
-                        >
-                          {loading ? (
-                            <span className="flex items-center gap-2">
+                        <Button type="submit" className="w-full h-12 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-base font-medium" disabled={loading}>
+                          {loading ? <span className="flex items-center gap-2">
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                               Création en cours...
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-2">
+                            </span> : <span className="flex items-center gap-2">
                               Créer mon compte et choisir mon abonnement
                               <ArrowRight className="h-4 w-4" />
-                            </span>
-                          )}
+                            </span>}
                         </Button>
 
                         {/* Éléments de réassurance */}
