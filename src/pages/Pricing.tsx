@@ -248,14 +248,26 @@ export default function Pricing() {
 
           <h2 className="text-2xl font-semibold mb-4">Questions fréquentes</h2>
           <div className="max-w-3xl mx-auto space-y-4 text-left">
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Quelle est la différence entre les plans ?</h3>
-              <p className="text-muted-foreground text-sm">
-                Le plan Artistes convient aux créateurs individuels, 
-                le plan Professionnels aux institutions avec plus de fonctionnalités avancées. 
-                Les deux plans offrent un accès complet à la plateforme.
-              </p>
-            </div>
+            {!(isProfessional || userTypeParam === 'professional' || user?.user_metadata?.user_type === 'professional') && (
+              <div className="p-4 border rounded-lg">
+                <h3 className="font-medium mb-2">Quelle est la différence entre les plans ?</h3>
+                <p className="text-muted-foreground text-sm">
+                  Le plan Artistes convient aux créateurs individuels, 
+                  le plan Professionnels aux institutions avec plus de fonctionnalités avancées. 
+                  Les deux plans offrent un accès complet à la plateforme.
+                </p>
+              </div>
+            )}
+            
+            {(isProfessional || userTypeParam === 'professional' || user?.user_metadata?.user_type === 'professional') && (
+              <div className="p-4 border rounded-lg">
+                <h3 className="font-medium mb-2">À propos de votre plan Professionnel</h3>
+                <p className="text-muted-foreground text-sm">
+                  Le plan Professionnels vous donne accès à toutes les fonctionnalités avancées 
+                  pour gérer vos événements, castings et rechercher des talents efficacement.
+                </p>
+              </div>
+            )}
             
             <div className="p-4 border rounded-lg">
               <h3 className="font-medium mb-2">Comment changer de plan ?</h3>
