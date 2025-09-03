@@ -374,64 +374,72 @@ const Auth = () => {
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="h-4 w-4" />
-                      Étape 1/4 : Création du compte
+                      <span>Étape 1/4 : Création du compte</span>
                     </div>
                   </div>
                   <Progress value={25} className="mb-4" />
-                  <CardTitle>Créer mon compte</CardTitle>
-                  <CardDescription>
+                  <CardTitle className="text-2xl">Créer mon compte</CardTitle>
+                  <CardDescription className="text-base mt-2">
                     Rejoignez la communauté lyrique et accédez aux meilleures opportunités artistiques
                   </CardDescription>
                   
                   {/* Pricing transparency */}
-                  <div className="bg-accent/20 border border-accent/30 rounded-lg p-3 mt-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Award className="h-4 w-4 text-accent-foreground" />
-                      <span className="font-medium">Après inscription :</span>
-                      <span>Choisissez votre plan (à partir de 9€/mois)</span>
-                      <Button
-                        variant="link" 
-                        size="sm"
-                        className="h-auto p-0 text-accent-foreground"
-                        onClick={() => navigate('/pricing')}
-                      >
-                        Voir les tarifs
-                      </Button>
+                  <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 mt-6">
+                    <div className="flex items-start gap-3">
+                      <Award className="h-5 w-5 text-accent-foreground mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-accent-foreground mb-1">
+                          Après inscription
+                        </div>
+                        <div className="text-sm text-muted-foreground mb-2">
+                          Choisissez votre plan d&apos;abonnement à partir de 9€/mois
+                        </div>
+                        <Button
+                          variant="link" 
+                          size="sm"
+                          className="h-auto p-0 text-accent-foreground hover:underline"
+                          onClick={() => navigate('/pricing')}
+                        >
+                          Consulter nos tarifs →
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="artist" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="artist" className="flex flex-col items-center gap-1 h-auto py-3">
+                    <TabsList className="grid w-full grid-cols-2 h-auto">
+                      <TabsTrigger value="artist" className="flex flex-col items-center gap-2 h-auto py-4 px-3">
                         <div className="flex items-center gap-2">
-                          <Mic className="h-4 w-4" />
-                          <span>Artiste</span>
+                          <Mic className="h-5 w-5" />
+                          <span className="font-medium">Artiste</span>
                         </div>
-                        <span className="text-xs text-muted-foreground text-center">
-                          Chanteurs, instrumentistes cherchant des opportunités
+                        <span className="text-xs text-muted-foreground text-center leading-tight">
+                          Chanteurs, instrumentistes
                         </span>
                       </TabsTrigger>
-                      <TabsTrigger value="professional" className="flex flex-col items-center gap-1 h-auto py-3">
+                      <TabsTrigger value="professional" className="flex flex-col items-center gap-2 h-auto py-4 px-3">
                         <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4" />
-                          <span>Professionnel</span>
+                          <Users className="h-5 w-5" />
+                          <span className="font-medium">Professionnel</span>
                         </div>
-                        <span className="text-xs text-muted-foreground text-center">
-                          Directeurs artistiques, coachs, producteurs recrutant
+                        <span className="text-xs text-muted-foreground text-center leading-tight">
+                          Recruteurs, formateurs
                         </span>
                       </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="artist" className="mt-6">
-                      <div className="mb-4 p-3 bg-primary/5 rounded-lg border">
-                        <div className="flex items-start gap-2">
-                          <Mic className="h-5 w-5 text-primary mt-0.5" />
+                      <div className="mb-6 p-4 bg-primary/5 border border-primary/10 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <Mic className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
                           <div>
-                            <h4 className="font-medium text-primary">Compte Artiste</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Créez votre profil, partagez votre répertoire et postulez aux auditions. 
-                              Exemples : soprano lyrique, pianiste concertiste, chef de chœur.
+                            <h4 className="font-semibold text-primary mb-2">Compte Artiste</h4>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              Créez votre profil artistique, partagez votre répertoire et postulez aux auditions.
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-2 italic">
+                              Exemples : soprano lyrique, pianiste concertiste, chef de chœur
                             </p>
                           </div>
                         </div>
@@ -450,7 +458,7 @@ const Auth = () => {
                             onChange={(e) => setArtistSignupForm({ ...artistSignupForm, stageName: e.target.value })}
                             required
                           />
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground mt-1">
                             Le nom sous lequel vous serez visible publiquement
                           </p>
                         </div>
@@ -487,9 +495,9 @@ const Auth = () => {
                         </div>
                         
                         {/* Reassurance elements */}
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                          <Shield className="h-4 w-4" />
-                          <span>Vos données sont sécurisées • Aucun engagement</span>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-3 px-3 bg-muted/30 rounded-md">
+                          <Shield className="h-4 w-4 flex-shrink-0" />
+                          <span>Données sécurisées • Aucun engagement</span>
                         </div>
                         
                         <Button 
@@ -506,14 +514,16 @@ const Auth = () => {
                     </TabsContent>
 
                     <TabsContent value="professional" className="mt-6">
-                      <div className="mb-4 p-3 bg-secondary/10 rounded-lg border">
-                        <div className="flex items-start gap-2">
-                          <Users className="h-5 w-5 text-secondary mt-0.5" />
+                      <div className="mb-6 p-4 bg-secondary/5 border border-secondary/10 rounded-lg">
+                        <div className="flex items-start gap-3">
+                          <Users className="h-6 w-6 text-secondary mt-0.5 flex-shrink-0" />
                           <div>
-                            <h4 className="font-medium text-secondary">Compte Professionnel</h4>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              Recrutez des talents, gérez vos auditions et développez votre réseau. 
-                              Exemples : directeur d'opéra, coach vocal, agent artistique.
+                            <h4 className="font-semibold text-secondary mb-2">Compte Professionnel</h4>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              Recrutez des talents, gérez vos auditions et développez votre réseau professionnel.
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-2 italic">
+                              Exemples : directeur d&apos;opéra, coach vocal, agent artistique
                             </p>
                           </div>
                         </div>
@@ -589,9 +599,9 @@ const Auth = () => {
                         </div>
                         
                         {/* Reassurance elements */}
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                          <Shield className="h-4 w-4" />
-                          <span>Vos données sont sécurisées • Résiliation simple</span>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-3 px-3 bg-muted/30 rounded-md">
+                          <Shield className="h-4 w-4 flex-shrink-0" />
+                          <span>Données sécurisées • Résiliation simple</span>
                         </div>
                         
                         <Button 
