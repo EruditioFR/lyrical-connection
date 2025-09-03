@@ -269,13 +269,15 @@ export default function Pricing() {
               </div>
             )}
             
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-medium mb-2">Comment changer de plan ?</h3>
-              <p className="text-muted-foreground text-sm">
-                Vous pouvez changer de plan à tout moment depuis votre espace de gestion d'abonnement. 
-                Les changements prennent effet immédiatement.
-              </p>
-            </div>
+            {!(isProfessional || userTypeParam === 'professional' || user?.user_metadata?.user_type === 'professional') && (
+              <div className="p-4 border rounded-lg">
+                <h3 className="font-medium mb-2">Comment changer de plan ?</h3>
+                <p className="text-muted-foreground text-sm">
+                  Vous pouvez changer de plan à tout moment depuis votre espace de gestion d'abonnement. 
+                  Les changements prennent effet immédiatement.
+                </p>
+              </div>
+            )}
 
             <div className="p-4 border rounded-lg">
               <h3 className="font-medium mb-2">Comment annuler mon abonnement ?</h3>
