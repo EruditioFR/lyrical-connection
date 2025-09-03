@@ -6,11 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
-import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle } from 'lucide-react';
+import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle, Shield, Clock, ExternalLink, ArrowRight, Star, Users, Building } from 'lucide-react';
 const professionalRoles = [{
   value: 'casting_director',
   label: 'Directeur de casting / Directeur artistique'
@@ -335,109 +336,346 @@ const Auth = () => {
             <TabsContent value="signup">
               <Card>
                 <CardHeader>
-                  <CardTitle>Créer mon compte</CardTitle>
-                  <CardDescription>
-                    Choisissez votre type de compte
-                  </CardDescription>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <CardTitle className="text-xl font-semibold">Créer mon compte</CardTitle>
+                      <CardDescription className="text-base mt-1">
+                        Étape 1/4 : Choisissez votre profil
+                      </CardDescription>
+                    </div>
+                    <div className="text-right">
+                      <Progress value={25} className="w-16 h-2" />
+                      <span className="text-xs text-muted-foreground mt-1 block">25%</span>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="artist" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="artist" className="flex items-center gap-2">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
+                      <TabsTrigger value="artist" className="flex items-center gap-2 py-3">
                         <User className="h-4 w-4" />
                         Artiste
                       </TabsTrigger>
-                      <TabsTrigger value="professional" className="flex items-center gap-2">
+                      <TabsTrigger value="professional" className="flex items-center gap-2 py-3">
                         <Briefcase className="h-4 w-4" />
                         Professionnel
                       </TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="artist" className="mt-4">
-                      <form onSubmit={handleArtistSignup} className="space-y-4">
+                    <TabsContent value="artist" className="mt-0">
+                      {/* Description du profil Artiste */}
+                      <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20 rounded-lg p-4 mb-6">
+                        <div className="flex items-start gap-3">
+                          <div className="bg-primary/10 rounded-full p-2">
+                            <Star className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-base mb-2">Profil Artiste</h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Chanteurs : créez votre profil artistique, partagez votre répertoire et postulez aux auditions.
+                            </p>
+                            <div className="text-xs text-muted-foreground space-y-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-primary rounded-full"></div>
+                                <span>Exemples : Maria Callas, Luciano Pavarotti</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <form onSubmit={handleArtistSignup} className="space-y-5">
                         <div className="space-y-2">
-                          <Label htmlFor="artist-stage-name">Nom de scène</Label>
-                          <Input id="artist-stage-name" type="text" placeholder="Votre nom d'artiste" value={artistSignupForm.stageName} onChange={e => setArtistSignupForm({
-                          ...artistSignupForm,
-                          stageName: e.target.value
-                        })} required />
+                          <Label htmlFor="artist-stage-name" className="text-sm font-medium">
+                            Nom de scène ou nom professionnel
+                          </Label>
+                          <Input 
+                            id="artist-stage-name" 
+                            type="text" 
+                            placeholder="ex: Maria Soprano, Jean Ténor..." 
+                            value={artistSignupForm.stageName} 
+                            onChange={e => setArtistSignupForm({
+                              ...artistSignupForm,
+                              stageName: e.target.value
+                            })} 
+                            required 
+                            className="h-11"
+                          />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="artist-email">Email</Label>
-                          <Input id="artist-email" type="email" placeholder="votre@email.com" value={artistSignupForm.email} onChange={e => setArtistSignupForm({
-                          ...artistSignupForm,
-                          email: e.target.value
-                        })} required />
+                          <Label htmlFor="artist-email" className="text-sm font-medium">Email professionnel</Label>
+                          <Input 
+                            id="artist-email" 
+                            type="email" 
+                            placeholder="votre@email.com" 
+                            value={artistSignupForm.email} 
+                            onChange={e => setArtistSignupForm({
+                              ...artistSignupForm,
+                              email: e.target.value
+                            })} 
+                            required 
+                            className="h-11"
+                          />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="artist-password">Mot de passe</Label>
-                          <Input id="artist-password" type="password" value={artistSignupForm.password} onChange={e => setArtistSignupForm({
-                          ...artistSignupForm,
-                          password: e.target.value
-                        })} required />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="artist-password" className="text-sm font-medium">Mot de passe</Label>
+                            <Input 
+                              id="artist-password" 
+                              type="password" 
+                              placeholder="Min. 8 caractères"
+                              value={artistSignupForm.password} 
+                              onChange={e => setArtistSignupForm({
+                                ...artistSignupForm,
+                                password: e.target.value
+                              })} 
+                              required 
+                              className="h-11"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="artist-confirm-password" className="text-sm font-medium">Confirmer</Label>
+                            <Input 
+                              id="artist-confirm-password" 
+                              type="password" 
+                              placeholder="Répétez le mot de passe"
+                              value={artistSignupForm.confirmPassword} 
+                              onChange={e => setArtistSignupForm({
+                                ...artistSignupForm,
+                                confirmPassword: e.target.value
+                              })} 
+                              required 
+                              className="h-11"
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="artist-confirm-password">Confirmer le mot de passe</Label>
-                          <Input id="artist-confirm-password" type="password" value={artistSignupForm.confirmPassword} onChange={e => setArtistSignupForm({
-                          ...artistSignupForm,
-                          confirmPassword: e.target.value
-                        })} required />
+
+                        {/* Informations sur les coûts */}
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                          <div className="flex items-start gap-3">
+                            <Clock className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-amber-900 mb-1">
+                                Abonnement requis
+                              </p>
+                              <p className="text-xs text-amber-700 mb-2">
+                                À partir de 9€/mois pour accéder aux opportunités
+                              </p>
+                              <button 
+                                type="button"
+                                className="text-xs text-amber-700 hover:text-amber-800 underline flex items-center gap-1"
+                                onClick={() => window.open('/pricing', '_blank')}
+                              >
+                                Voir les tarifs <ExternalLink className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <Button type="submit" className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" disabled={loading}>
-                          {loading ? 'Inscription...' : "S'inscrire comme artiste"}
+
+                        <Button 
+                          type="submit" 
+                          className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-base font-medium" 
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <span className="flex items-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              Création en cours...
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-2">
+                              Créer mon compte et choisir mon abonnement
+                              <ArrowRight className="h-4 w-4" />
+                            </span>
+                          )}
                         </Button>
+
+                        {/* Éléments de réassurance */}
+                        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-3 border-t">
+                          <div className="flex items-center gap-1">
+                            <Shield className="h-3 w-3" />
+                            <span>Données sécurisées</span>
+                          </div>
+                          <div className="w-1 h-1 bg-muted-foreground/40 rounded-full"></div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>Résiliation simple</span>
+                          </div>
+                        </div>
                       </form>
                     </TabsContent>
 
-                    <TabsContent value="professional" className="mt-4">
-                      <form onSubmit={handleProfessionalSignup} className="space-y-4">
+                    <TabsContent value="professional" className="mt-0">
+                      {/* Description du profil Professionnel */}
+                      <div className="bg-gradient-to-br from-accent/5 to-primary/5 border border-accent/20 rounded-lg p-4 mb-6">
+                        <div className="flex items-start gap-3">
+                          <div className="bg-accent/10 rounded-full p-2">
+                            <Building className="h-5 w-5 text-accent" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-base mb-2">Profil Professionnel</h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              Recruteurs, agents, directeurs : trouvez et contactez les talents pour vos projets.
+                            </p>
+                            <div className="text-xs text-muted-foreground space-y-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-accent rounded-full"></div>
+                                <span>Exemples : Opéra de Paris, Vienna State Opera</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <form onSubmit={handleProfessionalSignup} className="space-y-5">
                         <div className="space-y-2">
-                          <Label htmlFor="pro-company-name">Nom de société / organisation</Label>
-                          <Input id="pro-company-name" type="text" placeholder="Nom de votre société" value={professionalSignupForm.companyName} onChange={e => setProfessionalSignupForm({
-                          ...professionalSignupForm,
-                          companyName: e.target.value
-                        })} required />
+                          <Label htmlFor="pro-company-name" className="text-sm font-medium">
+                            Nom de société / organisation
+                          </Label>
+                          <Input 
+                            id="pro-company-name" 
+                            type="text" 
+                            placeholder="ex: Opéra National, Festival International..." 
+                            value={professionalSignupForm.companyName} 
+                            onChange={e => setProfessionalSignupForm({
+                              ...professionalSignupForm,
+                              companyName: e.target.value
+                            })} 
+                            required 
+                            className="h-11"
+                          />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="pro-role">Créez votre profil artistique, partagez votre répertoire et postulez aux auditions et aux concours.</Label>
-                          <Select value={professionalSignupForm.professionalRole} onValueChange={value => setProfessionalSignupForm({
-                          ...professionalSignupForm,
-                          professionalRole: value
-                        })}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Sélectionnez votre métier" />
+                          <Label htmlFor="pro-role" className="text-sm font-medium">Votre métier</Label>
+                          <Select 
+                            value={professionalSignupForm.professionalRole} 
+                            onValueChange={value => setProfessionalSignupForm({
+                              ...professionalSignupForm,
+                              professionalRole: value
+                            })}
+                          >
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Sélectionnez votre domaine d'activité" />
                             </SelectTrigger>
                             <SelectContent>
-                              {professionalRoles.map(role => <SelectItem key={role.value} value={role.value}>
-                                  {role.label}
-                                </SelectItem>)}
+                              <div className="p-2">
+                                <div className="text-xs font-medium text-muted-foreground mb-2 px-2">DIRECTION ARTISTIQUE</div>
+                                <SelectItem value="casting_director">Directeur de casting / Directeur artistique</SelectItem>
+                                <SelectItem value="opera_house_manager">Responsable de maison d&apos;opéra</SelectItem>
+                                <SelectItem value="producer">Producteur de spectacle / festival</SelectItem>
+                                
+                                <div className="text-xs font-medium text-muted-foreground mb-2 mt-4 px-2">FORMATION & COACHING</div>
+                                <SelectItem value="vocal_coach">Chef de chant / Coach vocal</SelectItem>
+                                <SelectItem value="voice_teacher">Professeur de chant / Pédagogue</SelectItem>
+                                
+                                <div className="text-xs font-medium text-muted-foreground mb-2 mt-4 px-2">ACCOMPAGNEMENT</div>
+                                <SelectItem value="conductor">Chef d&apos;orchestre</SelectItem>
+                                <SelectItem value="artistic_agent">Agent artistique / Manager</SelectItem>
+                                <SelectItem value="competition_director">Directeur de concours / jury</SelectItem>
+                              </div>
                             </SelectContent>
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="pro-email">Email</Label>
-                          <Input id="pro-email" type="email" placeholder="votre@email.com" value={professionalSignupForm.email} onChange={e => setProfessionalSignupForm({
-                          ...professionalSignupForm,
-                          email: e.target.value
-                        })} required />
+                          <Label htmlFor="pro-email" className="text-sm font-medium">Email professionnel</Label>
+                          <Input 
+                            id="pro-email" 
+                            type="email" 
+                            placeholder="votre@email.com" 
+                            value={professionalSignupForm.email} 
+                            onChange={e => setProfessionalSignupForm({
+                              ...professionalSignupForm,
+                              email: e.target.value
+                            })} 
+                            required 
+                            className="h-11"
+                          />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="pro-password">Mot de passe</Label>
-                          <Input id="pro-password" type="password" value={professionalSignupForm.password} onChange={e => setProfessionalSignupForm({
-                          ...professionalSignupForm,
-                          password: e.target.value
-                        })} required />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="pro-password" className="text-sm font-medium">Mot de passe</Label>
+                            <Input 
+                              id="pro-password" 
+                              type="password" 
+                              placeholder="Min. 8 caractères"
+                              value={professionalSignupForm.password} 
+                              onChange={e => setProfessionalSignupForm({
+                                ...professionalSignupForm,
+                                password: e.target.value
+                              })} 
+                              required 
+                              className="h-11"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="pro-confirm-password" className="text-sm font-medium">Confirmer</Label>
+                            <Input 
+                              id="pro-confirm-password" 
+                              type="password" 
+                              placeholder="Répétez le mot de passe"
+                              value={professionalSignupForm.confirmPassword} 
+                              onChange={e => setProfessionalSignupForm({
+                                ...professionalSignupForm,
+                                confirmPassword: e.target.value
+                              })} 
+                              required 
+                              className="h-11"
+                            />
+                          </div>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="pro-confirm-password">Confirmer le mot de passe</Label>
-                          <Input id="pro-confirm-password" type="password" value={professionalSignupForm.confirmPassword} onChange={e => setProfessionalSignupForm({
-                          ...professionalSignupForm,
-                          confirmPassword: e.target.value
-                        })} required />
+
+                        {/* Informations sur les coûts */}
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <div className="flex items-start gap-3">
+                            <Users className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-sm font-medium text-blue-900 mb-1">
+                                Accès professionnel
+                              </p>
+                              <p className="text-xs text-blue-700 mb-2">
+                                À partir de 29€/mois pour recruter et contacter les artistes
+                              </p>
+                              <button 
+                                type="button"
+                                className="text-xs text-blue-700 hover:text-blue-800 underline flex items-center gap-1"
+                                onClick={() => window.open('/pricing', '_blank')}
+                              >
+                                Voir les tarifs <ExternalLink className="h-3 w-3" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                        <Button type="submit" className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" disabled={loading}>
-                          {loading ? 'Inscription...' : "S'inscrire comme professionnel"}
+
+                        <Button 
+                          type="submit" 
+                          className="w-full h-12 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-base font-medium" 
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <span className="flex items-center gap-2">
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              Création en cours...
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-2">
+                              Créer mon compte et choisir mon abonnement
+                              <ArrowRight className="h-4 w-4" />
+                            </span>
+                          )}
                         </Button>
+
+                        {/* Éléments de réassurance */}
+                        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground pt-3 border-t">
+                          <div className="flex items-center gap-1">
+                            <Shield className="h-3 w-3" />
+                            <span>Données sécurisées</span>
+                          </div>
+                          <div className="w-1 h-1 bg-muted-foreground/40 rounded-full"></div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            <span>Aucun engagement</span>
+                          </div>
+                        </div>
                       </form>
                     </TabsContent>
                   </Tabs>
