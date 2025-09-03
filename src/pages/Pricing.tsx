@@ -231,7 +231,9 @@ export default function Pricing() {
             </div>
           )}
           
-          {!isArtist && !isProfessional && (
+          {!isArtist && !isProfessional && 
+           !(userTypeParam === 'professional') && 
+           !(user?.user_metadata?.user_type === 'professional') && (
             <div className="mb-8 p-6 bg-muted/30 rounded-lg max-w-4xl mx-auto">
               <h3 className="text-lg font-semibold mb-2">Option Visibilité Premium</h3>
               <p className="text-muted-foreground text-sm mb-3">
