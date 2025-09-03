@@ -5,12 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
-import { 
-  Music, Users, Calendar, Search, MessageSquare, Trophy, BarChart3, Settings, 
-  Mic, Globe, Heart, Zap, Star, CheckCircle, X, Crown, Shield, Video,
-  Mail, Bell, CreditCard, Languages, Database, FileText
-} from 'lucide-react';
-
+import { Music, Users, Calendar, Search, MessageSquare, Trophy, BarChart3, Settings, Mic, Globe, Heart, Zap, Star, CheckCircle, X, Crown, Shield, Video, Mail, Bell, CreditCard, Languages, Database, FileText } from 'lucide-react';
 const Features = () => {
   const heroRef = useAnimateOnScroll();
   const artistsRef = useAnimateOnScroll();
@@ -19,113 +14,113 @@ const Features = () => {
   const communicationRef = useAnimateOnScroll();
   const subscriptionRef = useAnimateOnScroll();
   const comparisonRef = useAnimateOnScroll();
-
-  const artistFeatures = [
-    {
-      icon: Music,
-      title: "Profil Artistique Complet",
-      description: "Créez votre vitrine avec photos HD, vidéos, extraits audio et répertoire détaillé",
-      highlight: "Illimité"
-    },
-    {
-      icon: Trophy,
-      title: "Candidatures Simplifiées", 
-      description: "Postulez aux auditions et concours en un clic avec votre profil pré-rempli",
-      highlight: "1 clic"
-    },
-    {
-      icon: BarChart3,
-      title: "Statistiques Avancées",
-      description: "Suivez les visites, l'engagement et l'évolution de votre carrière",
-      highlight: "Analytics pro"
-    },
-    {
-      icon: Calendar,
-      title: "Agenda Intégré",
-      description: "Gérez vos auditions, concerts et disponibilités en temps réel",
-      highlight: "Sync calendar"
-    }
-  ];
-
-  const professionalFeatures = [
-    {
-      icon: Database,
-      title: "Base de Données Premium",
-      description: "Plus de 500 profils d'artistes vérifiés avec filtres avancés",
-      highlight: "500+ artistes"
-    },
-    {
-      icon: Search,
-      title: "Recherche IA",
-      description: "Trouvez l'artiste parfait par tessiture, répertoire et disponibilité",
-      highlight: "Powered by AI"
-    },
-    {
-      icon: Settings,
-      title: "Outils de Casting",
-      description: "Créez des appels personnalisés et gérez les candidatures efficacement",
-      highlight: "Workflow optimisé"
-    },
-    {
-      icon: BarChart3,
-      title: "Dashboard Avancé",
-      description: "Analytics complets sur vos recrutements et performances",
-      highlight: "Insights pro"
-    }
-  ];
-
-  const platformFeatures = [
-    {
-      icon: Calendar,
-      title: "Événements & Masterclass",
-      description: "Organisez et participez à des formations, masterclasses et auditions",
-      category: "Événements"
-    },
-    {
-      icon: Video,
-      title: "Diffusion Live",
-      description: "Diffusez vos événements en direct et enregistrez-les pour plus tard",
-      category: "Événements"
-    },
-    {
-      icon: MessageSquare,
-      title: "Messagerie Temps Réel",
-      description: "Communication instantanée entre artistes et professionnels",
-      category: "Communication"
-    },
-    {
-      icon: Bell,
-      title: "Notifications Smart",
-      description: "Alertes personnalisées pour les nouvelles opportunités et messages",
-      category: "Communication"
-    },
-    {
-      icon: CreditCard,
-      title: "Paiements Sécurisés",
-      description: "Transactions sécurisées avec Stripe pour les inscriptions payantes",
-      category: "Monétisation"
-    },
-    {
-      icon: Languages,
-      title: "Multi-langues",
-      description: "Interface disponible en français, anglais, italien et allemand",
-      category: "International"
-    }
-  ];
-
-  const comparisonData = [
-    { feature: "Profil artiste complet", free: true, pro: true },
-    { feature: "Candidatures aux castings", free: "5/mois", pro: "Illimitées" },
-    { feature: "Messages", free: "10/mois", pro: "Illimitées" },
-    { feature: "Recherche avancée", free: false, pro: true },
-    { feature: "Analytics détaillées", free: false, pro: true },
-    { feature: "Événements payants", free: false, pro: true },
-    { feature: "Support prioritaire", free: false, pro: true },
-    { feature: "Badge professionnel", free: false, pro: true }
-  ];
-
-  return (
-    <Layout>
+  const artistFeatures = [{
+    icon: Music,
+    title: "Profil Artistique Complet",
+    description: "Créez votre vitrine avec photos HD, vidéos, extraits audio et répertoire détaillé",
+    highlight: "Illimité"
+  }, {
+    icon: Trophy,
+    title: "Candidatures Simplifiées",
+    description: "Postulez aux auditions et concours en un clic avec votre profil pré-rempli",
+    highlight: "1 clic"
+  }, {
+    icon: BarChart3,
+    title: "Statistiques Avancées",
+    description: "Suivez les visites, l'engagement et l'évolution de votre carrière",
+    highlight: "Analytics pro"
+  }, {
+    icon: Calendar,
+    title: "Agenda Intégré",
+    description: "Gérez vos auditions, concerts et disponibilités en temps réel",
+    highlight: "Sync calendar"
+  }];
+  const professionalFeatures = [{
+    icon: Database,
+    title: "Base de Données Premium",
+    description: "Plus de 500 profils d'artistes vérifiés avec filtres avancés",
+    highlight: "500+ artistes"
+  }, {
+    icon: Search,
+    title: "Recherche IA",
+    description: "Trouvez l'artiste parfait par tessiture, répertoire et disponibilité",
+    highlight: "Powered by AI"
+  }, {
+    icon: Settings,
+    title: "Outils de Casting",
+    description: "Créez des appels personnalisés et gérez les candidatures efficacement",
+    highlight: "Workflow optimisé"
+  }, {
+    icon: BarChart3,
+    title: "Dashboard Avancé",
+    description: "Analytics complets sur vos recrutements et performances",
+    highlight: "Insights pro"
+  }];
+  const platformFeatures = [{
+    icon: Calendar,
+    title: "Événements & Masterclass",
+    description: "Organisez et participez à des formations, masterclasses et auditions",
+    category: "Événements"
+  }, {
+    icon: Video,
+    title: "Diffusion Live",
+    description: "Diffusez vos événements en direct et enregistrez-les pour plus tard",
+    category: "Événements"
+  }, {
+    icon: MessageSquare,
+    title: "Messagerie Temps Réel",
+    description: "Communication instantanée entre artistes et professionnels",
+    category: "Communication"
+  }, {
+    icon: Bell,
+    title: "Notifications Smart",
+    description: "Alertes personnalisées pour les nouvelles opportunités et messages",
+    category: "Communication"
+  }, {
+    icon: CreditCard,
+    title: "Paiements Sécurisés",
+    description: "Transactions sécurisées avec Stripe pour les inscriptions payantes",
+    category: "Monétisation"
+  }, {
+    icon: Languages,
+    title: "Multi-langues",
+    description: "Interface disponible en français, anglais, italien et allemand",
+    category: "International"
+  }];
+  const comparisonData = [{
+    feature: "Profil artiste complet",
+    free: true,
+    pro: true
+  }, {
+    feature: "Candidatures aux castings",
+    free: "5/mois",
+    pro: "Illimitées"
+  }, {
+    feature: "Messages",
+    free: "10/mois",
+    pro: "Illimitées"
+  }, {
+    feature: "Recherche avancée",
+    free: false,
+    pro: true
+  }, {
+    feature: "Analytics détaillées",
+    free: false,
+    pro: true
+  }, {
+    feature: "Événements payants",
+    free: false,
+    pro: true
+  }, {
+    feature: "Support prioritaire",
+    free: false,
+    pro: true
+  }, {
+    feature: "Badge professionnel",
+    free: false,
+    pro: true
+  }];
+  return <Layout>
       {/* Hero Section */}
       <section className="py-24 bg-gradient-to-br from-lyrical-50 to-gold-50">
         <div className="container mx-auto px-4 md:px-6">
@@ -168,8 +163,7 @@ const Features = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {artistFeatures.map((feature, index) => (
-              <Card key={index} className="border-lyrical-100 hover:border-lyrical-200 transition-colors">
+            {artistFeatures.map((feature, index) => <Card key={index} className="border-lyrical-100 hover:border-lyrical-200 transition-colors">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="bg-lyrical-100 p-3 rounded-xl">
@@ -182,8 +176,7 @@ const Features = () => {
                 <CardContent>
                   <CardDescription>{feature.description}</CardDescription>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -204,8 +197,7 @@ const Features = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {professionalFeatures.map((feature, index) => (
-              <Card key={index} className="border-gold-100 hover:border-gold-200 transition-colors">
+            {professionalFeatures.map((feature, index) => <Card key={index} className="border-gold-100 hover:border-gold-200 transition-colors">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="bg-gold-100 p-3 rounded-xl">
@@ -218,8 +210,7 @@ const Features = () => {
                 <CardContent>
                   <CardDescription>{feature.description}</CardDescription>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -235,8 +226,7 @@ const Features = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {platformFeatures.map((feature, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
+            {platformFeatures.map((feature, index) => <Card key={index} className="hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-center space-x-3">
                     <div className="bg-primary/10 p-2 rounded-lg">
@@ -251,74 +241,14 @@ const Features = () => {
                 <CardContent className="pt-0">
                   <CardDescription className="text-sm">{feature.description}</CardDescription>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
 
       {/* Comparison Table */}
       <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4 md:px-6">
-          <div ref={comparisonRef} className="text-center mb-16 text-appear">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">Gratuit vs Professionnel</h2>
-            <p className="text-lg text-muted-foreground">
-              Comparez nos offres pour choisir celle qui vous convient
-            </p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            <Card>
-              <CardHeader>
-                <div className="grid grid-cols-3 gap-4 items-center">
-                  <div></div>
-                  <div className="text-center">
-                    <h3 className="font-serif text-lg font-semibold">Gratuit</h3>
-                    <p className="text-sm text-muted-foreground">Pour débuter</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Crown className="h-5 w-5 text-gold-600" />
-                      <h3 className="font-serif text-lg font-semibold">Professionnel</h3>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Pour les pros</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {comparisonData.map((item, index) => (
-                    <div key={index} className="grid grid-cols-3 gap-4 items-center py-2 border-b border-border last:border-b-0">
-                      <div className="font-medium text-sm">{item.feature}</div>
-                      <div className="text-center">
-                        {typeof item.free === 'boolean' ? (
-                          item.free ? (
-                            <CheckCircle className="h-5 w-5 text-green-600 mx-auto" />
-                          ) : (
-                            <X className="h-5 w-5 text-red-400 mx-auto" />
-                          )
-                        ) : (
-                          <span className="text-sm text-muted-foreground">{item.free}</span>
-                        )}
-                      </div>
-                      <div className="text-center">
-                        {typeof item.pro === 'boolean' ? (
-                          item.pro ? (
-                            <CheckCircle className="h-5 w-5 text-green-600 mx-auto" />
-                          ) : (
-                            <X className="h-5 w-5 text-red-400 mx-auto" />
-                          )
-                        ) : (
-                          <span className="text-sm font-medium">{item.pro}</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        
       </section>
 
       {/* CTA Section */}
@@ -340,8 +270,6 @@ const Features = () => {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 };
-
 export default Features;
