@@ -18,6 +18,9 @@ export const useUserType = () => {
         };
       }
 
+      console.log('=== USER TYPE QUERY ===');
+      console.log('User metadata:', user.user_metadata);
+
       // Check if user has an artist profile
       const { data: artistProfile } = await supabase
         .from('artist_profiles')
@@ -26,6 +29,7 @@ export const useUserType = () => {
         .maybeSingle();
 
       if (artistProfile) {
+        console.log('Found artist profile:', artistProfile);
         return {
           userType: 'artist' as UserType,
           artistProfile,
@@ -41,6 +45,7 @@ export const useUserType = () => {
         .maybeSingle();
 
       if (professionalProfile) {
+        console.log('Found professional profile:', professionalProfile);
         return {
           userType: 'professional' as UserType,
           artistProfile: null,
@@ -48,6 +53,17 @@ export const useUserType = () => {
         };
       }
 
+      // If no profile found, check user metadata for intended type
+      if (user.user_metadata?.user_type) {
+        console.log('No profile found, but user metadata indicates:', user.user_metadata.user_type);
+        return {
+          userType: user.user_metadata.user_type as UserType,
+          artistProfile: null,
+          professionalProfile: null
+        };
+      }
+
+      console.log('No profile found and no metadata, returning unknown');
       return {
         userType: 'unknown' as UserType,
         artistProfile: null,

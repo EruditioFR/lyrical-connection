@@ -63,26 +63,31 @@ export default function Pricing() {
       display_order: 3.5 // Between Artistes and Professionnels
     };
 
-    // Use URL parameter for new signup flow
-    const effectiveUserType = userTypeParam || (isArtist ? 'artist' : isProfessional ? 'professional' : null);
+    // Use URL parameter for new signup flow, or user type from hook, or user metadata
+    const effectiveUserType = userTypeParam || 
+                             (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
+                             user?.user_metadata?.user_type;
 
     console.log('=== PRICING FILTER DEBUG ===');
     console.log('userTypeParam:', userTypeParam);
     console.log('isArtist:', isArtist);  
     console.log('isProfessional:', isProfessional);
+    console.log('user metadata user_type:', user?.user_metadata?.user_type);
     console.log('effectiveUserType:', effectiveUserType);
 
     if (!user) {
       // Not logged in: show all base plans for public
+      console.log('Not logged in, showing base plans');
       return basePlans;
     }
     
-    if (userTypeLoading && !userTypeParam) {
-      // Still loading user type and no URL param: show base plans temporarily
+    if (userTypeLoading && !userTypeParam && !user?.user_metadata?.user_type) {
+      // Still loading user type and no URL param or metadata: show base plans temporarily
+      console.log('Still loading, showing base plans temporarily');
       return basePlans;
     }
 
-    if (effectiveUserType === 'artist' || isArtist) {
+    if (effectiveUserType === 'artist') {
       // Artist: show only Artistes, Premium Artistes (no Gratuit)
       console.log('Showing artist plans');
       const artistPlans = basePlans.filter(plan => 
@@ -92,7 +97,7 @@ export default function Pricing() {
       return artistPlans;
     }
     
-    if (effectiveUserType === 'professional' || isProfessional) {
+    if (effectiveUserType === 'professional') {
       // Professional: show only Professionnels (no Gratuit, no Artistes, no Premium)
       console.log('Showing professional plans');
       return basePlans.filter(plan => 
