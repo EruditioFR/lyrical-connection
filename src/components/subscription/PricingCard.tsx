@@ -77,16 +77,15 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading }: Pr
       </CardContent>
 
       <CardFooter>
-        <Button
-          className="w-full"
-          variant={isCurrentPlan ? "outline" : (isPremium || plan.name === "Artistes" ? "default" : "outline")}
-          onClick={() => onSelectPlan(plan.id)}
-          disabled={isCurrentPlan || isLoading}
-        >
-          {isCurrentPlan ? 'Plan actuel' : 
-           plan.name === 'Gratuit' ? 'Plan actuel' :
-           isLoading ? 'Chargement...' : 'Choisir ce plan'}
-        </Button>
+         <Button
+           className="w-full"
+           variant={isCurrentPlan ? "outline" : (isPremium || plan.name === "Artistes" ? "default" : "outline")}
+           onClick={() => onSelectPlan(plan.id)}
+           disabled={isCurrentPlan || isLoading}
+         >
+           {isCurrentPlan ? 'Plan actuel' : 
+            isLoading ? 'Chargement...' : 'Choisir ce plan'}
+         </Button>
       </CardFooter>
     </Card>
   );

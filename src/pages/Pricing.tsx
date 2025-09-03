@@ -236,9 +236,9 @@ export default function Pricing() {
             <div className="p-4 border rounded-lg">
               <h3 className="font-medium mb-2">Quelle est la différence entre les plans ?</h3>
               <p className="text-muted-foreground text-sm">
-                Le plan Gratuit est sur invitation uniquement. 
                 Le plan Artistes convient aux créateurs individuels, 
-                le plan Professionnels aux institutions avec plus de fonctionnalités avancées.
+                le plan Professionnels aux institutions avec plus de fonctionnalités avancées. 
+                Les deux plans offrent un accès complet à la plateforme.
               </p>
             </div>
             
