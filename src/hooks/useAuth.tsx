@@ -128,6 +128,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setSubscriptionLoading(true);
     try {
       console.log('=== VÉRIFICATION ABONNEMENT ===');
+      
+      // Call the check-subscription edge function to sync with Stripe (including test mode)
+      const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription');
+      
+      if (stripeError) {
+        console.warn('Erreur lors de la vérification Stripe:', stripeError);
+      } else {
+        console.log('Vérification Stripe terminée:', stripeData);
+      }
+
+      // Check local database for active subscription (now updated by the edge function)
       const { data: subscriptionData, error } = await supabase
         .from('subscriptions')
         .select('*, subscription_plans(*)')
@@ -144,7 +155,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const hasActive = !!subscriptionData;
-      console.log('Abonnement actif:', hasActive);
+      console.log('Abonnement actif (incluant test):', hasActive);
       setHasActiveSubscription(hasActive);
     } catch (error) {
       console.error('Erreur lors de la vérification d\'abonnement:', error);
