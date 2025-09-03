@@ -192,13 +192,14 @@ export default function Pricing() {
           {getFilteredPlans()
             .sort((a, b) => a.display_order - b.display_order)
             .map((plan) => (
-            <PricingCard
-              key={plan.id}
-              plan={plan}
-              isCurrentPlan={subscription?.plan_id === plan.id}
-              onSelectPlan={handleSelectPlan}
-              isLoading={createCheckoutSession.isPending}
-            />
+             <PricingCard
+               key={plan.id}
+               plan={plan}
+               isCurrentPlan={subscription?.plan_id === plan.id}
+               onSelectPlan={handleSelectPlan}
+               isLoading={createCheckoutSession.isPending}
+               userType={effectiveUserType || (isArtist ? 'artist' : isProfessional ? 'professional' : 'unknown')}
+             />
           ))}
         </div>
 

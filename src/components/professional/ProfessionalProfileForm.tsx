@@ -347,11 +347,7 @@ const ProfessionalProfileForm = () => {
             profileType="professional" 
             profileId={profile.id}
           />
-          <PremiumVisibilityCard 
-            profileType="professional" 
-            profileId={profile.id}
-            title="Visibilité Premium Professionnel"
-          />
+          {/* Premium visibility not available for professionals */}
         </div>
       )}
     </div>

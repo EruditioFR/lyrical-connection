@@ -9,9 +9,17 @@ interface PricingCardProps {
   isCurrentPlan?: boolean;
   onSelectPlan: (planId: string) => void;
   isLoading?: boolean;
+  userType?: 'artist' | 'professional' | 'unknown';
 }
 
-export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading }: PricingCardProps) => {
+export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading, userType = 'unknown' }: PricingCardProps) => {
+  // Hide artist plans and premium options for professionals
+  if (userType === 'professional') {
+    if (plan.name === 'Artistes' || plan.name === 'Premium Artistes' || plan.name === 'Premium Visibilité') {
+      return null;
+    }
+  }
+
   const isPopular = plan.name === "Artistes";
   const isLimitedOffer = plan.name === "Early Bird";
   const isPremium = plan.name === "Premium Artistes";

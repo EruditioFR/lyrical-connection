@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Check, Star, Crown, Zap } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
-const plans = [{
+import { useUserType } from '@/hooks/useUserType';
+
+const allPlans = [{
   name: "Artistes",
   price: "9",
   period: "mois",
@@ -12,7 +14,8 @@ const plans = [{
   popular: false,
   cta: "Devenir Premium",
   icon: Star,
-  gradient: "from-lyrical-600 to-lyrical-700"
+  gradient: "from-lyrical-600 to-lyrical-700",
+  userType: "artist"
 }, {
   name: "Professionnel",
   price: "49",
@@ -22,11 +25,26 @@ const plans = [{
   popular: true,
   cta: "Accéder à l'espace Pro",
   icon: Crown,
-  gradient: "from-gold-500 to-gold-600"
+  gradient: "from-gold-500 to-gold-600",
+  userType: "professional"
 }];
+
 const PricingSection = () => {
   const headerRef = useAnimateOnScroll();
   const bottomRef = useAnimateOnScroll();
+  const { userType, isProfessional } = useUserType();
+  
+  // Filter plans based on user type
+  const getFilteredPlans = () => {
+    if (isProfessional) {
+      // Professionals only see their plan
+      return allPlans.filter(plan => plan.userType === "professional");
+    }
+    // Artists and unknown users see all plans
+    return allPlans;
+  };
+  
+  const plans = getFilteredPlans();
   
   return <section className="py-24 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4 md:px-6">

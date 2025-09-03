@@ -19,6 +19,14 @@ export const PlanComparisonCard = ({
   isLoading,
   userType = 'unknown'
 }: PlanComparisonCardProps) => {
+  // Hide artist plans and premium options for professionals
+  if (userType === 'professional') {
+    // Hide artist plans and premium options
+    if (plan.name === 'Artistes' || plan.name === 'Premium Artistes' || plan.name === 'Premium Visibilité') {
+      return null;
+    }
+  }
+
   const isUpgrade = plan.price_monthly > currentPlanPrice;
   const isDowngrade = plan.price_monthly < currentPlanPrice && !isCurrentPlan;
   const isPremium = plan.name === "Premium Visibilité";
