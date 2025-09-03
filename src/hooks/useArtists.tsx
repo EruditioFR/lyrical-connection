@@ -78,20 +78,20 @@ export const useArtists = (filters?: ArtistFilters) => {
         console.error('Error fetching subscriptions:', subscriptionsError);
       }
 
-      // Récupérer les abonnements de visibilité premium actifs
-      const { data: premiumVisibility, error: premiumVisibilityError } = await supabase
-        .from('premium_visibility_subscriptions')
+      // Récupérer les abonnements premium actifs (plan Premium Visibilité spécifique)
+      const { data: premiumSubscriptions, error: premiumError } = await supabase
+        .from('subscriptions')
         .select('user_id, status, current_period_end')
         .eq('status', 'active')
-        .gte('current_period_end', new Date().toISOString());
+        .eq('plan_id', '894be73f-4527-47b0-81aa-21c58f7525a7'); // Plan Premium Visibilité
 
-      if (premiumVisibilityError) {
-        console.error('Error fetching premium visibility:', premiumVisibilityError);
+      if (premiumError) {
+        console.error('Error fetching premium subscriptions:', premiumError);
       }
 
       // Créer des Sets pour les différents types d'abonnements
       const premiumVisibilityUserIds = new Set(
-        (premiumVisibility || []).map(pv => pv.user_id)
+        (premiumSubscriptions || []).map(sub => sub.user_id)
       );
       const activeSubscriptionUserIds = new Set(
         (subscriptions || []).map(sub => sub.user_id)
