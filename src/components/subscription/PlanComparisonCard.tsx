@@ -82,7 +82,11 @@ export const PlanComparisonCard = ({
         {plan.limitations && Object.keys(plan.limitations).length > 0 && <div className="space-y-2">
             <h4 className="font-semibold">🎯 Essai gratuit de 15 jours pour les nouveaux utilisateurs</h4>
             <div className="space-y-1">
-              {Object.entries(plan.limitations).map(([key, value]) => {})}
+              {Object.entries(plan.limitations).map(([key, value]) => (
+                <p key={key} className="text-xs text-muted-foreground">
+                  {key}: {String(value)}
+                </p>
+              ))}
             </div>
           </div>}
 

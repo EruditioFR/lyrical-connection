@@ -219,16 +219,20 @@ export const useArtists = (filters?: ArtistFilters) => {
         filteredArtists = filteredArtists.filter(artist => uniqueArtistIds.includes(artist.id));
       }
 
-      // Traiter les artistes premium pour récupérer la photo de profil favorite
+      // Traiter les artistes pour récupérer la photo de profil et marquer les premium
       const realArtists = filteredArtists.map(artist => {
         const profilePhoto = artist.artist_photos?.find((photo: any) => photo.is_profile_photo);
         const profileImageUrl = profilePhoto 
           ? supabase.storage.from('artist-photos').getPublicUrl(profilePhoto.file_path).data.publicUrl
           : artist.profile_image_url;
         
+        // Marquer l'artiste comme premium s'il a un abonnement actif
+        const hasPremiumVisibility = premiumVisibilityUserIds.has(artist.user_id) || activeSubscriptionUserIds.has(artist.user_id);
+        
         return {
           ...artist,
           profile_image_url: profileImageUrl,
+          public_visibility_premium: hasPremiumVisibility,
           artist_photos: undefined // Ne pas exposer les photos dans l'interface Artist
         } as Artist;
       });
