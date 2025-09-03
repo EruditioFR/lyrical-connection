@@ -99,14 +99,14 @@ export const useArtists = (filters?: ArtistFilters) => {
 
       let filteredArtists = artistsData || [];
 
-      // Filtrer pour ne garder que les artistes ayant un abonnement premium actif
+      // Appliquer la logique de filtrage selon l'authentification
       if (!filters?.isUserAuthenticated) {
-        // Utilisateurs non connectés : seuls les artistes avec un abonnement premium actif sont visibles
+        // Utilisateurs non connectés : SEULEMENT les artistes avec abonnement premium visibility
         filteredArtists = filteredArtists.filter(artist => {
-          return activeSubscriptionUserIds.has(artist.user_id) || premiumVisibilityUserIds.has(artist.user_id);
+          return premiumVisibilityUserIds.has(artist.user_id);
         });
       } else {
-        // Utilisateurs connectés : tous les artistes avec un abonnement actif sont visibles
+        // Utilisateurs connectés : tous les artistes avec abonnement standard OU premium
         filteredArtists = filteredArtists.filter(artist => {
           return activeSubscriptionUserIds.has(artist.user_id) || premiumVisibilityUserIds.has(artist.user_id);
         });
@@ -226,8 +226,8 @@ export const useArtists = (filters?: ArtistFilters) => {
           ? supabase.storage.from('artist-photos').getPublicUrl(profilePhoto.file_path).data.publicUrl
           : artist.profile_image_url;
         
-        // Marquer l'artiste comme premium s'il a un abonnement actif
-        const hasPremiumVisibility = premiumVisibilityUserIds.has(artist.user_id) || activeSubscriptionUserIds.has(artist.user_id);
+        // Marquer l'artiste comme premium seulement s'il a un abonnement premium visibility
+        const hasPremiumVisibility = premiumVisibilityUserIds.has(artist.user_id);
         
         return {
           ...artist,
@@ -237,7 +237,16 @@ export const useArtists = (filters?: ArtistFilters) => {
         } as Artist;
       });
       
-      // Retourner uniquement les artistes réels (plus d'artistes fictifs)
+      // Trier les artistes : premium en premier pour les utilisateurs connectés
+      if (filters?.isUserAuthenticated) {
+        realArtists.sort((a, b) => {
+          // Les artistes premium en premier
+          if (a.public_visibility_premium && !b.public_visibility_premium) return -1;
+          if (!a.public_visibility_premium && b.public_visibility_premium) return 1;
+          return 0; // Garder l'ordre original pour les artistes du même type
+        });
+      }
+      
       return realArtists;
     },
   });
