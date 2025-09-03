@@ -68,11 +68,11 @@ export const useArtists = (filters?: ArtistFilters) => {
         throw artistsError;
       }
 
-      // Récupérer les abonnements premium actifs et en test
+      // Récupérer les abonnements premium actifs
       const { data: subscriptions, error: subscriptionsError } = await supabase
         .from('subscriptions')
         .select('user_id, status, current_period_end')
-        .in('status', ['active', 'trialing']);
+        .eq('status', 'active');
 
       if (subscriptionsError) {
         console.error('Error fetching subscriptions:', subscriptionsError);
@@ -99,14 +99,14 @@ export const useArtists = (filters?: ArtistFilters) => {
 
       let filteredArtists = artistsData || [];
 
-      // Filtrer pour ne garder que les artistes ayant un abonnement en cours
+      // Filtrer pour ne garder que les artistes ayant un abonnement premium actif
       if (!filters?.isUserAuthenticated) {
-        // Utilisateurs non connectés : seuls les artistes avec un abonnement premium_visibility actif sont visibles
+        // Utilisateurs non connectés : seuls les artistes avec un abonnement premium actif sont visibles
         filteredArtists = filteredArtists.filter(artist => {
-          return premiumVisibilityUserIds.has(artist.user_id);
+          return activeSubscriptionUserIds.has(artist.user_id) || premiumVisibilityUserIds.has(artist.user_id);
         });
       } else {
-        // Utilisateurs connectés : seuls les artistes avec un abonnement actif (général ou premium visibility) sont visibles
+        // Utilisateurs connectés : tous les artistes avec un abonnement actif sont visibles
         filteredArtists = filteredArtists.filter(artist => {
           return activeSubscriptionUserIds.has(artist.user_id) || premiumVisibilityUserIds.has(artist.user_id);
         });
