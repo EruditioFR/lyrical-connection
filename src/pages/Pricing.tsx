@@ -4,9 +4,13 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserType } from "@/hooks/useUserType";
 import { Card, CardContent } from "@/components/ui/card";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Pricing() {
-  const { user } = useAuth();
+  const { user, hasActiveSubscription } = useAuth();
   const { isArtist, isProfessional, isLoading: userTypeLoading } = useUserType();
   const { 
     plans, 
@@ -14,6 +18,20 @@ export default function Pricing() {
     subscription, 
     createCheckoutSession 
   } = useSubscription();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
+  const source = searchParams.get('source');
+  const isPostRegistration = source === 'login' || source === 'signup';
+  const isRequired = source === 'required';
+
+  // Rediriger les utilisateurs avec abonnement actif vers le dashboard
+  useEffect(() => {
+    if (user && hasActiveSubscription && !isRequired) {
+      console.log('Utilisateur avec abonnement actif, redirection vers dashboard');
+      navigate('/dashboard');
+    }
+  }, [user, hasActiveSubscription, isRequired, navigate]);
 
   // Filter plans based on user type
   const getFilteredPlans = () => {
@@ -130,10 +148,30 @@ export default function Pricing() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
+        {(isPostRegistration || isRequired) && (
+          <div className="mb-8 max-w-4xl mx-auto">
+            <Alert className={isRequired ? "border-orange-200 bg-orange-50" : "border-blue-200 bg-blue-50"}>
+              <AlertCircle className={`h-4 w-4 ${isRequired ? "text-orange-600" : "text-blue-600"}`} />
+              <AlertDescription className={isRequired ? "text-orange-800" : "text-blue-800"}>
+                {isRequired ? (
+                  <strong>Abonnement requis :</strong>
+                ) : (
+                  <strong>Bienvenue !</strong>
+                )} Choisissez votre plan pour accéder à toutes les fonctionnalités de la plateforme.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+        
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">Plans et Tarifs</h1>
+          <h1 className="text-3xl font-bold">
+            {isPostRegistration ? 'Choisissez votre plan' : 'Plans et Tarifs'}
+          </h1>
           <p className="text-muted-foreground mt-2">
-            Choisissez le plan qui correspond à vos besoins
+            {isPostRegistration 
+              ? 'Sélectionnez le plan qui correspond le mieux à vos besoins' 
+              : 'Choisissez le plan qui correspond à vos besoins'
+            }
           </p>
         </div>
 

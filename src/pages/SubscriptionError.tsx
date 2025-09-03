@@ -67,7 +67,7 @@ export default function SubscriptionError() {
                 <div className="space-y-3">
                   <Button 
                     className="w-full" 
-                    onClick={() => navigate('/pricing')}
+                    onClick={() => navigate('/pricing?source=retry')}
                   >
                     <CreditCard className="w-4 h-4 mr-2" />
                     Réessayer le paiement
@@ -76,10 +76,10 @@ export default function SubscriptionError() {
                   <Button 
                     variant="outline" 
                     className="w-full"
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => navigate('/')}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Retour au tableau de bord
+                    Retour à l'accueil
                   </Button>
 
                   <Button 

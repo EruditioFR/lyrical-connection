@@ -34,8 +34,8 @@ const Auth = () => {
   // Redirection si déjà authentifié
   useEffect(() => {
     if (user) {
-      console.log('Utilisateur déjà connecté, redirection vers /');
-      navigate('/');
+      console.log('Utilisateur déjà connecté, redirection vers /pricing pour vérification abonnement');
+      navigate('/pricing?source=login');
     }
   }, [user, navigate]);
 
@@ -253,7 +253,8 @@ const Auth = () => {
                   <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
                     <li>Vérifiez votre boîte de réception (et dossier spam)</li>
                     <li>Cliquez sur le lien de confirmation dans l'email</li>
-                    <li>Vous pourrez ensuite vous connecter à votre compte</li>
+                    <li>Connectez-vous et choisissez votre plan d'abonnement</li>
+                    <li>Vous pourrez ensuite accéder à la plateforme</li>
                   </ol>
                 </div>
 

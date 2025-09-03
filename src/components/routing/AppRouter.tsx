@@ -2,6 +2,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthGuard } from '@/components/auth/AuthGuard';
+import { SubscriptionGuard } from '@/components/auth/SubscriptionGuard';
 
 // Import pages
 import Index from '@/pages/Index';
@@ -75,46 +76,46 @@ export const AppRouter = () => {
       <Route path="/blog/:slug" element={<BlogPost />} />
       <Route path="/professionnels" element={<ProfessionalsList />} />
       
-      {/* Protected routes */}
-      <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
-      <Route path="/profil" element={<AuthGuard><Profile /></AuthGuard>} />
-      <Route path="/professional-profile" element={<AuthGuard><ProfessionalProfile /></AuthGuard>} />
-      <Route path="/artistes/:id" element={<AuthGuard><ArtistProfile /></AuthGuard>} />
-      <Route path="/professionnel/:id" element={<AuthGuard><ProfessionalProfile /></AuthGuard>} />
+      {/* Protected routes with subscription required */}
+      <Route path="/dashboard" element={<AuthGuard><SubscriptionGuard><Dashboard /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/profil" element={<AuthGuard><SubscriptionGuard><Profile /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/professional-profile" element={<AuthGuard><SubscriptionGuard><ProfessionalProfile /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/artistes/:id" element={<AuthGuard><SubscriptionGuard><ArtistProfile /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/professionnel/:id" element={<AuthGuard><SubscriptionGuard><ProfessionalProfile /></SubscriptionGuard></AuthGuard>} />
       
-      {/* Protected casting routes */}
-      <Route path="/castings/nouveau" element={<AuthGuard><CreateCasting /></AuthGuard>} />
-      <Route path="/castings/:id" element={<AuthGuard><CastingDetail /></AuthGuard>} />
-      <Route path="/castings/:id/postuler" element={<AuthGuard><CastingApplication /></AuthGuard>} />
-      <Route path="/mes-candidatures" element={<AuthGuard><MyApplications /></AuthGuard>} />
-      <Route path="/candidatures-reçues" element={<AuthGuard><ReceivedApplications /></AuthGuard>} />
-      <Route path="/professional/castings/:castingId/applications" element={<AuthGuard><ProfessionalApplications /></AuthGuard>} />
-      <Route path="/professional/casting-applications" element={<AuthGuard><ProfessionalCastingApplications /></AuthGuard>} />
+      {/* Protected casting routes with subscription required */}
+      <Route path="/castings/nouveau" element={<AuthGuard><SubscriptionGuard><CreateCasting /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/castings/:id" element={<AuthGuard><SubscriptionGuard><CastingDetail /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/castings/:id/postuler" element={<AuthGuard><SubscriptionGuard><CastingApplication /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/mes-candidatures" element={<AuthGuard><SubscriptionGuard><MyApplications /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/candidatures-reçues" element={<AuthGuard><SubscriptionGuard><ReceivedApplications /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/professional/castings/:castingId/applications" element={<AuthGuard><SubscriptionGuard><ProfessionalApplications /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/professional/casting-applications" element={<AuthGuard><SubscriptionGuard><ProfessionalCastingApplications /></SubscriptionGuard></AuthGuard>} />
       
-      {/* Protected event routes */}
-      <Route path="/evenements/nouveau" element={<AuthGuard><CreateEvent /></AuthGuard>} />
-      <Route path="/evenements/:id" element={<AuthGuard><EventDetail /></AuthGuard>} />
-      <Route path="/evenements/:id/modifier" element={<AuthGuard><EditEvent /></AuthGuard>} />
-      <Route path="/mes-evenements" element={<AuthGuard><ProfessionalEvents /></AuthGuard>} />
-      <Route path="/professional/event-applications" element={<AuthGuard><ProfessionalEventApplications /></AuthGuard>} />
+      {/* Protected event routes with subscription required */}
+      <Route path="/evenements/nouveau" element={<AuthGuard><SubscriptionGuard><CreateEvent /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/evenements/:id" element={<AuthGuard><SubscriptionGuard><EventDetail /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/evenements/:id/modifier" element={<AuthGuard><SubscriptionGuard><EditEvent /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/mes-evenements" element={<AuthGuard><SubscriptionGuard><ProfessionalEvents /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/professional/event-applications" element={<AuthGuard><SubscriptionGuard><ProfessionalEventApplications /></SubscriptionGuard></AuthGuard>} />
       
-      {/* Protected artist routes */}
-      <Route path="/recherche-artistes" element={<AuthGuard><ArtistSearch /></AuthGuard>} />
+      {/* Protected artist routes with subscription required */}
+      <Route path="/recherche-artistes" element={<AuthGuard><SubscriptionGuard><ArtistSearch /></SubscriptionGuard></AuthGuard>} />
       
-      {/* Protected professional routes */}
-      <Route path="/professionnels/:id" element={<AuthGuard><ProfessionalDetail /></AuthGuard>} />
+      {/* Protected professional routes with subscription required */}
+      <Route path="/professionnels/:id" element={<AuthGuard><SubscriptionGuard><ProfessionalDetail /></SubscriptionGuard></AuthGuard>} />
       
-      {/* Protected messaging routes */}
-      <Route path="/messages" element={<AuthGuard><Messages /></AuthGuard>} />
-      <Route path="/professional/messages" element={<AuthGuard><ProfessionalMessages /></AuthGuard>} />
+      {/* Protected messaging routes with subscription required */}
+      <Route path="/messages" element={<AuthGuard><SubscriptionGuard><Messages /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/professional/messages" element={<AuthGuard><SubscriptionGuard><ProfessionalMessages /></SubscriptionGuard></AuthGuard>} />
       
-      {/* Other routes */}
-      <Route path="/notifications" element={<AuthGuard><Notifications /></AuthGuard>} />
+      {/* Other routes - subscription management doesn't require active subscription */}
+      <Route path="/notifications" element={<AuthGuard><SubscriptionGuard><Notifications /></SubscriptionGuard></AuthGuard>} />
       <Route path="/subscription" element={<AuthGuard><Subscription /></AuthGuard>} />
       <Route path="/subscription/success" element={<AuthGuard><SubscriptionSuccess /></AuthGuard>} />
       <Route path="/subscription/error" element={<AuthGuard><SubscriptionError /></AuthGuard>} />
-      <Route path="/change-password" element={<AuthGuard><ChangePassword /></AuthGuard>} />
-      <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
+      <Route path="/change-password" element={<AuthGuard><SubscriptionGuard><ChangePassword /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/admin" element={<AuthGuard><SubscriptionGuard><Admin /></SubscriptionGuard></AuthGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
