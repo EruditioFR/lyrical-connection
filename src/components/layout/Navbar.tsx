@@ -144,7 +144,7 @@ const Navbar = () => {
         {/* Actions : Hamburger + Notifications + Language + Authentification / Profil */}
         <div className="flex items-center space-x-4">
           {/* Bouton hamburger mobile */}
-          {isMobile && user && (
+          {isMobile && (
             <Button
               variant="outline"
               size="sm"
@@ -219,57 +219,110 @@ const Navbar = () => {
       </div>
 
       {/* Menu Mobile */}
-      {isMobile && isMobileMenuOpen && user && (
+      {isMobile && isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
           <div className="px-4 py-3 space-y-3">
-            {isProfessional && (
+            {user ? (
               <>
-                <div className="text-sm font-semibold text-gray-900 border-b pb-2">
-                  Menu Professionnel
-                </div>
-                <Link
-                  to="/professional-events"
-                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Mes événements
-                </Link>
-                <Link
-                  to="/castings"
-                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Castings
-                </Link>
-                <Link
-                  to="/received-applications"
-                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Candidatures reçues
-                </Link>
-                <Link
-                  to="/professional-messages"
-                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Messages
-                </Link>
-                <Link
-                  to="/artists"
-                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Trouver des artistes
-                </Link>
+                {isProfessional && (
+                  <>
+                    <div className="text-sm font-semibold text-gray-900 border-b pb-2">
+                      Menu Professionnel
+                    </div>
+                    <Link
+                      to="/professional-events"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Mes événements
+                    </Link>
+                    <Link
+                      to="/castings"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Castings
+                    </Link>
+                    <Link
+                      to="/received-applications"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Candidatures reçues
+                    </Link>
+                    <Link
+                      to="/professional-messages"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Messages
+                    </Link>
+                    <Link
+                      to="/artists"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Trouver des artistes
+                    </Link>
+                  </>
+                )}
+                
+                {isArtist && (
+                  <>
+                    <div className="text-sm font-semibold text-gray-900 border-b pb-2">
+                      Menu Artiste
+                    </div>
+                    <Link
+                      to="/events"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Événements
+                    </Link>
+                    <Link
+                      to="/castings"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Castings
+                    </Link>
+                    <Link
+                      to="/my-applications"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Mes candidatures
+                    </Link>
+                    <Link
+                      to="/messages"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Messages
+                    </Link>
+                  </>
+                )}
+
+                {/* Notifications pour artistes sur mobile */}
+                {isArtist && (
+                  <div className="border-t pt-3 mt-3">
+                    <NotificationBell />
+                  </div>
+                )}
               </>
-            )}
-            
-            {isArtist && (
+            ) : (
+              /* Menu pour visiteurs non connectés */
               <>
                 <div className="text-sm font-semibold text-gray-900 border-b pb-2">
-                  Menu Artiste
+                  Découvrir Lyrisphere
                 </div>
+                <Link
+                  to="/"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Accueil
+                </Link>
                 <Link
                   to="/events"
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
@@ -285,27 +338,27 @@ const Navbar = () => {
                   Castings
                 </Link>
                 <Link
-                  to="/my-applications"
+                  to="/artists"
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Mes candidatures
+                  Artistes
                 </Link>
                 <Link
-                  to="/messages"
+                  to="/about"
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Messages
+                  À propos
+                </Link>
+                <Link
+                  to="/pricing"
+                  className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Tarifs
                 </Link>
               </>
-            )}
-
-            {/* Notifications pour artistes sur mobile */}
-            {isArtist && (
-              <div className="border-t pt-3 mt-3">
-                <NotificationBell />
-              </div>
             )}
 
             {/* Langue sur mobile */}
