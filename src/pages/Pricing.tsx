@@ -122,19 +122,28 @@ export default function Pricing() {
       return;
     }
 
-    // Handle premium artist plan specially - redirect to profile to add premium visibility
+    // Handle premium artist plan specially
     if (planId === 'premium-artist') {
       console.log('Premium artist plan selected');
-      // First check if user has a paid subscription
-      if (!subscription || subscription.plan_id === 'gratuit') {
-        console.log('No paid subscription, redirecting to subscription page');
-        // Need to get a paid plan first
-        window.location.href = '/subscription';
+      
+      // If user already has a paid subscription, add premium visibility
+      if (subscription && subscription.plan_id !== 'gratuit') {
+        console.log('User has paid subscription, redirecting to profile for premium visibility');
+        window.location.href = '/profile?tab=premium';
         return;
       }
-      // Redirect to profile to add premium visibility
-      console.log('Redirecting to profile for premium visibility');
-      window.location.href = '/profile?tab=premium';
+      
+      // No paid subscription - find the Premium Visibilité plan and subscribe directly
+      const premiumVisibilityPlan = plans?.find(plan => plan.name === 'Premium Visibilité');
+      if (premiumVisibilityPlan) {
+        console.log('Subscribing directly to Premium Visibilité plan');
+        createCheckoutSession.mutate(premiumVisibilityPlan.id);
+        return;
+      }
+      
+      // Fallback: redirect to subscription page if Premium Visibilité plan not found
+      console.log('Premium Visibilité plan not found, redirecting to subscription page');
+      window.location.href = '/subscription';
       return;
     }
 
