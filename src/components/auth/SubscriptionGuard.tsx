@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useUserRoles } from '@/hooks/useUserRoles';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Clock } from 'lucide-react';
@@ -12,21 +13,24 @@ interface SubscriptionGuardProps {
 
 export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
   const { user, loading, hasActiveSubscription, subscriptionLoading } = useAuth();
+  const { isAdmin, isLoading: rolesLoading } = useUserRoles();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !subscriptionLoading && user && !hasActiveSubscription) {
+    if (!loading && !subscriptionLoading && !rolesLoading && user && !hasActiveSubscription && !isAdmin) {
       console.log('SubscriptionGuard: Vérification abonnement...');
       console.log('État actuel:', { 
         user: !!user, 
         loading, 
         subscriptionLoading, 
-        hasActiveSubscription 
+        rolesLoading,
+        hasActiveSubscription,
+        isAdmin
       });
       
       // Délai avant redirection pour laisser le temps aux abonnements test de se charger
       const timer = setTimeout(() => {
-        if (!hasActiveSubscription) {
+        if (!hasActiveSubscription && !isAdmin) {
           console.log('Redirection vers /pricing après vérification finale');
           navigate('/pricing?source=required');
         }
@@ -34,9 +38,9 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
 
       return () => clearTimeout(timer);
     }
-  }, [user, loading, hasActiveSubscription, subscriptionLoading, navigate]);
+  }, [user, loading, hasActiveSubscription, subscriptionLoading, rolesLoading, isAdmin, navigate]);
 
-  if (loading || subscriptionLoading) {
+  if (loading || subscriptionLoading || rolesLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
@@ -49,6 +53,12 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
 
   if (!user) {
     return null; // AuthGuard will handle this
+  }
+
+  // Les administrateurs ont accès à tout sans abonnement
+  if (isAdmin) {
+    console.log('SubscriptionGuard: Accès admin autorisé sans abonnement');
+    return <>{children}</>;
   }
 
   if (!hasActiveSubscription) {
