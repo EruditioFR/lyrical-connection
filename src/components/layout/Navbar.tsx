@@ -190,7 +190,7 @@ const Navbar = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/facturation')}>
                     <Receipt className="mr-2 h-4 w-4" />
-                    <span>Facturation</span>
+                    <span>Mes factures</span>
                   </DropdownMenuItem>
                   {/* Lien d'administration dans le menu déroulant pour les admins */}
                   {isAdmin && <>
