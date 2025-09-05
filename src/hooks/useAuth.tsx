@@ -154,8 +154,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      const hasActive = !!subscriptionData;
-      console.log('Abonnement actif (incluant test):', hasActive);
+      let hasActive = !!subscriptionData;
+
+      // Si pas d'abonnement actif, vérifier si c'est un compte gratuit créé par un admin
+      if (!hasActive) {
+        console.log('Pas d\'abonnement actif, vérification des comptes gratuits...');
+        
+        // Vérifier si l'utilisateur a un profil artiste gratuit créé par un admin
+        const { data: artistProfile } = await supabase
+          .from('artist_profiles')
+          .select('is_free_account, created_by_admin')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .maybeSingle();
+
+        // Vérifier si l'utilisateur a un profil professionnel gratuit créé par un admin
+        const { data: professionalProfile } = await supabase
+          .from('professional_profiles')
+          .select('is_free_account, created_by_admin')
+          .eq('user_id', user.id)
+          .eq('is_active', true)
+          .maybeSingle();
+
+        // Si l'utilisateur a un profil gratuit créé par un admin, il a accès aux fonctionnalités payantes
+        const isFreeAccountByAdmin = (artistProfile?.is_free_account && artistProfile?.created_by_admin) ||
+                                    (professionalProfile?.is_free_account && professionalProfile?.created_by_admin);
+
+        if (isFreeAccountByAdmin) {
+          hasActive = true;
+          console.log('Compte gratuit créé par admin détecté - accès autorisé');
+        }
+      }
+
+      console.log('Abonnement actif (incluant test et comptes gratuits admin):', hasActive);
       setHasActiveSubscription(hasActive);
     } catch (error) {
       console.error('Erreur lors de la vérification d\'abonnement:', error);
