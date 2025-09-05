@@ -7,7 +7,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-20 bg-slate-600"></div>
       
       <div className="container mx-auto px-4 md:px-6 py-24 md:py-32 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
           <h1 className="text-4xl md:text-6xl font-serif font-bold leading-tight">
             Découvrez les <span className="bg-clip-text text-transparent bg-gradient-to-r from-lyrical-700 to-gold-500">talents lyriques</span> de demain
           </h1>
@@ -48,9 +48,7 @@ const Hero = () => {
       
       <div className="container mx-auto px-4 md:px-6 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{
-          animationDelay: '100ms'
-        }}>
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Music className="h-6 w-6" />
             </div>
@@ -58,9 +56,7 @@ const Hero = () => {
             <p className="text-muted-foreground">Découvrez des chanteurs lyriques exceptionnels et suivez leur parcours artistique.</p>
           </div>
           
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{
-          animationDelay: '200ms'
-        }}>
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Calendar className="h-6 w-6" />
             </div>
@@ -68,9 +64,7 @@ const Hero = () => {
             <p className="text-muted-foreground">Participez à des concerts, auditions et rencontres professionnelles de qualité.</p>
           </div>
           
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50 animate-fade-in" style={{
-          animationDelay: '300ms'
-        }}>
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6 text-center shadow-sm border border-border/50">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
               <Users className="h-6 w-6" />
             </div>

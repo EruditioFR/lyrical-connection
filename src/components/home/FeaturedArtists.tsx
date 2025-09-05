@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle, MapPin, Music } from 'lucide-react';
-import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+
 import { useArtists } from '@/hooks/useArtists';
 
 const FeaturedArtists = () => {
   const { t } = useTranslation('home');
-  const titleRef = useAnimateOnScroll();
+  
   
   // Récupérer les vrais artistes depuis la base de données
   const { artists, isLoading } = useArtists({});
@@ -37,7 +37,7 @@ const FeaturedArtists = () => {
     return (
       <section className="bg-background py-20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="animate-pulse">
+          <div>
             <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
             <div className="h-4 bg-muted rounded w-1/2 mb-12"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -60,7 +60,7 @@ const FeaturedArtists = () => {
     <section className="bg-background py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div ref={titleRef} className="text-appear">
+          <div>
             <h2 className="text-3xl md:text-4xl font-serif font-bold">{t('featuredArtists.title')}</h2>
             <p className="text-muted-foreground mt-2 max-w-2xl">
               {t('featuredArtists.subtitle')}
@@ -78,24 +78,14 @@ const FeaturedArtists = () => {
           {featuredArtists.map((artist, index) => (
             <div 
               key={artist.id}
-              className={`group rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border text-appear`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm"
             >
               <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
                 <img 
                   src={artist.image} 
                   alt={artist.name} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
-                  <Button 
-                    size="sm" 
-                    className="mb-4 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white gap-2 border-white/30"
-                  >
-                    <PlayCircle className="h-4 w-4" />
-                    {t('featuredArtists.listen')}
-                  </Button>
-                </div>
                 
                 {artist.featured && (
                   <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full">
@@ -113,7 +103,7 @@ const FeaturedArtists = () => {
               </Link>
               
               <div className="p-4">
-                <h3 className="font-serif font-semibold text-lg hover:text-lyrical-700 transition-colors">
+                <h3 className="font-serif font-semibold text-lg">
                   <Link to={`/artistes/${artist.id}`}>{artist.name}</Link>
                 </h3>
                 <p className="text-muted-foreground text-sm font-medium">{artist.voiceType}</p>
@@ -129,7 +119,7 @@ const FeaturedArtists = () => {
         </div>
         
         {/* Call to action section */}
-        <div className="mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-xl p-8 text-center animate-fade-in" style={{ animationDelay: '500ms' }}>
+        <div className="mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-xl p-8 text-center">
           <h3 className="text-xl font-serif font-semibold mb-4">
             {t('featuredArtists.becomeArtist.title')}
           </h3>

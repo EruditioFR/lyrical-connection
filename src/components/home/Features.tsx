@@ -17,7 +17,7 @@ const Features = () => {
   return (
     <section className="py-24 bg-gradient-to-b from-background to-muted/50">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16 text-appear">
+        <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-serif font-bold">
             Une plateforme complète dédiée à la musique lyrique
           </h2>
@@ -29,7 +29,7 @@ const Features = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
           {/* Profil Artiste */}
-          <div className="bg-card rounded-xl p-6 border border-border shadow-sm hover:shadow-md transition-all duration-300 text-appear">
+          <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mb-5 flex items-center justify-center">
               <Music className="h-6 w-6" />
             </div>
@@ -43,7 +43,7 @@ const Features = () => {
           </div>
 
           {/* Plateforme Pro */}
-          <div className="bg-card rounded-xl p-6 border border-border shadow-sm hover:shadow-md transition-all duration-300 text-appear" style={{ animationDelay: '100ms' }}>
+          <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mb-5 flex items-center justify-center">
               <Users className="h-6 w-6" />
             </div>
@@ -57,7 +57,7 @@ const Features = () => {
           </div>
 
           {/* Événements */}
-          <div className="bg-card rounded-xl p-6 border border-border shadow-sm hover:shadow-md transition-all duration-300 text-appear" style={{ animationDelay: '200ms' }}>
+          <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mb-5 flex items-center justify-center">
               <Calendar className="h-6 w-6" />
             </div>
@@ -71,7 +71,7 @@ const Features = () => {
           </div>
 
           {/* Recherche avancée */}
-          <div className="bg-card rounded-xl p-6 border border-border shadow-sm hover:shadow-md transition-all duration-300 text-appear" style={{ animationDelay: '300ms' }}>
+          <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
             <div className="bg-lyrical-100 text-lyrical-700 p-3 rounded-full w-12 h-12 mb-5 flex items-center justify-center">
               <Search className="h-6 w-6" />
             </div>
@@ -86,7 +86,7 @@ const Features = () => {
         </div>
 
         <div className="mt-16 md:mt-24">
-          <div className="bg-card rounded-xl overflow-hidden border border-border shadow-md text-appear">
+          <div className="bg-card rounded-xl overflow-hidden border border-border shadow-md">
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="p-8 md:p-12 flex flex-col justify-center">
                 <h3 className="text-2xl md:text-3xl font-serif font-bold mb-4">

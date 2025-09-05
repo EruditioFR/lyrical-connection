@@ -3,14 +3,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, MapPin, Star } from 'lucide-react';
-import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+
 import { usePublicEvents } from '@/hooks/useEvents';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const FeaturedEvents = () => {
   const { data: events = [], isLoading } = usePublicEvents();
-  const headerRef = useAnimateOnScroll();
+  
   
   // Prendre les 3 premiers événements, en priorisant les événements promus
   const featuredEvents = events
@@ -28,7 +28,7 @@ const FeaturedEvents = () => {
       <section className="bg-background py-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         </div>
       </section>
@@ -43,7 +43,7 @@ const FeaturedEvents = () => {
     <section className="bg-background py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div ref={headerRef} className="text-appear">
+          <div>
             <h2 className="text-3xl md:text-4xl font-serif font-bold">Les événements</h2>
             <p className="text-muted-foreground mt-2 max-w-2xl">
               Découvrez les prochains événements lyriques sélectionnés pour vous.
@@ -61,8 +61,7 @@ const FeaturedEvents = () => {
           {featuredEvents.map((event, index) => (
             <div 
               key={event.id}
-              className={`group rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border text-appear relative`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm relative"
             >
               {event.is_featured && (
                 <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full flex items-center gap-1 z-10">
@@ -76,7 +75,7 @@ const FeaturedEvents = () => {
                   <img 
                     src={event.image_url} 
                     alt={event.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-lyrical-100 to-gold-100 flex items-center justify-center">
@@ -102,7 +101,7 @@ const FeaturedEvents = () => {
                   )}
                 </div>
 
-                <h3 className="font-serif font-semibold text-lg hover:text-lyrical-700 transition-colors mb-3">
+                <h3 className="font-serif font-semibold text-lg mb-3">
                   <Link to={`/events/${event.id}`}>{event.title}</Link>
                 </h3>
 
