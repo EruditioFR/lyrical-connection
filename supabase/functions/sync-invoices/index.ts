@@ -42,6 +42,10 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
     
+    // Detect if we're in test mode
+    const isTestMode = stripeKey.startsWith('sk_test_');
+    logStep("Stripe mode detected", { isTestMode });
+    
     // Find Stripe customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     if (customers.data.length === 0) {
@@ -80,6 +84,7 @@ serve(async (req) => {
         period_start: invoice.period_start ? new Date(invoice.period_start * 1000).toISOString() : null,
         period_end: invoice.period_end ? new Date(invoice.period_end * 1000).toISOString() : null,
         due_date: invoice.due_date ? new Date(invoice.due_date * 1000).toISOString() : null,
+        is_test_mode: isTestMode,
         updated_at: new Date().toISOString(),
       };
 

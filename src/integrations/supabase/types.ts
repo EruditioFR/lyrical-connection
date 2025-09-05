@@ -905,6 +905,7 @@ export type Database = {
           id: string
           invoice_number: string | null
           invoice_pdf: string | null
+          is_test_mode: boolean
           period_end: string | null
           period_start: string | null
           status: string
@@ -924,6 +925,7 @@ export type Database = {
           id?: string
           invoice_number?: string | null
           invoice_pdf?: string | null
+          is_test_mode?: boolean
           period_end?: string | null
           period_start?: string | null
           status: string
@@ -943,6 +945,7 @@ export type Database = {
           id?: string
           invoice_number?: string | null
           invoice_pdf?: string | null
+          is_test_mode?: boolean
           period_end?: string | null
           period_start?: string | null
           status?: string

@@ -20,6 +20,7 @@ interface Invoice {
   period_start?: string;
   period_end?: string;
   due_date?: string;
+  is_test_mode: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -74,11 +75,13 @@ export const useInvoices = () => {
   });
 
   // Helper functions
-  const formatAmount = (amount: number, currency: string = 'eur') => {
-    return new Intl.NumberFormat('fr-FR', {
+  const formatAmount = (amount: number, currency: string = 'eur', isTestMode?: boolean) => {
+    const formattedAmount = new Intl.NumberFormat('fr-FR', {
       style: 'currency',
       currency: currency.toUpperCase(),
     }).format(amount / 100);
+    
+    return isTestMode ? `${formattedAmount} (test)` : formattedAmount;
   };
 
   const formatDate = (dateString: string) => {
@@ -140,6 +143,9 @@ export const useInvoices = () => {
     // Statistics
     totalPaid: invoices?.reduce((sum, inv) => inv.status === 'paid' ? sum + inv.amount_paid : sum, 0) || 0,
     totalDue: invoices?.reduce((sum, inv) => inv.status === 'open' ? sum + inv.amount_due : sum, 0) || 0,
+    totalTestPaid: invoices?.reduce((sum, inv) => (inv.status === 'paid' && inv.is_test_mode) ? sum + inv.amount_paid : sum, 0) || 0,
+    totalTestDue: invoices?.reduce((sum, inv) => (inv.status === 'open' && inv.is_test_mode) ? sum + inv.amount_due : sum, 0) || 0,
     invoiceCount: invoices?.length || 0,
+    testInvoiceCount: invoices?.filter(inv => inv.is_test_mode).length || 0,
   };
 };

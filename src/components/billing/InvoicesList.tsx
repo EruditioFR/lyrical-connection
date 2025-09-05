@@ -26,7 +26,10 @@ const InvoicesList = () => {
     getStatusText,
     totalPaid,
     totalDue,
-    invoiceCount
+    totalTestPaid,
+    totalTestDue,
+    invoiceCount,
+    testInvoiceCount
   } = useInvoices();
 
   if (isLoading) {
@@ -104,6 +107,11 @@ const InvoicesList = () => {
                 <p className="text-2xl font-bold text-green-600">
                   {formatAmount(totalPaid)}
                 </p>
+                {totalTestPaid > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    (dont {formatAmount(totalTestPaid, 'eur', true)} d'abonnement test)
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -118,6 +126,11 @@ const InvoicesList = () => {
                 <p className="text-2xl font-bold text-orange-600">
                   {formatAmount(totalDue)}
                 </p>
+                {totalTestDue > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    (dont {formatAmount(totalTestDue, 'eur', true)} d'abonnement test)
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -146,8 +159,13 @@ const InvoicesList = () => {
               <CardHeader className="pb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">
+                    <CardTitle className="text-lg flex items-center gap-2">
                       {invoice.invoice_number || `Facture ${invoice.stripe_invoice_id.slice(-8)}`}
+                      {invoice.is_test_mode && (
+                        <Badge variant="outline" className="text-xs">
+                          Test
+                        </Badge>
+                      )}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
                       {invoice.description}
@@ -166,7 +184,11 @@ const InvoicesList = () => {
                     <div>
                       <p className="text-xs text-muted-foreground">Montant</p>
                       <p className="font-semibold">
-                        {formatAmount(invoice.amount_paid > 0 ? invoice.amount_paid : invoice.amount_due, invoice.currency)}
+                        {formatAmount(
+                          invoice.amount_paid > 0 ? invoice.amount_paid : invoice.amount_due, 
+                          invoice.currency,
+                          invoice.is_test_mode
+                        )}
                       </p>
                     </div>
                   </div>
