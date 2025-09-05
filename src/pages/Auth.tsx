@@ -48,6 +48,9 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [signupEmail, setSignupEmail] = useState('');
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
+  const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   // Redirection si déjà authentifié
   useEffect(() => {
@@ -100,6 +103,47 @@ const Auth = () => {
       }
     } catch (error) {
       console.error('Erreur inattendue:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur inattendue s'est produite",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!forgotPasswordEmail) {
+      toast({
+        title: "Email requis",
+        description: "Veuillez saisir votre adresse email",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
+        redirectTo: `${window.location.origin}/auth?mode=reset-password`
+      });
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        setForgotPasswordSent(true);
+        toast({
+          title: "Email envoyé",
+          description: "Un email de réinitialisation a été envoyé à votre adresse"
+        });
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite",
@@ -304,31 +348,113 @@ const Auth = () => {
             <TabsContent value="login">
               <Card>
                 <CardHeader>
-                  <CardTitle>Connexion</CardTitle>
+                  <CardTitle>{showForgotPassword ? "Réinitialiser le mot de passe" : "Connexion"}</CardTitle>
                   <CardDescription>
-                    Connectez-vous à votre compte
+                    {showForgotPassword 
+                      ? "Saisissez votre email pour recevoir un lien de réinitialisation"
+                      : "Connectez-vous à votre compte"
+                    }
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email">Email</Label>
-                      <Input id="login-email" type="email" placeholder="votre@email.com" value={loginForm.email} onChange={e => setLoginForm({
-                      ...loginForm,
-                      email: e.target.value
-                    })} required />
+                  {!showForgotPassword ? (
+                    <form onSubmit={handleLogin} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="login-email">Email</Label>
+                        <Input 
+                          id="login-email" 
+                          type="email" 
+                          placeholder="votre@email.com" 
+                          value={loginForm.email} 
+                          onChange={e => setLoginForm({
+                            ...loginForm,
+                            email: e.target.value
+                          })} 
+                          required 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="login-password">Mot de passe</Label>
+                        <Input 
+                          id="login-password" 
+                          type="password" 
+                          value={loginForm.password} 
+                          onChange={e => setLoginForm({
+                            ...loginForm,
+                            password: e.target.value
+                          })} 
+                          required 
+                        />
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowForgotPassword(true);
+                            setForgotPasswordEmail(loginForm.email);
+                          }}
+                          className="text-sm text-primary hover:text-primary/80 underline"
+                        >
+                          Mot de passe oublié ?
+                        </button>
+                      </div>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" 
+                        disabled={loading}
+                      >
+                        {loading ? 'Connexion...' : 'Se connecter'}
+                      </Button>
+                    </form>
+                  ) : (
+                    <div className="space-y-4">
+                      {!forgotPasswordSent ? (
+                        <>
+                          <div className="space-y-2">
+                            <Label htmlFor="forgot-email">Email</Label>
+                            <Input 
+                              id="forgot-email" 
+                              type="email" 
+                              placeholder="votre@email.com" 
+                              value={forgotPasswordEmail} 
+                              onChange={e => setForgotPasswordEmail(e.target.value)} 
+                              required 
+                            />
+                          </div>
+                          <Button 
+                            type="button"
+                            onClick={handleForgotPassword} 
+                            className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" 
+                            disabled={loading}
+                          >
+                            {loading ? 'Envoi...' : 'Envoyer le lien de réinitialisation'}
+                          </Button>
+                        </>
+                      ) : (
+                        <div className="text-center space-y-4">
+                          <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
+                          <div>
+                            <h3 className="font-medium text-green-900 mb-1">Email envoyé</h3>
+                            <p className="text-sm text-green-700">
+                              Un lien de réinitialisation a été envoyé à <strong>{forgotPasswordEmail}</strong>
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      <Button 
+                        type="button"
+                        onClick={() => {
+                          setShowForgotPassword(false);
+                          setForgotPasswordSent(false);
+                          setForgotPasswordEmail('');
+                        }}
+                        variant="outline" 
+                        className="w-full"
+                      >
+                        Retour à la connexion
+                      </Button>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="login-password">Mot de passe</Label>
-                      <Input id="login-password" type="password" value={loginForm.password} onChange={e => setLoginForm({
-                      ...loginForm,
-                      password: e.target.value
-                    })} required />
-                    </div>
-                    <Button type="submit" className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" disabled={loading}>
-                      {loading ? 'Connexion...' : 'Se connecter'}
-                    </Button>
-                  </form>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
