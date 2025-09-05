@@ -10,6 +10,7 @@ import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
 import AdminArtistProfileDialog from './AdminArtistProfileDialog';
 import EditProfessionalProfileDialog from './EditProfessionalProfileDialog';
 import DeleteProfileDialog from './DeleteProfileDialog';
+import { InviteAccountButton } from './InviteAccountButton';
 import type { Database } from '@/integrations/supabase/types';
 
 type ProfessionalRole = Database['public']['Enums']['professional_role'];
@@ -142,6 +143,11 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                         )}
                       </Button>
                     )}
+                    <InviteAccountButton
+                      profileId={account.id}
+                      profileType={type}
+                      profileName={account.stage_name || account.company_name || 'Compte'}
+                    />
                     <Button
                       size="sm"
                       variant="ghost"

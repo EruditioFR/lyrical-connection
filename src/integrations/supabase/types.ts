@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_invitations: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          invitation_token: string
+          is_used: boolean
+          profile_id: string
+          profile_type: string
+          real_email: string
+          updated_at: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          invitation_token: string
+          is_used?: boolean
+          profile_id: string
+          profile_type: string
+          real_email: string
+          updated_at?: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invitation_token?: string
+          is_used?: boolean
+          profile_id?: string
+          profile_type?: string
+          real_email?: string
+          updated_at?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           additional_documents: string[] | null

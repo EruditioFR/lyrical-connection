@@ -41,6 +41,7 @@ import TermsOfService from '@/pages/TermsOfService';
 import CookiesPolicy from '@/pages/CookiesPolicy';
 import FAQ from '@/pages/FAQ';
 import Notifications from '@/pages/Notifications';
+import Invitation from '@/pages/Invitation';
 import ProfessionalsList from '@/pages/ProfessionalsList';
 import ProfessionalDetail from '@/pages/ProfessionalDetail';
 import Contact from '@/pages/Contact';
@@ -116,6 +117,7 @@ export const AppRouter = () => {
       <Route path="/subscription" element={<AuthGuard><Subscription /></AuthGuard>} />
       <Route path="/subscription/success" element={<AuthGuard><SubscriptionSuccess /></AuthGuard>} />
       <Route path="/subscription/error" element={<AuthGuard><SubscriptionError /></AuthGuard>} />
+      <Route path="/invitation/:token" element={<Invitation />} />
       <Route path="/change-password" element={<AuthGuard><SubscriptionGuard><ChangePassword /></SubscriptionGuard></AuthGuard>} />
       <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
       <Route path="*" element={<NotFound />} />
