@@ -32,6 +32,8 @@ interface Account {
   experience_years?: number;
   professional_role?: ProfessionalRole;
   team_description?: string;
+  public_visibility_premium?: boolean;
+  premium_subscription_end?: string;
 }
 
 interface EditFreeAccountDialogProps {
@@ -42,6 +44,7 @@ interface EditFreeAccountDialogProps {
 const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [accessLevel, setAccessLevel] = useState<'standard' | 'premium'>('standard');
   const { toast } = useToast();
 
   // Artist form state
@@ -70,6 +73,12 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
   });
 
   useEffect(() => {
+    // Déterminer le niveau d'accès actuel
+    const isPremium = account.public_visibility_premium && 
+                      account.premium_subscription_end && 
+                      new Date(account.premium_subscription_end) > new Date();
+    setAccessLevel(isPremium ? 'premium' : 'standard');
+    
     if (account.type === 'artist') {
       setArtistData({
         stage_name: account.stage_name || '',
@@ -101,10 +110,15 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
     setIsLoading(true);
 
     try {
+      const isPremiumVisibility = accessLevel === 'premium';
+      
       if (account.type === 'artist') {
         const updateData = {
           ...artistData,
           experience_years: artistData.experience_years || null,
+          public_visibility_premium: isPremiumVisibility,
+          premium_subscription_end: isPremiumVisibility ? 
+            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null,
         };
 
         const { error } = await supabase
@@ -114,9 +128,16 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
 
         if (error) throw error;
       } else {
+        const updateData = {
+          ...professionalData,
+          public_visibility_premium: isPremiumVisibility,
+          premium_subscription_end: isPremiumVisibility ? 
+            new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null,
+        };
+        
         const { error } = await supabase
           .from('professional_profiles')
-          .update(professionalData)
+          .update(updateData)
           .eq('id', account.id);
 
         if (error) throw error;
@@ -157,6 +178,19 @@ const EditFreeAccountDialog = ({ account, onAccountUpdated }: EditFreeAccountDia
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="access_level">Niveau d'accès *</Label>
+            <Select value={accessLevel} onValueChange={(value: 'standard' | 'premium') => setAccessLevel(value)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="standard">Standard (accès complet)</SelectItem>
+                <SelectItem value="premium">Premium Visibilité (accès complet + visibilité premium)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {account.type === 'artist' ? (
             <>
               <div className="space-y-2">

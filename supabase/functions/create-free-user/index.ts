@@ -18,9 +18,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { type, profile_data, created_by } = await req.json();
+    const { type, profile_data, created_by, access_level } = await req.json();
 
-    console.log('Creating free user:', { type, profile_data, created_by });
+    console.log('Creating free user:', { type, profile_data, created_by, access_level });
 
     // Générer un email temporaire unique
     const timestamp = Date.now();
@@ -51,6 +51,8 @@ serve(async (req) => {
     if (type === 'artist') {
       console.log('Creating artist profile...');
       
+      const isPremiumVisibility = access_level === 'premium';
+      
       const { error: profileError } = await supabaseClient
         .from('artist_profiles')
         .insert({
@@ -67,6 +69,8 @@ serve(async (req) => {
           created_by_admin: created_by,
           is_free_account: true,
           is_active: true,
+          public_visibility_premium: isPremiumVisibility,
+          premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null, // 1 an
         });
 
       if (profileError) {
@@ -74,10 +78,12 @@ serve(async (req) => {
         throw profileError;
       }
       
-      console.log('Artist profile created successfully');
+      console.log('Artist profile created successfully with access level:', access_level);
       
     } else if (type === 'professional') {
       console.log('Creating professional profile...');
+      
+      const isPremiumVisibility = access_level === 'premium';
       
       const { error: profileError } = await supabaseClient
         .from('professional_profiles')
@@ -94,6 +100,8 @@ serve(async (req) => {
           created_by_admin: created_by,
           is_free_account: true,
           is_active: true,
+          public_visibility_premium: isPremiumVisibility,
+          premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null, // 1 an
         });
 
       if (profileError) {
@@ -101,7 +109,7 @@ serve(async (req) => {
         throw profileError;
       }
       
-      console.log('Professional profile created successfully');
+      console.log('Professional profile created successfully with access level:', access_level);
     }
 
     return new Response(
@@ -109,7 +117,8 @@ serve(async (req) => {
         success: true, 
         user_id: authData.user!.id,
         temp_email: tempEmail,
-        user_type: type // Retourner le type pour vérification
+        user_type: type, // Retourner le type pour vérification
+        access_level: access_level || 'standard'
       }),
       { 
         headers: { 

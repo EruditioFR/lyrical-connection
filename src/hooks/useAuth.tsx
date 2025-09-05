@@ -163,7 +163,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Vérifier si l'utilisateur a un profil artiste gratuit créé par un admin
         const { data: artistProfile } = await supabase
           .from('artist_profiles')
-          .select('is_free_account, created_by_admin')
+          .select('is_free_account, created_by_admin, public_visibility_premium, premium_subscription_end')
           .eq('user_id', user.id)
           .eq('is_active', true)
           .maybeSingle();
@@ -171,7 +171,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Vérifier si l'utilisateur a un profil professionnel gratuit créé par un admin
         const { data: professionalProfile } = await supabase
           .from('professional_profiles')
-          .select('is_free_account, created_by_admin')
+          .select('is_free_account, created_by_admin, public_visibility_premium, premium_subscription_end')
           .eq('user_id', user.id)
           .eq('is_active', true)
           .maybeSingle();
@@ -180,9 +180,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const isFreeAccountByAdmin = (artistProfile?.is_free_account && artistProfile?.created_by_admin) ||
                                     (professionalProfile?.is_free_account && professionalProfile?.created_by_admin);
 
-        if (isFreeAccountByAdmin) {
+        // Vérifier aussi si c'est un compte avec premium visibilité valide
+        const hasPremiumVisibility = (artistProfile?.public_visibility_premium && 
+                                      artistProfile?.premium_subscription_end &&
+                                      new Date(artistProfile.premium_subscription_end) > new Date()) ||
+                                     (professionalProfile?.public_visibility_premium && 
+                                      professionalProfile?.premium_subscription_end &&
+                                      new Date(professionalProfile.premium_subscription_end) > new Date());
+
+        if (isFreeAccountByAdmin || hasPremiumVisibility) {
           hasActive = true;
-          console.log('Compte gratuit créé par admin détecté - accès autorisé');
+          console.log('Compte gratuit créé par admin ou premium visibilité détecté - accès autorisé');
         }
       }
 

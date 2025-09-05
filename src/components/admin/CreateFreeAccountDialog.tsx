@@ -33,7 +33,8 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
     phone: '',
     website: '',
     nationality: '',
-    experience_years: ''
+    experience_years: '',
+    access_level: 'standard' as 'standard' | 'premium'
   });
 
   const [professionalForm, setProfessionalForm] = useState({
@@ -44,7 +45,8 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
     location: '',
     phone: '',
     website: '',
-    team_description: ''
+    team_description: '',
+    access_level: 'standard' as 'standard' | 'premium'
   });
 
   const handleCreateArtist = async (e: React.FormEvent) => {
@@ -70,7 +72,8 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
         phone: '',
         website: '',
         nationality: '',
-        experience_years: ''
+        experience_years: '',
+        access_level: 'standard' as 'standard' | 'premium'
       });
       onOpenChange(false);
     } catch (error) {
@@ -100,7 +103,8 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
         location: '',
         phone: '',
         website: '',
-        team_description: ''
+        team_description: '',
+        access_level: 'standard' as 'standard' | 'premium'
       });
       onOpenChange(false);
     } catch (error) {
@@ -240,6 +244,19 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="access_level">Niveau d'accès *</Label>
+                <Select value={artistForm.access_level} onValueChange={(value: 'standard' | 'premium') => setArtistForm({ ...artistForm, access_level: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner le niveau d'accès" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="standard">Standard (accès complet)</SelectItem>
+                    <SelectItem value="premium">Premium Visibilité (accès complet + visibilité premium)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="bio">Biographie</Label>
                 <Textarea
                   id="bio"
@@ -345,6 +362,19 @@ const CreateFreeAccountDialog = ({ open, onOpenChange, defaultAccountType }: Cre
                   placeholder="Décrivez votre entreprise et vos activités..."
                   rows={3}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="prof_access_level">Niveau d'accès *</Label>
+                <Select value={professionalForm.access_level} onValueChange={(value: 'standard' | 'premium') => setProfessionalForm({ ...professionalForm, access_level: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner le niveau d'accès" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="standard">Standard (accès complet)</SelectItem>
+                    <SelectItem value="premium">Premium Visibilité (accès complet + visibilité premium)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">

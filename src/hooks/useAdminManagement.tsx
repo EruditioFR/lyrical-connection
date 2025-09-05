@@ -72,6 +72,7 @@ export const useAdminManagement = () => {
       website?: string;
       nationality?: string;
       experience_years?: string;
+      access_level?: 'standard' | 'premium';
     }) => {
       console.log('Creating free artist with data:', artistData);
       
@@ -86,6 +87,7 @@ export const useAdminManagement = () => {
           type: 'artist', // S'assurer que le type est explicitement 'artist'
           profile_data: profileData,
           created_by: user?.id,
+          access_level: artistData.access_level || 'standard',
         },
       });
 
@@ -127,6 +129,7 @@ export const useAdminManagement = () => {
       phone?: string;
       website?: string;
       team_description?: string;
+      access_level?: 'standard' | 'premium';
     }) => {
       console.log('Creating free professional with data:', professionalData);
       
@@ -135,6 +138,7 @@ export const useAdminManagement = () => {
           type: 'professional', // S'assurer que le type est explicitement 'professional'
           profile_data: professionalData,
           created_by: user?.id,
+          access_level: professionalData.access_level || 'standard',
         },
       });
 
