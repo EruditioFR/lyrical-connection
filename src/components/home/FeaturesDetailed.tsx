@@ -1,66 +1,79 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Music, Users, Calendar, Search, MessageSquare, Trophy, BarChart3, Settings, Mic, Globe, Heart, Zap } from 'lucide-react';
+import { Mic, Globe } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+
+// Import feature images
+import artistProfileImg from '@/assets/features/artist-profile.png';
+import calendarManagementImg from '@/assets/features/calendar-management.png';
+import searchVisibilityImg from '@/assets/features/search-visibility.png';
+import communicationImg from '@/assets/features/communication.png';
+import analyticsImg from '@/assets/features/analytics.png';
+import applicationsImg from '@/assets/features/applications.png';
+import databaseImg from '@/assets/features/database.png';
+import advancedSearchImg from '@/assets/features/advanced-search.png';
+import eventManagementImg from '@/assets/features/event-management.png';
+import castingToolsImg from '@/assets/features/casting-tools.png';
+import proDashboardImg from '@/assets/features/pro-dashboard.png';
 const artistFeatures = [{
-  icon: Music,
+  image: artistProfileImg,
   title: "Profil Artistique Complet",
   description: "Créez votre vitrine personnelle avec photos, vidéos, extraits audio et répertoire détaillé",
   color: "lyrical"
 }, {
-  icon: Calendar,
+  image: calendarManagementImg,
   title: "Gestion d'Agenda",
   description: "Organisez vos auditions, concerts et événements avec notre calendrier intégré",
   color: "gold"
 }, {
-  icon: Search,
+  image: searchVisibilityImg,
   title: "Visibilité Maximale",
   description: "Soyez découvert par les professionnels grâce à notre moteur de recherche avancé",
   color: "lyrical"
 }, {
-  icon: MessageSquare,
+  image: communicationImg,
   title: "Communication Directe",
   description: "Échangez directement avec les directeurs artistiques et agents",
   color: "gold"
 }, {
-  icon: BarChart3,
+  image: analyticsImg,
   title: "Statistiques Détaillées",
   description: "Suivez les visites de votre profil et l'engagement de votre audience",
   color: "lyrical"
 }, {
-  icon: Trophy,
+  image: applicationsImg,
   title: "Candidatures Simplifiées",
   description: "Postulez aux auditions et concours en un clic avec votre profil pré-rempli",
   color: "gold"
 }];
 const professionalFeatures = [{
-  icon: Users,
+  image: databaseImg,
   title: "Base de Données Exclusive",
   description: "Accédez à plus de 500 profils d'artistes lyriques vérifiés et qualifiés",
   color: "lyrical"
 }, {
-  icon: Search,
+  image: advancedSearchImg,
   title: "Recherche Avancée",
   description: "Filtrez par tessiture, répertoire, expérience, localisation et disponibilité",
   color: "gold"
 }, {
-  icon: Calendar,
+  image: eventManagementImg,
   title: "Gestion d'Événements",
   description: "Organisez auditions, masterclasses et spectacles avec gestion des inscriptions",
   color: "lyrical"
 }, {
-  icon: MessageSquare,
+  image: communicationImg,
   title: "Communication Centralisée",
   description: "Gérez tous vos échanges avec les artistes depuis une interface unique",
   color: "gold"
 }, {
-  icon: Settings,
+  image: castingToolsImg,
   title: "Outils de Casting",
   description: "Créez des appels à candidatures personnalisés et gérez les réponses efficacement",
   color: "lyrical"
 }, {
-  icon: BarChart3,
+  image: proDashboardImg,
   title: "Tableau de Bord Pro",
   description: "Suivez vos statistiques, candidatures reçues et taux de réponse",
   color: "gold"
@@ -105,9 +118,9 @@ pour tous les acteurs du lyrique</h2>
             {artistFeatures.map((feature, index) => {
             const FeatureCard = () => {
               const cardRef = useAnimateOnScroll();
-              return <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border hover:border-lyrical-200 transition-all duration-300 hover:shadow-lg text-appear">
-                    <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
-                      <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
+              return <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border">
+                    <div className="w-16 h-16 mb-4 rounded-xl overflow-hidden">
+                      <img src={feature.image} alt={feature.title} className="w-full h-full object-cover" />
                     </div>
                     <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
                     <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
@@ -147,9 +160,9 @@ pour tous les acteurs du lyrique</h2>
             {professionalFeatures.map((feature, index) => {
             const ProfessionalFeatureCard = () => {
               const cardRef = useAnimateOnScroll();
-              return <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border hover:border-gold-200 transition-all duration-300 hover:shadow-lg text-appear">
-                    <div className={`bg-${feature.color}-100 p-3 rounded-xl w-fit mb-4`}>
-                      <feature.icon className={`h-6 w-6 text-${feature.color}-700`} />
+              return <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border">
+                    <div className="w-16 h-16 mb-4 rounded-xl overflow-hidden">
+                      <img src={feature.image} alt={feature.title} className="w-full h-full object-cover" />
                     </div>
                     <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
                     <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
