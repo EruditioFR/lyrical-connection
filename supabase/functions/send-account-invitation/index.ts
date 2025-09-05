@@ -1,10 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { Resend } from 'npm:resend@2.0.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -46,6 +49,86 @@ serve(async (req) => {
     const invitationLink = `${baseUrl}/invitation/${invitation_token}`;
 
     console.log('Account invitation created successfully');
+
+    // Envoyer l'email d'invitation
+    const emailSubject = `Invitation à rejoindre Lyrisphere - ${profile_type === 'artist' ? 'Profil Artiste' : 'Profil Professionnel'}`;
+    
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #1a365d, #2d5a87); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+            .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 8px 8px; }
+            .button { 
+              display: inline-block; 
+              background: #2563eb; 
+              color: white; 
+              padding: 12px 24px; 
+              text-decoration: none; 
+              border-radius: 6px; 
+              margin: 20px 0;
+              font-weight: bold;
+            }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎵 Bienvenue sur Lyrisphere</h1>
+            </div>
+            <div class="content">
+              <h2>Votre invitation est prête !</h2>
+              <p>Bonjour,</p>
+              <p>Un administrateur vous a créé un compte sur <strong>Lyrisphere</strong>, la plateforme dédiée aux professionnels de l'opéra et du chant lyrique.</p>
+              
+              <p>Votre profil <strong>${profile_type === 'artist' ? 'Artiste' : 'Professionnel'}</strong> a été préparé et vous pouvez maintenant y accéder en cliquant sur le bouton ci-dessous :</p>
+              
+              <p style="text-align: center;">
+                <a href="${invitationLink}" class="button" style="color: white;">
+                  Activer mon compte
+                </a>
+              </p>
+              
+              <p><strong>Important :</strong></p>
+              <ul>
+                <li>Cette invitation est valable pendant <strong>7 jours</strong></li>
+                <li>Vous devrez créer un mot de passe lors de votre première connexion</li>
+                <li>Votre adresse email sera : <strong>${real_email}</strong></li>
+              </ul>
+              
+              <p>Une fois connecté, vous pourrez compléter votre profil et accéder à toutes les fonctionnalités de la plateforme.</p>
+              
+              <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+              
+              <p>L'équipe Lyrisphere</p>
+            </div>
+            <div class="footer">
+              <p>Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :<br>
+              <a href="${invitationLink}">${invitationLink}</a></p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    try {
+      const emailResult = await resend.emails.send({
+        from: 'Lyrisphere <noreply@lyrisphere.app>',
+        to: [real_email],
+        subject: emailSubject,
+        html: emailHtml,
+      });
+
+      console.log('Email sent successfully:', emailResult);
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      // On continue même si l'email échoue, l'invitation est créée en base
+    }
 
     return new Response(
       JSON.stringify({ 
