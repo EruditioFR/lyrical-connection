@@ -28,6 +28,12 @@ const AuthenticatedHome = () => {
     return user?.email?.split('@')[0] || 'Utilisateur';
   };
 
+  const getUserTypeLabel = () => {
+    if (isArtist) return 'Artiste';
+    if (isProfessional) return 'Professionnel';
+    return 'Utilisateur';
+  };
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
@@ -117,7 +123,7 @@ const AuthenticatedHome = () => {
             <CardContent className="space-y-4">
               <div>
                 <p className="text-sm text-muted-foreground">Type de compte</p>
-                <p className="font-medium capitalize">{userType}</p>
+                <p className="font-medium">{getUserTypeLabel()}</p>
               </div>
               {isArtist && artistProfile && (
                 <>
