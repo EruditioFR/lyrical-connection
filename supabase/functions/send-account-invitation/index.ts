@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,22 +21,20 @@ serve(async (req) => {
 
     console.log('Sending account invitation:', { profile_id, profile_type, real_email });
 
-    // Validation des secrets SMTP
-    const smtpConfig = {
-      host: Deno.env.get('SMTP_HOST'),
-      port: Deno.env.get('SMTP_PORT'),
-      username: Deno.env.get('SMTP_USERNAME'),
-      password: Deno.env.get('SMTP_PASSWORD'),
-      from: Deno.env.get('SMTP_FROM')
+    // Validation des secrets Mailjet
+    const mailjetConfig = {
+      apiKey: Deno.env.get('MAILJET_API_KEY'),
+      secretKey: Deno.env.get('MAILJET_SECRET_KEY')
     };
 
-    console.log('SMTP Configuration check:', {
-      host: smtpConfig.host || 'MISSING',
-      port: smtpConfig.port || 'MISSING',
-      username: smtpConfig.username ? 'SET' : 'MISSING',
-      password: smtpConfig.password ? 'SET' : 'MISSING',
-      from: smtpConfig.from || 'MISSING'
+    console.log('Mailjet Configuration check:', {
+      apiKey: mailjetConfig.apiKey ? 'SET' : 'MISSING',
+      secretKey: mailjetConfig.secretKey ? 'SET' : 'MISSING'
     });
+
+    if (!mailjetConfig.apiKey || !mailjetConfig.secretKey) {
+      throw new Error('MAILJET_API_KEY and MAILJET_SECRET_KEY environment variables must be set');
+    }
 
     // Validation du format email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -141,73 +138,82 @@ serve(async (req) => {
     // Variable pour tracker le succès d'envoi email
     let emailSent = false;
 
-    // Envoi d'email via API PHP
+    // Envoi d'email via Mailjet API
     const emailId = crypto.randomUUID().substring(0, 8);
-    console.log(`[EMAIL-${emailId}] Starting PHP email process for ${real_email}`);
+    console.log(`[EMAIL-${emailId}] Starting Mailjet email process for ${real_email}`);
 
     try {
-      const phpEmailUrl = Deno.env.get('PHP_EMAIL_API_URL');
-      
-      if (!phpEmailUrl) {
-        throw new Error('PHP_EMAIL_API_URL environment variable not set');
-      }
-
-      console.log(`[EMAIL-${emailId}] Calling PHP API at: ${phpEmailUrl}`);
-
-      const emailData = {
-        to: real_email,
-        subject: emailSubject,
-        html: emailHtml,
-        profile_type: profile_type
+      // Préparer les données pour Mailjet
+      const mailjetPayload = {
+        Messages: [
+          {
+            From: {
+              Email: "noreply@lyrisphere.com",
+              Name: "Lyrisphere"
+            },
+            To: [
+              {
+                Email: real_email,
+                Name: real_email
+              }
+            ],
+            Subject: emailSubject,
+            HTMLPart: emailHtml
+          }
+        ]
       };
 
       console.log(`[EMAIL-${emailId}] Email data prepared:`, {
-        to: emailData.to,
-        subject: emailData.subject,
-        html_length: emailData.html.length,
-        profile_type: emailData.profile_type
+        to: real_email,
+        subject: emailSubject,
+        html_length: emailHtml.length,
+        profile_type: profile_type
       });
 
       const startTime = Date.now();
       
-      const response = await fetch(phpEmailUrl, {
+      // Encoder les credentials pour l'authentification Basic
+      const auth = btoa(`${mailjetConfig.apiKey}:${mailjetConfig.secretKey}`);
+      
+      const response = await fetch('https://api.mailjet.com/v3.1/send', {
         method: 'POST',
         headers: {
+          'Authorization': `Basic ${auth}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailData),
+        body: JSON.stringify(mailjetPayload),
       });
 
       const endTime = Date.now();
       const responseData = await response.json();
 
-      console.log(`[EMAIL-${emailId}] PHP API response in ${endTime - startTime}ms:`, {
+      console.log(`[EMAIL-${emailId}] Mailjet API response in ${endTime - startTime}ms:`, {
         status: response.status,
-        success: responseData.success,
-        message: responseData.message
+        success: response.ok,
+        data: responseData
       });
 
-      if (!response.ok || !responseData.success) {
-        throw new Error(`PHP API error: ${responseData.error || responseData.message || 'Unknown error'}`);
+      if (!response.ok) {
+        throw new Error(`Mailjet API error: ${responseData.ErrorMessage || 'Unknown error'} (Status: ${response.status})`);
       }
 
-      console.log(`[EMAIL-${emailId}] Email sent successfully via PHP API`);
+      console.log(`[EMAIL-${emailId}] Email sent successfully via Mailjet API`);
       emailSent = true;
       
     } catch (emailError) {
-      console.error(`[EMAIL-${emailId}] PHP Email Error:`, {
+      console.error(`[EMAIL-${emailId}] Mailjet Email Error:`, {
         error_name: emailError.name,
         error_message: emailError.message,
         error_stack: emailError.stack
       });
       
       // Diagnostic spécifique selon le type d'erreur
-      if (emailError.message?.includes('PHP_EMAIL_API_URL')) {
-        console.error(`[EMAIL-${emailId}] Configuration error - Set PHP_EMAIL_API_URL environment variable`);
+      if (emailError.message?.includes('MAILJET_API_KEY')) {
+        console.error(`[EMAIL-${emailId}] Configuration error - Set MAILJET_API_KEY and MAILJET_SECRET_KEY environment variables`);
       } else if (emailError.message?.includes('fetch')) {
-        console.error(`[EMAIL-${emailId}] Network error - Check PHP API server availability`);
-      } else if (emailError.message?.includes('PHP API error')) {
-        console.error(`[EMAIL-${emailId}] PHP API returned an error - Check server logs`);
+        console.error(`[EMAIL-${emailId}] Network error - Check Mailjet API availability`);
+      } else if (emailError.message?.includes('Mailjet API error')) {
+        console.error(`[EMAIL-${emailId}] Mailjet API returned an error - Check API credentials and limits`);
       }
       
       emailSent = false;
