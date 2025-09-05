@@ -117,7 +117,7 @@ export const AppRouter = () => {
       <Route path="/subscription/success" element={<AuthGuard><SubscriptionSuccess /></AuthGuard>} />
       <Route path="/subscription/error" element={<AuthGuard><SubscriptionError /></AuthGuard>} />
       <Route path="/change-password" element={<AuthGuard><SubscriptionGuard><ChangePassword /></SubscriptionGuard></AuthGuard>} />
-      <Route path="/admin" element={<AuthGuard><SubscriptionGuard><Admin /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
