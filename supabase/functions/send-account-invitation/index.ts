@@ -22,6 +22,30 @@ serve(async (req) => {
 
     console.log('Sending account invitation:', { profile_id, profile_type, real_email });
 
+    // Validation des secrets SMTP
+    const smtpConfig = {
+      host: Deno.env.get('SMTP_HOST'),
+      port: Deno.env.get('SMTP_PORT'),
+      username: Deno.env.get('SMTP_USERNAME'),
+      password: Deno.env.get('SMTP_PASSWORD'),
+      from: Deno.env.get('SMTP_FROM')
+    };
+
+    console.log('SMTP Configuration check:', {
+      host: smtpConfig.host || 'MISSING',
+      port: smtpConfig.port || 'MISSING',
+      username: smtpConfig.username ? 'SET' : 'MISSING',
+      password: smtpConfig.password ? 'SET' : 'MISSING',
+      from: smtpConfig.from || 'MISSING'
+    });
+
+    // Validation du format email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(real_email)) {
+      console.error('Invalid email format:', real_email);
+      throw new Error('Format d\'email invalide');
+    }
+
     // Générer un token unique pour l'invitation
     const invitation_token = crypto.randomUUID();
     const expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 jours
@@ -114,31 +138,79 @@ serve(async (req) => {
       </html>
     `;
 
+    // Variable pour tracker le succès d'envoi email
+    let emailSent = false;
+
+    // Logging détaillé pour chaque étape SMTP
+    const emailId = crypto.randomUUID().substring(0, 8);
+    console.log(`[EMAIL-${emailId}] Starting SMTP email process for ${real_email}`);
+
     try {
+      console.log(`[EMAIL-${emailId}] Creating SMTP client with config:`, {
+        hostname: smtpConfig.host,
+        port: parseInt(smtpConfig.port || '587'),
+        tls: true,
+        auth_username: smtpConfig.username ? 'SET' : 'MISSING'
+      });
+
       const client = new SMTPClient({
         connection: {
-          hostname: Deno.env.get('SMTP_HOST') || 'mail.o2switch.net',
-          port: parseInt(Deno.env.get('SMTP_PORT') || '587'),
+          hostname: smtpConfig.host || 'mail.o2switch.net',
+          port: parseInt(smtpConfig.port || '587'),
           tls: true,
           auth: {
-            username: Deno.env.get('SMTP_USERNAME') || '',
-            password: Deno.env.get('SMTP_PASSWORD') || '',
+            username: smtpConfig.username || '',
+            password: smtpConfig.password || '',
           },
         },
       });
 
-      await client.send({
-        from: Deno.env.get('SMTP_FROM') || 'noreply@aacfi.fr',
+      console.log(`[EMAIL-${emailId}] SMTP client created, attempting to send email`);
+
+      const emailData = {
+        from: smtpConfig.from || 'noreply@aacfi.fr',
         to: real_email,
         subject: emailSubject,
         html: emailHtml,
+      };
+
+      console.log(`[EMAIL-${emailId}] Email data prepared:`, {
+        from: emailData.from,
+        to: emailData.to,
+        subject: emailData.subject,
+        html_length: emailData.html.length
       });
 
-      console.log('Email sent successfully via O2Switch SMTP');
+      const startTime = Date.now();
+      await client.send(emailData);
+      const endTime = Date.now();
+
+      console.log(`[EMAIL-${emailId}] Email sent successfully via O2Switch SMTP in ${endTime - startTime}ms`);
       await client.close();
+      
+      // Marquer le succès d'envoi
+      emailSent = true;
+      
     } catch (emailError) {
-      console.error('Error sending email via SMTP:', emailError);
-      // On continue même si l'email échoue, l'invitation est créée en base
+      console.error(`[EMAIL-${emailId}] SMTP Error Details:`, {
+        error_name: emailError.name,
+        error_message: emailError.message,
+        error_code: emailError.code,
+        error_stack: emailError.stack
+      });
+      
+      // Diagnostic spécifique selon le type d'erreur
+      if (emailError.message?.includes('ENOTFOUND')) {
+        console.error(`[EMAIL-${emailId}] DNS/Host resolution error - Check SMTP_HOST`);
+      } else if (emailError.message?.includes('ECONNREFUSED')) {
+        console.error(`[EMAIL-${emailId}] Connection refused - Check SMTP_PORT and firewall`);
+      } else if (emailError.message?.includes('Authentication')) {
+        console.error(`[EMAIL-${emailId}] Authentication failed - Check SMTP_USERNAME/PASSWORD`);
+      } else if (emailError.message?.includes('timeout')) {
+        console.error(`[EMAIL-${emailId}] Timeout error - Network or server issue`);
+      }
+      
+      emailSent = false;
     }
 
     return new Response(
@@ -146,7 +218,12 @@ serve(async (req) => {
         success: true, 
         invitation_token,
         invitation_link: invitationLink,
-        real_email
+        real_email,
+        email_sent: emailSent,
+        email_status: emailSent ? 'sent' : 'failed',
+        message: emailSent ? 
+          'Invitation créée et email envoyé avec succès' : 
+          'Invitation créée mais email non envoyé (voir logs)'
       }),
       { 
         headers: { 
