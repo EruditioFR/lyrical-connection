@@ -31,6 +31,7 @@ import Subscription from '@/pages/Subscription';
 import SubscriptionSuccess from '@/pages/SubscriptionSuccess';
 import SubscriptionError from '@/pages/SubscriptionError';
 import ChangePassword from '@/pages/ChangePassword';
+import ResetPassword from '@/pages/ResetPassword';
 import About from '@/pages/About';
 import Admin from '@/pages/Admin';
 import NotFound from '@/pages/NotFound';
@@ -58,6 +59,7 @@ export const AppRouter = () => {
       <Route path="/features" element={<Features />} />
       <Route path="/fonctionnalites" element={<Features />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/about" element={<About />} />
       <Route path="/qui-sommes-nous" element={<About />} />
       <Route path="/contact" element={<Contact />} />

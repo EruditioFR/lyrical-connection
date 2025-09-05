@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,6 +39,7 @@ const professionalRoles = [{
 }];
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const {
     user
   } = useAuth();
@@ -51,6 +52,19 @@ const Auth = () => {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+
+  // Vérifier les messages de succès dans l'URL
+  useEffect(() => {
+    const message = searchParams.get('message');
+    if (message === 'password-changed') {
+      toast({
+        title: "Mot de passe modifié",
+        description: "Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous connecter."
+      });
+      // Nettoyer l'URL
+      navigate('/auth', { replace: true });
+    }
+  }, [searchParams, toast, navigate]);
 
   // Redirection si déjà authentifié
   useEffect(() => {
@@ -126,7 +140,7 @@ const Auth = () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
-        redirectTo: `${window.location.origin}/auth?mode=reset-password`
+        redirectTo: `${window.location.origin}/reset-password`
       });
 
       if (error) {
