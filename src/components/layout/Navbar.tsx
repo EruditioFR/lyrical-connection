@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageSelector } from '@/components/ui/language-selector';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { LogOut, User, Settings, CreditCard, Shield, ChevronDown, Menu, X } from 'lucide-react';
+import { LogOut, User, Settings, CreditCard, Shield, ChevronDown, Menu, X, Receipt } from 'lucide-react';
 import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { MegaMenu } from './MegaMenu';
@@ -187,6 +187,10 @@ const Navbar = () => {
                   <DropdownMenuItem onClick={() => navigate('/subscription')}>
                     <CreditCard className="mr-2 h-4 w-4" />
                     <span>Abonnement</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/facturation')}>
+                    <Receipt className="mr-2 h-4 w-4" />
+                    <span>Facturation</span>
                   </DropdownMenuItem>
                   {/* Lien d'administration dans le menu déroulant pour les admins */}
                   {isAdmin && <>

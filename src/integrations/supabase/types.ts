@@ -893,6 +893,66 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          created_at: string
+          currency: string
+          description: string | null
+          due_date: string | null
+          hosted_invoice_url: string | null
+          id: string
+          invoice_number: string | null
+          invoice_pdf: string | null
+          period_end: string | null
+          period_start: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_invoice_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_due: number
+          amount_paid: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          hosted_invoice_url?: string | null
+          id?: string
+          invoice_number?: string | null
+          invoice_pdf?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_invoice_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          due_date?: string | null
+          hosted_invoice_url?: string | null
+          id?: string
+          invoice_number?: string | null
+          invoice_pdf?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_invoice_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lyrical_works: {
         Row: {
           acts_count: number | null

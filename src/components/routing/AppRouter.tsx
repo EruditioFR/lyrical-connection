@@ -51,6 +51,7 @@ import ReceivedApplications from '@/pages/ReceivedApplications';
 import Blog from '@/pages/Blog';
 import BlogPost from '@/pages/BlogPost';
 import CastingDetail from '@/pages/CastingDetail';
+import Billing from '@/pages/Billing';
 
 export const AppRouter = () => {
   return (
@@ -114,6 +115,7 @@ export const AppRouter = () => {
       
       {/* Other routes - subscription management doesn't require active subscription */}
       <Route path="/notifications" element={<AuthGuard><SubscriptionGuard><Notifications /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/facturation" element={<AuthGuard><Billing /></AuthGuard>} />
       <Route path="/subscription" element={<AuthGuard><Subscription /></AuthGuard>} />
       <Route path="/subscription/success" element={<AuthGuard><SubscriptionSuccess /></AuthGuard>} />
       <Route path="/subscription/error" element={<AuthGuard><SubscriptionError /></AuthGuard>} />
