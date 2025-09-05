@@ -2,13 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, MapPin, Users } from 'lucide-react';
-import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 const UpcomingEvents = () => {
-  const headerRef = useAnimateOnScroll();
-  const ctaRef = useAnimateOnScroll();
   
   // Récupérer les vrais événements depuis la base de données
   const { data: events = [], isLoading } = useQuery({
@@ -47,7 +45,7 @@ const UpcomingEvents = () => {
     return (
       <section className="bg-muted py-20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="animate-pulse">
+          <div>
             <div className="h-8 bg-background rounded w-1/3 mb-4"></div>
             <div className="h-4 bg-background rounded w-1/2 mb-12"></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -70,7 +68,7 @@ const UpcomingEvents = () => {
     <section className="bg-muted py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div ref={headerRef} className="text-appear">
+          <div>
             <h2 className="text-3xl md:text-4xl font-serif font-bold">Événements à venir</h2>
             <p className="text-muted-foreground mt-2 max-w-2xl">
               Participez à des événements exclusifs et découvrez les talents lyriques en live.
@@ -88,14 +86,13 @@ const UpcomingEvents = () => {
           {upcomingEvents.map((event, index) => (
             <div 
               key={event.id}
-              className={`group rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border text-appear`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm"
             >
               <div className="relative aspect-[16/9] overflow-hidden">
                 <img 
                   src={event.image} 
                   alt={event.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 
@@ -115,7 +112,7 @@ const UpcomingEvents = () => {
               </div>
               
               <div className="p-5">
-                <h3 className="font-serif font-semibold text-lg hover:text-lyrical-700 transition-colors">
+                <h3 className="font-serif font-semibold text-lg">
                   <Link to={`/evenements/${event.id}`}>{event.title}</Link>
                 </h3>
                 <div className="mt-3 space-y-2">
@@ -135,7 +132,7 @@ const UpcomingEvents = () => {
                 <div className="mt-4">
                   <Button 
                     variant="outline" 
-                    className="w-full hover:bg-muted"
+                    className="w-full"
                     asChild
                   >
                     <Link to={`/evenements/${event.id}`}>Détails et inscription</Link>
@@ -147,7 +144,7 @@ const UpcomingEvents = () => {
         </div>
         
         {/* Call to action section */}
-        <div ref={ctaRef} className="mt-16 text-center bg-card rounded-xl p-8 border text-appear">
+        <div className="mt-16 text-center bg-card rounded-xl p-8 border">
           <h3 className="text-xl font-serif font-semibold mb-4">
             Vous organisez un événement ?
           </h3>
