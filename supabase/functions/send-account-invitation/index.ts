@@ -1,13 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { Resend } from 'npm:resend@2.0.0';
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
-
-const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -117,16 +115,29 @@ serve(async (req) => {
     `;
 
     try {
-      const emailResult = await resend.emails.send({
-        from: 'Lyrisphere <noreply@lyrisphere.app>',
-        to: [real_email],
+      const client = new SMTPClient({
+        connection: {
+          hostname: Deno.env.get('SMTP_HOST') || 'mail.o2switch.net',
+          port: parseInt(Deno.env.get('SMTP_PORT') || '587'),
+          tls: true,
+          auth: {
+            username: Deno.env.get('SMTP_USERNAME') || '',
+            password: Deno.env.get('SMTP_PASSWORD') || '',
+          },
+        },
+      });
+
+      await client.send({
+        from: Deno.env.get('SMTP_FROM') || 'noreply@aacfi.fr',
+        to: real_email,
         subject: emailSubject,
         html: emailHtml,
       });
 
-      console.log('Email sent successfully:', emailResult);
+      console.log('Email sent successfully via O2Switch SMTP');
+      await client.close();
     } catch (emailError) {
-      console.error('Error sending email:', emailError);
+      console.error('Error sending email via SMTP:', emailError);
       // On continue même si l'email échoue, l'invitation est créée en base
     }
 
