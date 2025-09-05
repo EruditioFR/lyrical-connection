@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Calendar, MessageSquare, Users, TrendingUp, Plus, Bell } from 'lucide-react';
+import SubscriptionDebug from '@/components/debug/SubscriptionDebug';
 
 const AuthenticatedHome = () => {
   const { user } = useAuth();
@@ -230,6 +231,9 @@ const AuthenticatedHome = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Debug Panel pour les abonnements test */}
+        <SubscriptionDebug />
       </div>
     </Layout>
   );

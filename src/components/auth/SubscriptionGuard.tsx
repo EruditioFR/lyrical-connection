@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Clock } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SubscriptionGuardProps {
   children: React.ReactNode;
@@ -15,8 +16,23 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
 
   useEffect(() => {
     if (!loading && !subscriptionLoading && user && !hasActiveSubscription) {
-      console.log('Utilisateur sans abonnement actif, redirection vers /pricing');
-      navigate('/pricing?source=required');
+      console.log('SubscriptionGuard: Vérification abonnement...');
+      console.log('État actuel:', { 
+        user: !!user, 
+        loading, 
+        subscriptionLoading, 
+        hasActiveSubscription 
+      });
+      
+      // Délai avant redirection pour laisser le temps aux abonnements test de se charger
+      const timer = setTimeout(() => {
+        if (!hasActiveSubscription) {
+          console.log('Redirection vers /pricing après vérification finale');
+          navigate('/pricing?source=required');
+        }
+      }, 2000); // Délai de 2 secondes
+
+      return () => clearTimeout(timer);
     }
   }, [user, loading, hasActiveSubscription, subscriptionLoading, navigate]);
 
