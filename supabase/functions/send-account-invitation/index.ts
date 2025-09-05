@@ -148,7 +148,7 @@ serve(async (req) => {
         Messages: [
           {
             From: {
-              Email: "noreply@lyrisphere.com",
+              Email: "jbbejot@aacfi.fr",
               Name: "Lyrisphere"
             },
             To: [
