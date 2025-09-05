@@ -14,8 +14,15 @@ const FeaturedArtists = () => {
   // Récupérer les vrais artistes depuis la base de données
   const { artists, isLoading } = useArtists({});
   
-  // Prendre les 4 premiers artistes actifs
-  const featuredArtists = artists.slice(0, 4).map(artist => ({
+  // Filtrer uniquement les artistes avec un forfait Premium Visibilité actif
+  const premiumArtists = artists.filter(artist => 
+    artist.public_visibility_premium && 
+    artist.premium_subscription_end && 
+    new Date(artist.premium_subscription_end) > new Date()
+  );
+  
+  // Prendre les 4 premiers artistes premium
+  const featuredArtists = premiumArtists.slice(0, 4).map(artist => ({
     id: artist.id,
     name: artist.stage_name,
     voiceType: artist.voice_type || 'Artiste lyrique',
