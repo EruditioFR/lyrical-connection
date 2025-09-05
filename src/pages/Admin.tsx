@@ -10,9 +10,10 @@ import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
 import BlogManagement from '@/components/admin/BlogManagement';
 import { LyricalWorksManager } from '@/components/admin/LyricalWorksManager';
 import OperaDatabaseManager from '@/components/admin/OperaDatabaseManager';
+import { QuickResendInvitation } from '@/components/admin/QuickResendInvitation';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
-import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music, Database } from 'lucide-react';
+import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music, Database, Mail } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
@@ -36,7 +37,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="artists" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-11">
+          <TabsList className="grid w-full grid-cols-12">
             <TabsTrigger value="artists" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Artistes
@@ -64,6 +65,10 @@ const Admin = () => {
             <TabsTrigger value="workflows" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Workflows
+            </TabsTrigger>
+            <TabsTrigger value="invitations" className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              Invitations
             </TabsTrigger>
             <TabsTrigger value="translations" className="flex items-center gap-2">
               <Languages className="h-4 w-4" />
@@ -109,6 +114,10 @@ const Admin = () => {
 
           <TabsContent value="workflows" className="space-y-6">
             <AutomatedWorkflows />
+          </TabsContent>
+
+          <TabsContent value="invitations" className="space-y-6">
+            <QuickResendInvitation />
           </TabsContent>
 
           <TabsContent value="translations" className="space-y-6">
