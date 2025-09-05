@@ -53,29 +53,63 @@ serve(async (req) => {
       
       const isPremiumVisibility = access_level === 'premium';
       
-      const { error: profileError } = await supabaseClient
+      // Vérifier si le profil existe déjà
+      const { data: existingProfile } = await supabaseClient
         .from('artist_profiles')
-        .insert({
-          user_id: authData.user!.id,
-          stage_name: profile_data.stage_name,
-          bio: profile_data.bio || null,
-          voice_type: profile_data.voice_type || null,
-          contact_email: profile_data.contact_email,
-          location: profile_data.location || null,
-          phone: profile_data.phone || null,
-          website: profile_data.website || null,
-          nationality: profile_data.nationality || null,
-          experience_years: profile_data.experience_years || null,
-          created_by_admin: created_by,
-          is_free_account: true,
-          is_active: true,
-          public_visibility_premium: isPremiumVisibility,
-          premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null, // 1 an
-        });
+        .select('id')
+        .eq('user_id', authData.user!.id)
+        .single();
 
-      if (profileError) {
-        console.error('Error creating artist profile:', profileError);
-        throw profileError;
+      if (existingProfile) {
+        console.log('Artist profile already exists, updating it...');
+        const { error: updateError } = await supabaseClient
+          .from('artist_profiles')
+          .update({
+            stage_name: profile_data.stage_name,
+            bio: profile_data.bio || null,
+            voice_type: profile_data.voice_type || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            nationality: profile_data.nationality || null,
+            experience_years: profile_data.experience_years || null,
+            public_visibility_premium: isPremiumVisibility,
+            premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null,
+          })
+          .eq('user_id', authData.user!.id);
+
+        if (updateError) {
+          console.error('Error updating artist profile:', updateError);
+          throw updateError;
+        }
+      } else {
+        const { error: profileError } = await supabaseClient
+          .from('artist_profiles')
+          .insert({
+            user_id: authData.user!.id,
+            stage_name: profile_data.stage_name,
+            bio: profile_data.bio || null,
+            voice_type: profile_data.voice_type || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            nationality: profile_data.nationality || null,
+            experience_years: profile_data.experience_years || null,
+            created_by_admin: created_by,
+            is_free_account: true,
+            is_active: true,
+            public_visibility_premium: isPremiumVisibility,
+            premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null, // 1 an
+          });
+
+        if (profileError) {
+          console.error('Error creating artist profile:', profileError);
+          // Supprimer l'utilisateur auth créé si la création du profil échoue
+          await supabaseClient.auth.admin.deleteUser(authData.user!.id);
+          throw profileError;
+        }
       }
       
       console.log('Artist profile created successfully with access level:', access_level);
@@ -85,28 +119,61 @@ serve(async (req) => {
       
       const isPremiumVisibility = access_level === 'premium';
       
-      const { error: profileError } = await supabaseClient
+      // Vérifier si le profil existe déjà
+      const { data: existingProfile } = await supabaseClient
         .from('professional_profiles')
-        .insert({
-          user_id: authData.user!.id,
-          company_name: profile_data.company_name,
-          professional_role: profile_data.professional_role,
-          bio: profile_data.bio || null,
-          contact_email: profile_data.contact_email,
-          location: profile_data.location || null,
-          phone: profile_data.phone || null,
-          website: profile_data.website || null,
-          team_description: profile_data.team_description || null,
-          created_by_admin: created_by,
-          is_free_account: true,
-          is_active: true,
-          public_visibility_premium: isPremiumVisibility,
-          premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null, // 1 an
-        });
+        .select('id')
+        .eq('user_id', authData.user!.id)
+        .single();
 
-      if (profileError) {
-        console.error('Error creating professional profile:', profileError);
-        throw profileError;
+      if (existingProfile) {
+        console.log('Professional profile already exists, updating it...');
+        const { error: updateError } = await supabaseClient
+          .from('professional_profiles')
+          .update({
+            company_name: profile_data.company_name,
+            professional_role: profile_data.professional_role,
+            bio: profile_data.bio || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            team_description: profile_data.team_description || null,
+            public_visibility_premium: isPremiumVisibility,
+            premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null,
+          })
+          .eq('user_id', authData.user!.id);
+
+        if (updateError) {
+          console.error('Error updating professional profile:', updateError);
+          throw updateError;
+        }
+      } else {
+        const { error: profileError } = await supabaseClient
+          .from('professional_profiles')
+          .insert({
+            user_id: authData.user!.id,
+            company_name: profile_data.company_name,
+            professional_role: profile_data.professional_role,
+            bio: profile_data.bio || null,
+            contact_email: profile_data.contact_email,
+            location: profile_data.location || null,
+            phone: profile_data.phone || null,
+            website: profile_data.website || null,
+            team_description: profile_data.team_description || null,
+            created_by_admin: created_by,
+            is_free_account: true,
+            is_active: true,
+            public_visibility_premium: isPremiumVisibility,
+            premium_subscription_end: isPremiumVisibility ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() : null, // 1 an
+          });
+
+        if (profileError) {
+          console.error('Error creating professional profile:', profileError);
+          // Supprimer l'utilisateur auth créé si la création du profil échoue
+          await supabaseClient.auth.admin.deleteUser(authData.user!.id);
+          throw profileError;
+        }
       }
       
       console.log('Professional profile created successfully with access level:', access_level);
