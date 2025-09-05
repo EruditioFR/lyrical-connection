@@ -141,73 +141,73 @@ serve(async (req) => {
     // Variable pour tracker le succès d'envoi email
     let emailSent = false;
 
-    // Logging détaillé pour chaque étape SMTP
+    // Envoi d'email via API PHP
     const emailId = crypto.randomUUID().substring(0, 8);
-    console.log(`[EMAIL-${emailId}] Starting SMTP email process for ${real_email}`);
+    console.log(`[EMAIL-${emailId}] Starting PHP email process for ${real_email}`);
 
     try {
-      console.log(`[EMAIL-${emailId}] Creating SMTP client with config:`, {
-        hostname: smtpConfig.host,
-        port: parseInt(smtpConfig.port || '587'),
-        tls: true,
-        auth_username: smtpConfig.username ? 'SET' : 'MISSING'
-      });
+      const phpEmailUrl = Deno.env.get('PHP_EMAIL_API_URL');
+      
+      if (!phpEmailUrl) {
+        throw new Error('PHP_EMAIL_API_URL environment variable not set');
+      }
 
-      const client = new SMTPClient({
-        connection: {
-          hostname: smtpConfig.host || 'mail.o2switch.net',
-          port: parseInt(smtpConfig.port || '587'),
-          tls: true,
-          auth: {
-            username: smtpConfig.username || '',
-            password: smtpConfig.password || '',
-          },
-        },
-      });
-
-      console.log(`[EMAIL-${emailId}] SMTP client created, attempting to send email`);
+      console.log(`[EMAIL-${emailId}] Calling PHP API at: ${phpEmailUrl}`);
 
       const emailData = {
-        from: smtpConfig.from || 'noreply@aacfi.fr',
         to: real_email,
         subject: emailSubject,
         html: emailHtml,
+        profile_type: profile_type
       };
 
       console.log(`[EMAIL-${emailId}] Email data prepared:`, {
-        from: emailData.from,
         to: emailData.to,
         subject: emailData.subject,
-        html_length: emailData.html.length
+        html_length: emailData.html.length,
+        profile_type: emailData.profile_type
       });
 
       const startTime = Date.now();
-      await client.send(emailData);
-      const endTime = Date.now();
-
-      console.log(`[EMAIL-${emailId}] Email sent successfully via O2Switch SMTP in ${endTime - startTime}ms`);
-      await client.close();
       
-      // Marquer le succès d'envoi
+      const response = await fetch(phpEmailUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(emailData),
+      });
+
+      const endTime = Date.now();
+      const responseData = await response.json();
+
+      console.log(`[EMAIL-${emailId}] PHP API response in ${endTime - startTime}ms:`, {
+        status: response.status,
+        success: responseData.success,
+        message: responseData.message
+      });
+
+      if (!response.ok || !responseData.success) {
+        throw new Error(`PHP API error: ${responseData.error || responseData.message || 'Unknown error'}`);
+      }
+
+      console.log(`[EMAIL-${emailId}] Email sent successfully via PHP API`);
       emailSent = true;
       
     } catch (emailError) {
-      console.error(`[EMAIL-${emailId}] SMTP Error Details:`, {
+      console.error(`[EMAIL-${emailId}] PHP Email Error:`, {
         error_name: emailError.name,
         error_message: emailError.message,
-        error_code: emailError.code,
         error_stack: emailError.stack
       });
       
       // Diagnostic spécifique selon le type d'erreur
-      if (emailError.message?.includes('ENOTFOUND')) {
-        console.error(`[EMAIL-${emailId}] DNS/Host resolution error - Check SMTP_HOST`);
-      } else if (emailError.message?.includes('ECONNREFUSED')) {
-        console.error(`[EMAIL-${emailId}] Connection refused - Check SMTP_PORT and firewall`);
-      } else if (emailError.message?.includes('Authentication')) {
-        console.error(`[EMAIL-${emailId}] Authentication failed - Check SMTP_USERNAME/PASSWORD`);
-      } else if (emailError.message?.includes('timeout')) {
-        console.error(`[EMAIL-${emailId}] Timeout error - Network or server issue`);
+      if (emailError.message?.includes('PHP_EMAIL_API_URL')) {
+        console.error(`[EMAIL-${emailId}] Configuration error - Set PHP_EMAIL_API_URL environment variable`);
+      } else if (emailError.message?.includes('fetch')) {
+        console.error(`[EMAIL-${emailId}] Network error - Check PHP API server availability`);
+      } else if (emailError.message?.includes('PHP API error')) {
+        console.error(`[EMAIL-${emailId}] PHP API returned an error - Check server logs`);
       }
       
       emailSent = false;
