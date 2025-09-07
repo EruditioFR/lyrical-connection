@@ -25,7 +25,7 @@ const HeroModern = () => {
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-12 text-center lg:text-left text-appear pt-20">
             {/* Brand/Punchline */}
-            <div className="text-lg md:text-xl font-medium text-lyrical-600 mb-4">
+            <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-lyrical-600 mb-6 tracking-wide">
               Lyrisphere
             </div>
             
