@@ -37,30 +37,17 @@ const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelect
   }
 
   return (
-    <section className="py-8 bg-gradient-to-b from-muted/20 to-background">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-md mx-auto text-center">
-          <h2 className="text-lg font-medium mb-6 text-foreground">
-            Quel est votre profil ?
-          </h2>
-          
-          {/* Modern Pill Toggle */}
-          <div className="relative inline-flex bg-muted/80 rounded-full p-1 shadow-inner">
-            {/* Sliding Pill Background */}
-            <div 
-              className={cn(
-                "absolute top-1 h-[calc(100%-8px)] w-[calc(50%-4px)] bg-background rounded-full shadow-sm transition-all duration-300 ease-out",
-                selectedType === 'professional' ? "translate-x-[calc(100%+4px)]" : "translate-x-0"
-              )}
-            />
-            
-            {/* Toggle Buttons */}
+    <section className="py-6">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-center">
+          {/* Ultra Simple Toggle */}
+          <div className="inline-flex bg-muted rounded-full p-0.5">
             <button
               onClick={() => onSelectType('artist')}
               className={cn(
-                "relative z-10 px-6 py-2.5 text-sm font-medium transition-colors duration-200 rounded-full min-w-[100px]",
+                "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
                 selectedType === 'artist' || !selectedType
-                  ? "text-foreground"
+                  ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -69,13 +56,13 @@ const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelect
             <button
               onClick={() => onSelectType('professional')}
               className={cn(
-                "relative z-10 px-6 py-2.5 text-sm font-medium transition-colors duration-200 rounded-full min-w-[100px]",
+                "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
                 selectedType === 'professional'
-                  ? "text-foreground"
+                  ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              Professionnel
+              Pro
             </button>
           </div>
         </div>
