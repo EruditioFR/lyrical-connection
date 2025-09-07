@@ -82,12 +82,25 @@ const FeaturesProfessionals = () => {
             const FeatureCard = () => {
               const cardRef = useAnimateOnScroll();
               return (
-                <div ref={cardRef} key={index} className="bg-card rounded-xl p-6 border border-border text-appear">
-                  <div className="w-16 h-16 mb-4 rounded-xl overflow-hidden">
-                    <img src={feature.image} alt={feature.title} className="w-full h-full object-cover" />
+                <div 
+                  ref={cardRef} 
+                  key={index} 
+                  className="relative h-52 md:h-60 lg:h-72 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ease-out hover:scale-[1.02] text-appear group"
+                  style={{
+                    backgroundImage: `url(${feature.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  }}
+                  aria-label={feature.title}
+                >
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-gold-900/90 via-gold-800/40 to-transparent group-hover:from-gold-900/80 group-hover:via-gold-800/30 transition-all duration-300"></div>
+                  
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h4 className="font-serif font-semibold text-lg mb-3 text-white">{feature.title}</h4>
+                    <p className="text-white/90 text-sm leading-relaxed">{feature.description}</p>
                   </div>
-                  <h4 className="font-serif font-semibold text-lg mb-3">{feature.title}</h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
                 </div>
               );
             };
