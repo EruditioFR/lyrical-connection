@@ -10,31 +10,6 @@ interface UserTypeSelectorProps {
 }
 
 const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelectorProps) => {
-  if (selectedType) {
-    return (
-      <div className="py-6 bg-muted/30">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onBack}
-              className="flex items-center space-x-2 text-sm"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Changer</span>
-            </Button>
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <span>Vous êtes :</span>
-              <span className="font-semibold text-foreground">
-                {selectedType === 'artist' ? 'Artiste' : 'Professionnel'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <section className="py-8 bg-muted/10 border-y border-border/50">
