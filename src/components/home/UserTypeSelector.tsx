@@ -37,47 +37,47 @@ const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelect
   }
 
   return (
-    <section className="py-12 bg-gradient-to-b from-muted/30 to-background">
+    <section className="py-8 bg-gradient-to-b from-muted/20 to-background">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-xl md:text-2xl font-serif font-bold mb-3">
+        <div className="max-w-md mx-auto text-center">
+          <h2 className="text-lg font-medium mb-6 text-foreground">
             Quel est votre profil ?
           </h2>
-          <p className="text-muted-foreground mb-8 text-base">
-            Découvrez les fonctionnalités adaptées à vos besoins
-          </p>
           
-          {/* Toggle Switch */}
-          <div className="inline-flex bg-muted rounded-xl p-1 max-w-sm mx-auto">
+          {/* Modern Pill Toggle */}
+          <div className="relative inline-flex bg-muted/80 rounded-full p-1 shadow-inner">
+            {/* Sliding Pill Background */}
+            <div 
+              className={cn(
+                "absolute top-1 h-[calc(100%-8px)] w-[calc(50%-4px)] bg-background rounded-full shadow-sm transition-all duration-300 ease-out",
+                selectedType === 'professional' ? "translate-x-[calc(100%+4px)]" : "translate-x-0"
+              )}
+            />
+            
+            {/* Toggle Buttons */}
             <button
               onClick={() => onSelectType('artist')}
               className={cn(
-                "flex-1 flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                "relative z-10 px-6 py-2.5 text-sm font-medium transition-colors duration-200 rounded-full min-w-[100px]",
                 selectedType === 'artist' || !selectedType
-                  ? "bg-white shadow-sm text-foreground"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Mic className="h-4 w-4 mr-2" />
               Artiste
             </button>
             <button
               onClick={() => onSelectType('professional')}
               className={cn(
-                "flex-1 flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                "relative z-10 px-6 py-2.5 text-sm font-medium transition-colors duration-200 rounded-full min-w-[100px]",
                 selectedType === 'professional'
-                  ? "bg-white shadow-sm text-foreground"
+                  ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Globe className="h-4 w-4 mr-2" />
               Professionnel
             </button>
           </div>
-          
-          <p className="text-xs text-muted-foreground mt-4">
-            Choisissez votre profil pour voir les fonctionnalités dédiées
-          </p>
         </div>
       </div>
     </section>
