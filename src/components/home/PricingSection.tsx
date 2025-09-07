@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Check, Star, Crown, Zap } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Check, Star, Crown, Zap, Plus } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 import { useUserType } from '@/hooks/useUserType';
+import { usePremiumVisibility } from '@/hooks/usePremiumVisibility';
+import { useAuth } from '@/hooks/useAuth';
 
-const allPlans = [{
+const allPlans = [
+{
   name: "Artistes",
   price: "9",
   period: "mois",
@@ -16,13 +20,27 @@ const allPlans = [{
   icon: Star,
   gradient: "from-lyrical-600 to-lyrical-700",
   userType: "artist"
-}, {
+}, 
+{
+  name: "Premium Visibilité",
+  price: "29",
+  period: "mois",
+  description: "Add-on pour apparaître sur les pages publiques",
+  features: ["Visible par les visiteurs non connectés", "Apparaît dans les pages publiques", "Priorité dans les résultats de recherche", "Badge premium sur votre profil", "Boost de visibilité", "Analytics premium"],
+  popular: true,
+  cta: "Activer la visibilité premium",
+  icon: Crown,
+  gradient: "from-amber-600 to-amber-700",
+  userType: "artist",
+  isPremiumAddon: true
+},
+{
   name: "Professionnel",
   price: "49",
   period: "mois",
   description: "Pour les professionnels en quête de talents",
   features: ["Accès complet à la base d'artistes", "Recherche avancée illimitée", "Création d'événements et castings", "Messagerie directe avec artistes", "Outils de gestion de candidatures", "Tableau de bord analytique", "Support dédié"],
-  popular: true,
+  popular: false,
   cta: "Accéder à l'espace Pro",
   icon: Crown,
   gradient: "from-gold-500 to-gold-600",
@@ -36,7 +54,9 @@ interface PricingSectionProps {
 const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
   const headerRef = useAnimateOnScroll();
   const bottomRef = useAnimateOnScroll();
-  const { userType, isProfessional } = useUserType();
+  const { userType, isProfessional, artistProfile } = useUserType();
+  const { createPremium, isCreatingPremium } = usePremiumVisibility();
+  const { user } = useAuth();
   
   // Filter plans based on selected user type or authenticated user type
   const getFilteredPlans = () => {
@@ -55,6 +75,20 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
   };
   
   const plans = getFilteredPlans();
+  
+  // Handle premium visibility subscription
+  const handlePremiumVisibility = () => {
+    if (!user || !artistProfile) {
+      // Redirect to auth if not logged in
+      window.location.href = '/auth';
+      return;
+    }
+    
+    createPremium({ 
+      profileType: 'artist', 
+      profileId: artistProfile.id 
+    });
+  };
   
   return <section className="py-24 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4 md:px-6">
@@ -81,12 +115,26 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
                 <div 
                   ref={cardRef}
                   key={plan.name} 
-                  className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'}`}
+                  className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-amber-200 bg-gradient-to-br from-amber-50/50 to-orange-50/30' : ''}`}
                 >
               {/* Popular Badge */}
-              {plan.popular && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  
-                </div>}
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+                    ✨ Recommandé
+                  </Badge>
+                </div>
+              )}
+
+              {/* Premium Add-on Badge */}
+              {plan.isPremiumAddon && (
+                <div className="absolute -top-3 right-6">
+                  <Badge variant="outline" className="border-amber-300 text-amber-700 bg-amber-100">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add-on
+                  </Badge>
+                </div>
+              )}
 
               {/* Plan Header */}
               <div className="text-center mb-8">
@@ -101,22 +149,47 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
                   <span className="text-4xl font-bold">{plan.price}€</span>
                   <span className="text-muted-foreground">/ {plan.period}</span>
                 </div>
+                
+                {plan.isPremiumAddon && (
+                  <p className="text-xs text-amber-600 mt-2">
+                    En complément de votre abonnement principal
+                  </p>
+                )}
               </div>
 
               {/* Features */}
               <div className="space-y-4 mb-8">
-                {plan.features.map((feature, featureIndex) => <div key={featureIndex} className="flex items-start space-x-3">
+                {plan.features.map((feature, featureIndex) => (
+                  <div key={featureIndex} className="flex items-start space-x-3">
                     <div className={`mt-1 p-1 rounded-full bg-gradient-to-r ${plan.gradient}`}>
                       <Check className="h-3 w-3 text-white" />
                     </div>
                     <span className="text-sm">{feature}</span>
-                  </div>)}
+                  </div>
+                ))}
               </div>
 
               {/* CTA */}
-              <Button className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`} asChild>
-                <Link to="/pricing">{plan.cta}</Link>
-              </Button>
+              {plan.isPremiumAddon ? (
+                <Button 
+                  onClick={handlePremiumVisibility}
+                  disabled={isCreatingPremium}
+                  className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`}
+                >
+                  {isCreatingPremium ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Activation...
+                    </>
+                  ) : (
+                    plan.cta
+                  )}
+                </Button>
+              ) : (
+                <Button className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`} asChild>
+                  <Link to="/pricing">{plan.cta}</Link>
+                </Button>
+              )}
 
               {/* Additional Info */}
               <p className="text-center text-xs text-muted-foreground mt-4">
