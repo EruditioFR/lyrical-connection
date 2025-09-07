@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import AuthenticatedHome from '@/components/home/AuthenticatedHome';
 import HeroModern from '@/components/home/HeroModern';
-import FeaturesDetailed from '@/components/home/FeaturesDetailed';
+import UserTypeSelector from '@/components/home/UserTypeSelector';
+import FeaturesArtists from '@/components/home/FeaturesArtists';
+import FeaturesProfessionals from '@/components/home/FeaturesProfessionals';
 import FeaturedArtists from '@/components/home/FeaturedArtists';
 import FeaturedEvents from '@/components/home/FeaturedEvents';
 import UpcomingEvents from '@/components/home/UpcomingEvents';
@@ -15,6 +17,7 @@ import Layout from '@/components/layout/Layout';
 
 const Index = () => {
   const { user, loading } = useAuth();
+  const [selectedUserType, setSelectedUserType] = useState<'artist' | 'professional' | null>(null);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -38,14 +41,42 @@ const Index = () => {
   return (
     <Layout>
       <HeroModern />
-      <FeaturesDetailed />
-      <FeaturedArtists />
-      <FeaturedEvents />
-      <UpcomingEvents />
-      <PricingSection />
-      <PortalsSection />
-      <TestimonialsSection />
-      <CtaSection />
+      <UserTypeSelector 
+        selectedType={selectedUserType}
+        onSelectType={setSelectedUserType}
+        onBack={() => setSelectedUserType(null)}
+      />
+      
+      {selectedUserType === 'artist' && (
+        <>
+          <FeaturesArtists />
+          <FeaturedArtists />
+          <UpcomingEvents />
+          <PricingSection />
+          <TestimonialsSection />
+          <CtaSection />
+        </>
+      )}
+      
+      {selectedUserType === 'professional' && (
+        <>
+          <FeaturesProfessionals />
+          <FeaturedEvents />
+          <PricingSection />
+          <TestimonialsSection />
+          <CtaSection />
+        </>
+      )}
+      
+      {!selectedUserType && (
+        <>
+          <FeaturedArtists />
+          <FeaturedEvents />
+          <UpcomingEvents />
+          <PortalsSection />
+          <TestimonialsSection />
+        </>
+      )}
     </Layout>
   );
 };
