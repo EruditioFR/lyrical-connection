@@ -262,7 +262,7 @@ const Navbar = () => {
                       Messages
                     </Link>
                     <Link
-                      to="/artists"
+                      to="/artistes"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -277,7 +277,7 @@ const Navbar = () => {
                       Menu Artiste
                     </div>
                     <Link
-                      to="/events"
+                      to="/evenements"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -328,7 +328,7 @@ const Navbar = () => {
                   Accueil
                 </Link>
                 <Link
-                  to="/events"
+                  to="/evenements"
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -342,7 +342,7 @@ const Navbar = () => {
                   Castings
                 </Link>
                 <Link
-                  to="/artists"
+                  to="/artistes"
                   className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
