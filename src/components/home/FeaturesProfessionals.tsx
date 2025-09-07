@@ -91,9 +91,9 @@ const FeaturesProfessionals = () => {
                   key={index} 
                   className="h-full hover:shadow-lg transition-all duration-300 ease-out text-appear border-border/50 hover:border-border group"
                 >
-                  <CardContent className="p-6 h-full flex flex-col">
+                  <CardContent className="p-6 h-full flex flex-col text-center">
                     {/* Icon */}
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto ${
                       isLyrical 
                         ? "bg-gradient-to-br from-lyrical-100 to-lyrical-200 group-hover:from-lyrical-200 group-hover:to-lyrical-300" 
                         : "bg-gradient-to-br from-gold-100 to-gold-200 group-hover:from-gold-200 group-hover:to-gold-300"
@@ -105,7 +105,7 @@ const FeaturesProfessionals = () => {
                     
                     {/* Content */}
                     <div className="flex-1">
-                      <h4 className="font-semibold text-lg mb-3 text-foreground group-hover:text-primary transition-colors">
+                      <h4 className="font-semibold text-xl mb-3 text-foreground group-hover:text-primary transition-colors">
                         {feature.title}
                       </h4>
                       <p className="text-muted-foreground text-sm leading-relaxed">
