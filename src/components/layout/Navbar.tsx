@@ -103,7 +103,7 @@ const Navbar = () => {
     };
   }, []);
 
-    return <nav className="bg-white shadow-sm border-b relative" ref={navRef}>
+    return <nav className="bg-white shadow-sm border-b sticky top-0 z-50" ref={navRef}>
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between min-h-[64px]">
         {/* Logo */}
         <Link to="/" className="flex items-center text-xl font-semibold text-gray-900">Lyrisphere</Link>
@@ -224,7 +224,7 @@ const Navbar = () => {
 
       {/* Menu Mobile */}
       {isMobile && isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg absolute top-full left-0 right-0 z-40">
           <div className="px-4 py-3 space-y-3">
             {user ? (
               <>
