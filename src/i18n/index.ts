@@ -41,7 +41,7 @@ const resources = {
     },
     home: {
       hero: {
-        title: 'Connectez les talents lyriques aux opportunités',
+        title: 'Connecte les talents lyriques aux opportunités',
         subtitle: 'La première plateforme dédiée aux chanteurs lyriques et aux professionnels de l\'opéra. Créez votre profil, découvrez des opportunités et développez votre carrière.',
         createProfile: 'Créer mon profil',
         discoverArtists: 'Découvrir les artistes',
