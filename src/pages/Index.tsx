@@ -52,7 +52,7 @@ const Index = () => {
           <FeaturesArtists />
           <FeaturedArtists />
           <UpcomingEvents />
-          <PricingSection />
+          <PricingSection selectedUserType="artist" />
           <TestimonialsSection />
           <CtaSection />
         </>
@@ -62,7 +62,7 @@ const Index = () => {
         <>
           <FeaturesProfessionals />
           <FeaturedEvents />
-          <PricingSection />
+          <PricingSection selectedUserType="professional" />
           <TestimonialsSection />
           <CtaSection />
         </>

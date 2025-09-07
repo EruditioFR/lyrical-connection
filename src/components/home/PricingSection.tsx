@@ -29,13 +29,23 @@ const allPlans = [{
   userType: "professional"
 }];
 
-const PricingSection = () => {
+interface PricingSectionProps {
+  selectedUserType?: 'artist' | 'professional' | null;
+}
+
+const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
   const headerRef = useAnimateOnScroll();
   const bottomRef = useAnimateOnScroll();
   const { userType, isProfessional } = useUserType();
   
-  // Filter plans based on user type
+  // Filter plans based on selected user type or authenticated user type
   const getFilteredPlans = () => {
+    // If a user type is selected on homepage, filter by that
+    if (selectedUserType) {
+      return allPlans.filter(plan => plan.userType === selectedUserType);
+    }
+    
+    // Otherwise use the existing logic for authenticated users
     if (isProfessional) {
       // Professionals only see their plan
       return allPlans.filter(plan => plan.userType === "professional");
