@@ -85,7 +85,7 @@ const FeaturesProfessionals = () => {
                 <div 
                   ref={cardRef} 
                   key={index} 
-                  className="relative h-52 md:h-60 lg:h-72 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ease-out hover:scale-[1.02] text-appear group"
+                  className="relative h-40 md:h-48 lg:h-56 rounded-lg overflow-hidden shadow-md transition-shadow duration-300 ease-out text-appear"
                   style={{
                     backgroundImage: `url(${feature.image})`,
                     backgroundSize: 'cover',
@@ -93,13 +93,13 @@ const FeaturesProfessionals = () => {
                   }}
                   aria-label={feature.title}
                 >
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gold-900/90 via-gold-800/40 to-transparent group-hover:from-gold-900/80 group-hover:via-gold-800/30 transition-all duration-300"></div>
+                  {/* Neutral Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                   
                   {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h4 className="font-serif font-semibold text-lg mb-3 text-white">{feature.title}</h4>
-                    <p className="text-white/90 text-sm leading-relaxed">{feature.description}</p>
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <h4 className="font-semibold text-base mb-2 text-white">{feature.title}</h4>
+                    <p className="text-white text-sm leading-relaxed">{feature.description}</p>
                   </div>
                 </div>
               );
