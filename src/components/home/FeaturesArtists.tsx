@@ -62,8 +62,8 @@ const FeaturesArtists = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <div ref={sectionRef} className="text-appear">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4">Fonctionnalités pour les Artistes</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif font-bold mb-4 leading-tight">Fonctionnalités pour les Artistes</h2>
+            <p className="text-foreground/80 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
               Développez votre carrière avec des outils professionnels de promotion et de networking
             </p>
           </div>
@@ -75,7 +75,7 @@ const FeaturesArtists = () => {
         </div>
         
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {artistFeatures.map((feature, index) => {
             const FeatureCard = () => {
               const cardRef = useAnimateOnScroll();
@@ -88,7 +88,7 @@ const FeaturesArtists = () => {
                   key={index} 
                   className="h-full hover:shadow-lg transition-all duration-300 ease-out text-appear border-border/50 hover:border-border group"
                 >
-                  <CardContent className="p-6 h-full flex flex-col text-center">
+                  <CardContent className="p-4 md:p-6 h-full flex flex-col text-center">
                     {/* Icon */}
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto ${
                       isLyrical 
@@ -102,10 +102,10 @@ const FeaturesArtists = () => {
                     
                     {/* Content */}
                     <div className="flex-1">
-                      <h4 className="font-semibold text-xl mb-3 text-foreground group-hover:text-primary transition-colors">
+                      <h4 className="font-semibold text-xl md:text-2xl mb-3 text-foreground group-hover:text-primary transition-colors leading-tight">
                         {feature.title}
                       </h4>
-                      <p className="text-muted-foreground text-sm leading-relaxed">
+                      <p className="text-foreground/70 text-base md:text-sm leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
@@ -125,11 +125,11 @@ const FeaturesArtists = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div ref={ctaRef} className="mt-20 text-center bg-muted rounded-2xl p-12 text-appear">
-          <h3 className="text-2xl md:text-3xl font-serif font-bold mb-4">
+        <div ref={ctaRef} className="mt-16 md:mt-20 text-center bg-muted rounded-2xl p-6 md:p-12 text-appear">
+          <h3 className="text-xl md:text-2xl lg:text-3xl font-serif font-bold mb-4 leading-tight">
             Prêt à développer votre carrière ?
           </h3>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-foreground/80 mb-6 md:mb-8 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
             Rejoignez plus de 400 artistes lyriques qui utilisent déjà Lyrisphere 
             pour développer leur visibilité et décrocher des opportunités.
           </p>
