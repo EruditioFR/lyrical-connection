@@ -69,7 +69,7 @@ const FeaturesProfessionals = () => {
           </div>
           <div className="mt-8">
             <Button variant="outline" className="border-gold-200 hover:bg-gold-50" asChild>
-              <Link to="/auth">Accéder à l'espace pro</Link>
+              <Link to="/auth">Créez votre compte pro</Link>
             </Button>
           </div>
         </div>
@@ -120,7 +120,7 @@ const FeaturesProfessionals = () => {
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
           <Button variant="outline" className="border-gold-200 hover:bg-gold-50" asChild>
-            <Link to="/auth">Accéder à l'espace pro</Link>
+            <Link to="/auth">Créez votre compte pro</Link>
           </Button>
         </div>
 
@@ -135,7 +135,7 @@ const FeaturesProfessionals = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
-              <Link to="/auth">Accéder à l'espace pro</Link>
+              <Link to="/auth">Créez votre compte pro</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
               <Link to="/professionnels">Voir des profils pros</Link>
