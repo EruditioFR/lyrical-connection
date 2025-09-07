@@ -68,7 +68,7 @@ const FeaturesArtists = () => {
             </p>
           </div>
           <div className="mt-8">
-            <Button className="bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800" asChild>
+            <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
               <Link to="/auth">Créer mon profil artiste</Link>
             </Button>
           </div>
@@ -119,7 +119,7 @@ const FeaturesArtists = () => {
         
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
-          <Button className="bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800" asChild>
+          <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
             <Link to="/auth">Créer mon profil artiste</Link>
           </Button>
         </div>
@@ -134,7 +134,7 @@ const FeaturesArtists = () => {
             pour développer leur visibilité et décrocher des opportunités.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800 text-white" asChild>
+            <Button size="lg" className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
               <Link to="/auth">Créer mon profil gratuit</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>
