@@ -60,21 +60,18 @@ const FeaturesProfessionals = () => {
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="text-center mb-12">
           <div ref={sectionRef} className="text-appear">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="bg-gold-100 p-3 rounded-xl">
-                <Globe className="h-8 w-8 text-gold-700" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-serif font-bold">Fonctionnalités pour Professionnels</h2>
-            </div>
-            <p className="text-muted-foreground max-w-lg">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4">Fonctionnalités pour les Professionnels</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               Trouvez les talents qui correspondent exactement à vos besoins artistiques
             </p>
           </div>
-          <Button variant="outline" className="hidden md:flex border-gold-200 hover:bg-gold-50" asChild>
-            <Link to="/auth">Accéder à l'espace pro</Link>
-          </Button>
+          <div className="mt-8">
+            <Button variant="outline" className="border-gold-200 hover:bg-gold-50" asChild>
+              <Link to="/auth">Accéder à l'espace pro</Link>
+            </Button>
+          </div>
         </div>
         
         {/* Features Grid */}
