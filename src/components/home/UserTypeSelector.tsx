@@ -37,18 +37,18 @@ const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelect
   }
 
   return (
-    <section className="py-6">
+    <section className="py-8 bg-muted/10 border-y border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex justify-center">
-          {/* Ultra Simple Toggle */}
-          <div className="inline-flex bg-muted rounded-full p-0.5">
+          {/* Toggle plus visible */}
+          <div className="inline-flex bg-muted/80 rounded-full p-1 shadow-sm border border-border/30">
             <button
               onClick={() => onSelectType('artist')}
               className={cn(
-                "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
+                "px-6 py-3 text-base font-medium rounded-full transition-all duration-200 min-w-[120px]",
                 selectedType === 'artist' || !selectedType
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
               Artiste
@@ -56,13 +56,13 @@ const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelect
             <button
               onClick={() => onSelectType('professional')}
               className={cn(
-                "px-4 py-2 text-sm font-medium rounded-full transition-all duration-200",
+                "px-6 py-3 text-base font-medium rounded-full transition-all duration-200 min-w-[120px]",
                 selectedType === 'professional'
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
-              Pro
+              Professionnel
             </button>
           </div>
         </div>
