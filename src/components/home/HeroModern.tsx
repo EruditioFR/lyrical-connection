@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -25,13 +24,19 @@ const HeroModern = () => {
         <div className="flex flex-col lg:flex-row items-center min-h-[80vh]">
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-12 text-center lg:text-left text-appear pt-20">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6">
+            {/* Brand/Punchline */}
+            <div className="text-lg md:text-xl font-medium text-lyrical-600 mb-4">
               Lyrisphere
+            </div>
+            
+            {/* Main Title */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-foreground">
+              {t('hero.title')}
             </h1>
             
+            {/* Clear Description */}
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0">
-             Parce que nous croyons que la voix est un passeport universel. Parce qu’il est temps d’offrir au lyrique un élan numérique digne de sa beauté,<br />
-Nous avons créé <strong>Lyrisphere</strong>.
+              {t('hero.subtitle')}
             </p>
             
             {/* CTA Buttons */}
