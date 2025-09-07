@@ -1,50 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Mic } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Mic, 
+  User, 
+  Calendar, 
+  Eye, 
+  MessageCircle, 
+  BarChart3, 
+  FileCheck 
+} from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
-
-// Import feature images
-import artistProfileImg from '@/assets/features/artist-profile.png';
-import calendarManagementImg from '@/assets/features/calendar-management.png';
-import searchVisibilityImg from '@/assets/features/search-visibility.png';
-import communicationImg from '@/assets/features/communication.png';
-import analyticsImg from '@/assets/features/analytics.png';
-import applicationsImg from '@/assets/features/applications.png';
 
 const artistFeatures = [
   {
-    image: artistProfileImg,
+    icon: User,
     title: "Profil Artistique Complet",
     description: "Créez votre vitrine personnelle avec photos, vidéos, extraits audio et répertoire détaillé",
     color: "lyrical"
   },
   {
-    image: calendarManagementImg,
+    icon: Calendar,
     title: "Gestion d'Agenda",
     description: "Organisez vos auditions, concerts et événements avec notre calendrier intégré",
     color: "gold"
   },
   {
-    image: searchVisibilityImg,
+    icon: Eye,
     title: "Visibilité Maximale",
     description: "Soyez découvert par les professionnels grâce à notre moteur de recherche avancé",
     color: "lyrical"
   },
   {
-    image: communicationImg,
+    icon: MessageCircle,
     title: "Communication Directe",
     description: "Échangez directement avec les directeurs artistiques et agents",
     color: "gold"
   },
   {
-    image: analyticsImg,
+    icon: BarChart3,
     title: "Statistiques Détaillées",
     description: "Suivez les visites de votre profil et l'engagement de votre audience",
     color: "lyrical"
   },
   {
-    image: applicationsImg,
+    icon: FileCheck,
     title: "Candidatures Simplifiées",
     description: "Postulez aux auditions et concours en un clic avec votre profil pré-rempli",
     color: "gold"
@@ -77,31 +78,42 @@ const FeaturesArtists = () => {
         </div>
         
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {artistFeatures.map((feature, index) => {
             const FeatureCard = () => {
               const cardRef = useAnimateOnScroll();
+              const IconComponent = feature.icon;
+              const isLyrical = feature.color === "lyrical";
+              
               return (
-                <div 
+                <Card 
                   ref={cardRef} 
                   key={index} 
-                  className="relative h-40 md:h-48 lg:h-56 rounded-lg overflow-hidden shadow-md transition-shadow duration-300 ease-out text-appear"
-                  style={{
-                    backgroundImage: `url(${feature.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center'
-                  }}
-                  aria-label={feature.title}
+                  className="h-full hover:shadow-lg transition-all duration-300 ease-out text-appear border-border/50 hover:border-border group"
                 >
-                  {/* Neutral Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                  
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <h4 className="font-semibold text-base mb-2 text-white">{feature.title}</h4>
-                    <p className="text-white text-sm leading-relaxed">{feature.description}</p>
-                  </div>
-                </div>
+                  <CardContent className="p-6 h-full flex flex-col">
+                    {/* Icon */}
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 ${
+                      isLyrical 
+                        ? "bg-gradient-to-br from-lyrical-100 to-lyrical-200 group-hover:from-lyrical-200 group-hover:to-lyrical-300" 
+                        : "bg-gradient-to-br from-gold-100 to-gold-200 group-hover:from-gold-200 group-hover:to-gold-300"
+                    }`}>
+                      <IconComponent className={`h-6 w-6 ${
+                        isLyrical ? "text-lyrical-700" : "text-gold-700"
+                      }`} />
+                    </div>
+                    
+                    {/* Content */}
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-lg mb-3 text-foreground group-hover:text-primary transition-colors">
+                        {feature.title}
+                      </h4>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               );
             };
             return <FeatureCard key={index} />;
