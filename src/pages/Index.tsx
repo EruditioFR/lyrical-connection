@@ -17,7 +17,7 @@ import Layout from '@/components/layout/Layout';
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const [selectedUserType, setSelectedUserType] = useState<'artist' | 'professional' | null>(null);
+  const [selectedUserType, setSelectedUserType] = useState<'artist' | 'professional' | null>('artist');
 
   // Show loading state while checking authentication
   if (loading) {
