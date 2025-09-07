@@ -104,7 +104,7 @@ const NavigationBreadcrumb: React.FC = () => {
       <Breadcrumb>
         <BreadcrumbList>
           {breadcrumbs.map((crumb, index) => (
-            <React.Fragment key={crumb.path}>
+            <div key={crumb.path} className="contents">
               <BreadcrumbItem>
                 {index === breadcrumbs.length - 1 ? (
                   <BreadcrumbPage className="flex items-center gap-2">
@@ -121,7 +121,7 @@ const NavigationBreadcrumb: React.FC = () => {
                 )}
               </BreadcrumbItem>
               {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-            </React.Fragment>
+            </div>
           ))}
         </BreadcrumbList>
       </Breadcrumb>
