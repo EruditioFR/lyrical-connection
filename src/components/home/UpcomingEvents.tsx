@@ -67,14 +67,12 @@ const UpcomingEvents = () => {
   return (
     <section className="bg-muted py-20">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold">Événements à venir</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl">
-              Participez à des événements exclusifs et découvrez les talents lyriques en live.
-            </p>
-          </div>
-          <Button variant="link" className="flex items-center mt-4 md:mt-0" asChild>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold">Événements à venir</h2>
+          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+            Participez à des événements exclusifs et découvrez les talents lyriques en live.
+          </p>
+          <Button variant="link" className="flex items-center justify-center mt-4" asChild>
             <Link to="/evenements">
               Voir tous les événements
               <ArrowRight className="ml-2 h-4 w-4" />
