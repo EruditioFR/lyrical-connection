@@ -61,7 +61,10 @@ const AdminArtistProfileDialog = ({ account, onAccountUpdated }: AdminArtistProf
 
   useEffect(() => {
     if (open) {
-      console.log('Loading artist profile data:', account);
+      console.log('=== ADMIN ARTIST DIALOG OPENED ===');
+      console.log('Full account data:', JSON.stringify(account, null, 2));
+      console.log('Available properties:', Object.keys(account));
+      
       setFormData({
         stage_name: account.stage_name || '',
         bio: account.bio || '',
@@ -76,6 +79,22 @@ const AdminArtistProfileDialog = ({ account, onAccountUpdated }: AdminArtistProf
         gender: account.gender || '',
         spoken_languages: account.spoken_languages || [],
         project_description: account.project_description || ''
+      });
+      
+      console.log('Form data after setting:', {
+        stage_name: account.stage_name,
+        bio: account.bio,
+        voice_type: account.voice_type,
+        experience_years: account.experience_years,
+        contact_email: account.contact_email,
+        phone: account.phone,
+        location: account.location,
+        website: account.website,
+        nationality: account.nationality,
+        birth_date: account.birth_date,
+        gender: account.gender,
+        spoken_languages: account.spoken_languages,
+        project_description: account.project_description
       });
     }
   }, [account, open]);
