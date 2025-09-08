@@ -49,30 +49,29 @@ const ResetPassword = () => {
           return;
         }
         
-        // Si nous avons un token d'accès, essayer de l'échanger
-        if (accessToken && type === 'recovery') {
-          console.log('Tentative d\'échange du token de récupération...');
-          const { data, error } = await supabase.auth.exchangeCodeForSession(accessToken);
+        // Si nous avons des tokens de récupération, essayer de les utiliser
+        if ((accessToken || refreshToken) && type === 'recovery') {
+          console.log('Tentative d\'utilisation des tokens de récupération...');
           
-          if (error) {
-            console.error('Erreur lors de l\'échange du token:', error);
-            if (retryCount < maxRetries) {
-              retryCount++;
-              console.log(`Nouvelle tentative ${retryCount}/${maxRetries} dans ${retryDelay}ms...`);
-              setTimeout(checkResetSession, retryDelay);
-              return;
-            } else {
-              setIsValidSession(false);
-              setCheckingSession(false);
-              return;
+          try {
+            // Pour les liens de récupération, essayer de définir la session directement
+            if (accessToken && refreshToken) {
+              const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken
+              });
+              
+              if (error) {
+                console.error('Erreur lors de la définition de la session:', error);
+              } else if (data.session) {
+                console.log('Session de récupération établie avec succès');
+                setIsValidSession(true);
+                setCheckingSession(false);
+                return;
+              }
             }
-          }
-          
-          if (data.session) {
-            console.log('Session de récupération établie avec succès');
-            setIsValidSession(true);
-            setCheckingSession(false);
-            return;
+          } catch (error) {
+            console.error('Erreur lors de la configuration de la session:', error);
           }
         }
         
