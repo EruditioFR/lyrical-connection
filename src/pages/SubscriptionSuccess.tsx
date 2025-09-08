@@ -3,8 +3,9 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Users, Calendar, Mail, Star } from "lucide-react";
+import { CheckCircle, Users, Calendar, Mail, Star, User, Eye, MessageCircle, BarChart3, FileCheck, Database, Search } from "lucide-react";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useUserType } from "@/hooks/useUserType";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function SubscriptionSuccess() {
@@ -12,6 +13,7 @@ export default function SubscriptionSuccess() {
   const navigate = useNavigate();
   const sessionId = searchParams.get('session_id');
   const { checkSubscriptionStatus, subscription } = useSubscription();
+  const { userType, isLoading: userTypeLoading } = useUserType();
 
   useEffect(() => {
     // Check subscription status when arriving on success page
@@ -23,9 +25,42 @@ export default function SubscriptionSuccess() {
     }
   }, [sessionId]);
 
-  const features = [
+  const artistFeatures = [
     {
-      icon: Users,
+      icon: User,
+      title: "Complétez votre profil artistique",
+      description: "Ajoutez vos photos, vidéos, extraits audio et répertoire détaillé",
+      path: "/profil"
+    },
+    {
+      icon: Eye,
+      title: "Maximisez votre visibilité",
+      description: "Votre profil sera mis en avant dans les résultats de recherche",
+      path: "/profil"
+    },
+    {
+      icon: FileCheck,
+      title: "Postulez aux auditions",
+      description: "Recherchez et candidatez aux castings et événements",
+      path: "/castings"
+    },
+    {
+      icon: MessageCircle,
+      title: "Échangez avec les professionnels",
+      description: "Communiquez directement avec les directeurs artistiques",
+      path: "/messages"
+    },
+    {
+      icon: BarChart3,
+      title: "Suivez vos statistiques",
+      description: "Consultez les visites de votre profil et votre engagement",
+      path: "/dashboard"
+    }
+  ];
+
+  const professionalFeatures = [
+    {
+      icon: Database,
       title: "Recherche d'artistes avancée",
       description: "Accédez à notre base de données complète d'artistes lyriques",
       path: "/recherche-artistes"
@@ -37,18 +72,26 @@ export default function SubscriptionSuccess() {
       path: "/evenements/nouveau"
     },
     {
+      icon: Users,
+      title: "Outils de casting",
+      description: "Créez des appels à candidatures et gérez les réponses",
+      path: "/castings/nouveau"
+    },
+    {
       icon: Mail,
       title: "Messagerie professionnelle",
-      description: "Communiquez directement avec les artistes et professionnels",
+      description: "Communiquez directement avec les artistes",
       path: "/messages"
     },
     {
-      icon: Star,
-      title: "Visibilité premium",
-      description: "Votre profil mis en avant dans les résultats de recherche",
-      path: "/profil"
+      icon: BarChart3,
+      title: "Tableau de bord professionnel",
+      description: "Suivez vos statistiques et candidatures reçues",
+      path: "/dashboard"
     }
   ];
+
+  const features = userType === 'artist' ? artistFeatures : professionalFeatures;
 
   return (
     <Layout>
