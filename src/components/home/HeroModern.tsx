@@ -25,7 +25,7 @@ const HeroModern = () => {
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-16 xl:pr-20 text-center lg:text-left text-appear">
             {/* Brand/Punchline - Responsive sizing */}
-            <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white lg:text-transparent lg:bg-gradient-to-r lg:from-lyrical-600 lg:to-gold-500 lg:bg-clip-text mb-4 lg:mb-6 tracking-wide drop-shadow-2xl leading-tight">
+            <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white lg:text-transparent lg:bg-gradient-to-r lg:from-lyrical-600 lg:to-gold-500 lg:bg-clip-text mb-4 lg:mb-6 tracking-wide drop-shadow-2xl" style={{lineHeight: '1.4'}}>
               Lyrisphere
             </div>
             
