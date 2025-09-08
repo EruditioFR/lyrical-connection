@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
 import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle, Shield, Clock, ExternalLink, ArrowRight, Star, Users, Building } from 'lucide-react';
 import { cn } from "@/lib/utils";
+
+// Composant Auth refactorisé sans Tabs
 const professionalRoles = [{
   value: 'casting_director',
   label: 'Directeur de casting / Directeur artistique'
