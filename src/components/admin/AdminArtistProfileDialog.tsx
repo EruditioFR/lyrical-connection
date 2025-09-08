@@ -124,6 +124,16 @@ const AdminArtistProfileDialog = ({ account, onAccountUpdated }: AdminArtistProf
       };
 
       console.log('Prepared artist update data:', updateData);
+      console.log('Current user auth.uid():', (await supabase.auth.getUser()).data.user?.id);
+      console.log('Trying to update profile with ID:', account.id);
+
+      // Vérifier d'abord les permissions admin
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id);
+      
+      console.log('User roles:', userRoles, 'Error:', rolesError);
 
       const { data, error } = await supabase
         .from('artist_profiles')
