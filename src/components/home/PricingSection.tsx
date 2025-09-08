@@ -14,7 +14,7 @@ const allPlans = [
   price: "9",
   period: "mois",
   description: "Pour les artistes qui veulent maximiser leur visibilité",
-  features: ["Profil artistique complet", "Upload illimité audio/vidéo", "Statistiques détaillées", "Réponse prioritaire aux castings", "Badge 'Artiste Vérifié'", "Support client prioritaire"],
+  features: ["Profil artistique complet", "Upload illimité audio/vidéo", "Statistiques détaillées", "Accès au support client"],
   popular: false,
   cta: "Devenir Premium",
   icon: Star,
