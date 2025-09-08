@@ -86,33 +86,58 @@ export default function Pricing() {
       return basePlans;
     }
 
-    // Use selectedUserType from toggle first, then fallback to other sources
-    const effectiveUserType = selectedUserType || 
-                             userTypeParam || 
-                             (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
-                             user?.user_metadata?.user_type;
-
-    console.log('effectiveUserType:', effectiveUserType);
-
-    if (effectiveUserType === 'artist') {
-      // Artist: show only Artistes and Premium Visibilité (no Gratuit, no Professionnels)
-      console.log('Showing artist plans');
-      const artistPlans = basePlans.filter(plan => 
+    // Priority 1: Use selectedUserType from toggle (always takes precedence)
+    if (selectedUserType === 'artist') {
+      console.log('Toggle: Showing artist plans');
+      return basePlans.filter(plan => 
         plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
       );
-      return artistPlans;
     }
     
-    if (effectiveUserType === 'professional') {
-      // Professional: show only Professionnels (no Gratuit, no Artistes, no Premium)
-      console.log('Showing professional plans');
+    if (selectedUserType === 'professional') {
+      console.log('Toggle: Showing professional plans');
       return basePlans.filter(plan => 
         plan.name === 'Professionnels'
       );
     }
     
-    // No profile yet or unknown: show all base plans (no premium artist plan)
-    console.log('Showing base plans for unknown user type');
+    // Priority 2: Use URL parameter (for signup flow)
+    if (userTypeParam === 'artist') {
+      console.log('URL param: Showing artist plans');
+      return basePlans.filter(plan => 
+        plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
+      );
+    }
+    
+    if (userTypeParam === 'professional') {
+      console.log('URL param: Showing professional plans');
+      return basePlans.filter(plan => 
+        plan.name === 'Professionnels'
+      );
+    }
+    
+    // Priority 3: Use user data (if logged in)
+    if (user && !userTypeLoading) {
+      const userType = (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
+                      user?.user_metadata?.user_type;
+                      
+      if (userType === 'artist') {
+        console.log('User data: Showing artist plans');
+        return basePlans.filter(plan => 
+          plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
+        );
+      }
+      
+      if (userType === 'professional') {
+        console.log('User data: Showing professional plans');
+        return basePlans.filter(plan => 
+          plan.name === 'Professionnels'
+        );
+      }
+    }
+    
+    // Default: show all base plans
+    console.log('Default: Showing all base plans');
     return basePlans;
   };
 
