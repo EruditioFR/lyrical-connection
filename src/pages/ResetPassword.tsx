@@ -22,39 +22,119 @@ const ResetPassword = () => {
   });
 
   useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 seconde
+
     const checkResetSession = async () => {
       try {
-        // Vérifier si nous avons une session valide suite à un lien de réinitialisation
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Erreur session:', error);
-          setIsValidSession(false);
-          return;
-        }
-
-        // Vérifier si c'est bien une session de réinitialisation de mot de passe
-        // En regardant les paramètres de l'URL ou la session
+        // D'abord vérifier les paramètres URL
         const accessToken = searchParams.get('access_token');
         const refreshToken = searchParams.get('refresh_token');
         const type = searchParams.get('type');
         
+        console.log('=== DEBUG RESET PASSWORD ===');
+        console.log('URL complète:', window.location.href);
+        console.log('Paramètres URL:', {
+          accessToken: accessToken ? `${accessToken.substring(0, 20)}...` : 'absent',
+          refreshToken: refreshToken ? `${refreshToken.substring(0, 20)}...` : 'absent',
+          type
+        });
+        
+        // Si aucun paramètre de récupération n'est présent, lien invalide
+        if (!accessToken && !refreshToken && type !== 'recovery') {
+          console.log('Aucun paramètre de récupération trouvé');
+          setIsValidSession(false);
+          setCheckingSession(false);
+          return;
+        }
+        
+        // Si nous avons un token d'accès, essayer de l'échanger
+        if (accessToken && type === 'recovery') {
+          console.log('Tentative d\'échange du token de récupération...');
+          const { data, error } = await supabase.auth.exchangeCodeForSession(accessToken);
+          
+          if (error) {
+            console.error('Erreur lors de l\'échange du token:', error);
+            if (retryCount < maxRetries) {
+              retryCount++;
+              console.log(`Nouvelle tentative ${retryCount}/${maxRetries} dans ${retryDelay}ms...`);
+              setTimeout(checkResetSession, retryDelay);
+              return;
+            } else {
+              setIsValidSession(false);
+              setCheckingSession(false);
+              return;
+            }
+          }
+          
+          if (data.session) {
+            console.log('Session de récupération établie avec succès');
+            setIsValidSession(true);
+            setCheckingSession(false);
+            return;
+          }
+        }
+        
+        // Vérifier la session courante
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Erreur session:', sessionError);
+          
+          // Si c'est la première tentative et qu'on a des tokens, essayer encore
+          if (retryCount < maxRetries && (accessToken || refreshToken)) {
+            retryCount++;
+            console.log(`Session pas encore prête, nouvelle tentative ${retryCount}/${maxRetries} dans ${retryDelay}ms...`);
+            setTimeout(checkResetSession, retryDelay);
+            return;
+          }
+          
+          setIsValidSession(false);
+          setCheckingSession(false);
+          return;
+        }
+
+        console.log('Session trouvée:', session ? 'OUI' : 'NON');
+        console.log('Session user:', session?.user?.email);
+        
+        // Si on a une session et des paramètres de récupération, c'est valide
         if (session && (type === 'recovery' || accessToken || refreshToken)) {
+          console.log('Session de réinitialisation valide');
           setIsValidSession(true);
+        } else if (!session && (accessToken || refreshToken) && retryCount < maxRetries) {
+          // Session pas encore établie, réessayer
+          retryCount++;
+          console.log(`Session pas encore établie, nouvelle tentative ${retryCount}/${maxRetries} dans ${retryDelay}ms...`);
+          setTimeout(checkResetSession, retryDelay);
+          return;
         } else {
+          console.log('Session invalide');
           setIsValidSession(false);
           toast({
             title: "Lien invalide",
-            description: "Ce lien de réinitialisation est invalide ou a expiré.",
+            description: "Ce lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
             variant: "destructive"
           });
           setTimeout(() => navigate('/auth'), 3000);
         }
       } catch (error) {
         console.error('Erreur lors de la vérification:', error);
+        
+        // Réessayer si pas déjà fait
+        if (retryCount < maxRetries) {
+          retryCount++;
+          console.log(`Erreur, nouvelle tentative ${retryCount}/${maxRetries} dans ${retryDelay}ms...`);
+          setTimeout(checkResetSession, retryDelay);
+          return;
+        }
+        
         setIsValidSession(false);
       } finally {
-        setCheckingSession(false);
+        // Ne set checkingSession à false que si on ne va pas réessayer
+        if (retryCount >= maxRetries) {
+          setCheckingSession(false);
+        }
       }
     };
 
