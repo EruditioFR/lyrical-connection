@@ -156,32 +156,60 @@ const ResetPassword = () => {
 
     setLoading(true);
     try {
-      // Récupérer le token depuis l'URL pour l'utiliser dans la mise à jour
+      // Récupérer le token depuis l'URL
       const accessToken = searchParams.get('access_token');
       
       if (accessToken) {
-        // Utiliser le token de récupération pour authentifier la demande
-        const { error } = await supabase.auth.updateUser({
-          password: passwordForm.password
+        console.log('Utilisation du token de récupération pour établir une session temporaire...');
+        
+        // D'abord, vérifier le token de récupération pour établir une session temporaire
+        const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
+          token_hash: accessToken,
+          type: 'recovery'
         });
 
-        if (error) {
+        if (verifyError) {
+          console.error('Erreur lors de la vérification du token:', verifyError);
           toast({
             title: "Erreur",
-            description: error.message,
+            description: "Token de récupération invalide ou expiré",
             variant: "destructive"
           });
+          return;
+        }
+
+        if (verifyData.session) {
+          console.log('Session temporaire établie, mise à jour du mot de passe...');
+          
+          // Maintenant qu'on a une session, mettre à jour le mot de passe
+          const { error: updateError } = await supabase.auth.updateUser({
+            password: passwordForm.password
+          });
+
+          if (updateError) {
+            toast({
+              title: "Erreur",
+              description: updateError.message,
+              variant: "destructive"
+            });
+          } else {
+            toast({
+              title: "Mot de passe modifié",
+              description: "Votre mot de passe a été modifié avec succès. Vous allez être redirigé."
+            });
+            
+            // Déconnecter l'utilisateur et le rediriger vers la page de connexion
+            await supabase.auth.signOut();
+            setTimeout(() => {
+              navigate('/auth?message=password-changed');
+            }, 2000);
+          }
         } else {
           toast({
-            title: "Mot de passe modifié",
-            description: "Votre mot de passe a été modifié avec succès. Vous allez être redirigé."
+            title: "Erreur",
+            description: "Impossible d'établir une session avec le token de récupération",
+            variant: "destructive"
           });
-          
-          // Déconnecter l'utilisateur et le rediriger vers la page de connexion
-          await supabase.auth.signOut();
-          setTimeout(() => {
-            navigate('/auth?message=password-changed');
-          }, 2000);
         }
       } else {
         toast({
