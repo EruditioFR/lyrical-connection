@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Music, BookOpen, Mic, Archive, Eye, Edit, Trash2, FileText } from 'lucide-react';
+import { Search, Plus, Music, BookOpen, Mic, Archive, Eye, Edit, Trash2, FileText, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +36,7 @@ import { useComposers } from '@/hooks/useComposers';
 import { useOpenOpusImport } from '@/hooks/useOpenOpusImport';
 import AriaDialog from './AriaDialog';
 import AdvancedCsvImportDialog from './AdvancedCsvImportDialog';
+import AutomatedDataImportSystem from './AutomatedDataImportSystem';
 
 const OperaDatabaseManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,6 +49,7 @@ const OperaDatabaseManager = () => {
   const [importQuery, setImportQuery] = useState('');
   const [importMode, setImportMode] = useState<'composers' | 'works' | 'all'>('all');
   const [advancedImportOpen, setAdvancedImportOpen] = useState(false);
+  const [automatedSystemOpen, setAutomatedSystemOpen] = useState(false);
 
   const { works } = useLyricalWorks();
   const { roles } = useWorkRoles();
@@ -195,6 +197,14 @@ const OperaDatabaseManager = () => {
                 <SelectItem value="works">Œuvres</SelectItem>
               </SelectContent>
             </Select>
+            <Button 
+              onClick={() => setAutomatedSystemOpen(true)} 
+              variant="default"
+              className="gap-2"
+            >
+              <Zap className="h-4 w-4" />
+              Import Automatisé
+            </Button>
             <Button 
               onClick={handleImportFromOpenOpus} 
               disabled={isImporting}
@@ -582,6 +592,28 @@ const OperaDatabaseManager = () => {
         onOpenChange={setAdvancedImportOpen}
         onImportSuccess={() => window.location.reload()}
       />
+
+      {automatedSystemOpen && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm overflow-y-auto">
+          <div className="container mx-auto p-6 max-w-6xl">
+            <div className="bg-background border rounded-lg shadow-lg">
+              <div className="flex items-center justify-between p-4 border-b">
+                <h2 className="text-lg font-semibold">Système d'Import Automatisé</h2>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setAutomatedSystemOpen(false)}
+                >
+                  ×
+                </Button>
+              </div>
+              <div className="p-6">
+                <AutomatedDataImportSystem />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <AlertDialog open={!!deletingAria} onOpenChange={() => setDeletingAria(null)}>
         <AlertDialogContent>
