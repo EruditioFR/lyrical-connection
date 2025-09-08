@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
-import { Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Lock, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -20,6 +20,8 @@ const ResetPassword = () => {
     password: '',
     confirmPassword: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     let retryCount = 0;
@@ -298,33 +300,53 @@ const ResetPassword = () => {
               <form onSubmit={handlePasswordReset} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="password">Nouveau mot de passe</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="Minimum 8 caractères"
-                    value={passwordForm.password} 
-                    onChange={e => setPasswordForm({
-                      ...passwordForm,
-                      password: e.target.value
-                    })} 
-                    required 
-                    minLength={8}
-                  />
+                  <div className="relative">
+                    <Input 
+                      id="password" 
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Minimum 8 caractères"
+                      value={passwordForm.password} 
+                      onChange={e => setPasswordForm({
+                        ...passwordForm,
+                        password: e.target.value
+                      })} 
+                      required 
+                      minLength={8}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirmer le mot de passe</Label>
-                  <Input 
-                    id="confirmPassword" 
-                    type="password" 
-                    placeholder="Répétez le nouveau mot de passe"
-                    value={passwordForm.confirmPassword} 
-                    onChange={e => setPasswordForm({
-                      ...passwordForm,
-                      confirmPassword: e.target.value
-                    })} 
-                    required 
-                    minLength={8}
-                  />
+                  <div className="relative">
+                    <Input 
+                      id="confirmPassword" 
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Répétez le nouveau mot de passe"
+                      value={passwordForm.confirmPassword} 
+                      onChange={e => setPasswordForm({
+                        ...passwordForm,
+                        confirmPassword: e.target.value
+                      })} 
+                      required 
+                      minLength={8}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
