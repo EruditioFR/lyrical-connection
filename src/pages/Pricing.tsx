@@ -65,17 +65,12 @@ export default function Pricing() {
       display_order: 3.5 // Between Artistes and Professionnels
     };
 
-    // Use selectedUserType for toggle first, then URL parameter for new signup flow
-    const effectiveUserType = selectedUserType || userTypeParam || 
-                             (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
-                             user?.user_metadata?.user_type;
-
     console.log('=== PRICING FILTER DEBUG ===');
+    console.log('selectedUserType:', selectedUserType);
     console.log('userTypeParam:', userTypeParam);
     console.log('isArtist:', isArtist);  
     console.log('isProfessional:', isProfessional);
     console.log('user metadata user_type:', user?.user_metadata?.user_type);
-    console.log('effectiveUserType:', effectiveUserType);
     console.log('userTypeLoading:', userTypeLoading);
     console.log('user email:', user?.email);
 
@@ -85,27 +80,19 @@ export default function Pricing() {
       return basePlans;
     }
     
-    if (userTypeLoading && !userTypeParam && !user?.user_metadata?.user_type) {
-      // Still loading user type and no URL param or metadata: show base plans temporarily
+    if (userTypeLoading && !userTypeParam && !user?.user_metadata?.user_type && !selectedUserType) {
+      // Still loading user type and no params or selection: show base plans temporarily
       console.log('Still loading, showing base plans temporarily');
       return basePlans;
     }
 
-    // Priority to URL parameter over hook data (for new signup flow)
-    if (userTypeParam === 'artist') {
-      console.log('URL param indicates artist, showing artist plans');
-      const artistPlans = basePlans.filter(plan => 
-        plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
-      );
-      return artistPlans;
-    }
-    
-    if (userTypeParam === 'professional') {
-      console.log('URL param indicates professional, showing professional plans');
-      return basePlans.filter(plan => 
-        plan.name === 'Professionnels'
-      );
-    }
+    // Use selectedUserType from toggle first, then fallback to other sources
+    const effectiveUserType = selectedUserType || 
+                             userTypeParam || 
+                             (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
+                             user?.user_metadata?.user_type;
+
+    console.log('effectiveUserType:', effectiveUserType);
 
     if (effectiveUserType === 'artist') {
       // Artist: show only Artistes and Premium Visibilité (no Gratuit, no Professionnels)
