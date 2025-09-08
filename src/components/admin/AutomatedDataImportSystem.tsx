@@ -22,6 +22,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useOpenOpusImport } from '@/hooks/useOpenOpusImport';
 import { useAdvancedCsvImport } from '@/hooks/useAdvancedCsvImport';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import AdvancedCsvImportDialog from './AdvancedCsvImportDialog';
 
@@ -34,6 +35,7 @@ interface ImportStepStatus {
 
 const AutomatedDataImportSystem = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('automated');
   const [csvImportOpen, setCsvImportOpen] = useState(false);
   const [automatedSteps, setAutomatedSteps] = useState<ImportStepStatus[]>([
@@ -151,6 +153,10 @@ const AutomatedDataImportSystem = () => {
         description: `Template "${templateName}" importé avec succès !`,
       });
 
+      // Invalider les caches pour recharger les données
+      queryClient.invalidateQueries({ queryKey: ['composers'] });
+      queryClient.invalidateQueries({ queryKey: ['lyrical-works'] });
+
     } catch (error) {
       console.error('Automated import error:', error);
       
@@ -205,6 +211,10 @@ const AutomatedDataImportSystem = () => {
         title: "Import API terminé",
         description: `Données récupérées depuis ${dataSource} avec succès !`,
       });
+
+      // Invalider les caches pour recharger les données
+      queryClient.invalidateQueries({ queryKey: ['composers'] });
+      queryClient.invalidateQueries({ queryKey: ['lyrical-works'] });
 
     } catch (error) {
       console.error('API import error:', error);

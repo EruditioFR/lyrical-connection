@@ -24,7 +24,7 @@ export const useComposers = (searchTerm?: string) => {
         query = query.or(`name.ilike.%${searchTerm}%,complete_name.ilike.%${searchTerm}%`);
       }
 
-      const { data, error } = await query.limit(100);
+      const { data, error } = await query.limit(200);
 
       if (error) {
         console.error('Error fetching composers:', error);

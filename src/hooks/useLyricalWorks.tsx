@@ -27,7 +27,7 @@ export const useLyricalWorks = (searchTerm?: string) => {
         query = query.or(`title.ilike.%${searchTerm}%,composer.ilike.%${searchTerm}%`);
       }
 
-      const { data, error } = await query.limit(50);
+      const { data, error } = await query.limit(200);
 
       if (error) {
         console.error('Error fetching lyrical works:', error);
