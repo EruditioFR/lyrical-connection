@@ -36,8 +36,8 @@ export default function Pricing() {
 
   // Filter plans based on user type
   const getFilteredPlans = () => {
-    // Filter out Early Bird from public display (admin-only plan)
-    const basePlans = plans.filter(plan => plan.name !== 'Early Bird');
+    // Filter out Early Bird and Gratuit from public display (admin-only plans)
+    const basePlans = plans.filter(plan => plan.name !== 'Early Bird' && plan.name !== 'Gratuit');
     
     // Add premium plan for artists
     const premiumArtistPlan = {
