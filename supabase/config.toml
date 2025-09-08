@@ -12,6 +12,9 @@ verify_jwt = true
 [functions.delete-user-admin]
 verify_jwt = true
 
+[functions.fetch-opera-api-data]
+verify_jwt = true
+
 [functions.generate-sample-data]
 verify_jwt = true
 

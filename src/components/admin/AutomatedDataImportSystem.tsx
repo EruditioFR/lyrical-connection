@@ -167,6 +167,61 @@ const AutomatedDataImportSystem = () => {
     }
   };
 
+  const handleApiImport = async (dataSource: string) => {
+    // Reset all steps
+    setAutomatedSteps(prev => prev.map(s => ({ ...s, status: 'pending', count: 0, message: undefined })));
+
+    try {
+      // Show progress
+      updateStepStatus('composers', 'loading', 0, 'Recherche en cours...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      updateStepStatus('works', 'loading', 0, 'Récupération des données...');
+      
+      // Call the new API fetch function
+      const { data, error } = await supabase.functions.invoke('fetch-opera-api-data', {
+        body: { 
+          dataSource,
+          searchQuery: undefined,
+          category: 'all',
+          limit: 100
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Update progress based on actual results
+      updateStepStatus('composers', 'completed', data.imported.composers, `${data.imported.composers} compositeurs importés`);
+      await new Promise(resolve => setTimeout(resolve, 200));
+      updateStepStatus('works', 'completed', data.imported.works, `${data.imported.works} œuvres importées`);
+      await new Promise(resolve => setTimeout(resolve, 200));
+      updateStepStatus('roles', 'completed', 0, 'En attente des rôles...');
+      await new Promise(resolve => setTimeout(resolve, 200));
+      updateStepStatus('arias', 'completed', 0, 'En attente des airs...');
+
+      toast({
+        title: "Import API terminé",
+        description: `Données récupérées depuis ${dataSource} avec succès !`,
+      });
+
+    } catch (error) {
+      console.error('API import error:', error);
+      
+      // Mark all loading steps as error
+      setAutomatedSteps(prev => prev.map(s => 
+        s.status === 'loading' ? { ...s, status: 'error', message: error.message } : s
+      ));
+      
+      toast({
+        title: "Erreur d'import API",
+        description: error.message || "Une erreur est survenue lors de l'import depuis l'API",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleOpenOpusImport = () => {
     openOpusImport({
       importMode: 'all',
@@ -239,8 +294,9 @@ const AutomatedDataImportSystem = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="automated">Import Auto</TabsTrigger>
+          <TabsTrigger value="api">APIs Fiables</TabsTrigger>
           <TabsTrigger value="openopus">OpenOpus</TabsTrigger>
           <TabsTrigger value="csv">Import CSV</TabsTrigger>
           <TabsTrigger value="samples">Exemples</TabsTrigger>
@@ -349,6 +405,118 @@ const AutomatedDataImportSystem = () => {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="api" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="h-5 w-5" />
+                APIs Musicales Fiables
+              </CardTitle>
+              <CardDescription>
+                Récupérez des données depuis des sources musicales reconnues
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Database className="h-6 w-6 text-blue-600" />
+                    <div>
+                      <h3 className="font-medium">MusicBrainz</h3>
+                      <p className="text-sm text-muted-foreground">Base de données musicale ouverte</p>
+                    </div>
+                  </div>
+                  <p className="text-sm mb-3">
+                    Accès à une vaste collection de métadonnées musicales avec compositeurs, œuvres et détails biographiques.
+                  </p>
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleApiImport('musicbrainz')}
+                    disabled={isAnyStepLoading}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Importer depuis MusicBrainz
+                  </Button>
+                </Card>
+
+                <Card className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Globe className="h-6 w-6 text-green-600" />
+                    <div>
+                      <h3 className="font-medium">Wikidata</h3>
+                      <p className="text-sm text-muted-foreground">Données structurées de Wikipedia</p>
+                    </div>
+                  </div>
+                  <p className="text-sm mb-3">
+                    Informations biographiques détaillées, portraits et œuvres des grands compositeurs classiques.
+                  </p>
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleApiImport('wikidata')}
+                    disabled={isAnyStepLoading}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Importer depuis Wikidata
+                  </Button>
+                </Card>
+
+                <Card className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Music className="h-6 w-6 text-purple-600" />
+                    <div>
+                      <h3 className="font-medium">OpenOpus</h3>
+                      <p className="text-sm text-muted-foreground">API spécialisée musique classique</p>
+                    </div>
+                  </div>
+                  <p className="text-sm mb-3">
+                    Catalogue complet d'œuvres classiques avec numéros de catalogue et classifications détaillées.
+                  </p>
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleApiImport('openopus')}
+                    disabled={isAnyStepLoading}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Importer depuis OpenOpus
+                  </Button>
+                </Card>
+
+                <Card className="p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Zap className="h-6 w-6 text-orange-600" />
+                    <div>
+                      <h3 className="font-medium">Import Complet</h3>
+                      <p className="text-sm text-muted-foreground">Combine toutes les sources</p>
+                    </div>
+                  </div>
+                  <p className="text-sm mb-3">
+                    Récupère et combine les données de toutes les APIs pour une base de données enrichie.
+                  </p>
+                  <Button 
+                    className="w-full"
+                    onClick={() => handleApiImport('comprehensive')}
+                    disabled={isAnyStepLoading}
+                    variant="default"
+                  >
+                    <Zap className="h-4 w-4 mr-2" />
+                    Import Complet Multi-APIs
+                  </Button>
+                </Card>
+              </div>
+              
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-medium mb-2">🌟 Avantages des APIs</h4>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <strong>Données fiables</strong> : Sources reconnues et vérifiées</li>
+                  <li>• <strong>Mise à jour automatique</strong> : Données toujours actuelles</li>
+                  <li>• <strong>Métadonnées enrichies</strong> : Biographies, portraits, dates</li>
+                  <li>• <strong>Classification précise</strong> : Genres, époques, catalogues</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="openopus" className="space-y-6">
