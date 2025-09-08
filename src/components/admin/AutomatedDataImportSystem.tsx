@@ -156,6 +156,8 @@ const AutomatedDataImportSystem = () => {
       // Invalider les caches pour recharger les données
       queryClient.invalidateQueries({ queryKey: ['composers'] });
       queryClient.invalidateQueries({ queryKey: ['lyrical-works'] });
+      queryClient.invalidateQueries({ queryKey: ['work-roles'] });
+      queryClient.invalidateQueries({ queryKey: ['opera-database'] });
 
     } catch (error) {
       console.error('Automated import error:', error);
@@ -215,6 +217,8 @@ const AutomatedDataImportSystem = () => {
       // Invalider les caches pour recharger les données
       queryClient.invalidateQueries({ queryKey: ['composers'] });
       queryClient.invalidateQueries({ queryKey: ['lyrical-works'] });
+      queryClient.invalidateQueries({ queryKey: ['work-roles'] });
+      queryClient.invalidateQueries({ queryKey: ['opera-database'] });
 
     } catch (error) {
       console.error('API import error:', error);

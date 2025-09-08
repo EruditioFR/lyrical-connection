@@ -110,7 +110,7 @@ serve(async (req) => {
       }
     }
 
-    // Import works
+    // Import works and create default roles/arias
     for (const work of works) {
       try {
         // Find composer ID
@@ -123,14 +123,48 @@ serve(async (req) => {
         if (composer) {
           const workWithComposerId = { ...work, composer_id: composer.id };
           
-          const { error } = await supabase
+          const { data: insertedWork, error } = await supabase
             .from('lyrical_works')
-            .upsert(workWithComposerId, { onConflict: 'title,composer' });
+            .upsert(workWithComposerId, { onConflict: 'title,composer' })
+            .select('id')
+            .single();
           
-          if (!error) {
+          if (!error && insertedWork) {
             importedCount.works++;
+            
+            // Create default roles for this work
+            const defaultRoles = await createDefaultRoles(work, insertedWork.id);
+            for (const role of defaultRoles) {
+              try {
+                const { error: roleError } = await supabase
+                  .from('work_roles')
+                  .upsert(role, { onConflict: 'work_id,role_name' });
+                
+                if (!roleError) {
+                  importedCount.roles++;
+                }
+              } catch (roleErr) {
+                console.error('Error creating role:', roleErr);
+              }
+            }
+            
+            // Create default arias for this work
+            const defaultArias = await createDefaultArias(work, insertedWork.id);
+            for (const aria of defaultArias) {
+              try {
+                const { error: ariaError } = await supabase
+                  .from('arias')
+                  .upsert(aria, { onConflict: 'work_id,title' });
+                
+                if (!ariaError) {
+                  importedCount.arias++;
+                }
+              } catch (ariaErr) {
+                console.error('Error creating aria:', ariaErr);
+              }
+            }
           } else {
-            errors.push(`Work ${work.title}: ${error.message}`);
+            errors.push(`Work ${work.title}: ${error?.message || 'Unknown error'}`);
           }
         } else {
           errors.push(`Work ${work.title}: Composer not found`);
@@ -149,7 +183,7 @@ serve(async (req) => {
         works: works.length
       },
       errors,
-      message: `Import depuis ${dataSource} terminé: ${importedCount.composers} compositeurs, ${importedCount.works} œuvres importées`
+      message: `Import depuis ${dataSource} terminé: ${importedCount.composers} compositeurs, ${importedCount.works} œuvres, ${importedCount.roles} rôles, ${importedCount.arias} airs importés`
     };
 
     console.log('API data fetch completed:', result);
@@ -475,4 +509,107 @@ function deduplicateWorks(works: WorkData[]): WorkData[] {
     seen.add(key);
     return true;
   });
+}
+
+// Helper functions to create default roles and arias
+async function createDefaultRoles(work: WorkData, workId: string): Promise<any[]> {
+  const roles = [];
+  const workTitle = work.title.toLowerCase();
+  
+  // Define common opera roles based on work titles
+  const operaRoles = {
+    'don giovanni': [
+      { role_name: 'Don Giovanni', voice_type: 'Baryton', role_type: 'Principal', difficulty_level: 4 },
+      { role_name: 'Leporello', voice_type: 'Basse', role_type: 'Principal', difficulty_level: 3 },
+      { role_name: 'Donna Anna', voice_type: 'Soprano dramatique', role_type: 'Principal', difficulty_level: 5 },
+      { role_name: 'Donna Elvira', voice_type: 'Soprano', role_type: 'Principal', difficulty_level: 4 },
+      { role_name: 'Zerlina', voice_type: 'Soprano', role_type: 'Secondaire', difficulty_level: 3 }
+    ],
+    'la traviata': [
+      { role_name: 'Violetta', voice_type: 'Soprano colorature', role_type: 'Principal', difficulty_level: 5 },
+      { role_name: 'Alfredo', voice_type: 'Ténor lyrique', role_type: 'Principal', difficulty_level: 4 },
+      { role_name: 'Giorgio Germont', voice_type: 'Baryton', role_type: 'Principal', difficulty_level: 3 }
+    ],
+    'la bohème': [
+      { role_name: 'Mimi', voice_type: 'Soprano lyrique', role_type: 'Principal', difficulty_level: 4 },
+      { role_name: 'Rodolfo', voice_type: 'Ténor', role_type: 'Principal', difficulty_level: 4 },
+      { role_name: 'Musetta', voice_type: 'Soprano', role_type: 'Secondaire', difficulty_level: 3 },
+      { role_name: 'Marcello', voice_type: 'Baryton', role_type: 'Secondaire', difficulty_level: 3 }
+    ],
+    'rigoletto': [
+      { role_name: 'Rigoletto', voice_type: 'Baryton', role_type: 'Principal', difficulty_level: 5 },
+      { role_name: 'Gilda', voice_type: 'Soprano colorature', role_type: 'Principal', difficulty_level: 5 },
+      { role_name: 'Le Duc de Mantoue', voice_type: 'Ténor', role_type: 'Principal', difficulty_level: 4 }
+    ]
+  };
+  
+  // Check for specific opera matches
+  for (const [operaKey, operaRolesList] of Object.entries(operaRoles)) {
+    if (workTitle.includes(operaKey)) {
+      return operaRolesList.map(role => ({
+        work_id: workId,
+        ...role
+      }));
+    }
+  }
+  
+  // Default roles for any opera
+  const defaultRoles = [
+    { role_name: 'Protagoniste', voice_type: 'Soprano', role_type: 'Principal', difficulty_level: 4 },
+    { role_name: 'Héros', voice_type: 'Ténor', role_type: 'Principal', difficulty_level: 4 },
+    { role_name: 'Antagoniste', voice_type: 'Baryton', role_type: 'Principal', difficulty_level: 3 }
+  ];
+  
+  return defaultRoles.map(role => ({
+    work_id: workId,
+    ...role
+  }));
+}
+
+async function createDefaultArias(work: WorkData, workId: string): Promise<any[]> {
+  const arias = [];
+  const workTitle = work.title.toLowerCase();
+  
+  // Define famous arias based on work titles
+  const operaArias = {
+    'don giovanni': [
+      { title: 'Là ci darem la mano', act_number: 1, difficulty_level: 3, role_context: 'Don Giovanni, Zerlina' },
+      { title: 'Il mio tesoro', act_number: 2, difficulty_level: 4, role_context: 'Don Ottavio' }
+    ],
+    'la traviata': [
+      { title: 'Sempre libera', act_number: 1, difficulty_level: 5, role_context: 'Violetta' },
+      { title: 'Addio del passato', act_number: 3, difficulty_level: 4, role_context: 'Violetta' }
+    ],
+    'la bohème': [
+      { title: 'Che gelida manina', act_number: 1, difficulty_level: 4, role_context: 'Rodolfo' },
+      { title: 'Sì, mi chiamano Mimi', act_number: 1, difficulty_level: 4, role_context: 'Mimi' }
+    ],
+    'rigoletto': [
+      { title: 'La donna è mobile', act_number: 3, difficulty_level: 3, role_context: 'Le Duc de Mantoue' },
+      { title: 'Caro nome', act_number: 1, difficulty_level: 5, role_context: 'Gilda' }
+    ]
+  };
+  
+  // Check for specific opera matches
+  for (const [operaKey, operaAriasList] of Object.entries(operaArias)) {
+    if (workTitle.includes(operaKey)) {
+      return operaAriasList.map(aria => ({
+        work_id: workId,
+        composer: work.composer,
+        key_signature: 'Do majeur',
+        ...aria
+      }));
+    }
+  }
+  
+  // Default aria for any work
+  return [{
+    work_id: workId,
+    title: `Air principal de ${work.title}`,
+    composer: work.composer,
+    act_number: 1,
+    difficulty_level: 3,
+    key_signature: 'Do majeur',
+    role_context: 'Protagoniste'
+  }];
 }
