@@ -88,12 +88,11 @@ export default function Pricing() {
     }
 
     if (effectiveUserType === 'artist') {
-      // Artist: show only Artistes, Premium Artistes (no Gratuit)
+      // Artist: show only Artistes and Premium Visibilité (no Gratuit, no Professionnels)
       console.log('Showing artist plans');
       const artistPlans = basePlans.filter(plan => 
-        plan.name === 'Artistes'
+        plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
       );
-      artistPlans.push(premiumArtistPlan);
       return artistPlans;
     }
     

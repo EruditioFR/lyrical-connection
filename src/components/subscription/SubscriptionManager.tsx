@@ -34,7 +34,7 @@ export const SubscriptionManager = () => {
     let filtered = plans.filter(plan => plan.name !== 'Early Bird' && plan.name !== 'Gratuit');
     
     if (userType === 'artist') {
-      // Show "Artistes" and "Premium Visibilité" plans for artists
+      // Show "Artistes" and "Premium Visibilité" plans for artists (no Professionnels)
       return filtered.filter(plan => plan.name === 'Artistes' || plan.name === 'Premium Visibilité');
     } else if (userType === 'professional') {
       // Show only "Professionnels" plan for professionals (no Gratuit, no Artistes)
