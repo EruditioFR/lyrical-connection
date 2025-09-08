@@ -36,57 +36,14 @@ export default function Pricing() {
     }
   }, [user, hasActiveSubscription, isRequired, navigate]);
 
-  // Filter plans based on user type
+  // Filter plans based on toggle selection only
   const getFilteredPlans = () => {
     // Filter out Early Bird and Gratuit from public display (admin-only plans)
     const basePlans = plans.filter(plan => plan.name !== 'Early Bird' && plan.name !== 'Gratuit');
     
-    // Add premium plan for artists
-    const premiumArtistPlan = {
-      id: 'premium-artist',
-      name: 'Premium Artistes',
-      description: 'Visibilité maximale avec toutes les fonctionnalités premium',
-      price_monthly: 29,
-      stripe_price_id: 'price_premium_artist', // Will be handled specially in the payment flow
-      features: [
-        'Toutes les fonctionnalités Artistes',
-        'Visibilité premium avec badge',
-        'Priorité dans les résultats de recherche',
-        'Analytics avancées premium',
-        'Support prioritaire VIP'
-      ],
-      limitations: {
-        castings_per_month: 100,
-        premium_features: true,
-        premium_visibility: true
-      },
-      trial_days: 0,
-      is_active: true,
-      display_order: 3.5 // Between Artistes and Professionnels
-    };
-
-    console.log('=== PRICING FILTER DEBUG ===');
+    console.log('=== PRICING FILTER (SIMPLIFIED) ===');
     console.log('selectedUserType:', selectedUserType);
-    console.log('userTypeParam:', userTypeParam);
-    console.log('isArtist:', isArtist);  
-    console.log('isProfessional:', isProfessional);
-    console.log('user metadata user_type:', user?.user_metadata?.user_type);
-    console.log('userTypeLoading:', userTypeLoading);
-    console.log('user email:', user?.email);
 
-    if (!user) {
-      // Not logged in: show all base plans for public
-      console.log('Not logged in, showing base plans');
-      return basePlans;
-    }
-    
-    if (userTypeLoading && !userTypeParam && !user?.user_metadata?.user_type && !selectedUserType) {
-      // Still loading user type and no params or selection: show base plans temporarily
-      console.log('Still loading, showing base plans temporarily');
-      return basePlans;
-    }
-
-    // Priority 1: Use selectedUserType from toggle (always takes precedence)
     if (selectedUserType === 'artist') {
       console.log('Toggle: Showing artist plans');
       return basePlans.filter(plan => 
@@ -100,45 +57,12 @@ export default function Pricing() {
         plan.name === 'Professionnels'
       );
     }
-    
-    // Priority 2: Use URL parameter (for signup flow)
-    if (userTypeParam === 'artist') {
-      console.log('URL param: Showing artist plans');
-      return basePlans.filter(plan => 
-        plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
-      );
-    }
-    
-    if (userTypeParam === 'professional') {
-      console.log('URL param: Showing professional plans');
-      return basePlans.filter(plan => 
-        plan.name === 'Professionnels'
-      );
-    }
-    
-    // Priority 3: Use user data (if logged in)
-    if (user && !userTypeLoading) {
-      const userType = (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
-                      user?.user_metadata?.user_type;
-                      
-      if (userType === 'artist') {
-        console.log('User data: Showing artist plans');
-        return basePlans.filter(plan => 
-          plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
-        );
-      }
-      
-      if (userType === 'professional') {
-        console.log('User data: Showing professional plans');
-        return basePlans.filter(plan => 
-          plan.name === 'Professionnels'
-        );
-      }
-    }
-    
-    // Default: show all base plans
-    console.log('Default: Showing all base plans');
-    return basePlans;
+
+    // Default fallback (should not happen with toggle)
+    console.log('Fallback: Showing artist plans');
+    return basePlans.filter(plan => 
+      plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
+    );
   };
 
   const handleSelectPlan = async (planId: string) => {
@@ -276,54 +200,38 @@ export default function Pricing() {
                isCurrentPlan={subscription?.plan_id === plan.id}
                onSelectPlan={handleSelectPlan}
                isLoading={createCheckoutSession.isPending}
-               userType={(userTypeParam === 'artist' || userTypeParam === 'professional') ? userTypeParam : (isArtist ? 'artist' : isProfessional ? 'professional' : 'unknown')}
+               userType={selectedUserType}
              />
           ))}
         </div>
 
         <div className="mt-12 text-center">
-          {isArtist && (
+          {selectedUserType === 'artist' && (
             <div className="mb-8 p-6 bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-lg max-w-4xl mx-auto">
-              <h3 className="text-lg font-semibold mb-2">🌟 Plan Premium Artistes</h3>
+              <h3 className="text-lg font-semibold mb-2">🌟 Plan Premium Visibilité</h3>
               <p className="text-muted-foreground text-sm mb-3">
-                Le plan Premium Artistes (29€/mois) inclut toutes les fonctionnalités du plan Artistes 
-                plus la visibilité premium avec badge, priorité dans les résultats et analytics avancées.
+                Ajoutez l'option Premium Visibilité (+29€/mois) pour obtenir un badge premium, 
+                une priorité dans les résultats de recherche et des analytics avancées.
               </p>
               <p className="text-xs text-muted-foreground">
-                Alternative : Vous pouvez aussi prendre le plan Artistes et ajouter la visibilité premium séparément depuis votre profil.
-              </p>
-            </div>
-          )}
-          
-          {!isArtist && !isProfessional && 
-           !(userTypeParam === 'professional') && 
-           !(user?.user_metadata?.user_type === 'professional') && (
-            <div className="mb-8 p-6 bg-muted/30 rounded-lg max-w-4xl mx-auto">
-              <h3 className="text-lg font-semibold mb-2">Option Visibilité Premium</h3>
-              <p className="text-muted-foreground text-sm mb-3">
-                Les abonnés payants peuvent ajouter l'option Visibilité Premium (+29€/mois) 
-                pour apparaître en priorité sur les pages publiques avec un badge premium.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Disponible depuis votre profil une fois abonné à un plan payant.
+                Disponible depuis votre profil une fois abonné au plan Artistes.
               </p>
             </div>
           )}
 
           <h2 className="text-2xl font-semibold mb-4">Questions fréquentes</h2>
           <div className="max-w-3xl mx-auto space-y-4 text-left">
-            {!(isProfessional || userTypeParam === 'professional' || user?.user_metadata?.user_type === 'professional') && (
+            {selectedUserType === 'artist' && (
               <div className="p-4 border rounded-lg">
                 <h3 className="font-medium mb-2">Quelle est la différence entre les plans ?</h3>
                 <p className="text-muted-foreground text-sm">
-                  Le plan Artistes convient aux créateurs individuels, 
-                  le plan Professionnels aux institutions avec plus de fonctionnalités avancées. 
-                  Les deux plans offrent un accès complet à la plateforme.
+                  Le plan Artistes (9€/mois) vous donne accès à toutes les fonctionnalités essentielles. 
+                  L'option Premium Visibilité (+29€/mois) ajoute un badge premium et une priorité dans les résultats.
                 </p>
               </div>
             )}
             
-            {(isProfessional || userTypeParam === 'professional' || user?.user_metadata?.user_type === 'professional') && (
+            {selectedUserType === 'professional' && (
               <div className="p-4 border rounded-lg">
                 <h3 className="font-medium mb-2">À propos de votre plan Professionnel</h3>
                 <p className="text-muted-foreground text-sm">
@@ -333,7 +241,7 @@ export default function Pricing() {
               </div>
             )}
             
-            {!(isProfessional || userTypeParam === 'professional' || user?.user_metadata?.user_type === 'professional') && (
+            {selectedUserType === 'artist' && (
               <div className="p-4 border rounded-lg">
                 <h3 className="font-medium mb-2">Comment changer de plan ?</h3>
                 <p className="text-muted-foreground text-sm">
