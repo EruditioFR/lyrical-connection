@@ -305,11 +305,9 @@ const AdminArtistProfileDialog = ({ account, onAccountUpdated }: AdminArtistProf
                       <SelectValue placeholder="Sélectionnez un genre" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="M">Homme</SelectItem>
+                      <SelectItem value="H">Homme</SelectItem>
                       <SelectItem value="F">Femme</SelectItem>
-                      <SelectItem value="non-binaire">Non-binaire</SelectItem>
                       <SelectItem value="autre">Autre</SelectItem>
-                      <SelectItem value="prefere-ne-pas-dire">Préfère ne pas dire</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
