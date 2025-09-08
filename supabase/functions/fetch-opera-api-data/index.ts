@@ -38,6 +38,7 @@ interface WorkData {
   librettist?: string;
   acts_count?: number;
   total_duration_minutes?: number;
+  catalogue_number?: string;
 }
 
 serve(async (req) => {
