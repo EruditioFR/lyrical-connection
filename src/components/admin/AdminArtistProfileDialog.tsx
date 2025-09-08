@@ -229,14 +229,14 @@ const AdminArtistProfileDialog = ({ account, onAccountUpdated }: AdminArtistProf
                       <SelectValue placeholder="Sélectionnez un type de voix" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="soprano">Soprano</SelectItem>
-                      <SelectItem value="mezzo-soprano">Mezzo-soprano</SelectItem>
-                      <SelectItem value="contralto">Contralto</SelectItem>
-                      <SelectItem value="countertenor">Contre-ténor</SelectItem>
-                      <SelectItem value="tenor">Ténor</SelectItem>
-                      <SelectItem value="baritone">Baryton</SelectItem>
-                      <SelectItem value="bass">Basse</SelectItem>
-                      <SelectItem value="bass-baritone">Basse-baryton</SelectItem>
+                      <SelectItem value="Soprano">Soprano</SelectItem>
+                      <SelectItem value="Mezzo-soprano">Mezzo-soprano</SelectItem>
+                      <SelectItem value="Contralto">Contralto</SelectItem>
+                      <SelectItem value="Contre-ténor">Contre-ténor</SelectItem>
+                      <SelectItem value="Ténor">Ténor</SelectItem>
+                      <SelectItem value="Baryton">Baryton</SelectItem>
+                      <SelectItem value="Basse">Basse</SelectItem>
+                      <SelectItem value="Basse-baryton">Basse-baryton</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -295,8 +295,8 @@ const AdminArtistProfileDialog = ({ account, onAccountUpdated }: AdminArtistProf
                       <SelectValue placeholder="Sélectionnez un genre" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="homme">Homme</SelectItem>
-                      <SelectItem value="femme">Femme</SelectItem>
+                      <SelectItem value="M">Homme</SelectItem>
+                      <SelectItem value="F">Femme</SelectItem>
                       <SelectItem value="non-binaire">Non-binaire</SelectItem>
                       <SelectItem value="autre">Autre</SelectItem>
                       <SelectItem value="prefere-ne-pas-dire">Préfère ne pas dire</SelectItem>
