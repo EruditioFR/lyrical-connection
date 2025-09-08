@@ -5,8 +5,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserType } from "@/hooks/useUserType";
 import { Card, CardContent } from "@/components/ui/card";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { AlertCircle, CheckCircle, User, Briefcase } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function Pricing() {
@@ -20,6 +21,7 @@ export default function Pricing() {
   } = useSubscription();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const [selectedUserType, setSelectedUserType] = useState<'artist' | 'professional'>('artist');
   
   const source = searchParams.get('source');
   const userTypeParam = searchParams.get('type');
@@ -63,8 +65,9 @@ export default function Pricing() {
       display_order: 3.5 // Between Artistes and Professionnels
     };
 
-    // Use URL parameter for new signup flow, or user type from hook, or user metadata
-    const effectiveUserType = userTypeParam || 
+    // Use selectedUserType for toggle, or URL parameter for new signup flow, or user type from hook, or user metadata
+    const effectiveUserType = selectedUserType ||
+                             userTypeParam || 
                              (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
                              user?.user_metadata?.user_type;
 
@@ -225,6 +228,30 @@ export default function Pricing() {
               : 'Choisissez le plan qui correspond à vos besoins'
             }
           </p>
+        </div>
+
+        {/* Toggle buttons for user type selection */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex bg-muted p-1 rounded-lg">
+            <Button
+              variant={selectedUserType === 'artist' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setSelectedUserType('artist')}
+              className="flex items-center gap-2 px-4 py-2"
+            >
+              <User className="h-4 w-4" />
+              Artiste
+            </Button>
+            <Button
+              variant={selectedUserType === 'professional' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setSelectedUserType('professional')}
+              className="flex items-center gap-2 px-4 py-2"
+            >
+              <Briefcase className="h-4 w-4" />
+              Professionnel
+            </Button>
+          </div>
         </div>
 
 
