@@ -9,6 +9,7 @@ interface AuthContextType {
   loading: boolean;
   hasActiveSubscription: boolean;
   subscriptionLoading: boolean;
+  isAccountActive: boolean;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
   checkSubscription: () => Promise<void>;
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   hasActiveSubscription: false,
   subscriptionLoading: true,
+  isAccountActive: true,
   signOut: async () => {},
   refreshSession: async () => {},
   checkSubscription: async () => {},
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [isAccountActive, setIsAccountActive] = useState(true);
 
   useEffect(() => {
     console.log('=== INITIALISATION AUTH ===');
@@ -73,6 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setHasActiveSubscription(false);
           setSubscriptionLoading(false);
+          setIsAccountActive(true);
         }
       }
     );
@@ -94,6 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setHasActiveSubscription(false);
           setSubscriptionLoading(false);
+          setIsAccountActive(true);
         }
       }
       setLoading(false);
@@ -116,12 +121,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     setHasActiveSubscription(false);
     setSubscriptionLoading(false);
+    setIsAccountActive(true);
   };
 
   const checkSubscription = async () => {
     if (!user?.id) {
       setHasActiveSubscription(false);
       setSubscriptionLoading(false);
+      setIsAccountActive(true);
       return;
     }
 
@@ -160,25 +167,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!hasActive) {
         console.log('Pas d\'abonnement actif, vérification des comptes gratuits...');
         
-        // Vérifier si l'utilisateur a un profil artiste gratuit créé par un admin
+      // Vérifier si l'utilisateur a un profil artiste gratuit créé par un admin
         const { data: artistProfile } = await supabase
           .from('artist_profiles')
-          .select('is_free_account, created_by_admin, public_visibility_premium, premium_subscription_end')
+          .select('is_free_account, created_by_admin, public_visibility_premium, premium_subscription_end, is_active')
           .eq('user_id', user.id)
-          .eq('is_active', true)
           .maybeSingle();
 
         // Vérifier si l'utilisateur a un profil professionnel gratuit créé par un admin
         const { data: professionalProfile } = await supabase
           .from('professional_profiles')
-          .select('is_free_account, created_by_admin, public_visibility_premium, premium_subscription_end')
+          .select('is_free_account, created_by_admin, public_visibility_premium, premium_subscription_end, is_active')
           .eq('user_id', user.id)
-          .eq('is_active', true)
           .maybeSingle();
 
+        // Vérifier si le compte est actif
+        const accountActive = (artistProfile?.is_active !== false) && (professionalProfile?.is_active !== false);
+        setIsAccountActive(accountActive);
+
+        // Si le compte est désactivé, pas besoin de vérifier les abonnements
+        if (!accountActive) {
+          console.log('Compte désactivé détecté');
+          setHasActiveSubscription(false);
+          setSubscriptionLoading(false);
+          return;
+        }
+
         // Si l'utilisateur a un profil gratuit créé par un admin, il a accès aux fonctionnalités payantes
-        const isFreeAccountByAdmin = (artistProfile?.is_free_account && artistProfile?.created_by_admin) ||
-                                    (professionalProfile?.is_free_account && professionalProfile?.created_by_admin);
+        const isFreeAccountByAdmin = (artistProfile?.is_free_account && artistProfile?.created_by_admin && artistProfile?.is_active !== false) ||
+                                    (professionalProfile?.is_free_account && professionalProfile?.created_by_admin && professionalProfile?.is_active !== false);
 
         // Vérifier aussi si c'est un compte avec premium visibilité valide
         const hasPremiumVisibility = (artistProfile?.public_visibility_premium && 
@@ -199,6 +216,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error('Erreur lors de la vérification d\'abonnement:', error);
       setHasActiveSubscription(false);
+      setIsAccountActive(true); // Default to active on error
     } finally {
       setSubscriptionLoading(false);
     }
@@ -228,6 +246,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       loading, 
       hasActiveSubscription, 
       subscriptionLoading, 
+      isAccountActive,
       signOut, 
       refreshSession, 
       checkSubscription 

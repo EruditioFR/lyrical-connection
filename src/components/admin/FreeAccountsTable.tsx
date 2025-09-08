@@ -10,6 +10,7 @@ import FreeAccountsTableSkeleton from './FreeAccountsTableSkeleton';
 import AdminArtistProfileDialog from './AdminArtistProfileDialog';
 import EditProfessionalProfileDialog from './EditProfessionalProfileDialog';
 import DeleteProfileDialog from './DeleteProfileDialog';
+import DeactivateAccountDialog from './DeactivateAccountDialog';
 import { InviteAccountButton } from './InviteAccountButton';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -39,6 +40,7 @@ interface Account {
   repertoire?: string[];
   cover_image_url?: string;
   is_free_account?: boolean;
+  is_active?: boolean;
 }
 
 interface FreeAccountsTableProps {
@@ -99,10 +101,17 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                   {type === 'artist' ? account.stage_name : account.company_name}
                 </TableCell>
                 <TableCell>{account.contact_email}</TableCell>
-                <TableCell>
-                  <Badge variant={account.is_free_account ? "secondary" : "default"} className="text-xs">
-                    {account.is_free_account ? 'Gratuit' : 'Payant'}
-                  </Badge>
+                <TableCell className="space-y-1">
+                  <div>
+                    <Badge variant={account.is_free_account ? "secondary" : "default"} className="text-xs">
+                      {account.is_free_account ? 'Gratuit' : 'Payant'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <Badge variant={account.is_active === false ? "destructive" : "outline"} className="text-xs">
+                      {account.is_active === false ? 'Désactivé' : 'Actif'}
+                    </Badge>
+                  </div>
                 </TableCell>
                 <TableCell>{formatDate(account.created_at)}</TableCell>
                 <TableCell>
@@ -163,6 +172,10 @@ const FreeAccountsTable = ({ filteredAccounts, accountType, onAccountUpdated }: 
                         Voir profil
                       </a>
                     </Button>
+                    <DeactivateAccountDialog 
+                      account={account}
+                      onAccountUpdated={onAccountUpdated || (() => {})}
+                    />
                     <DeleteProfileDialog 
                       account={account}
                       onProfileDeleted={onAccountUpdated || (() => {})}

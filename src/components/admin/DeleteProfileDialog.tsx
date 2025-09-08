@@ -19,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface DeleteProfileDialogProps {
   account: {
     id: string;
+    user_id: string;
     stage_name?: string;
     company_name?: string;
     type: 'artist' | 'professional';
@@ -34,26 +35,25 @@ const DeleteProfileDialog = ({ account, onProfileDeleted }: DeleteProfileDialogP
     setIsDeleting(true);
     
     try {
-      const tableName = account.type === 'artist' ? 'artist_profiles' : 'professional_profiles';
-      
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', account.id);
+      // Use the edge function to completely delete the user
+      const { data, error } = await supabase.functions.invoke('delete-user-admin', {
+        body: { userIdToDelete: account.user_id }
+      });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       toast({
-        title: "Profil supprimé",
-        description: `Le profil ${account.type === 'artist' ? 'artiste' : 'professionnel'} a été supprimé avec succès.`,
+        title: "Utilisateur supprimé",
+        description: `L'utilisateur ${account.type === 'artist' ? 'artiste' : 'professionnel'} a été complètement supprimé de la base de données.`,
       });
 
       onProfileDeleted();
     } catch (error) {
-      console.error('Error deleting profile:', error);
+      console.error('Error deleting user:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer le profil.",
+        description: error instanceof Error ? error.message : "Impossible de supprimer l'utilisateur.",
         variant: "destructive",
       });
     } finally {
@@ -75,31 +75,41 @@ const DeleteProfileDialog = ({ account, onProfileDeleted }: DeleteProfileDialogP
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer définitivement le profil de{' '}
+            Êtes-vous sûr de vouloir supprimer <strong>DÉFINITIVEMENT</strong> l'utilisateur{' '}
             <strong>{profileName}</strong> ?
             <br />
             <br />
-            Cette action supprimera toutes les données associées au profil :
+            <strong>⚠️ ATTENTION :</strong> Cette action supprimera complètement l'utilisateur de la base de données, y compris son compte d'authentification.
+            <br />
+            <br />
+            Cette action supprimera toutes les données associées :
             <ul className="list-disc list-inside mt-2 space-y-1">
+              <li><strong>Compte d'authentification</strong> (l'utilisateur ne pourra plus se connecter)</li>
               {account.type === 'artist' ? (
                 <>
+                  <li>Profil artiste complet</li>
                   <li>Photos du profil</li>
                   <li>Enregistrements audio/vidéo</li>
                   <li>Répertoire</li>
                   <li>Candidatures</li>
+                  <li>Messages et conversations</li>
                 </>
               ) : (
                 <>
+                  <li>Profil professionnel complet</li>
                   <li>Médias professionnels</li>
                   <li>Disponibilités</li>
                   <li>Profils cibles</li>
                   <li>Castings créés</li>
                   <li>Événements créés</li>
+                  <li>Messages et conversations</li>
                 </>
               )}
             </ul>
             <br />
-            <strong>Cette action est irréversible.</strong>
+            <strong>⚠️ Cette action est IRRÉVERSIBLE et DÉFINITIVE.</strong>
+            <br />
+            <em>Si vous souhaitez simplement suspendre l'accès temporairement, utilisez la fonction "Désactiver" à la place.</em>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -109,7 +119,7 @@ const DeleteProfileDialog = ({ account, onProfileDeleted }: DeleteProfileDialogP
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? 'Suppression...' : 'Supprimer définitivement'}
+            {isDeleting ? 'Suppression...' : 'SUPPRIMER DÉFINITIVEMENT'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -9,6 +9,9 @@ verify_jwt = true
 [functions.customer-portal]
 verify_jwt = true
 
+[functions.delete-user-admin]
+verify_jwt = true
+
 [functions.import-openopus-data]
 verify_jwt = true
 
