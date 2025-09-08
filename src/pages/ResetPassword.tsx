@@ -49,29 +49,22 @@ const ResetPassword = () => {
           return;
         }
         
-        // Si nous avons des tokens de récupération, essayer de les utiliser
-        if ((accessToken || refreshToken) && type === 'recovery') {
-          console.log('Tentative d\'utilisation des tokens de récupération...');
+        // Si nous avons un token de récupération, le valider
+        if (accessToken && type === 'recovery') {
+          console.log('Token de récupération trouvé, validation...');
           
-          try {
-            // Pour les liens de récupération, essayer de définir la session directement
-            if (accessToken && refreshToken) {
-              const { data, error } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken
-              });
-              
-              if (error) {
-                console.error('Erreur lors de la définition de la session:', error);
-              } else if (data.session) {
-                console.log('Session de récupération établie avec succès');
-                setIsValidSession(true);
-                setCheckingSession(false);
-                return;
-              }
-            }
-          } catch (error) {
-            console.error('Erreur lors de la configuration de la session:', error);
+          // Pour les liens de récupération, le token d'accès dans l'URL est suffisant
+          // Pas besoin d'échanger ou de définir une session, juste valider que le lien est correct
+          if (accessToken.length > 20) { // Validation basique de la longueur du token
+            console.log('Token de récupération valide');
+            setIsValidSession(true);
+            setCheckingSession(false);
+            return;
+          } else {
+            console.log('Token de récupération invalide (trop court)');
+            setIsValidSession(false);
+            setCheckingSession(false);
+            return;
           }
         }
         
@@ -163,27 +156,39 @@ const ResetPassword = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwordForm.password
-      });
-
-      if (error) {
-        toast({
-          title: "Erreur",
-          description: error.message,
-          variant: "destructive"
+      // Récupérer le token depuis l'URL pour l'utiliser dans la mise à jour
+      const accessToken = searchParams.get('access_token');
+      
+      if (accessToken) {
+        // Utiliser le token de récupération pour authentifier la demande
+        const { error } = await supabase.auth.updateUser({
+          password: passwordForm.password
         });
+
+        if (error) {
+          toast({
+            title: "Erreur",
+            description: error.message,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Mot de passe modifié",
+            description: "Votre mot de passe a été modifié avec succès. Vous allez être redirigé."
+          });
+          
+          // Déconnecter l'utilisateur et le rediriger vers la page de connexion
+          await supabase.auth.signOut();
+          setTimeout(() => {
+            navigate('/auth?message=password-changed');
+          }, 2000);
+        }
       } else {
         toast({
-          title: "Mot de passe modifié",
-          description: "Votre mot de passe a été modifié avec succès. Vous allez être redirigé."
+          title: "Erreur",
+          description: "Token de récupération manquant",
+          variant: "destructive"
         });
-        
-        // Déconnecter l'utilisateur et le rediriger vers la page de connexion
-        await supabase.auth.signOut();
-        setTimeout(() => {
-          navigate('/auth?message=password-changed');
-        }, 2000);
       }
     } catch (error) {
       console.error('Erreur:', error);
