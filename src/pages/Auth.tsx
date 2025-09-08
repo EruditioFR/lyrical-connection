@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +11,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import Layout from '@/components/layout/Layout';
 import { Music, LogIn, UserPlus, User, Briefcase, Mail, CheckCircle, Shield, Clock, ExternalLink, ArrowRight, Star, Users, Building } from 'lucide-react';
+import { cn } from "@/lib/utils";
 const professionalRoles = [{
   value: 'casting_director',
   label: 'Directeur de casting / Directeur artistique'
@@ -40,18 +40,18 @@ const professionalRoles = [{
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const {
-    user
-  } = useAuth();
-  const {
-    toast
-  } = useToast();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [signupEmail, setSignupEmail] = useState('');
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  
+  // Nouveaux états pour gérer la sélection
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [userType, setUserType] = useState<'artist' | 'professional'>('artist');
 
   // Vérifier les messages de succès dans l'URL
   useEffect(() => {
@@ -347,19 +347,49 @@ const Auth = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login" className="flex items-center gap-2">
-                <LogIn className="h-4 w-4" />
-                J'ai déjà un compte
-              </TabsTrigger>
-              <TabsTrigger value="signup" className="flex items-center gap-2">
-                <UserPlus className="h-4 w-4" />
-                Créer mon compte
-              </TabsTrigger>
-            </TabsList>
+          {/* Sélecteur du mode d'authentification */}
+          <div className="mb-8">
+            <div className="grid w-full grid-cols-2 gap-4">
+              <button
+                onClick={() => setAuthMode('login')}
+                className={cn(
+                  "p-4 border-2 rounded-lg transition-all duration-200 text-left",
+                  authMode === 'login'
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <LogIn className="h-5 w-5" />
+                  <div>
+                    <div className="font-medium">J'ai déjà un compte</div>
+                    <div className="text-sm text-muted-foreground">Me connecter</div>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => setAuthMode('signup')}
+                className={cn(
+                  "p-4 border-2 rounded-lg transition-all duration-200 text-left",
+                  authMode === 'signup'
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border hover:border-primary/50 hover:bg-muted/50"
+                )}
+              >
+                <div className="flex items-center gap-3">
+                  <UserPlus className="h-5 w-5" />
+                  <div>
+                    <div className="font-medium">Créer mon compte</div>
+                    <div className="text-sm text-muted-foreground">Première inscription</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
 
-            <TabsContent value="login">
+          {/* Contenu basé sur la sélection */}
+          {authMode === 'login' && (
               <Card>
                 <CardHeader>
                   <CardTitle>{showForgotPassword ? "Réinitialiser le mot de passe" : "Connexion"}</CardTitle>
@@ -467,59 +497,85 @@ const Auth = () => {
                       >
                         Retour à la connexion
                       </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+                     </div>
+                   )}
+                 </CardContent>
+               </Card>
+          )}
 
-            <TabsContent value="signup">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <CardTitle className="text-xl font-semibold">Créer mon compte</CardTitle>
-                      <CardDescription className="text-base mt-1">
-                        Étape 1/4 : Choisissez votre profil
-                      </CardDescription>
-                    </div>
-                    <div className="text-right">
-                      <Progress value={25} className="w-16 h-2" />
-                      <span className="text-xs text-muted-foreground mt-1 block">25%</span>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="artist" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-6">
-                      <TabsTrigger value="artist" className="flex items-center gap-2 py-3">
-                        <User className="h-4 w-4" />
-                        Artiste
-                      </TabsTrigger>
-                      <TabsTrigger value="professional" className="flex items-center gap-2 py-3">
-                        <Briefcase className="h-4 w-4" />
-                        Professionnel
-                      </TabsTrigger>
-                    </TabsList>
+          {authMode === 'signup' && (
+               <Card>
+                 <CardHeader>
+                   <div className="flex items-center justify-between mb-4">
+                     <div>
+                       <CardTitle className="text-xl font-semibold">Créer mon compte</CardTitle>
+                       <CardDescription className="text-base mt-1">
+                         Étape 1/4 : Choisissez votre profil
+                       </CardDescription>
+                     </div>
+                     <div className="text-right">
+                       <Progress value={25} className="w-16 h-2" />
+                       <span className="text-xs text-muted-foreground mt-1 block">25%</span>
+                     </div>
+                   </div>
+                 </CardHeader>
+                 <CardContent>
+                   {/* Sélecteur du type d'utilisateur */}
+                   <div className="grid w-full grid-cols-2 gap-4 mb-6">
+                     <button
+                       onClick={() => setUserType('artist')}
+                       className={cn(
+                         "p-4 border-2 rounded-lg transition-all duration-200 text-left",
+                         userType === 'artist'
+                           ? "border-primary bg-primary/5 text-primary"
+                           : "border-border hover:border-primary/50 hover:bg-muted/50"
+                       )}
+                     >
+                       <div className="flex items-center gap-3">
+                         <User className="h-5 w-5" />
+                         <div>
+                           <div className="font-medium">Artiste</div>
+                           <div className="text-sm text-muted-foreground">Chanteur lyrique</div>
+                         </div>
+                       </div>
+                     </button>
+                     
+                     <button
+                       onClick={() => setUserType('professional')}
+                       className={cn(
+                         "p-4 border-2 rounded-lg transition-all duration-200 text-left",
+                         userType === 'professional'
+                           ? "border-primary bg-primary/5 text-primary"
+                           : "border-border hover:border-primary/50 hover:bg-muted/50"
+                       )}
+                     >
+                       <div className="flex items-center gap-3">
+                         <Briefcase className="h-5 w-5" />
+                         <div>
+                           <div className="font-medium">Professionnel</div>
+                           <div className="text-sm text-muted-foreground">Recruteur, agent</div>
+                         </div>
+                       </div>
+                     </button>
+                   </div>
 
-                    <TabsContent value="artist" className="mt-0">
-                      {/* Description du profil Artiste */}
-                      <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20 rounded-lg p-4 mb-6">
-                        <div className="flex items-start gap-3">
-                          <div className="bg-primary/10 rounded-full p-2">
-                            <Star className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-base mb-2">Profil Artiste</h3>
-                            <p className="text-sm text-muted-foreground mb-3">
-                              Chanteurs : créez votre profil artistique, partagez votre répertoire et postulez aux auditions.
-                            </p>
-                            <div className="text-xs text-muted-foreground space-y-1">
-                              
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                   {/* Contenu basé sur le type sélectionné */}
+                   {userType === 'artist' && (
+                     <div>
+                       {/* Description du profil Artiste */}
+                       <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20 rounded-lg p-4 mb-6">
+                         <div className="flex items-start gap-3">
+                           <div className="bg-primary/10 rounded-full p-2">
+                             <Star className="h-5 w-5 text-primary" />
+                           </div>
+                           <div>
+                             <h3 className="font-semibold text-base mb-2">Profil Artiste</h3>
+                             <p className="text-sm text-muted-foreground mb-3">
+                               Chanteurs : créez votre profil artistique, partagez votre répertoire et postulez aux auditions.
+                             </p>
+                           </div>
+                         </div>
+                       </div>
 
                       <form onSubmit={handleArtistSignup} className="space-y-5">
                         <div className="space-y-2">
@@ -594,11 +650,13 @@ const Auth = () => {
                             <Clock className="h-3 w-3" />
                             <span>Résiliation simple</span>
                           </div>
-                        </div>
-                      </form>
-                    </TabsContent>
+                         </div>
+                       </form>
+                     </div>
+                   )}
 
-                    <TabsContent value="professional" className="mt-0">
+                   {userType === 'professional' && (
+                     <div>
                       {/* Description du profil Professionnel */}
                       <div className="bg-gradient-to-br from-accent/5 to-primary/5 border border-accent/20 rounded-lg p-4 mb-6">
                         <div className="flex items-start gap-3">
@@ -718,14 +776,13 @@ const Auth = () => {
                             <Clock className="h-3 w-3" />
                             <span>Aucun engagement</span>
                           </div>
-                        </div>
-                      </form>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                         </div>
+                       </form>
+                     </div>
+                   )}
+                 </CardContent>
+               </Card>
+          )}
         </div>
       </div>
     </Layout>;
