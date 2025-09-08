@@ -65,9 +65,8 @@ export default function Pricing() {
       display_order: 3.5 // Between Artistes and Professionnels
     };
 
-    // Use selectedUserType for toggle, or URL parameter for new signup flow, or user type from hook, or user metadata
-    const effectiveUserType = selectedUserType ||
-                             userTypeParam || 
+    // Use selectedUserType for toggle first, then URL parameter for new signup flow
+    const effectiveUserType = selectedUserType || userTypeParam || 
                              (isArtist ? 'artist' : isProfessional ? 'professional' : null) ||
                              user?.user_metadata?.user_type;
 
