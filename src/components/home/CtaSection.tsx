@@ -24,7 +24,7 @@ const CtaSection = () => {
                 {t('cta.createAccount')}
               </Link>
             </Button>
-            <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg border-white text-white hover:bg-white/10" asChild>
+            <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-lyrical-900 bg-transparent" asChild>
               <Link to="/abonnements">
                 {t('cta.viewPlans')}
                 <ArrowRight className="ml-2 h-5 w-5" />
