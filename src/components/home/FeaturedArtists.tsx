@@ -57,7 +57,7 @@ const FeaturedArtists = () => {
   }
   
   return (
-    <section className="bg-background py-20">
+    <section className="bg-background pt-4 pb-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <div>
