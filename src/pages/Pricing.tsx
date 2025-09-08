@@ -74,6 +74,8 @@ export default function Pricing() {
     console.log('isProfessional:', isProfessional);
     console.log('user metadata user_type:', user?.user_metadata?.user_type);
     console.log('effectiveUserType:', effectiveUserType);
+    console.log('userTypeLoading:', userTypeLoading);
+    console.log('user email:', user?.email);
 
     if (!user) {
       // Not logged in: show all base plans for public
@@ -85,6 +87,22 @@ export default function Pricing() {
       // Still loading user type and no URL param or metadata: show base plans temporarily
       console.log('Still loading, showing base plans temporarily');
       return basePlans;
+    }
+
+    // Priority to URL parameter over hook data (for new signup flow)
+    if (userTypeParam === 'artist') {
+      console.log('URL param indicates artist, showing artist plans');
+      const artistPlans = basePlans.filter(plan => 
+        plan.name === 'Artistes' || plan.name === 'Premium Visibilité'
+      );
+      return artistPlans;
+    }
+    
+    if (userTypeParam === 'professional') {
+      console.log('URL param indicates professional, showing professional plans');
+      return basePlans.filter(plan => 
+        plan.name === 'Professionnels'
+      );
     }
 
     if (effectiveUserType === 'artist') {
