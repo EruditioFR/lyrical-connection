@@ -84,6 +84,13 @@ const Events = () => {
     <Layout>
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
+          {/* Header global avec trigger sidebar */}
+          <div className="fixed top-16 left-4 z-50">
+            <SidebarTrigger className="bg-background/95 backdrop-blur border shadow-sm p-2 hover:bg-muted/50 rounded-lg transition-all duration-200">
+              <Search className="h-4 w-4" />
+            </SidebarTrigger>
+          </div>
+
           {/* Sidebar pour les filtres */}
           <EventsSidebar 
             filters={filters} 
@@ -95,16 +102,11 @@ const Events = () => {
           <main className="flex-1 overflow-auto">
             <div className="bg-muted/30 py-12 md:py-16">
               <div className="container mx-auto px-4 md:px-6">
-                {/* Header avec bouton sidebar */}
-                <div className="max-w-4xl mx-auto text-center mb-12">
-                  <div className="flex items-center justify-center gap-4 mb-4">
-                    <SidebarTrigger className="p-2 hover:bg-muted/50 rounded-lg transition-colors">
-                      <Search className="h-4 w-4" />
-                    </SidebarTrigger>
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
-                      Événements
-                    </h1>
-                  </div>
+                {/* Header */}
+                <div className="max-w-4xl mx-auto text-center mb-12 ml-12">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-4">
+                    Événements
+                  </h1>
                   <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                     Découvrez les masterclass, stages et concours organisés par nos professionnels
                   </p>
