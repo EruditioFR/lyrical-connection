@@ -24,15 +24,6 @@ const HeroModern = () => {
         <div className="flex flex-col lg:flex-row items-center min-h-[60vh] lg:min-h-[90vh] py-12 lg:py-0">
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-16 xl:pr-20 text-center lg:text-left text-appear">
-            {/* Logo/Brand */}
-            <div className="mb-4 lg:mb-6">
-              <img 
-                src="/lovable-uploads/396b40a6-3f84-4c77-b3c8-98ab489ac48b.png" 
-                alt="Lyrisphere - Global Network for Opera Professionals" 
-                className="max-h-[300px] w-auto mx-auto lg:mx-0"
-              />
-            </div>
-            
             {/* Main Title */}
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif font-bold leading-tight mb-4 lg:mb-6 text-foreground">
               {t('hero.title')}
