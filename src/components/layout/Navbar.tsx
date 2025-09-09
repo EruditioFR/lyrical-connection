@@ -304,6 +304,13 @@ const Navbar = () => {
                     >
                       Messages
                     </Link>
+                    <Link
+                      to="/professionnels"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Voir les professionnels
+                    </Link>
                   </>
                 )}
 
