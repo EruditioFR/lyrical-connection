@@ -37,14 +37,14 @@ const FeaturedArtistCard = ({ artist }: { artist: any }) => {
         
         {/* Audio indicators */}
         {isAnalyzing && (
-          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+          <div className="absolute top-3 left-3">
             <div className="bg-muted-foreground/90 backdrop-blur-sm rounded-full p-3">
               <Loader2 className="h-6 w-6 text-white animate-spin" />
             </div>
           </div>
         )}
         {isPlaying && (
-          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+          <div className="absolute top-3 left-3">
             <div className="bg-primary/90 backdrop-blur-sm rounded-full p-3">
               <Volume2 className="h-6 w-6 text-white animate-pulse" />
             </div>
