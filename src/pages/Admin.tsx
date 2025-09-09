@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import FreeAccountsPanel from '@/components/admin/FreeAccountsPanel';
@@ -14,12 +14,25 @@ import OperaDatabaseManager from '@/components/admin/OperaDatabaseManager';
 import NoticeManager from '@/components/admin/NoticeManager';
 import { QuickResendInvitation } from '@/components/admin/QuickResendInvitation';
 import { useUserRoles } from '@/hooks/useUserRoles';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
-  const [activeTab, setActiveTab] = useState('artists');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'artists');
+
+  useEffect(() => {
+    const currentTab = searchParams.get('tab');
+    if (currentTab && currentTab !== activeTab) {
+      setActiveTab(currentTab);
+    }
+  }, [searchParams]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">Chargement...</div>;
@@ -67,7 +80,7 @@ const Admin = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <AdminSidebar activeTab={activeTab} onTabChange={handleTabChange} />
         
         <main className="flex-1 flex flex-col">
           <header className="h-16 border-b border-border bg-card flex items-center px-6">
