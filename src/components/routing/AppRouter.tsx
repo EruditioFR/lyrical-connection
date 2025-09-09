@@ -34,6 +34,7 @@ import ChangePassword from '@/pages/ChangePassword';
 import ResetPassword from '@/pages/ResetPassword';
 import About from '@/pages/About';
 import Admin from '@/pages/Admin';
+import AdminProfile from '@/pages/AdminProfile';
 import NotFound from '@/pages/NotFound';
 import LegalNotice from '@/pages/LegalNotice';
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
@@ -122,6 +123,7 @@ export const AppRouter = () => {
       <Route path="/invitation/:token" element={<Invitation />} />
       <Route path="/change-password" element={<AuthGuard><SubscriptionGuard><ChangePassword /></SubscriptionGuard></AuthGuard>} />
       <Route path="/admin" element={<AuthGuard><Admin /></AuthGuard>} />
+      <Route path="/admin-profile" element={<AuthGuard><AdminProfile /></AuthGuard>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

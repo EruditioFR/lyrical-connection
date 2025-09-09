@@ -44,7 +44,7 @@ const Admin = () => {
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate('/admin-profile');
   };
 
   if (isLoading) {
