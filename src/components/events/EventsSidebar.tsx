@@ -66,10 +66,10 @@ export const EventsSidebar: React.FC<EventsSidebarProps> = ({
           {open && (
             <div className="flex items-center gap-2">
               <Search className="h-4 w-4 text-muted-foreground" />
-              <h2 className="font-medium text-sm">Filtres</h2>
+              <h2 className="font-medium text-sm">Filtres de recherche</h2>
             </div>
           )}
-          <SidebarTrigger className="h-6 w-6 text-muted-foreground hover:text-foreground">
+          <SidebarTrigger className="h-8 w-8 bg-transparent hover:bg-muted/50 text-muted-foreground hover:text-foreground rounded-md transition-all duration-200 flex items-center justify-center">
             <SlidersHorizontal className="h-4 w-4" />
           </SidebarTrigger>
         </div>

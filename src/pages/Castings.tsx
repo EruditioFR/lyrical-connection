@@ -43,15 +43,6 @@ const Castings = () => {
     <Layout>
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
-          {/* Header global avec trigger sidebar */}
-          {!isProfessional && (
-            <div className="fixed top-16 left-4 z-50">
-              <SidebarTrigger className="bg-background/95 backdrop-blur border shadow-sm p-2 hover:bg-muted/50 rounded-lg transition-all duration-200">
-                <Search className="h-4 w-4" />
-              </SidebarTrigger>
-            </div>
-          )}
-
           {/* Sidebar pour les filtres - masqué pour les professionnels */}
           {!isProfessional && (
             <CastingsSidebar 
@@ -65,7 +56,7 @@ const Castings = () => {
             <div className="container mx-auto px-4 py-8">
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
-                <div className={`${!isProfessional ? 'ml-12' : ''}`}>
+                <div>
                   <h1 className="text-3xl font-bold">
                     {isProfessional ? 'Mes Castings' : 'Castings'}
                   </h1>
