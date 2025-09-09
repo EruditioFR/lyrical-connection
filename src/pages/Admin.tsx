@@ -10,10 +10,11 @@ import AutomatedWorkflows from '@/components/admin/AutomatedWorkflows';
 import BlogManagement from '@/components/admin/BlogManagement';
 import { LyricalWorksManager } from '@/components/admin/LyricalWorksManager';
 import OperaDatabaseManager from '@/components/admin/OperaDatabaseManager';
+import NoticeManager from '@/components/admin/NoticeManager';
 import { QuickResendInvitation } from '@/components/admin/QuickResendInvitation';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
-import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music, Database, Mail } from 'lucide-react';
+import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music, Database, Mail, BookOpen } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
@@ -37,7 +38,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="artists" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-12">
+          <TabsList className="grid w-full grid-cols-12 lg:grid-cols-13">
             <TabsTrigger value="artists" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Artistes
@@ -85,6 +86,10 @@ const Admin = () => {
             <TabsTrigger value="opera-database" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
               Base Opéra
+            </TabsTrigger>
+            <TabsTrigger value="notices" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              Notices
             </TabsTrigger>
           </TabsList>
 
@@ -134,6 +139,10 @@ const Admin = () => {
 
           <TabsContent value="opera-database" className="space-y-6">
             <OperaDatabaseManager />
+          </TabsContent>
+
+          <TabsContent value="notices" className="space-y-6">
+            <NoticeManager />
           </TabsContent>
         </Tabs>
       </div>
