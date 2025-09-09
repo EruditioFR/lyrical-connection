@@ -107,11 +107,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between min-h-[64px]">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img 
-            src="/lovable-uploads/396b40a6-3f84-4c77-b3c8-98ab489ac48b.png" 
-            alt="Lyrisphere - Global Network for Opera Professionals" 
-            className="max-h-[300px] w-auto"
-          />
+          <span className="text-2xl font-bold text-lyrical-600">Lyrisphere</span>
         </Link>
 
         {/* Navigation principale */}

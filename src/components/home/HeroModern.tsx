@@ -24,9 +24,13 @@ const HeroModern = () => {
         <div className="flex flex-col lg:flex-row items-center min-h-[60vh] lg:min-h-[90vh] py-12 lg:py-0">
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-16 xl:pr-20 text-center lg:text-left text-appear">
-            {/* Brand/Punchline - Responsive sizing */}
-            <div className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white lg:text-transparent lg:bg-gradient-to-r lg:from-lyrical-600 lg:to-gold-500 lg:bg-clip-text mb-4 lg:mb-6 tracking-wide drop-shadow-2xl" style={{lineHeight: '1.4'}}>
-              Lyrisphere
+            {/* Logo/Brand */}
+            <div className="mb-4 lg:mb-6">
+              <img 
+                src="/lovable-uploads/396b40a6-3f84-4c77-b3c8-98ab489ac48b.png" 
+                alt="Lyrisphere - Global Network for Opera Professionals" 
+                className="max-h-[300px] w-auto mx-auto lg:mx-0"
+              />
             </div>
             
             {/* Main Title */}
