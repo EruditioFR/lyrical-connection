@@ -8,7 +8,7 @@ import { EventCard } from '@/components/events/EventCard';
 import { EventsSidebar } from '@/components/events/EventsSidebar';
 import EventsMarketing from '@/components/events/EventsMarketing';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { Loader2, AlertCircle, Search } from 'lucide-react';
+import { Loader2, AlertCircle, Search, SlidersHorizontal } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -84,6 +84,13 @@ const Events = () => {
     <Layout>
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
+          {/* Bouton toggle sidebar flottant */}
+          <div className="fixed top-20 left-4 z-50">
+            <SidebarTrigger className="bg-background/95 backdrop-blur border shadow-lg p-3 hover:bg-muted/50 rounded-lg transition-all duration-200 hover:scale-105">
+              <SlidersHorizontal className="h-4 w-4" />
+            </SidebarTrigger>
+          </div>
+
           {/* Sidebar pour les filtres */}
           <EventsSidebar 
             filters={filters} 

@@ -10,7 +10,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useCastings, useMyCastings } from '@/hooks/useCastings';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
-import { Plus, Loader2, Search } from 'lucide-react';
+import { Plus, Loader2, Search, SlidersHorizontal } from 'lucide-react';
 
 const Castings = () => {
   console.log('Castings component rendered');
@@ -43,6 +43,15 @@ const Castings = () => {
     <Layout>
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
+          {/* Bouton toggle sidebar flottant */}
+          {!isProfessional && (
+            <div className="fixed top-20 left-4 z-50">
+              <SidebarTrigger className="bg-background/95 backdrop-blur border shadow-lg p-3 hover:bg-muted/50 rounded-lg transition-all duration-200 hover:scale-105">
+                <SlidersHorizontal className="h-4 w-4" />
+              </SidebarTrigger>
+            </div>
+          )}
+
           {/* Sidebar pour les filtres - masqué pour les professionnels */}
           {!isProfessional && (
             <CastingsSidebar 
