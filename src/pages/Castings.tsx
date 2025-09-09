@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import CastingCard from '@/components/castings/CastingCard';
+import { CastingsFilterSidebar } from '@/components/castings/CastingsFilterSidebar';
 import CastingsMarketing from '@/components/castings/CastingsMarketing';
 import { Button } from '@/components/ui/button';
 import { useCastings, useMyCastings } from '@/hooks/useCastings';
@@ -16,6 +17,7 @@ const Castings = () => {
   const { user } = useAuth();
   const { userType } = useUserType();
   const [filters, setFilters] = useState({});
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Tous les hooks doivent être appelés AVANT toute condition
   const { castings: allCastings, isLoading: allCastingsLoading } = useCastings(filters);
@@ -39,6 +41,16 @@ const Castings = () => {
 
   return (
     <Layout>
+      {/* Sidebar de filtres - seulement pour les non-professionnels */}
+      {!isProfessional && (
+        <CastingsFilterSidebar
+          filters={filters}
+          onFiltersChange={setFilters}
+          isOpen={isSidebarOpen}
+          onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+        />
+      )}
+
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
