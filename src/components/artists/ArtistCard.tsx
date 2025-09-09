@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2 } from 'lucide-react';
+import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
 import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
@@ -22,7 +22,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
   isUserAuthenticated = true
 }) => {
   const navigate = useNavigate();
-  const { startAudioPreview, stopAudioPreview, isPlaying, hasAudioTracks } = useArtistAudioPreview(artist.id);
+  const { startAudioPreview, stopAudioPreview, isPlaying, isAnalyzing, hasAudioTracks } = useArtistAudioPreview(artist.id);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (onClick && !e.defaultPrevented) {
@@ -39,6 +39,8 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
     <Card 
       className={`hover:shadow-lg transition-all duration-300 cursor-pointer group ${
         isPlaying ? 'ring-2 ring-primary shadow-lg' : ''
+      } ${
+        isAnalyzing ? 'ring-2 ring-muted-foreground/50' : ''
       }`}
       onClick={handleCardClick}
       onMouseEnter={hasAudioTracks ? startAudioPreview : undefined}
@@ -52,6 +54,9 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                 {artist.stage_name}
                 {isPlaying && (
                   <Volume2 className="w-4 h-4 text-primary animate-pulse" />
+                )}
+                {isAnalyzing && (
+                  <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
                 )}
               </h3>
               {artist.public_visibility_premium && (

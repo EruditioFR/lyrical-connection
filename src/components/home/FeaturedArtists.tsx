@@ -3,19 +3,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlayCircle, MapPin, Music, Volume2 } from 'lucide-react';
+import { ArrowRight, PlayCircle, MapPin, Music, Volume2, Loader2 } from 'lucide-react';
 
 import { useArtists } from '@/hooks/useArtists';
 import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
 
 const FeaturedArtistCard = ({ artist }: { artist: any }) => {
   const { t } = useTranslation('home');
-  const { startAudioPreview, stopAudioPreview, isPlaying, hasAudioTracks } = useArtistAudioPreview(artist.id);
+  const { startAudioPreview, stopAudioPreview, isPlaying, isAnalyzing, hasAudioTracks } = useArtistAudioPreview(artist.id);
 
   return (
     <div 
       className={`rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 ${
         isPlaying ? 'ring-2 ring-primary shadow-lg scale-105' : 'hover:shadow-md'
+      } ${
+        isAnalyzing ? 'ring-2 ring-muted-foreground/50 scale-102' : ''
       }`}
       onMouseEnter={hasAudioTracks ? startAudioPreview : undefined}
       onMouseLeave={hasAudioTracks ? stopAudioPreview : undefined}
@@ -33,7 +35,14 @@ const FeaturedArtistCard = ({ artist }: { artist: any }) => {
           </div>
         )}
         
-        {/* Audio playing indicator */}
+        {/* Audio indicators */}
+        {isAnalyzing && (
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <div className="bg-muted-foreground/90 backdrop-blur-sm rounded-full p-3">
+              <Loader2 className="h-6 w-6 text-white animate-spin" />
+            </div>
+          </div>
+        )}
         {isPlaying && (
           <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
             <div className="bg-primary/90 backdrop-blur-sm rounded-full p-3">
@@ -56,6 +65,9 @@ const FeaturedArtistCard = ({ artist }: { artist: any }) => {
           <Link to={`/artistes/${artist.id}`} className="hover:text-primary transition-colors flex-1">
             {artist.name}
           </Link>
+          {isAnalyzing && (
+            <Loader2 className="w-4 h-4 text-muted-foreground animate-spin flex-shrink-0" />
+          )}
           {isPlaying && (
             <Volume2 className="w-4 h-4 text-primary animate-pulse flex-shrink-0" />
           )}
@@ -142,8 +154,6 @@ const FeaturedArtists = () => {
             <FeaturedArtistCard key={artist.id} artist={artist} />
           ))}
         </div>
-        
-        {/* Call to action section */}
         
         {/* Call to action section */}
         <div className="mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-xl p-8 text-center">
