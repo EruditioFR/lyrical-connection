@@ -51,13 +51,6 @@ const FeaturedArtistCard = ({ artist }: { artist: any }) => {
           </div>
         )}
         
-        {/* Profile stats overlay */}
-        <div className="absolute top-3 left-3">
-          <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1 text-white">
-            <Music className="h-3 w-3" />
-            <span className="text-xs font-medium">{artist.profileViews}</span>
-          </div>
-        </div>
       </Link>
       
       <div className="p-4">
