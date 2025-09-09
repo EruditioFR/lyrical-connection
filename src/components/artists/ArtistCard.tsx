@@ -3,9 +3,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown } from 'lucide-react';
+import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
+import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -21,6 +22,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
   isUserAuthenticated = true
 }) => {
   const navigate = useNavigate();
+  const { startAudioPreview, stopAudioPreview, isPlaying, hasAudioTracks } = useArtistAudioPreview(artist.id);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (onClick && !e.defaultPrevented) {
@@ -35,15 +37,22 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
 
   return (
     <Card 
-      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      className={`hover:shadow-lg transition-all duration-300 cursor-pointer group ${
+        isPlaying ? 'ring-2 ring-primary shadow-lg' : ''
+      }`}
       onClick={handleCardClick}
+      onMouseEnter={hasAudioTracks ? startAudioPreview : undefined}
+      onMouseLeave={hasAudioTracks ? stopAudioPreview : undefined}
     >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
-              <h3 className="artist-name-card">
+              <h3 className="artist-name-card flex items-center gap-2">
                 {artist.stage_name}
+                {isPlaying && (
+                  <Volume2 className="w-4 h-4 text-primary animate-pulse" />
+                )}
               </h3>
               {artist.public_visibility_premium && (
                 <Badge variant="default" className="bg-primary text-primary-foreground">

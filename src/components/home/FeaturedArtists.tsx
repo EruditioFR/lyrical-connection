@@ -3,9 +3,74 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlayCircle, MapPin, Music } from 'lucide-react';
+import { ArrowRight, PlayCircle, MapPin, Music, Volume2 } from 'lucide-react';
 
 import { useArtists } from '@/hooks/useArtists';
+import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
+
+const FeaturedArtistCard = ({ artist }: { artist: any }) => {
+  const { t } = useTranslation('home');
+  const { startAudioPreview, stopAudioPreview, isPlaying, hasAudioTracks } = useArtistAudioPreview(artist.id);
+
+  return (
+    <div 
+      className={`rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm transition-all duration-300 ${
+        isPlaying ? 'ring-2 ring-primary shadow-lg scale-105' : 'hover:shadow-md'
+      }`}
+      onMouseEnter={hasAudioTracks ? startAudioPreview : undefined}
+      onMouseLeave={hasAudioTracks ? stopAudioPreview : undefined}
+    >
+      <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
+        <img 
+          src={artist.image} 
+          alt={artist.name} 
+          className="w-full h-full object-cover"
+        />
+        
+        {artist.featured && (
+          <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full">
+            {t('featuredArtists.featured')}
+          </div>
+        )}
+        
+        {/* Audio playing indicator */}
+        {isPlaying && (
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+            <div className="bg-primary/90 backdrop-blur-sm rounded-full p-3">
+              <Volume2 className="h-6 w-6 text-white animate-pulse" />
+            </div>
+          </div>
+        )}
+        
+        {/* Profile stats overlay */}
+        <div className="absolute top-3 left-3">
+          <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1 text-white">
+            <Music className="h-3 w-3" />
+            <span className="text-xs font-medium">{artist.profileViews}</span>
+          </div>
+        </div>
+      </Link>
+      
+      <div className="p-4">
+        <h3 className="artist-name-featured mb-2 flex items-center gap-2">
+          <Link to={`/artistes/${artist.id}`} className="hover:text-primary transition-colors flex-1">
+            {artist.name}
+          </Link>
+          {isPlaying && (
+            <Volume2 className="w-4 h-4 text-primary animate-pulse flex-shrink-0" />
+          )}
+        </h3>
+        <p className="text-muted-foreground text-sm font-medium">{artist.voiceType}</p>
+        <p className="text-xs text-muted-foreground mt-1">{artist.specialty}</p>
+        
+        <div className="flex items-center mt-3 text-xs text-muted-foreground">
+          <MapPin className="h-3 w-3 mr-1" />
+          <span>{artist.location}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const FeaturedArtists = () => {
   const { t } = useTranslation('home');
@@ -74,47 +139,11 @@ const FeaturedArtists = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {featuredArtists.map((artist, index) => (
-            <div 
-              key={artist.id}
-              className="rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm"
-            >
-              <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
-                <img 
-                  src={artist.image} 
-                  alt={artist.name} 
-                  className="w-full h-full object-cover"
-                />
-                
-                {artist.featured && (
-                  <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full">
-                    {t('featuredArtists.featured')}
-                  </div>
-                )}
-                
-                {/* Profile stats overlay */}
-                <div className="absolute top-3 left-3">
-                  <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1 text-white">
-                    <Music className="h-3 w-3" />
-                    <span className="text-xs font-medium">{artist.profileViews}</span>
-                  </div>
-                </div>
-              </Link>
-              
-              <div className="p-4">
-                <h3 className="artist-name-featured mb-2">
-                  <Link to={`/artistes/${artist.id}`} className="hover:text-primary transition-colors">{artist.name}</Link>
-                </h3>
-                <p className="text-muted-foreground text-sm font-medium">{artist.voiceType}</p>
-                <p className="text-xs text-muted-foreground mt-1">{artist.specialty}</p>
-                
-                <div className="flex items-center mt-3 text-xs text-muted-foreground">
-                  <MapPin className="h-3 w-3 mr-1" />
-                  <span>{artist.location}</span>
-                </div>
-              </div>
-            </div>
+            <FeaturedArtistCard key={artist.id} artist={artist} />
           ))}
         </div>
+        
+        {/* Call to action section */}
         
         {/* Call to action section */}
         <div className="mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-xl p-8 text-center">
