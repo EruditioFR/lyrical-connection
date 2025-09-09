@@ -1,6 +1,7 @@
 
-import React from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState } from 'react';
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import AdminSidebar from '@/components/admin/AdminSidebar';
 import FreeAccountsPanel from '@/components/admin/FreeAccountsPanel';
 import VerificationPanel from '@/components/admin/VerificationPanel';
 import UpgradeRequestManager from '@/components/admin/UpgradeRequestManager';
@@ -14,10 +15,11 @@ import NoticeManager from '@/components/admin/NoticeManager';
 import { QuickResendInvitation } from '@/components/admin/QuickResendInvitation';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { Navigate } from 'react-router-dom';
-import { Users, Building2, CheckCircle, CreditCard, Bell, Settings, Languages, FileText, Music, Database, Mail, BookOpen } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 const Admin = () => {
   const { userRoles, isLoading } = useUserRoles();
+  const [activeTab, setActiveTab] = useState('artists');
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-screen">Chargement...</div>;
@@ -29,124 +31,61 @@ const Admin = () => {
     return <Navigate to="/" replace />;
   }
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'artists':
+        return <FreeAccountsPanel accountType="artist" />;
+      case 'professionals':
+        return <FreeAccountsPanel accountType="professional" />;
+      case 'verification':
+        return <VerificationPanel />;
+      case 'upgrades':
+        return <UpgradeRequestManager />;
+      case 'payments':
+        return <PaymentManager />;
+      case 'notifications':
+        return <NotificationCenter />;
+      case 'workflows':
+        return <AutomatedWorkflows />;
+      case 'invitations':
+        return <QuickResendInvitation />;
+      case 'translations':
+        return <div className="p-6">Translation Manager - Coming Soon</div>;
+      case 'lyrical-works':
+        return <LyricalWorksManager />;
+      case 'blog':
+        return <BlogManagement />;
+      case 'opera-database':
+        return <OperaDatabaseManager />;
+      case 'notices':
+        return <NoticeManager />;
+      default:
+        return <FreeAccountsPanel accountType="artist" />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Administration</h1>
-          <p className="text-gray-600 mt-2">Gestion de la plateforme Lyrisphere</p>
-        </div>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        
+        <main className="flex-1 flex flex-col">
+          <header className="h-16 border-b border-border bg-card flex items-center px-6">
+            <SidebarTrigger className="mr-4">
+              <Menu className="h-4 w-4" />
+            </SidebarTrigger>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Administration</h1>
+              <p className="text-muted-foreground text-sm">Gestion de la plateforme Lyrisphere</p>
+            </div>
+          </header>
 
-        <Tabs defaultValue="artists" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-12 lg:grid-cols-13">
-            <TabsTrigger value="artists" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Artistes
-            </TabsTrigger>
-            <TabsTrigger value="professionals" className="flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
-              Professionnels
-            </TabsTrigger>
-            <TabsTrigger value="verification" className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Vérification
-            </TabsTrigger>
-            <TabsTrigger value="upgrades" className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Upgrades
-            </TabsTrigger>
-            <TabsTrigger value="payments" className="flex items-center gap-2">
-              <CreditCard className="h-4 w-4" />
-              Paiements
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
-              <Bell className="h-4 w-4" />
-              Notifications
-            </TabsTrigger>
-            <TabsTrigger value="workflows" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Workflows
-            </TabsTrigger>
-            <TabsTrigger value="invitations" className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Invitations
-            </TabsTrigger>
-            <TabsTrigger value="translations" className="flex items-center gap-2">
-              <Languages className="h-4 w-4" />
-              Traductions
-            </TabsTrigger>
-            <TabsTrigger value="lyrical-works" className="flex items-center gap-2">
-              <Music className="h-4 w-4" />
-              Œuvres lyriques
-            </TabsTrigger>
-            <TabsTrigger value="blog" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Blog
-            </TabsTrigger>
-            <TabsTrigger value="opera-database" className="flex items-center gap-2">
-              <Database className="h-4 w-4" />
-              Base Opéra
-            </TabsTrigger>
-            <TabsTrigger value="notices" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              Notices
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="artists" className="space-y-6">
-            <FreeAccountsPanel accountType="artist" />
-          </TabsContent>
-
-          <TabsContent value="professionals" className="space-y-6">
-            <FreeAccountsPanel accountType="professional" />
-          </TabsContent>
-
-          <TabsContent value="verification" className="space-y-6">
-            <VerificationPanel />
-          </TabsContent>
-
-          <TabsContent value="upgrades" className="space-y-6">
-            <UpgradeRequestManager />
-          </TabsContent>
-
-          <TabsContent value="payments" className="space-y-6">
-            <PaymentManager />
-          </TabsContent>
-
-          <TabsContent value="notifications" className="space-y-6">
-            <NotificationCenter />
-          </TabsContent>
-
-          <TabsContent value="workflows" className="space-y-6">
-            <AutomatedWorkflows />
-          </TabsContent>
-
-          <TabsContent value="invitations" className="space-y-6">
-            <QuickResendInvitation />
-          </TabsContent>
-
-          <TabsContent value="translations" className="space-y-6">
-            <div>Translation Manager - Coming Soon</div>
-          </TabsContent>
-
-          <TabsContent value="lyrical-works" className="space-y-6">
-            <LyricalWorksManager />
-          </TabsContent>
-
-          <TabsContent value="blog" className="space-y-6">
-            <BlogManagement />
-          </TabsContent>
-
-          <TabsContent value="opera-database" className="space-y-6">
-            <OperaDatabaseManager />
-          </TabsContent>
-
-          <TabsContent value="notices" className="space-y-6">
-            <NoticeManager />
-          </TabsContent>
-        </Tabs>
+          <div className="flex-1 p-6">
+            {renderContent()}
+          </div>
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
