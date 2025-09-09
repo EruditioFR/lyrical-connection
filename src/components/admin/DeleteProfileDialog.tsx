@@ -74,42 +74,49 @@ const DeleteProfileDialog = ({ account, onProfileDeleted }: DeleteProfileDialogP
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-          <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer <strong>DÉFINITIVEMENT</strong> l'utilisateur{' '}
-            <strong>{profileName}</strong> ?
-            <br />
-            <br />
-            <strong>⚠️ ATTENTION :</strong> Cette action supprimera complètement l'utilisateur de la base de données, y compris son compte d'authentification.
-            <br />
-            <br />
-            Cette action supprimera toutes les données associées :
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li><strong>Compte d'authentification</strong> (l'utilisateur ne pourra plus se connecter)</li>
-              {account.type === 'artist' ? (
-                <>
-                  <li>Profil artiste complet</li>
-                  <li>Photos du profil</li>
-                  <li>Enregistrements audio/vidéo</li>
-                  <li>Répertoire</li>
-                  <li>Candidatures</li>
-                  <li>Messages et conversations</li>
-                </>
-              ) : (
-                <>
-                  <li>Profil professionnel complet</li>
-                  <li>Médias professionnels</li>
-                  <li>Disponibilités</li>
-                  <li>Profils cibles</li>
-                  <li>Castings créés</li>
-                  <li>Événements créés</li>
-                  <li>Messages et conversations</li>
-                </>
-              )}
-            </ul>
-            <br />
-            <strong>⚠️ Cette action est IRRÉVERSIBLE et DÉFINITIVE.</strong>
-            <br />
-            <em>Si vous souhaitez simplement suspendre l'accès temporairement, utilisez la fonction "Désactiver" à la place.</em>
+          <AlertDialogDescription asChild>
+            <div>
+              <p>
+                Êtes-vous sûr de vouloir supprimer <strong>DÉFINITIVEMENT</strong> l'utilisateur{' '}
+                <strong>{profileName}</strong> ?
+              </p>
+              <br />
+              <p>
+                <strong>⚠️ ATTENTION :</strong> Cette action supprimera complètement l'utilisateur de la base de données, y compris son compte d'authentification.
+              </p>
+              <br />
+              <p>Cette action supprimera toutes les données associées :</p>
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li><strong>Compte d'authentification</strong> (l'utilisateur ne pourra plus se connecter)</li>
+                {account.type === 'artist' ? (
+                  <>
+                    <li>Profil artiste complet</li>
+                    <li>Photos du profil</li>
+                    <li>Enregistrements audio/vidéo</li>
+                    <li>Répertoire</li>
+                    <li>Candidatures</li>
+                    <li>Messages et conversations</li>
+                  </>
+                ) : (
+                  <>
+                    <li>Profil professionnel complet</li>
+                    <li>Médias professionnels</li>
+                    <li>Disponibilités</li>
+                    <li>Profils cibles</li>
+                    <li>Castings créés</li>
+                    <li>Événements créés</li>
+                    <li>Messages et conversations</li>
+                  </>
+                )}
+              </ul>
+              <br />
+              <p>
+                <strong>⚠️ Cette action est IRRÉVERSIBLE et DÉFINITIVE.</strong>
+              </p>
+              <p>
+                <em>Si vous souhaitez simplement suspendre l'accès temporairement, utilisez la fonction "Désactiver" à la place.</em>
+              </p>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -55,16 +55,17 @@ serve(async (req) => {
     logStep("User ID to delete", { userIdToDelete });
 
     // Check if user exists and get profile info for logging
-    const { data: profiles } = await supabaseAdmin
+    const { data: artistProfiles } = await supabaseAdmin
       .from('artist_profiles')
       .select('stage_name, user_id')
-      .eq('user_id', userIdToDelete)
-      .union(
-        supabaseAdmin
-          .from('professional_profiles')
-          .select('company_name as stage_name, user_id')
-          .eq('user_id', userIdToDelete)
-      );
+      .eq('user_id', userIdToDelete);
+
+    const { data: professionalProfiles } = await supabaseAdmin
+      .from('professional_profiles')
+      .select('company_name as stage_name, user_id')
+      .eq('user_id', userIdToDelete);
+
+    const profiles = [...(artistProfiles || []), ...(professionalProfiles || [])];
 
     if (!profiles || profiles.length === 0) {
       logStep("No profiles found for user, checking if user exists in auth");
