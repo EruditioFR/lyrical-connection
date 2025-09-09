@@ -141,6 +141,9 @@ const FeaturedArtists = () => {
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
             {t('featuredArtists.subtitle')}
           </p>
+          <p className="text-muted-foreground/80 text-sm mt-3 max-w-2xl mx-auto italic">
+            Écoutez un extrait en survolant les photos des artistes
+          </p>
           <Button variant="link" className="flex items-center justify-center mt-4" asChild>
             <Link to="/artistes">
               {t('featuredArtists.viewAll')}
