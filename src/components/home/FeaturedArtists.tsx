@@ -101,8 +101,8 @@ const FeaturedArtists = () => {
               </Link>
               
               <div className="p-4">
-                <h3 className="font-serif font-semibold text-lg">
-                  <Link to={`/artistes/${artist.id}`}>{artist.name}</Link>
+                <h3 className="artist-name-featured mb-2">
+                  <Link to={`/artistes/${artist.id}`} className="hover:text-primary transition-colors">{artist.name}</Link>
                 </h3>
                 <p className="text-muted-foreground text-sm font-medium">{artist.voiceType}</p>
                 <p className="text-xs text-muted-foreground mt-1">{artist.specialty}</p>

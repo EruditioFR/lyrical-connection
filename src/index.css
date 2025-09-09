@@ -149,6 +149,18 @@
     @apply font-body text-body text-foreground;
   }
   
+  .artist-name {
+    @apply font-serif text-xl md:text-2xl font-bold text-foreground;
+  }
+  
+  .artist-name-card {
+    @apply font-serif text-xl font-bold text-foreground;
+  }
+  
+  .artist-name-featured {
+    @apply font-serif text-xl md:text-2xl font-bold text-foreground;
+  }
+  
   .secondary-text {
     @apply font-body text-body-sm text-secondary;
   }
