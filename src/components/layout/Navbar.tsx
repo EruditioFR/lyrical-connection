@@ -106,7 +106,13 @@ const Navbar = () => {
     return <nav className="bg-white shadow-sm border-b sticky top-0 z-50" ref={navRef}>
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between min-h-[64px]">
         {/* Logo */}
-        <Link to="/" className="flex items-center text-xl font-semibold text-gray-900">Lyrisphere</Link>
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/lovable-uploads/396b40a6-3f84-4c77-b3c8-98ab489ac48b.png" 
+            alt="Lyrisphere - Global Network for Opera Professionals" 
+            className="h-10 w-auto"
+          />
+        </Link>
 
         {/* Navigation principale */}
         <div className="hidden md:flex items-center space-x-8">
