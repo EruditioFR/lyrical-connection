@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Calendar, MessageSquare, Users, TrendingUp, Plus, Bell } from 'lucide-react';
 import SubscriptionDebug from '@/components/debug/SubscriptionDebug';
+import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 
 const AuthenticatedHome = () => {
   const { user } = useAuth();
@@ -38,14 +39,26 @@ const AuthenticatedHome = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        {/* Greeting Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            {getGreeting()}, {getDisplayName()} !
-          </h1>
-          <p className="text-muted-foreground">
-            Voici un aperçu de votre activité récente
-          </p>
+        {/* Hero Banner avec image d'opéra */}
+        <div 
+          className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900 mb-8"
+          style={{
+            backgroundImage: `url(${operaDashboardHero})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+          <div className="relative h-full flex items-center justify-start px-8">
+            <div className="text-white">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-2">
+                {getGreeting()}, {getDisplayName()} !
+              </h1>
+              <p className="text-white/90 text-lg">
+                Voici un aperçu de votre activité récente sur Lyrisphere
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Quick Actions */}

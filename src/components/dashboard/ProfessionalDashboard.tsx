@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import { useProfessionalEvents } from '@/hooks/useEvents';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
+import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 
 const ProfessionalDashboard = () => {
   const { data: events = [] } = useProfessionalEvents();
@@ -32,6 +33,28 @@ const ProfessionalDashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Hero Banner avec image d'opéra */}
+      <div 
+        className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
+        style={{
+          backgroundImage: `url(${operaDashboardHero})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+        <div className="relative h-full flex items-center justify-center text-center px-6">
+          <div className="text-white">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-2">
+              Tableau de Bord Professionnel
+            </h1>
+            <p className="text-white/90 text-lg">
+              Gérez vos événements et développez votre réseau artistique
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* En-tête avec statistiques */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>

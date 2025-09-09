@@ -5,6 +5,7 @@ import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
 import { Card, CardContent } from '@/components/ui/card';
+import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 
 const Dashboard = () => {
   // All hooks called unconditionally at the top
@@ -70,11 +71,26 @@ const Dashboard = () => {
           <ProfessionalDashboard />
         ) : isArtist ? (
           <div className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold">Tableau de bord artiste</h1>
-              <p className="text-muted-foreground">
-                Bienvenue, {artistProfile?.stage_name || 'Artiste'}
-              </p>
+            {/* Hero Banner pour artiste */}
+            <div 
+              className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
+              style={{
+                backgroundImage: `url(${operaDashboardHero})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+              <div className="relative h-full flex items-center justify-center text-center px-6">
+                <div className="text-white">
+                  <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-2">
+                    Tableau de Bord Artiste
+                  </h1>
+                  <p className="text-white/90 text-lg">
+                    Bienvenue, {artistProfile?.stage_name || 'Artiste'}
+                  </p>
+                </div>
+              </div>
             </div>
             <AnalyticsDashboard profileType="artist" />
           </div>
