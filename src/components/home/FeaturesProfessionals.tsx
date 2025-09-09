@@ -68,7 +68,7 @@ const FeaturesProfessionals = () => {
             </p>
           </div>
           <div className="mt-8">
-            <Button variant="outline" className="border-gold-200 hover:bg-gold-50" asChild>
+            <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
               <Link to="/auth">Créez votre compte pro</Link>
             </Button>
           </div>
@@ -119,7 +119,7 @@ const FeaturesProfessionals = () => {
         
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
-          <Button variant="outline" className="border-gold-200 hover:bg-gold-50" asChild>
+          <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
             <Link to="/auth">Créez votre compte pro</Link>
           </Button>
         </div>
