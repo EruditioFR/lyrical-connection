@@ -88,8 +88,8 @@ const FeaturesArtists = () => {
                   key={index} 
                   className={`h-full transition-all duration-300 ease-out text-appear group hover:scale-105 ${
                     isLyrical 
-                      ? "bg-gradient-to-br from-background to-lyrical-50/30 border-l-4 border-l-lyrical-500 border-t border-r border-b border-lyrical-200/50 hover:border-lyrical-400 hover:shadow-xl hover:shadow-lyrical-500/10" 
-                      : "bg-gradient-to-br from-background to-gold-50/30 border-l-4 border-l-gold-500 border-t border-r border-b border-gold-200/50 hover:border-gold-400 hover:shadow-xl hover:shadow-gold-500/10"
+                      ? "bg-gradient-to-br from-background to-lyrical-50/30 border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
+                      : "bg-gradient-to-br from-background to-gold-50/30 border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
                   }`}
                 >
                   <CardContent className="p-4 md:p-6 h-full flex flex-col text-center relative">
