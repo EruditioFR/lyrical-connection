@@ -110,7 +110,7 @@ const Navbar = () => {
           <img 
             src="/lovable-uploads/396b40a6-3f84-4c77-b3c8-98ab489ac48b.png" 
             alt="Lyrisphere - Global Network for Opera Professionals" 
-            className="h-16 w-auto"
+            className="h-30 w-auto"
           />
         </Link>
 
