@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Users, Share2, FileText, Calendar } from 'lucide-react';
+import { Users, Share2, FileText, Calendar, UserPlus } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { EventApplicationDialog } from './EventApplicationDialog';
 
 interface EventSidebarProps {
   event: any;
@@ -99,6 +100,14 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
                 )}
               </CardContent>
             </Card>
+          ) : isArtist && !artistApplication && event.status === 'published' ? (
+            // Si artiste et pas encore inscrit, afficher le bouton d'inscription
+            <EventApplicationDialog event={event}>
+              <Button className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white">
+                <UserPlus className="w-4 h-4 mr-2" />
+                S'inscrire à l'événement
+              </Button>
+            </EventApplicationDialog>
           ) : !isArtist && (
             <Button className="w-full" asChild>
               <Link to={`/evenements/${event.id}/inscriptions`}>
