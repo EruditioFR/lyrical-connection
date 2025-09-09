@@ -98,14 +98,14 @@ const Events = () => {
                 {/* Header avec bouton sidebar */}
                 <div className="max-w-4xl mx-auto text-center mb-12">
                   <div className="flex items-center justify-center gap-4 mb-4">
-                    <SidebarTrigger className="p-2 hover:bg-gold-100 rounded-md border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10">
-                      <Search className="h-5 w-5 text-lyrical-600" />
+                    <SidebarTrigger className="p-2 hover:bg-muted/50 rounded-lg transition-colors">
+                      <Search className="h-4 w-4" />
                     </SidebarTrigger>
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-lyrical-900 dark:text-lyrical-100">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold">
                       Événements
                     </h1>
                   </div>
-                  <p className="text-lg text-lyrical-600 dark:text-lyrical-400 max-w-2xl mx-auto">
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                     Découvrez les masterclass, stages et concours organisés par nos professionnels
                   </p>
                 </div>
@@ -113,17 +113,17 @@ const Events = () => {
                 <div className="max-w-7xl mx-auto space-y-8">
                   {/* Tableau des inscriptions pour les artistes */}
                   {isArtist && artistApplications.length > 0 && (
-                    <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10">
+                    <Card>
                       <CardHeader>
-                        <CardTitle className="text-lyrical-800 dark:text-lyrical-200">Mes inscriptions</CardTitle>
+                        <CardTitle>Mes inscriptions</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="text-lyrical-700 dark:text-lyrical-300">Événement</TableHead>
-                              <TableHead className="text-lyrical-700 dark:text-lyrical-300">Dates</TableHead>
-                              <TableHead className="text-lyrical-700 dark:text-lyrical-300">Statut</TableHead>
+                            <TableHead>Événement</TableHead>
+                            <TableHead>Dates</TableHead>
+                            <TableHead>Statut</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -138,15 +138,15 @@ const Events = () => {
                               
                               return (
                                 <TableRow key={application.id}>
-                                  <TableCell className="font-medium text-lyrical-800 dark:text-lyrical-200">
-                                    {event.title}
-                                  </TableCell>
-                                  <TableCell className="text-lyrical-600 dark:text-lyrical-400">
-                                    {format(new Date(event.start_date), 'dd MMM yyyy', { locale: fr })}
-                                    {event.start_date !== event.end_date && (
-                                      <> - {format(new Date(event.end_date), 'dd MMM yyyy', { locale: fr })}</>
-                                    )}
-                                  </TableCell>
+                                <TableCell className="font-medium">
+                                  {event.title}
+                                </TableCell>
+                                <TableCell>
+                                  {format(new Date(event.start_date), 'dd MMM yyyy', { locale: fr })}
+                                  {event.start_date !== event.end_date && (
+                                    <> - {format(new Date(event.end_date), 'dd MMM yyyy', { locale: fr })}</>
+                                  )}
+                                </TableCell>
                                   <TableCell>
                                     <Badge className={statusColor}>
                                       {displayStatus}
@@ -176,10 +176,10 @@ const Events = () => {
                       </Alert>
                     ) : events.length === 0 ? (
                       <div className="text-center py-12">
-                        <h3 className="text-lg font-medium text-lyrical-800 dark:text-lyrical-200 mb-2">
+                        <h3 className="text-lg font-medium mb-2">
                           Aucun événement trouvé
                         </h3>
-                        <p className="text-lyrical-600 dark:text-lyrical-400">
+                        <p className="text-muted-foreground">
                           Modifiez vos filtres pour voir plus d'événements
                         </p>
                       </div>

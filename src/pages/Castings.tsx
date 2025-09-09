@@ -58,15 +58,15 @@ const Castings = () => {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
                   {!isProfessional && (
-                    <SidebarTrigger className="p-2 hover:bg-gold-100 rounded-md border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10">
-                      <Search className="h-5 w-5 text-lyrical-600" />
+                    <SidebarTrigger className="p-2 hover:bg-muted/50 rounded-lg transition-colors">
+                      <Search className="h-4 w-4" />
                     </SidebarTrigger>
                   )}
                   <div>
-                    <h1 className="text-3xl font-bold text-lyrical-900 dark:text-lyrical-100">
+                    <h1 className="text-3xl font-bold">
                       {isProfessional ? 'Mes Castings' : 'Castings'}
                     </h1>
-                    <p className="text-lyrical-600 dark:text-lyrical-400 mt-2">
+                    <p className="text-muted-foreground mt-1">
                       {isProfessional 
                         ? 'Gérez vos castings et consultez les candidatures reçues'
                         : 'Découvrez les opportunités d\'auditions et de castings'
@@ -94,7 +94,7 @@ const Castings = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="mb-4 text-sm text-lyrical-500 dark:text-lyrical-400">
+                    <div className="mb-4 text-sm text-muted-foreground">
                       {castings.length} casting{castings.length !== 1 ? 's' : ''} trouvé{castings.length !== 1 ? 's' : ''}
                     </div>
                     
@@ -106,10 +106,10 @@ const Castings = () => {
                     
                     {castings.length === 0 && (
                       <div className="text-center py-12">
-                        <p className="text-lyrical-500 dark:text-lyrical-400 text-lg">
+                        <p className="text-muted-foreground text-lg">
                           Aucun casting ne correspond à vos critères.
                         </p>
-                        <p className="text-lyrical-400 dark:text-lyrical-500 text-sm mt-2">
+                        <p className="text-muted-foreground/70 text-sm mt-2">
                           Essayez de modifier vos filtres de recherche.
                         </p>
                       </div>

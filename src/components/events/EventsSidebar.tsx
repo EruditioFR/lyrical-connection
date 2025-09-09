@@ -60,69 +60,69 @@ export const EventsSidebar: React.FC<EventsSidebarProps> = ({
   const hasActiveFilters = filters.event_type || filters.category_id || filters.search;
 
   return (
-    <Sidebar className={`border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 ${!open ? "w-16" : "w-80"}`} collapsible="icon">
-      <SidebarHeader className="p-4 border-b border-gold-200/20">
+    <Sidebar className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" collapsible="icon">
+      <SidebarHeader className="p-3 border-b">
         <div className="flex items-center justify-between">
           {open && (
             <div className="flex items-center gap-2">
-              <Search className="h-5 w-5 text-lyrical-600" />
-              <h2 className="font-semibold text-lyrical-800 dark:text-lyrical-200">Filtres de recherche</h2>
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <h2 className="font-medium text-sm">Filtres</h2>
             </div>
           )}
-          <SidebarTrigger className="text-lyrical-600 hover:text-lyrical-800">
+          <SidebarTrigger className="h-6 w-6 text-muted-foreground hover:text-foreground">
             <SlidersHorizontal className="h-4 w-4" />
           </SidebarTrigger>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-4">
+      <SidebarContent className="p-3">
         {!open ? (
-          <div className="flex flex-col items-center space-y-4">
-            <Search className="h-6 w-6 text-lyrical-600" />
-            <Calendar className="h-6 w-6 text-lyrical-600" />
+          <div className="flex flex-col items-center space-y-3">
+            <Search className="h-5 w-5 text-muted-foreground" />
+            <Calendar className="h-5 w-5 text-muted-foreground" />
             {hasActiveFilters && (
-              <div className="w-3 h-3 bg-lyrical-600 rounded-full"></div>
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
             )}
           </div>
         ) : (
           <SidebarGroup>
-            <SidebarGroupContent className="space-y-4">
+            <SidebarGroupContent className="space-y-3">
               {hasActiveFilters && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={clearFilters}
-                  className="w-full border-gold-300 text-gold-700 hover:bg-gold-50"
+                  className="w-full h-8 text-xs"
                 >
                   <X className="h-3 w-3 mr-1" />
-                  Effacer tous les filtres
+                  Effacer
                 </Button>
               )}
 
               {/* Recherche */}
-              <div>
-                <Label htmlFor="search" className="text-lyrical-800 dark:text-lyrical-200">Rechercher</Label>
-                <div className="relative mt-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-lyrical-400" />
+              <div className="space-y-1.5">
+                <Label htmlFor="search" className="text-xs font-medium">Recherche</Label>
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     id="search"
                     placeholder="Titre, description..."
                     value={filters.search}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
-                    className="pl-10 border-gold-200/50 focus:border-lyrical-400"
+                    className="pl-8 h-8 text-sm"
                   />
                 </div>
               </div>
 
               {/* Type d'événement */}
-              <div>
-                <Label className="text-lyrical-800 dark:text-lyrical-200">Type d'événement</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Type</Label>
                 <Select
                   value={filters.event_type || 'all'}
                   onValueChange={(value) => handleFilterChange('event_type', value)}
                 >
-                  <SelectTrigger className="mt-1 border-gold-200/50 focus:border-lyrical-400">
-                    <SelectValue placeholder="Tous les types" />
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Tous" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les types</SelectItem>
@@ -136,14 +136,14 @@ export const EventsSidebar: React.FC<EventsSidebarProps> = ({
               </div>
 
               {/* Catégorie */}
-              <div>
-                <Label className="text-lyrical-800 dark:text-lyrical-200">Catégorie</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Catégorie</Label>
                 <Select
                   value={filters.category_id || 'all'}
                   onValueChange={(value) => handleFilterChange('category_id', value)}
                 >
-                  <SelectTrigger className="mt-1 border-gold-200/50 focus:border-lyrical-400">
-                    <SelectValue placeholder="Toutes les catégories" />
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Toutes" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Toutes les catégories</SelectItem>

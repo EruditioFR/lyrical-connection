@@ -90,81 +90,81 @@ export const CastingsSidebar: React.FC<CastingsSidebarProps> = ({ filters, onFil
   );
 
   return (
-    <Sidebar className={`border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 ${!open ? "w-16" : "w-80"}`} collapsible="icon">
-      <SidebarHeader className="p-4 border-b border-gold-200/20">
+    <Sidebar className="border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60" collapsible="icon">
+      <SidebarHeader className="p-3 border-b">
         <div className="flex items-center justify-between">
           {open && (
             <div className="flex items-center gap-2">
-              <Search className="h-5 w-5 text-lyrical-600" />
-              <h2 className="font-semibold text-lyrical-800 dark:text-lyrical-200">Filtres de recherche</h2>
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <h2 className="font-medium text-sm">Filtres</h2>
             </div>
           )}
-          <SidebarTrigger className="text-lyrical-600 hover:text-lyrical-800">
+          <SidebarTrigger className="h-6 w-6 text-muted-foreground hover:text-foreground">
             <SlidersHorizontal className="h-4 w-4" />
           </SidebarTrigger>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-4">
+      <SidebarContent className="p-3">
         {!open ? (
-          <div className="flex flex-col items-center space-y-4">
-            <Search className="h-6 w-6 text-lyrical-600" />
-            <Filter className="h-6 w-6 text-lyrical-600" />
+          <div className="flex flex-col items-center space-y-3">
+            <Search className="h-5 w-5 text-muted-foreground" />
+            <Filter className="h-5 w-5 text-muted-foreground" />
             {hasActiveFilters && (
-              <div className="w-3 h-3 bg-lyrical-600 rounded-full"></div>
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
             )}
           </div>
         ) : (
           <SidebarGroup>
-            <SidebarGroupContent className="space-y-4">
+            <SidebarGroupContent className="space-y-3">
               {hasActiveFilters && (
                 <Button 
                   variant="outline" 
                   size="sm"
                   onClick={clearAllFilters}
-                  className="w-full border-gold-300 text-gold-700 hover:bg-gold-50"
+                  className="w-full h-8 text-xs"
                 >
                   <X className="h-3 w-3 mr-1" />
-                  Effacer tous les filtres
+                  Effacer
                 </Button>
               )}
 
               {/* Recherche textuelle */}
-              <div>
-                <Label htmlFor="search" className="text-lyrical-800 dark:text-lyrical-200">Recherche</Label>
-                <div className="relative mt-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-lyrical-400" />
+              <div className="space-y-1.5">
+                <Label htmlFor="search" className="text-xs font-medium">Recherche</Label>
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     id="search"
                     placeholder="Titre, description..."
                     value={filters.search || ''}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
-                    className="pl-10 border-gold-200/50 focus:border-lyrical-400"
+                    className="pl-8 h-8 text-sm"
                   />
                 </div>
               </div>
 
               {/* Lieu */}
-              <div>
-                <Label htmlFor="location" className="text-lyrical-800 dark:text-lyrical-200">Lieu</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="location" className="text-xs font-medium">Lieu</Label>
                 <Input
                   id="location"
                   placeholder="Ville, région..."
                   value={filters.location || ''}
                   onChange={(e) => handleFilterChange('location', e.target.value)}
-                  className="mt-1 border-gold-200/50 focus:border-lyrical-400"
+                  className="h-8 text-sm"
                 />
               </div>
 
               {/* Type de production */}
-              <div>
-                <Label className="text-lyrical-800 dark:text-lyrical-200">Type de production</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Type</Label>
                 <Select 
                   value={filters.production_type || 'all'} 
                   onValueChange={(value) => handleFilterChange('production_type', value === 'all' ? undefined : value)}
                 >
-                  <SelectTrigger className="mt-1 border-gold-200/50 focus:border-lyrical-400">
-                    <SelectValue placeholder="Tous les types" />
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Tous" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Tous les types</SelectItem>
@@ -178,23 +178,23 @@ export const CastingsSidebar: React.FC<CastingsSidebarProps> = ({ filters, onFil
               </div>
 
               {/* Types de voix */}
-              <div>
-                <Label className="text-lyrical-800 dark:text-lyrical-200">Types de voix</Label>
-                <div className="flex flex-wrap gap-1 mt-2 mb-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Voix</Label>
+                <div className="flex flex-wrap gap-1 mb-1">
                   {(filters.voice_types || []).map(voice => (
                     <Badge 
                       key={voice} 
                       variant="secondary"
-                      className="cursor-pointer text-xs bg-lyrical-100 text-lyrical-800 hover:bg-lyrical-200"
+                      className="text-xs h-5 px-1.5 cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
                       onClick={() => handleArrayRemove('voice_types', voice)}
                     >
-                      {voice} ×
+                      {voice.split(' ')[0]} ×
                     </Badge>
                   ))}
                 </div>
                 <Select onValueChange={(value) => handleArrayAdd('voice_types', value)}>
-                  <SelectTrigger className="border-gold-200/50 focus:border-lyrical-400">
-                    <SelectValue placeholder="Ajouter un type de voix" />
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Ajouter" />
                   </SelectTrigger>
                   <SelectContent>
                     {voiceTypes.map(voice => (
@@ -207,14 +207,14 @@ export const CastingsSidebar: React.FC<CastingsSidebarProps> = ({ filters, onFil
               </div>
 
               {/* Niveau d'expérience */}
-              <div>
-                <Label className="text-lyrical-800 dark:text-lyrical-200">Niveau d'expérience</Label>
-                <div className="flex flex-wrap gap-1 mt-2 mb-2">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Niveau</Label>
+                <div className="flex flex-wrap gap-1 mb-1">
                   {(filters.experience_level || []).map(level => (
                     <Badge 
                       key={level} 
                       variant="secondary"
-                      className="cursor-pointer text-xs bg-lyrical-100 text-lyrical-800 hover:bg-lyrical-200"
+                      className="text-xs h-5 px-1.5 cursor-pointer hover:bg-destructive hover:text-destructive-foreground"
                       onClick={() => handleArrayRemove('experience_level', level)}
                     >
                       {experienceLevels.find(l => l.value === level)?.label || level} ×
@@ -222,8 +222,8 @@ export const CastingsSidebar: React.FC<CastingsSidebarProps> = ({ filters, onFil
                   ))}
                 </div>
                 <Select onValueChange={(value) => handleArrayAdd('experience_level', value)}>
-                  <SelectTrigger className="border-gold-200/50 focus:border-lyrical-400">
-                    <SelectValue placeholder="Ajouter un niveau" />
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Ajouter" />
                   </SelectTrigger>
                   <SelectContent>
                     {experienceLevels.map(level => (
@@ -236,17 +236,17 @@ export const CastingsSidebar: React.FC<CastingsSidebarProps> = ({ filters, onFil
               </div>
 
               {/* Type de compensation */}
-              <div>
-                <Label className="text-lyrical-800 dark:text-lyrical-200">Compensation</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium">Compensation</Label>
                 <Select 
                   value={filters.compensation_type || 'all'} 
                   onValueChange={(value) => handleFilterChange('compensation_type', value === 'all' ? undefined : value)}
                 >
-                  <SelectTrigger className="mt-1 border-gold-200/50 focus:border-lyrical-400">
-                    <SelectValue placeholder="Tous les types" />
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue placeholder="Tous" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tous les types</SelectItem>
+                    <SelectItem value="all">Tous</SelectItem>
                     {compensationTypes.map(type => (
                       <SelectItem key={type.value} value={type.value}>
                         {type.label}
