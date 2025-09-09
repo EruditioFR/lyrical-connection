@@ -86,14 +86,18 @@ const FeaturesArtists = () => {
                 <Card 
                   ref={cardRef} 
                   key={index} 
-                  className="h-full hover:shadow-lg transition-all duration-300 ease-out text-appear border-border/50 hover:border-border group"
+                  className={`h-full transition-all duration-300 ease-out text-appear group hover:scale-105 ${
+                    isLyrical 
+                      ? "bg-gradient-to-br from-background to-lyrical-50/30 border-l-4 border-l-lyrical-500 border-t border-r border-b border-lyrical-200/50 hover:border-lyrical-400 hover:shadow-xl hover:shadow-lyrical-500/10" 
+                      : "bg-gradient-to-br from-background to-gold-50/30 border-l-4 border-l-gold-500 border-t border-r border-b border-gold-200/50 hover:border-gold-400 hover:shadow-xl hover:shadow-gold-500/10"
+                  }`}
                 >
-                  <CardContent className="p-4 md:p-6 h-full flex flex-col text-center">
+                  <CardContent className="p-4 md:p-6 h-full flex flex-col text-center relative">
                     {/* Icon */}
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto ${
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto transition-all duration-300 ${
                       isLyrical 
-                        ? "bg-gradient-to-br from-lyrical-100 to-lyrical-200 group-hover:from-lyrical-200 group-hover:to-lyrical-300" 
-                        : "bg-gradient-to-br from-gold-100 to-gold-200 group-hover:from-gold-200 group-hover:to-gold-300"
+                        ? "bg-gradient-to-br from-lyrical-100 to-lyrical-200 group-hover:from-lyrical-200 group-hover:to-lyrical-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
+                        : "bg-gradient-to-br from-gold-100 to-gold-200 group-hover:from-gold-200 group-hover:to-gold-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
                     }`}>
                       <IconComponent className={`h-6 w-6 ${
                         isLyrical ? "text-lyrical-700" : "text-gold-700"
