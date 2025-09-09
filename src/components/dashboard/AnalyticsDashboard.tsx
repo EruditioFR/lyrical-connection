@@ -61,59 +61,59 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Vues totales</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Vues totales</CardTitle>
+            <Eye className="h-4 w-4 text-gold-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(analytics.totalViews)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">{formatNumber(analytics.totalViews)}</div>
+            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
               Nombre total de vues de profil
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Visiteurs uniques</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Visiteurs uniques</CardTitle>
+            <Users className="h-4 w-4 text-gold-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(analytics.uniqueViews)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">{formatNumber(analytics.uniqueViews)}</div>
+            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
               Visiteurs distincts
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Croissance</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Croissance</CardTitle>
+            <TrendingUp className="h-4 w-4 text-gold-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">
               {analytics.dailyViews.length > 1 ? '+12%' : 'N/A'}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
               Par rapport au mois dernier
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Vues aujourd'hui</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Vues aujourd'hui</CardTitle>
+            <Calendar className="h-4 w-4 text-gold-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">
               {analytics.dailyViews.find(v => 
                 v.date === new Date().toISOString().split('T')[0]
               )?.count || 0}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
               Vues d'aujourd'hui
             </p>
           </CardContent>
@@ -123,10 +123,10 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
       {/* Charts */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Daily Views Chart */}
-        <Card>
+        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
           <CardHeader>
-            <CardTitle>Vues quotidiennes</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lyrical-800 dark:text-lyrical-200">Vues quotidiennes</CardTitle>
+            <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
               Évolution des vues sur les 30 derniers jours
             </CardDescription>
           </CardHeader>
@@ -150,8 +150,8 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
                 <Area 
                   type="monotone" 
                   dataKey="count" 
-                  stroke="hsl(var(--primary))" 
-                  fill="hsl(var(--primary))" 
+                  stroke="hsl(var(--lyrical-600))" 
+                  fill="hsl(var(--lyrical-600))" 
                   fillOpacity={0.2}
                 />
               </AreaChart>
@@ -160,10 +160,10 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
         </Card>
 
         {/* Weekly Views Chart */}
-        <Card>
+        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
           <CardHeader>
-            <CardTitle>Vues hebdomadaires</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lyrical-800 dark:text-lyrical-200">Vues hebdomadaires</CardTitle>
+            <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
               Évolution des vues sur les 12 dernières semaines
             </CardDescription>
           </CardHeader>
@@ -186,7 +186,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
                 />
                 <Bar 
                   dataKey="count" 
-                  fill="hsl(var(--primary))" 
+                  fill="hsl(var(--lyrical-600))" 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -196,10 +196,10 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
       </div>
 
       {/* Recent Views */}
-      <Card>
+      <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
         <CardHeader>
-          <CardTitle>Vues récentes</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-lyrical-800 dark:text-lyrical-200">Vues récentes</CardTitle>
+          <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
             Les 20 dernières vues de votre profil
           </CardDescription>
         </CardHeader>
@@ -207,29 +207,29 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
           {recentViews && recentViews.length > 0 ? (
             <div className="space-y-2">
               {recentViews.slice(0, 20).map((view, index) => (
-                <div key={view.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                <div key={view.id} className="flex items-center justify-between py-2 border-b border-gold-200/20 last:border-b-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center text-sm">
+                    <div className="w-8 h-8 bg-gradient-to-br from-gold-100 to-lyrical-100 dark:from-gold-800 dark:to-lyrical-800 rounded-full flex items-center justify-center text-sm font-medium text-lyrical-700 dark:text-lyrical-200">
                       {index + 1}
                     </div>
                     <div>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">
                         {view.viewer_id ? 'Utilisateur connecté' : 'Visiteur anonyme'}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
                         {new Date(view.created_at).toLocaleString('fr-FR')}
                       </p>
                     </div>
                   </div>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="border-gold-300 text-gold-700 dark:border-gold-600 dark:text-gold-300">
                     {view.profile_type === 'artist' ? 'Artiste' : 'Professionnel'}
                   </Badge>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <Eye className="w-12 h-12 mx-auto mb-2 opacity-50" />
+            <div className="text-center py-8 text-lyrical-500 dark:text-lyrical-400">
+              <Eye className="w-12 h-12 mx-auto mb-2 opacity-50 text-gold-400" />
               <p>Aucune vue récente</p>
             </div>
           )}
