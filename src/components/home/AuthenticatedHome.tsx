@@ -5,13 +5,25 @@ import { useUserType } from '@/hooks/useUserType';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Calendar, MessageSquare, Users, TrendingUp, Plus, Bell } from 'lucide-react';
+import { Calendar, MessageSquare, Users, Plus, Bell, Mic, Briefcase, Search } from 'lucide-react';
 import SubscriptionDebug from '@/components/debug/SubscriptionDebug';
 import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import RecentMessages from '@/components/home/RecentMessages';
+import RecentNotifications from '@/components/home/RecentNotifications';
+import ArtistsPreview from '@/components/home/ArtistsPreview';
+import ProfessionalsPreview from '@/components/home/ProfessionalsPreview';
 
 const AuthenticatedHome = () => {
   const { user } = useAuth();
   const { userType, isProfessional, isArtist, artistProfile, professionalProfile } = useUserType();
+  const { 
+    recentMessages, 
+    recentNotifications, 
+    artistsPreview, 
+    professionalsPreview, 
+    isLoading 
+  } = useDashboardData();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -124,125 +136,111 @@ const AuthenticatedHome = () => {
           </Card>
         </div>
 
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Profile Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
-                Mon profil
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Type de compte</p>
-                <p className="font-medium">{getUserTypeLabel()}</p>
-              </div>
-              {isArtist && artistProfile && (
-                <>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Nom de scène</p>
-                    <p className="font-medium">{artistProfile.stage_name}</p>
-                  </div>
-                  {artistProfile.voice_type && (
-                    <div>
-                      <p className="text-sm text-muted-foreground">Tessiture</p>
-                      <p className="font-medium">{artistProfile.voice_type}</p>
-                    </div>
-                  )}
-                </>
-              )}
-              {isProfessional && professionalProfile && (
-                <>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Entreprise</p>
-                    <p className="font-medium">{professionalProfile.company_name}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Rôle</p>
-                    <p className="font-medium">{professionalProfile.professional_role}</p>
-                  </div>
-                </>
-              )}
-              <Link to="/profil">
-                <Button variant="outline" size="sm" className="w-full">
-                  Modifier le profil
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        {/* Main Dashboard Grid - New Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Recent Messages */}
+            <RecentMessages 
+              messages={recentMessages} 
+              isLoading={isLoading} 
+            />
 
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <TrendingUp className="h-5 w-5 mr-2" />
-                Activité récente
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Vos données d'activité apparaîtront ici une fois que vous commencerez à utiliser la plateforme.
-                </p>
-                <Link to="/dashboard">
-                  <Button variant="outline" size="sm" className="w-full">
-                    Voir le tableau de bord complet
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Recent Notifications */}
+            <RecentNotifications 
+              notifications={recentNotifications} 
+              isLoading={isLoading} 
+            />
+          </div>
 
-          {/* Quick Links */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2" />
-                Accès rapide
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {isProfessional ? (
-                <>
-                  <Link to="/mes-evenements" className="block">
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
-                      Mes événements
-                    </Button>
-                  </Link>
-                  <Link to="/castings" className="block">
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
-                      Mes castings
-                    </Button>
-                  </Link>
-                  <Link to="/recherche-artistes" className="block">
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
-                      Rechercher des artistes
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link to="/castings" className="block">
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
-                      Explorer les castings
-                    </Button>
-                  </Link>
-                  <Link to="/evenements" className="block">
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
-                      Explorer les événements
-                    </Button>
-                  </Link>
-                  <Link to="/mes-candidatures" className="block">
-                    <Button variant="ghost" size="sm" className="w-full justify-start">
-                      Mes candidatures
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          {/* Right Column */}
+          <div className="space-y-6">
+            {/* Quick Links - Enhanced */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Calendar className="h-5 w-5 mr-2" />
+                  Accès rapide
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {isProfessional ? (
+                  <>
+                    <Link to="/mes-evenements" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        Mes événements
+                      </Button>
+                    </Link>
+                    <Link to="/castings" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        Mes castings
+                      </Button>
+                    </Link>
+                    <Link to="/recherche-artistes" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <Search className="h-4 w-4 mr-2" />
+                        Rechercher des artistes
+                      </Button>
+                    </Link>
+                    <Link to="/professionnels" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <Briefcase className="h-4 w-4 mr-2" />
+                        Explorer les professionnels
+                      </Button>
+                    </Link>
+                    <Link to="/artistes" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <Mic className="h-4 w-4 mr-2" />
+                        Explorer les artistes
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/castings" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        Explorer les castings
+                      </Button>
+                    </Link>
+                    <Link to="/evenements" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        Explorer les événements
+                      </Button>
+                    </Link>
+                    <Link to="/mes-candidatures" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        Mes candidatures
+                      </Button>
+                    </Link>
+                    <Link to="/professionnels" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <Briefcase className="h-4 w-4 mr-2" />
+                        Explorer les professionnels
+                      </Button>
+                    </Link>
+                    <Link to="/artistes" className="block">
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <Mic className="h-4 w-4 mr-2" />
+                        Explorer les artistes
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Artists Preview */}
+            <ArtistsPreview 
+              artists={artistsPreview} 
+              isLoading={isLoading} 
+            />
+
+            {/* Professionals Preview */}
+            <ProfessionalsPreview 
+              professionals={professionalsPreview} 
+              isLoading={isLoading} 
+            />
+          </div>
         </div>
 
         {/* Debug Panel pour les abonnements test */}
