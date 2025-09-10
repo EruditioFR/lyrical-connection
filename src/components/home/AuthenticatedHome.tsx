@@ -49,8 +49,8 @@ const AuthenticatedHome = () => {
           }}
         >
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
-          <div className="relative h-full flex items-center justify-start px-8">
-            <div className="text-white">
+          <div className="relative h-full flex items-center justify-center px-8">
+            <div className="text-white text-center">
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-2">
                 {getGreeting()}, {getDisplayName()} !
               </h1>
