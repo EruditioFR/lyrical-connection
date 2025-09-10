@@ -17,6 +17,16 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const isTestMode = window.location.hostname === 'localhost' || 
+                      window.location.hostname.includes('lovable') || 
+                      window.location.hostname.includes('preview');
+    
+    // En mode test, ne pas bloquer l'accès
+    if (isTestMode && user) {
+      console.log('🔥 MODE TEST DÉTECTÉ - ACCÈS AUTORISÉ SANS VÉRIFICATION ABONNEMENT');
+      return;
+    }
+    
     if (!loading && !subscriptionLoading && !rolesLoading && user && !hasActiveSubscription && !isAdmin) {
       console.log('SubscriptionGuard: Vérification abonnement...');
       console.log('État actuel:', { 
@@ -28,13 +38,13 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
         isAdmin
       });
       
-      // Délai avant redirection pour laisser le temps aux abonnements test de se charger
+      // Délai plus long avant redirection pour laisser le temps aux abonnements test de se charger
       const timer = setTimeout(() => {
-        if (!hasActiveSubscription && !isAdmin) {
+        if (!hasActiveSubscription && !isAdmin && !isTestMode) {
           console.log('Redirection vers /pricing après vérification finale');
           navigate('/pricing?source=required');
         }
-      }, 2000); // Délai de 2 secondes
+      }, 3000); // Délai de 3 secondes au lieu de 2
 
       return () => clearTimeout(timer);
     }
@@ -58,6 +68,17 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
   // Les administrateurs ont accès à tout sans abonnement
   if (isAdmin) {
     console.log('SubscriptionGuard: Accès admin autorisé sans abonnement');
+    return <>{children}</>;
+  }
+
+  // Vérifier le mode test
+  const isTestMode = window.location.hostname === 'localhost' || 
+                    window.location.hostname.includes('lovable') || 
+                    window.location.hostname.includes('preview');
+
+  // En mode test, toujours autoriser l'accès
+  if (isTestMode) {
+    console.log('🔥 MODE TEST - ACCÈS AUTORISÉ');
     return <>{children}</>;
   }
 

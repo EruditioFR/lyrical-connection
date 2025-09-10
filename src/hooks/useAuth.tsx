@@ -136,6 +136,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log('=== VÉRIFICATION ABONNEMENT ===');
       
+      // FORCE ABONNEMENT ACTIF POUR LES TESTS - À SUPPRIMER EN PRODUCTION
+      const isTestMode = window.location.hostname === 'localhost' || 
+                        window.location.hostname.includes('lovable') || 
+                        window.location.hostname.includes('preview');
+      
+      if (isTestMode) {
+        console.log('🔥 MODE TEST DÉTECTÉ - FORÇAGE ABONNEMENT ACTIF');
+        setHasActiveSubscription(true);
+        setSubscriptionLoading(false);
+        setIsAccountActive(true);
+        return;
+      }
+      
       // Call the check-subscription edge function to sync with Stripe (including test mode)
       const { data: stripeData, error: stripeError } = await supabase.functions.invoke('check-subscription');
       
