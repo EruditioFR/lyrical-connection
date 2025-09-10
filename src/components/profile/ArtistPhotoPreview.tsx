@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ImageIcon } from 'lucide-react';
+import ImageViewerModal from './ImageViewerModal';
 
 interface ArtistPhotoPreviewProps {
   artistProfileId: string;
@@ -9,6 +10,7 @@ interface ArtistPhotoPreviewProps {
 
 const ArtistPhotoPreview = ({ artistProfileId }: ArtistPhotoPreviewProps) => {
   const { photos, isLoading, getPhotoUrl } = useArtistPhotos(artistProfileId);
+  const [selectedImage, setSelectedImage] = useState<{ src: string; title: string } | null>(null);
 
   if (isLoading) {
     return (
@@ -30,27 +32,43 @@ const ArtistPhotoPreview = ({ artistProfileId }: ArtistPhotoPreviewProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {photos.slice(0, 6).map((photo) => (
-        <div key={photo.id} className="group cursor-pointer">
-          <AspectRatio ratio={1} className="overflow-hidden rounded-lg">
-            <img
-              src={getPhotoUrl(photo.file_path)}
-              alt={photo.file_name}
-              className="w-full h-full object-cover transition-transform group-hover:scale-105"
-            />
-          </AspectRatio>
-        </div>
-      ))}
-      
-      {photos.length > 6 && (
-        <div className="col-span-2 text-center">
-          <p className="text-sm text-muted-foreground">
-            +{photos.length - 6} photos supplémentaires
-          </p>
-        </div>
-      )}
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-3">
+        {photos.slice(0, 6).map((photo) => (
+          <div 
+            key={photo.id} 
+            className="group cursor-pointer"
+            onClick={() => setSelectedImage({
+              src: getPhotoUrl(photo.file_path) || '',
+              title: photo.file_name
+            })}
+          >
+            <AspectRatio ratio={1} className="overflow-hidden rounded-lg">
+              <img
+                src={getPhotoUrl(photo.file_path)}
+                alt={photo.file_name}
+                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+              />
+            </AspectRatio>
+          </div>
+        ))}
+        
+        {photos.length > 6 && (
+          <div className="col-span-2 text-center">
+            <p className="text-sm text-muted-foreground">
+              +{photos.length - 6} photos supplémentaires
+            </p>
+          </div>
+        )}
+      </div>
+
+      <ImageViewerModal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        imageSrc={selectedImage?.src || ''}
+        imageTitle={selectedImage?.title || ''}
+      />
+    </>
   );
 };
 
