@@ -73,68 +73,6 @@ const AuthenticatedHome = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {isProfessional && (
-            <>
-              <Card className="hover:bg-accent/50 transition-colors">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouvel événement
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Link to="/evenements/nouveau">
-                    <Button size="sm" className="w-full">Créer</Button>
-                  </Link>
-                </CardContent>
-              </Card>
-              
-              <Card className="hover:bg-accent/50 transition-colors">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium flex items-center">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouveau casting
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Link to="/castings/nouveau">
-                    <Button size="sm" className="w-full">Créer</Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </>
-          )}
-
-          <Card className="hover:bg-accent/50 transition-colors">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Messages
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Link to="/messages">
-                <Button variant="outline" size="sm" className="w-full">Voir</Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:bg-accent/50 transition-colors">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center">
-                <Bell className="h-4 w-4 mr-2" />
-                Notifications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Link to="/notifications">
-                <Button variant="outline" size="sm" className="w-full">Voir</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Main Dashboard Grid - New Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
