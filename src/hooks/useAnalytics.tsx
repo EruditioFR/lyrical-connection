@@ -62,106 +62,80 @@ export const useAnalytics = (profileId?: string, profileType?: string) => {
         };
       }
 
-      // Get total views
-      const { count: totalViews } = await supabase
-        .from('profile_views')
-        .select('*', { count: 'exact' })
-        .eq('viewed_profile_id', profileId)
-        .eq('profile_type', profileType);
+      // 🎭 DONNÉES SIMULÉES POUR LA DÉMONSTRATION
+      console.log('🎭 Génération de données analytiques simulées...');
 
-      // Get unique views (distinct by IP or viewer_id)
-      const { data: uniqueViewsData } = await supabase
-        .from('profile_views')
-        .select('viewer_id, ip_address')
-        .eq('viewed_profile_id', profileId)
-        .eq('profile_type', profileType);
+      // Générer des vues quotidiennes simulées pour les 30 derniers jours
+      const dailyViews = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        // Générer un nombre aléatoire de vues (entre 5 et 45)
+        const baseViews = Math.floor(Math.random() * 40) + 5;
+        // Ajouter une tendance croissante
+        const trendBonus = Math.floor((29 - i) * 0.5);
+        // Ajouter de la variabilité week-end (moins de vues)
+        const weekendPenalty = [0, 6].includes(date.getDay()) ? -Math.floor(Math.random() * 10) : 0;
+        
+        const count = Math.max(1, baseViews + trendBonus + weekendPenalty);
+        
+        dailyViews.push({ date: dateStr, count });
+      }
 
-      const uniqueViews = uniqueViewsData ? 
-        new Set(uniqueViewsData.map(v => v.viewer_id || v.ip_address)).size : 0;
-
-      // Get daily views for last 30 days
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-      const { data: dailyViewsData } = await supabase
-        .from('profile_views')
-        .select('created_at')
-        .eq('viewed_profile_id', profileId)
-        .eq('profile_type', profileType)
-        .gte('created_at', thirtyDaysAgo.toISOString());
-
-      // Group by day
-      const dailyViews = dailyViewsData?.reduce((acc, view) => {
-        const date = new Date(view.created_at).toISOString().split('T')[0];
-        acc[date] = (acc[date] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
-
-      const dailyViewsArray = Object.entries(dailyViews).map(([date, count]) => ({
-        date,
-        count
-      }));
-
-      // Get weekly views for last 12 weeks
-      const twelveWeeksAgo = new Date();
-      twelveWeeksAgo.setDate(twelveWeeksAgo.getDate() - 84);
-
-      const { data: weeklyViewsData } = await supabase
-        .from('profile_views')
-        .select('created_at')
-        .eq('viewed_profile_id', profileId)
-        .eq('profile_type', profileType)
-        .gte('created_at', twelveWeeksAgo.toISOString());
-
-      // Group by week
-      const weeklyViews = weeklyViewsData?.reduce((acc, view) => {
-        const date = new Date(view.created_at);
+      // Générer des vues hebdomadaires simulées pour les 12 dernières semaines
+      const weeklyViews = [];
+      for (let i = 11; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - (i * 7));
+        // Récupérer le lundi de cette semaine
         const weekStart = new Date(date);
-        weekStart.setDate(date.getDate() - date.getDay());
-        const week = weekStart.toISOString().split('T')[0];
-        acc[week] = (acc[week] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
+        weekStart.setDate(date.getDate() - date.getDay() + 1);
+        const weekStr = weekStart.toISOString().split('T')[0];
+        
+        // Générer un nombre aléatoire de vues hebdomadaires (entre 50 et 200)
+        const baseViews = Math.floor(Math.random() * 150) + 50;
+        // Ajouter une tendance croissante
+        const trendBonus = Math.floor((11 - i) * 8);
+        
+        const count = baseViews + trendBonus;
+        
+        weeklyViews.push({ week: weekStr, count });
+      }
 
-      const weeklyViewsArray = Object.entries(weeklyViews).map(([week, count]) => ({
-        week,
-        count
-      }));
-
-      // Get monthly views for last 12 months
-      const twelveMonthsAgo = new Date();
-      twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
-
-      const { data: monthlyViewsData } = await supabase
-        .from('profile_views')
-        .select('created_at')
-        .eq('viewed_profile_id', profileId)
-        .eq('profile_type', profileType)
-        .gte('created_at', twelveMonthsAgo.toISOString());
-
-      // Group by month
-      const monthlyViews = monthlyViewsData?.reduce((acc, view) => {
-        const date = new Date(view.created_at);
+      // Générer des vues mensuelles simulées pour les 12 derniers mois
+      const monthlyViews = [];
+      for (let i = 11; i >= 0; i--) {
+        const date = new Date();
+        date.setMonth(date.getMonth() - i);
         const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        acc[month] = (acc[month] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>) || {};
+        
+        // Générer un nombre aléatoire de vues mensuelles (entre 200 et 800)
+        const baseViews = Math.floor(Math.random() * 600) + 200;
+        // Ajouter une tendance croissante
+        const trendBonus = Math.floor((11 - i) * 25);
+        
+        const count = baseViews + trendBonus;
+        
+        monthlyViews.push({ month, count });
+      }
 
-      const monthlyViewsArray = Object.entries(monthlyViews).map(([month, count]) => ({
-        month,
-        count
-      }));
+      // Calculer les totaux à partir des données simulées
+      const totalViews = dailyViews.reduce((sum, day) => sum + day.count, 0) * 2; // Multiplier pour avoir un total plus réaliste
+      const uniqueViews = Math.floor(totalViews * 0.7); // 70% des vues sont uniques
 
       return {
-        totalViews: totalViews || 0,
+        totalViews,
         uniqueViews,
-        dailyViews: dailyViewsArray,
-        weeklyViews: weeklyViewsArray,
-        monthlyViews: monthlyViewsArray,
-        viewsByType: [{ profile_type: profileType, count: totalViews || 0 }]
+        dailyViews,
+        weeklyViews,
+        monthlyViews,
+        viewsByType: [{ profile_type: profileType, count: totalViews }]
       };
     },
-    enabled: !!user && !!profileId && !!profileType
+    enabled: !!user && !!profileId && !!profileType,
+    staleTime: 5 * 60 * 1000, // 5 minutes de cache pour les données simulées
   });
 };
 
