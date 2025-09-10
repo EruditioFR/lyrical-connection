@@ -33,6 +33,7 @@ import RepertoireTab from '@/components/profile/RepertoireTab';
 import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 import AirPlayer from '@/components/profile/AirPlayer';
+import ArtistPhotoPreview from '@/components/profile/ArtistPhotoPreview';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -189,38 +190,57 @@ const ArtistProfile = () => {
                       )}
                     </div>
 
-                    {/* Informations supplémentaires déplacées au-dessus de la biographie - version améliorée */}
-                    <div className="mb-6 flex flex-wrap gap-6">
-                      {profile.experience_years !== null && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium text-foreground">{profile.experience_years}</span>
-                          <span className="text-muted-foreground">années d'expérience</span>
+                    {/* Layout avec biographie à gauche (60%) et photos à droite (40%) */}
+                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                      {/* Colonne de gauche - Biographie et informations (60%) */}
+                      <div className="lg:col-span-3">
+                        {/* Informations supplémentaires */}
+                        <div className="mb-6 flex flex-wrap gap-6">
+                          {profile.experience_years !== null && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <Clock className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-medium text-foreground">{profile.experience_years}</span>
+                              <span className="text-muted-foreground">années d'expérience</span>
+                            </div>
+                          )}
+                          
+                          {profile.nationality && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <Flag className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-medium text-foreground">{profile.nationality}</span>
+                            </div>
+                          )}
+                          
+                          {profile.spoken_languages && profile.spoken_languages.length > 0 && (
+                            <div className="flex items-center gap-2 text-sm">
+                              <Languages className="w-4 h-4 text-muted-foreground" />
+                              <span className="font-medium text-foreground">
+                                {profile.spoken_languages.join(', ')}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      
-                      {profile.nationality && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Flag className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium text-foreground">{profile.nationality}</span>
-                        </div>
-                      )}
-                      
-                      {profile.spoken_languages && profile.spoken_languages.length > 0 && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <Languages className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium text-foreground">
-                            {profile.spoken_languages.join(', ')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
 
-                    {profile.bio && (
-                      <p className="text-gray-700 max-w-2xl">
-                        {profile.bio}
-                      </p>
-                    )}
+                        {/* Biographie */}
+                        {profile.bio && (
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-3">À propos</h3>
+                            <p className="text-gray-700 leading-relaxed">
+                              {profile.bio}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Colonne de droite - Galerie photos (40%) */}
+                      <div className="lg:col-span-2">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                          <Camera className="w-5 h-5" />
+                          Galerie photos
+                        </h3>
+                        <ArtistPhotoPreview artistProfileId={profile.id} />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Actions */}
@@ -275,20 +295,6 @@ const ArtistProfile = () => {
             </Card>
           </div>
 
-          {/* Galerie photos */}
-          <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Camera className="w-5 h-5" />
-                  Galerie photos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PhotosTab artistProfileId={profile.id} />
-              </CardContent>
-            </Card>
-          </div>
 
           {/* Contact et liens */}
           {(profile.contact_email || profile.phone || profile.website) && (
