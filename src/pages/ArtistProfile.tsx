@@ -138,6 +138,20 @@ const ArtistProfile = () => {
           }}
         >
           <div className="absolute inset-0 bg-black/30"></div>
+          
+          {/* Bouton Editer en haut à droite */}
+          {isOwnProfile && (
+            <div className="absolute top-4 right-4">
+              <Button 
+                variant="secondary"
+                onClick={() => window.location.href = '/profil'}
+                className="bg-white/10 text-white border border-white/20 hover:bg-white/20"
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Editer mon profil
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="container mx-auto px-4 -mt-20 relative z-10">
@@ -245,16 +259,6 @@ const ArtistProfile = () => {
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    {isOwnProfile && (
-                      <Button 
-                        variant="outline"
-                        onClick={() => window.location.href = '/profil'}
-                      >
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editer mon profil
-                      </Button>
-                    )}
-                    
                     {!isOwnProfile && isProfessional && (
                       <ContactArtistDialog 
                         artistId={profile.id}
