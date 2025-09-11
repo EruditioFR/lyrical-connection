@@ -107,41 +107,36 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
         <CardTitle>Ecouter les prestations</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
           {activeAirs.map((air) => {
             const IconComponent = getAirIcon(air.type);
             const isPlaying = currentPlaying === air.id;
             
             return (
-              <div key={air.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3 flex-1">
-                  <IconComponent className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex-1">
-                    <h4 className="font-medium">{air.title}</h4>
-                    {air.description && (
-                      <p className="text-sm text-muted-foreground">{air.description}</p>
-                    )}
-                  </div>
+              <div key={air.id} className="flex flex-col p-4 border rounded-lg space-y-3">
+                <div className="flex items-center justify-center">
+                  <IconComponent className="h-8 w-8 text-muted-foreground" />
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className="text-center">
+                  <h4 className="font-medium text-sm truncate">{air.title}</h4>
+                  {air.description && (
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{air.description}</p>
+                  )}
+                </div>
+                
+                <div className="flex justify-center">
                   {air.type === 'audio' && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handlePlayPause(air)}
-                      className="flex items-center space-x-2"
+                      className="w-full"
                     >
                       {isPlaying ? (
-                        <>
-                          <Pause className="h-4 w-4" />
-                          <span>Pause</span>
-                        </>
+                        <Pause className="h-4 w-4" />
                       ) : (
-                        <>
-                          <Play className="h-4 w-4" />
-                          <span>Écouter</span>
-                        </>
+                        <Play className="h-4 w-4" />
                       )}
                     </Button>
                   )}
@@ -151,10 +146,9 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                       variant="outline"
                       size="sm"
                       onClick={() => handleVideoPlay(air)}
-                      className="flex items-center space-x-2"
+                      className="w-full"
                     >
                       <Play className="h-4 w-4" />
-                      <span>Voir la vidéo</span>
                     </Button>
                   )}
                   
@@ -179,9 +173,8 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                           openExternalLink(air.external_url!);
                         }
                       }}
-                      className="flex items-center space-x-2"
+                      className="w-full"
                     >
-                      {/* Afficher le texte approprié selon le type de contenu */}
                       {air.external_url && (
                         air.external_url.includes('youtube') ||
                         air.external_url.includes('vimeo') ||
@@ -190,15 +183,9 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                         air.external_url.includes('.webm') ||
                         air.external_url.includes('.mov')
                       ) ? (
-                        <>
-                          <Play className="h-4 w-4" />
-                          <span>Voir la vidéo</span>
-                        </>
+                        <Play className="h-4 w-4" />
                       ) : (
-                        <>
-                          <ExternalLink className="h-4 w-4" />
-                          <span>Consulter</span>
-                        </>
+                        <ExternalLink className="h-4 w-4" />
                       )}
                     </Button>
                   )}
