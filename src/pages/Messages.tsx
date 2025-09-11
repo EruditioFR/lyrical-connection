@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/Layout';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { MailboxSidebar } from '@/components/messaging/MailboxSidebar';
@@ -97,6 +97,14 @@ const MessagesContent = () => {
     }
   };
 
+  // Clear selected messages when folder changes
+  useEffect(() => {
+    setSelectedMessages([]);
+    setSelectedMessage(null);
+  }, [selectedFolder]);
+
+  const currentMessages = getCurrentMessages();
+
   const handleMessageSelect = (messageId: string) => {
     setSelectedMessages(prev => 
       prev.includes(messageId)
@@ -107,7 +115,7 @@ const MessagesContent = () => {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedMessages(getCurrentMessages().map(msg => msg.id));
+      setSelectedMessages(currentMessages.map(msg => msg.id));
     } else {
       setSelectedMessages([]);
     }
@@ -247,18 +255,22 @@ const MessagesContent = () => {
                       }}
                       onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       onDelete={(messageId) => {
-                        const message = inboxMessages.find(m => m.id === messageId);
-                        if (message) {
-                          const isSender = message.sender_id === user?.id;
-                          deleteMessage({ messageId, isSender });
-                          setSelectedMessage(null);
+                        if (selectedFolder === 'trash') {
+                          permanentDelete(messageId);
+                        } else {
+                          const message = currentMessages.find(m => m.id === messageId);
+                          if (message) {
+                            const isSender = message.sender_id === user?.id;
+                            deleteMessage({ messageId, isSender });
+                          }
                         }
+                        setSelectedMessage(null);
                       }}
                       currentUserId={user?.id}
                     />
                   ) : (
-                    <MessageList
-                      messages={inboxMessages}
+                     <MessageList
+                      messages={currentMessages}
                       selectedMessages={selectedMessages}
                       onMessageSelect={(messageId) => {
                         setSelectedMessages(prev => 
@@ -269,7 +281,7 @@ const MessagesContent = () => {
                       }}
                       onSelectAll={(checked) => {
                         if (checked) {
-                          setSelectedMessages(inboxMessages.map(msg => msg.id));
+                          setSelectedMessages(currentMessages.map(msg => msg.id));
                         } else {
                           setSelectedMessages([]);
                         }
@@ -286,6 +298,7 @@ const MessagesContent = () => {
                       onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       folder={selectedFolder}
                       currentUserId={user?.id}
+                      {...(selectedFolder === 'trash' ? { onRestore: handleRestore } : {})}
                     />
                   )}
                 </div>
@@ -294,7 +307,7 @@ const MessagesContent = () => {
                 <div className="hidden md:flex w-full">
                   <div className="w-1/2 border-r border-border">
                     <MessageList
-                      messages={inboxMessages}
+                      messages={currentMessages}
                       selectedMessages={selectedMessages}
                       onMessageSelect={(messageId) => {
                         setSelectedMessages(prev => 
@@ -305,7 +318,7 @@ const MessagesContent = () => {
                       }}
                       onSelectAll={(checked) => {
                         if (checked) {
-                          setSelectedMessages(inboxMessages.map(msg => msg.id));
+                          setSelectedMessages(currentMessages.map(msg => msg.id));
                         } else {
                           setSelectedMessages([]);
                         }
@@ -322,6 +335,7 @@ const MessagesContent = () => {
                       onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       folder={selectedFolder}
                       currentUserId={user?.id}
+                      {...(selectedFolder === 'trash' ? { onRestore: handleRestore } : {})}
                     />
                   </div>
                   <div className="flex-1">
@@ -336,12 +350,16 @@ const MessagesContent = () => {
                         }}
                         onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                         onDelete={(messageId) => {
-                          const message = inboxMessages.find(m => m.id === messageId);
-                          if (message) {
-                            const isSender = message.sender_id === user?.id;
-                            deleteMessage({ messageId, isSender });
-                            setSelectedMessage(null);
+                          if (selectedFolder === 'trash') {
+                            permanentDelete(messageId);
+                          } else {
+                            const message = currentMessages.find(m => m.id === messageId);
+                            if (message) {
+                              const isSender = message.sender_id === user?.id;
+                              deleteMessage({ messageId, isSender });
+                            }
                           }
+                          setSelectedMessage(null);
                         }}
                         currentUserId={user?.id}
                       />
