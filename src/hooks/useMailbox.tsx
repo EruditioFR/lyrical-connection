@@ -558,6 +558,28 @@ export const useMailbox = () => {
     },
   });
 
+  // Empty trash mutation
+  const emptyTrashMutation = useMutation({
+    mutationFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('mail_messages')
+        .delete()
+        .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.true),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.true)`);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
+      toast({
+        title: "Corbeille vidée",
+        description: "Tous les messages de la corbeille ont été supprimés définitivement.",
+      });
+    },
+  });
+
   // Real-time subscription
   useEffect(() => {
     const getUser = async () => {
@@ -605,6 +627,7 @@ export const useMailbox = () => {
     deleteMessage: deleteMessageMutation.mutate,
     restoreMessage: restoreMessageMutation.mutate,
     permanentDelete: permanentDeleteMutation.mutate,
+    emptyTrash: emptyTrashMutation.mutate,
     saveDraft: saveDraftMutation.mutate,
     deleteDraft: deleteDraftMutation.mutate,
   };

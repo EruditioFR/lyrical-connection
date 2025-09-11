@@ -6,22 +6,42 @@ import {
   Star, 
   FileText, 
   PenTool,
-  Trash2 
+  Trash2,
+  Trash
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface MailboxSidebarProps {
   selectedFolder: string;
   onFolderSelect: (folder: string) => void;
   unreadCount: number;
   onCompose: () => void;
+  onEmptyTrash?: () => void;
+  trashCount?: number;
+  draftsCount?: number;
+  starredCount?: number;
 }
 
 export const MailboxSidebar = ({ 
   selectedFolder, 
   onFolderSelect, 
   unreadCount,
-  onCompose 
+  onCompose,
+  onEmptyTrash,
+  trashCount,
+  draftsCount,
+  starredCount 
 }: MailboxSidebarProps) => {
   const folders = [
     { 
@@ -38,17 +58,20 @@ export const MailboxSidebar = ({
     { 
       id: 'starred', 
       label: 'Messages favoris', 
-      icon: Star 
+      icon: Star,
+      count: starredCount 
     },
     { 
       id: 'drafts', 
       label: 'Brouillons', 
-      icon: FileText 
+      icon: FileText,
+      count: draftsCount 
     },
     { 
       id: 'trash', 
       label: 'Corbeille', 
-      icon: Trash2 
+      icon: Trash2,
+      count: trashCount 
     },
   ];
 
@@ -83,7 +106,13 @@ export const MailboxSidebar = ({
               {folder.count && folder.count > 0 && (
                 <Badge 
                   variant="default" 
-                  className="ml-auto bg-primary text-primary-foreground text-xs px-2 py-0.5"
+                  className={cn(
+                    "ml-auto text-xs px-2 py-0.5",
+                    folder.id === 'inbox' && "bg-primary text-primary-foreground",
+                    folder.id === 'starred' && "bg-yellow-500 text-white",
+                    folder.id === 'drafts' && "bg-blue-500 text-white",
+                    folder.id === 'trash' && "bg-red-500 text-white"
+                  )}
                 >
                   {folder.count}
                 </Badge>
@@ -92,6 +121,42 @@ export const MailboxSidebar = ({
           );
         })}
       </div>
+
+      {/* Empty Trash Button */}
+      {selectedFolder === 'trash' && onEmptyTrash && trashCount && trashCount > 0 && (
+        <div className="mt-4 pt-4 border-t border-border">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full text-destructive hover:text-destructive-foreground hover:bg-destructive"
+              >
+                <Trash className="w-4 h-4 mr-2" />
+                Vider la corbeille
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Vider la corbeille</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Êtes-vous sûr de vouloir supprimer définitivement tous les messages de la corbeille ? 
+                  Cette action est irréversible.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={onEmptyTrash}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Vider la corbeille
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
     </div>
   );
 };

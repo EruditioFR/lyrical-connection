@@ -57,6 +57,7 @@ const MessagesContent = () => {
     deleteMessage,
     restoreMessage,
     permanentDelete,
+    emptyTrash,
   } = useMailbox();
 
   const handleRefreshSession = async () => {
@@ -225,6 +226,10 @@ const MessagesContent = () => {
                 onFolderSelect={setSelectedFolder}
                 unreadCount={unreadCount}
                 onCompose={() => setShowCompose(true)}
+                onEmptyTrash={emptyTrash}
+                trashCount={trashMessages.length}
+                draftsCount={drafts.length}
+                starredCount={starredMessages.length}
               />
 
               {/* Main Content */}
