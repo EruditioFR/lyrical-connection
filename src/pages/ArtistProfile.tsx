@@ -141,26 +141,30 @@ const ArtistProfile = () => {
         >
           <div className="absolute inset-0 bg-black/30"></div>
           
-          {/* Bouton Editer en haut à droite */}
-          <div className="absolute top-4 right-4 space-y-2">
+          {/* Boutons d'action en haut à droite */}
+          <div className="absolute top-6 right-6 flex flex-col gap-3">
             {isOwnProfile && (
               <Button 
-                variant="secondary"
+                variant="outline"
+                size="lg"
                 onClick={() => window.location.href = '/profil'}
-                className="bg-white/10 text-white border border-white/20 hover:bg-white/20 block"
+                className="bg-white/95 text-gray-900 border-white/30 hover:bg-white hover:text-gray-900 shadow-lg backdrop-blur-sm transition-all duration-300 font-semibold px-6"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Editer mon profil
               </Button>
             )}
             
-            {/* Bouton Contact dans une modale */}
-            {(profile.contact_email || profile.phone || profile.website) && (
+            {/* Bouton Contact avec design premium */}
+            {!isOwnProfile && (profile.contact_email || profile.phone || profile.website) && (
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button className="bg-white text-gray-900 hover:bg-gray-50 shadow-sm flex items-center gap-2">
-                    <Contact className="w-4 h-4" />
-                    Contact
+                  <Button 
+                    size="lg"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold px-6"
+                  >
+                    <Contact className="w-4 h-4 mr-2" />
+                    Contacter
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
