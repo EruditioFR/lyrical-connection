@@ -11,6 +11,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { MegaMenu } from './MegaMenu';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import MailIcon from './MailIcon';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
@@ -160,6 +161,7 @@ const Navbar = () => {
           <div className="hidden md:block">
             <LanguageSelector />
           </div>
+          {user && !isMobile && <MailIcon />}
           {user && isArtist && !isMobile && <NotificationBell />}
           {user ? <div className="flex items-center space-x-3">
               {!isMobile && <span className="text-sm font-medium text-gray-700">
@@ -316,12 +318,11 @@ const Navbar = () => {
                   </>
                 )}
 
-                {/* Notifications pour artistes sur mobile */}
-                {isArtist && (
-                  <div className="border-t pt-3 mt-3">
-                    <NotificationBell />
-                  </div>
-                )}
+                {/* Messages et notifications sur mobile */}
+                <div className="border-t pt-3 mt-3 flex items-center justify-between">
+                  <MailIcon />
+                  {isArtist && <NotificationBell />}
+                </div>
               </>
             ) : (
               /* Menu pour visiteurs non connectés */
