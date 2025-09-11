@@ -86,7 +86,7 @@ const AirPlayer: React.FC<AirPlayerProps> = ({
   if (isLoading) {
     return <Card>
         <CardHeader>
-          <CardTitle>Airs</CardTitle>
+          <CardTitle>Ecouter les prestations</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">Chargement...</p>
@@ -101,20 +101,20 @@ const AirPlayer: React.FC<AirPlayerProps> = ({
         <CardTitle>Ecouter ou regarder les prestations</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
           {activeAirs.map(air => {
           const IconComponent = getAirIcon(air.type);
           const isPlaying = currentPlaying === air.id;
-          return <div key={air.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center space-x-3 flex-1">
-                  <IconComponent className="h-5 w-5 text-muted-foreground" />
-                  <div className="flex-1">
-                    <h4 className="font-medium">{air.title}</h4>
-                    {air.description && <p className="text-sm text-muted-foreground">{air.description}</p>}
+          return <div key={air.id} className="p-4 border rounded-lg text-center space-y-3">
+                <div className="flex flex-col items-center space-y-2">
+                  <IconComponent className="h-8 w-8 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <h4 className="font-medium text-sm leading-tight">{air.title}</h4>
+                    {air.description && <p className="text-xs text-muted-foreground line-clamp-2">{air.description}</p>}
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                <div className="flex justify-center">
                   {air.type === 'audio' && <Button variant="outline" size="sm" onClick={() => handlePlayPause(air)} className="flex items-center space-x-2">
                       {isPlaying ? <>
                           <Pause className="h-4 w-4" />
