@@ -141,18 +141,28 @@ const MessagesContent = () => {
     toggleStar({ messageId, isStarred });
   };
 
-  const handleDelete = (messageId: string) => {
-    if (selectedFolder === 'trash') {
-      // Suppression définitive depuis la corbeille
-      permanentDelete(messageId);
-    } else {
-      // Déplacement vers la corbeille
-      const isSender = selectedFolder === 'sent';
-      deleteMessage({ messageId, isSender });
-    }
-    if (selectedMessage?.id === messageId) {
-      setSelectedMessage(null);
-    }
+  const handleBulkDelete = (messageIds: string[]) => {
+    messageIds.forEach(messageId => {
+      if (selectedFolder === 'trash') {
+        permanentDelete(messageId);
+      } else {
+        const message = currentMessages.find(m => m.id === messageId);
+        if (message) {
+          const isSender = message.sender_id === user?.id;
+          deleteMessage({ messageId, isSender });
+        }
+      }
+    });
+    setSelectedMessages([]);
+  };
+
+  const handleBulkMarkAsRead = (messageIds: string[]) => {
+    messageIds.forEach(messageId => {
+      const message = currentMessages.find(m => m.id === messageId);
+      if (message && !message.is_read) {
+        markAsRead(messageId);
+      }
+    });
   };
 
   const handleRestore = (messageId: string) => {
@@ -298,6 +308,19 @@ const MessagesContent = () => {
                       onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       folder={selectedFolder}
                       currentUserId={user?.id}
+                      onMarkAsRead={markAsRead}
+                      onDelete={(messageId) => {
+                        if (selectedFolder === 'trash') {
+                          permanentDelete(messageId);
+                        } else {
+                          const message = currentMessages.find(m => m.id === messageId);
+                          if (message) {
+                            const isSender = message.sender_id === user?.id;
+                            deleteMessage({ messageId, isSender });
+                          }
+                        }
+                        setSelectedMessages(prev => prev.filter(id => id !== messageId));
+                      }}
                       {...(selectedFolder === 'trash' ? { onRestore: handleRestore } : {})}
                     />
                   )}
@@ -306,7 +329,7 @@ const MessagesContent = () => {
                 {/* Desktop: Show both panels */}
                 <div className="hidden md:flex w-full">
                   <div className="w-1/2 border-r border-border">
-                    <MessageList
+                     <MessageList
                       messages={currentMessages}
                       selectedMessages={selectedMessages}
                       onMessageSelect={(messageId) => {
@@ -335,6 +358,19 @@ const MessagesContent = () => {
                       onStarToggle={(messageId, isStarred) => toggleStar({ messageId, isStarred })}
                       folder={selectedFolder}
                       currentUserId={user?.id}
+                      onMarkAsRead={markAsRead}
+                      onDelete={(messageId) => {
+                        if (selectedFolder === 'trash') {
+                          permanentDelete(messageId);
+                        } else {
+                          const message = currentMessages.find(m => m.id === messageId);
+                          if (message) {
+                            const isSender = message.sender_id === user?.id;
+                            deleteMessage({ messageId, isSender });
+                          }
+                        }
+                        setSelectedMessages(prev => prev.filter(id => id !== messageId));
+                      }}
                       {...(selectedFolder === 'trash' ? { onRestore: handleRestore } : {})}
                     />
                   </div>

@@ -45,6 +45,8 @@ interface MessageListProps {
   folder: string;
   currentUserId?: string;
   onRestore?: (messageId: string) => void;
+  onMarkAsRead?: (messageId: string) => void;
+  onDelete?: (messageId: string) => void;
 }
 
 export const MessageList = ({ 
@@ -56,7 +58,9 @@ export const MessageList = ({
   onStarToggle,
   folder,
   currentUserId,
-  onRestore
+  onRestore,
+  onMarkAsRead,
+  onDelete
 }: MessageListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
@@ -79,10 +83,11 @@ export const MessageList = ({
   });
 
   const handleBulkMarkAsRead = () => {
+    if (!onMarkAsRead) return;
     selectedMessages.forEach(messageId => {
       const message = messages.find(m => m.id === messageId);
       if (message && !message.is_read) {
-        // TODO: Call mark as read for each message
+        onMarkAsRead(messageId);
       }
     });
   };
@@ -97,8 +102,9 @@ export const MessageList = ({
   };
 
   const handleBulkDelete = () => {
+    if (!onDelete) return;
     selectedMessages.forEach(messageId => {
-      // TODO: Call delete for each message
+      onDelete(messageId);
     });
   };
 
