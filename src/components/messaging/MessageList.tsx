@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Paperclip, Reply, Filter, RotateCcw } from "lucide-react";
+import { Star, Paperclip, Reply, Filter, RotateCcw, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isWithinInterval } from "date-fns";
 import { fr } from "date-fns/locale";
 import { MessageSearch } from "./MessageSearch";
 import { MessageActions } from "./MessageActions";
+import { MessageExport } from "./MessageExport";
+import { KeyboardShortcuts } from "./KeyboardShortcuts";
+import { MessageFilters } from "./AdvancedFilters";
 
 interface Message {
   id: string;
@@ -64,23 +67,86 @@ export const MessageList = ({
 }: MessageListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+  const [filters, setFilters] = useState<MessageFilters>({
+    sortBy: 'date',
+    sortOrder: 'desc'
+  });
+  const [selectedMessageIndex, setSelectedMessageIndex] = useState(0);
   
   const allSelected = messages.length > 0 && selectedMessages.length === messages.length;
   const someSelected = selectedMessages.length > 0 && selectedMessages.length < messages.length;
 
-  // Filter messages based on search query
-  const filteredMessages = messages.filter(message => {
-    if (!searchQuery) return true;
-    
-    const searchLower = searchQuery.toLowerCase();
-    const senderInfo = getSenderInfo(message);
-    
-    return (
-      message.subject.toLowerCase().includes(searchLower) ||
-      message.content.toLowerCase().includes(searchLower) ||
-      senderInfo.name.toLowerCase().includes(searchLower)
-    );
-  });
+  // Apply all filters
+  const filteredMessages = messages
+    .filter(message => {
+      // Search filter
+      if (searchQuery) {
+        const searchLower = searchQuery.toLowerCase();
+        const senderInfo = getSenderInfo(message);
+        
+        const matchesSearch = (
+          message.subject.toLowerCase().includes(searchLower) ||
+          message.content.toLowerCase().includes(searchLower) ||
+          senderInfo.name.toLowerCase().includes(searchLower)
+        );
+        
+        if (!matchesSearch) return false;
+      }
+      
+      // Read status filter
+      if (filters.isRead !== undefined) {
+        if (message.is_read !== filters.isRead) return false;
+      }
+      
+      // Starred filter
+      if (filters.isStarred !== undefined) {
+        if (message.is_starred !== filters.isStarred) return false;
+      }
+      
+      // Attachments filter
+      if (filters.hasAttachments) {
+        if (!message.attachment_urls || message.attachment_urls.length === 0) return false;
+      }
+      
+      // Date range filter
+      if (filters.dateRange) {
+        const messageDate = new Date(message.created_at);
+        if (filters.dateRange.from && messageDate < filters.dateRange.from) return false;
+        if (filters.dateRange.to && messageDate > filters.dateRange.to) return false;
+      }
+      
+      // Sender filter
+      if (filters.sender) {
+        const senderInfo = getSenderInfo(message);
+        if (senderInfo.name !== filters.sender) return false;
+      }
+      
+      return true;
+    })
+    .sort((a, b) => {
+      // Sort messages
+      let aValue: any, bValue: any;
+      
+      switch (filters.sortBy) {
+        case 'sender':
+          aValue = getSenderInfo(a).name;
+          bValue = getSenderInfo(b).name;
+          break;
+        case 'subject':
+          aValue = a.subject || '';
+          bValue = b.subject || '';
+          break;
+        case 'date':
+        default:
+          aValue = new Date(a.created_at);
+          bValue = new Date(b.created_at);
+          break;
+      }
+      
+      const comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      return filters.sortOrder === 'asc' ? comparison : -comparison;
+    });
 
   const handleBulkMarkAsRead = () => {
     if (!onMarkAsRead) return;
@@ -131,6 +197,92 @@ export const MessageList = ({
       .slice(0, 2);
   };
 
+  const getSenders = () => {
+    return Array.from(new Set(
+      messages.map(message => getSenderInfo(message).name)
+    ));
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle shortcuts when typing in inputs
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        // Allow slash to focus search
+        if (e.key === '/' && e.target.tagName !== 'INPUT') {
+          e.preventDefault();
+          const searchInput = document.querySelector('input[placeholder*="Rechercher"]') as HTMLInputElement;
+          if (searchInput) {
+            searchInput.focus();
+          }
+        }
+        return;
+      }
+
+      switch (e.key) {
+        case '/':
+          e.preventDefault();
+          const searchInput = document.querySelector('input[placeholder*="Rechercher"]') as HTMLInputElement;
+          if (searchInput) {
+            searchInput.focus();
+          }
+          break;
+        
+        case '?':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setShowKeyboardShortcuts(true);
+          }
+          break;
+          
+        case 'ArrowUp':
+          e.preventDefault();
+          setSelectedMessageIndex(prev => Math.max(0, prev - 1));
+          break;
+          
+        case 'ArrowDown':
+          e.preventDefault();
+          setSelectedMessageIndex(prev => Math.min(filteredMessages.length - 1, prev + 1));
+          break;
+          
+        case 'Enter':
+          if (filteredMessages[selectedMessageIndex]) {
+            onMessageClick(filteredMessages[selectedMessageIndex]);
+          }
+          break;
+          
+        case ' ':
+          e.preventDefault();
+          if (filteredMessages[selectedMessageIndex] && onMarkAsRead) {
+            onMarkAsRead(filteredMessages[selectedMessageIndex].id);
+          }
+          break;
+          
+        case 's':
+          if (filteredMessages[selectedMessageIndex]) {
+            onStarToggle(filteredMessages[selectedMessageIndex].id, filteredMessages[selectedMessageIndex].is_starred);
+          }
+          break;
+          
+        case 'a':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            onSelectAll(true);
+          }
+          break;
+          
+        case 'x':
+          if (filteredMessages[selectedMessageIndex]) {
+            onMessageSelect(filteredMessages[selectedMessageIndex].id);
+          }
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [filteredMessages, selectedMessageIndex, onMessageClick, onMarkAsRead, onStarToggle, onSelectAll, onMessageSelect]);
+
   if (filteredMessages.length === 0 && !searchQuery) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
@@ -159,7 +311,14 @@ export const MessageList = ({
   return (
     <div className="flex-1 flex flex-col">
       {/* Search */}
-      <MessageSearch onSearch={setSearchQuery} onFilter={() => setShowFilters(!showFilters)} />
+      <MessageSearch 
+        onSearch={setSearchQuery} 
+        onFilter={() => setShowFilters(!showFilters)} 
+        filters={filters}
+        onFiltersChange={setFilters}
+        senders={getSenders()}
+        onKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
+      />
 
       {/* Bulk Actions */}
       <MessageActions
@@ -174,15 +333,23 @@ export const MessageList = ({
       />
 
       {/* Header */}
-      <div className="border-b border-border p-4 flex items-center gap-4">
-        <Checkbox
-          checked={allSelected}
-          onCheckedChange={(checked) => onSelectAll(!!checked)}
+      <div className="border-b border-border p-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Checkbox
+            checked={allSelected}
+            onCheckedChange={(checked) => onSelectAll(!!checked)}
+          />
+          <span className="text-sm text-muted-foreground">
+            {filteredMessages.length} message{filteredMessages.length > 1 ? 's' : ''} 
+            {searchQuery && ` (${messages.length} au total)`}
+          </span>
+        </div>
+        
+        <MessageExport 
+          messages={filteredMessages}
+          selectedMessages={selectedMessages}
+          folder={folder}
         />
-        <span className="text-sm text-muted-foreground">
-          {filteredMessages.length} message{filteredMessages.length > 1 ? 's' : ''} 
-          {searchQuery && ` (${messages.length} au total)`}
-        </span>
       </div>
 
       {/* Message List */}
@@ -199,7 +366,8 @@ export const MessageList = ({
               className={cn(
                 "border-b border-border p-4 hover:bg-muted/50 cursor-pointer transition-colors",
                 !message.is_read && "bg-accent/30",
-                isSelected && "bg-primary/10"
+                isSelected && "bg-primary/10",
+                selectedMessageIndex === messages.indexOf(message) && "ring-2 ring-primary/50"
               )}
               onClick={() => onMessageClick(message)}
             >
@@ -302,6 +470,11 @@ export const MessageList = ({
           );
         })}
       </div>
+      
+      <KeyboardShortcuts 
+        open={showKeyboardShortcuts}
+        onClose={() => setShowKeyboardShortcuts(false)}
+      />
     </div>
   );
 };

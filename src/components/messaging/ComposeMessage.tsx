@@ -6,11 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Send, Save, Paperclip, User, Building2, Upload } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { X, Send, Save, Paperclip, User, Building2, Upload, FileText, Settings } from "lucide-react";
 import { useMailbox } from "@/hooks/useMailbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { MessageTemplates } from "./MessageTemplates";
+import { MessageSignature } from "./MessageSignature";
 
 interface ComposeMessageProps {
   onClose: () => void;
@@ -387,42 +390,81 @@ export const ComposeMessage = ({
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.multiple = true;
-                fileInput.accept = '*/*';
-                fileInput.onchange = (e) => {
-                  const files = (e.target as HTMLInputElement).files;
-                  if (files) {
-                    handleFileSelect(files);
-                  }
-                };
-                fileInput.click();
-              }}
-              disabled={uploadingFiles.size > 0}
-            >
-              <Paperclip className="w-4 h-4 mr-2" />
-              Joindre
-            </Button>
-            <span className="text-xs text-muted-foreground">
-              (Max. {formatFileSize(MAX_FILE_SIZE)} par fichier)
-            </span>
+        {/* Templates et Signature */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="w-full">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Modèles de messages
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Choisir un modèle</DialogTitle>
+                </DialogHeader>
+                <MessageTemplates 
+                  onTemplateSelect={(template) => {
+                    if (template.subject) setSubject(template.subject);
+                    setContent(template.content);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSaveDraft}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Brouillon
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="w-full">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Signature
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Gestion des signatures</DialogTitle>
+                </DialogHeader>
+                <MessageSignature />
+              </DialogContent>
+            </Dialog>
           </div>
+
+          {/* Actions principales */}
+          <div className="flex items-center justify-between pt-4 border-t">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const fileInput = document.createElement('input');
+                  fileInput.type = 'file';
+                  fileInput.multiple = true;
+                  fileInput.accept = '*/*';
+                  fileInput.onchange = (e) => {
+                    const files = (e.target as HTMLInputElement).files;
+                    if (files) {
+                      handleFileSelect(files);
+                    }
+                  };
+                  fileInput.click();
+                }}
+                disabled={uploadingFiles.size > 0}
+              >
+                <Paperclip className="w-4 h-4 mr-2" />
+                Joindre
+              </Button>
+              <span className="text-xs text-muted-foreground">
+                (Max. {formatFileSize(MAX_FILE_SIZE)} par fichier)
+              </span>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSaveDraft}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Brouillon
+              </Button>
+            </div>
 
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={onClose}>
