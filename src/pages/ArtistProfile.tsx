@@ -25,8 +25,7 @@ import {
   Play,
   Clock,
   Flag,
-  Languages,
-  Contact
+  Languages
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
@@ -36,11 +35,13 @@ import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 import AirPlayer from '@/components/profile/AirPlayer';
 import ArtistPhotoPreview from '@/components/profile/ArtistPhotoPreview';
+import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { artistProfile: currentUserProfile, isProfessional } = useUserType();
+  const [showComposeMessage, setShowComposeMessage] = React.useState(false);
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['artist-profile-public', id],
@@ -155,63 +156,16 @@ const ArtistProfile = () => {
               </Button>
             )}
             
-            {/* Bouton Contact avec design premium */}
-            {!isOwnProfile && (profile.contact_email || profile.phone || profile.website) && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button 
-                    size="lg"
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold px-6"
-                  >
-                    <Contact className="w-4 h-4 mr-2" />
-                    Contacter
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Informations de contact</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    {profile.contact_email && (
-                      <div className="flex items-center gap-3">
-                        <Mail className="w-5 h-5 text-muted-foreground" />
-                        <a 
-                          href={`mailto:${profile.contact_email}`}
-                          className="text-primary hover:underline font-medium"
-                        >
-                          {profile.contact_email}
-                        </a>
-                      </div>
-                    )}
-                    
-                    {profile.phone && (
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-5 h-5 text-muted-foreground" />
-                        <a 
-                          href={`tel:${profile.phone}`}
-                          className="text-primary hover:underline font-medium"
-                        >
-                          {profile.phone}
-                        </a>
-                      </div>
-                    )}
-                    
-                    {profile.website && (
-                      <div className="flex items-center gap-3">
-                        <Globe className="w-5 h-5 text-muted-foreground" />
-                        <a 
-                          href={profile.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline font-medium"
-                        >
-                          Site web
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
+            {/* Bouton Contact pour messagerie interne */}
+            {!isOwnProfile && user && (
+              <Button 
+                size="lg"
+                onClick={() => setShowComposeMessage(true)}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold px-6"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contacter
+              </Button>
             )}
           </div>
         </div>
@@ -364,6 +318,19 @@ const ArtistProfile = () => {
 
         </div>
       </div>
+
+      {/* Modale de composition de message */}
+      {showComposeMessage && (
+        <Dialog open={showComposeMessage} onOpenChange={setShowComposeMessage}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <ComposeMessage
+              recipientId={profile.user_id}
+              recipientName={profile.stage_name}
+              onClose={() => setShowComposeMessage(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </Layout>
   );
 };
