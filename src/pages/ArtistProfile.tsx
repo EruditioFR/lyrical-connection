@@ -235,6 +235,49 @@ const ArtistProfile = () => {
                           )}
                         </div>
 
+                        {/* Informations de contact */}
+                        {(profile.contact_email || profile.phone || profile.website) && (
+                          <div className="mb-6 space-y-3">
+                            {profile.contact_email && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <Mail className="w-4 h-4 text-muted-foreground" />
+                                <a 
+                                  href={`mailto:${profile.contact_email}`}
+                                  className="text-primary hover:underline font-medium"
+                                >
+                                  {profile.contact_email}
+                                </a>
+                              </div>
+                            )}
+                            
+                            {profile.phone && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <Phone className="w-4 h-4 text-muted-foreground" />
+                                <a 
+                                  href={`tel:${profile.phone}`}
+                                  className="text-primary hover:underline font-medium"
+                                >
+                                  {profile.phone}
+                                </a>
+                              </div>
+                            )}
+                            
+                            {profile.website && (
+                              <div className="flex items-center gap-2 text-sm">
+                                <Globe className="w-4 h-4 text-muted-foreground" />
+                                <a 
+                                  href={profile.website}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hover:underline font-medium"
+                                >
+                                  Site web
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
                         {/* Biographie */}
                         {profile.bio && (
                           <div>
@@ -300,53 +343,6 @@ const ArtistProfile = () => {
           </div>
 
 
-          {/* Contact et liens */}
-          {(profile.contact_email || profile.phone || profile.website) && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {profile.contact_email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-gray-500" />
-                    <a 
-                      href={`mailto:${profile.contact_email}`}
-                      className="text-primary hover:underline"
-                    >
-                      {profile.contact_email}
-                    </a>
-                  </div>
-                )}
-                
-                {profile.phone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-gray-500" />
-                    <a 
-                      href={`tel:${profile.phone}`}
-                      className="text-primary hover:underline"
-                    >
-                      {profile.phone}
-                    </a>
-                  </div>
-                )}
-                
-                {profile.website && (
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-gray-500" />
-                    <a 
-                      href={profile.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      Site web
-                    </a>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
     </Layout>
