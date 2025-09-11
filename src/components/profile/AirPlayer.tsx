@@ -119,7 +119,7 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
                 </div>
                 
                 <div className="text-center">
-                  <h4 className="font-medium text-sm truncate">{air.title}</h4>
+                  <h4 className="font-medium text-sm">{air.title}</h4>
                   {air.description && (
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{air.description}</p>
                   )}
