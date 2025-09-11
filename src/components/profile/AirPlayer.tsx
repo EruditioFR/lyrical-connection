@@ -88,7 +88,7 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Airs</CardTitle>
+          <CardTitle>Ecouter les prestations</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">Chargement...</p>
@@ -104,7 +104,7 @@ const AirPlayer: React.FC<AirPlayerProps> = ({ artistProfileId }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Airs</CardTitle>
+        <CardTitle>Ecouter les prestations</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
