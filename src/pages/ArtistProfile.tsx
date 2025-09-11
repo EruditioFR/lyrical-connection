@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { 
   MapPin, 
   Calendar, 
@@ -24,7 +25,8 @@ import {
   Play,
   Clock,
   Flag,
-  Languages
+  Languages,
+  Contact
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
@@ -235,49 +237,6 @@ const ArtistProfile = () => {
                           )}
                         </div>
 
-                        {/* Informations de contact */}
-                        {(profile.contact_email || profile.phone || profile.website) && (
-                          <div className="mb-6 space-y-3">
-                            {profile.contact_email && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Mail className="w-4 h-4 text-muted-foreground" />
-                                <a 
-                                  href={`mailto:${profile.contact_email}`}
-                                  className="text-primary hover:underline font-medium"
-                                >
-                                  {profile.contact_email}
-                                </a>
-                              </div>
-                            )}
-                            
-                            {profile.phone && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Phone className="w-4 h-4 text-muted-foreground" />
-                                <a 
-                                  href={`tel:${profile.phone}`}
-                                  className="text-primary hover:underline font-medium"
-                                >
-                                  {profile.phone}
-                                </a>
-                              </div>
-                            )}
-                            
-                            {profile.website && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <Globe className="w-4 h-4 text-muted-foreground" />
-                                <a 
-                                  href={profile.website}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-primary hover:underline font-medium"
-                                >
-                                  Site web
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
                         {/* Biographie */}
                         {profile.bio && (
                           <div>
@@ -291,10 +250,68 @@ const ArtistProfile = () => {
 
                       {/* Colonne de droite - Galerie photos (40%) */}
                       <div className="lg:col-span-2">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                          <Camera className="w-5 h-5" />
-                          Galerie photos
-                        </h3>
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <Camera className="w-5 h-5" />
+                            Galerie photos
+                          </h3>
+                          
+                          {/* Bouton Contact dans une modale */}
+                          {(profile.contact_email || profile.phone || profile.website) && (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="flex items-center gap-2">
+                                  <Contact className="w-4 h-4" />
+                                  Contact
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Informations de contact</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  {profile.contact_email && (
+                                    <div className="flex items-center gap-3">
+                                      <Mail className="w-5 h-5 text-muted-foreground" />
+                                      <a 
+                                        href={`mailto:${profile.contact_email}`}
+                                        className="text-primary hover:underline font-medium"
+                                      >
+                                        {profile.contact_email}
+                                      </a>
+                                    </div>
+                                  )}
+                                  
+                                  {profile.phone && (
+                                    <div className="flex items-center gap-3">
+                                      <Phone className="w-5 h-5 text-muted-foreground" />
+                                      <a 
+                                        href={`tel:${profile.phone}`}
+                                        className="text-primary hover:underline font-medium"
+                                      >
+                                        {profile.phone}
+                                      </a>
+                                    </div>
+                                  )}
+                                  
+                                  {profile.website && (
+                                    <div className="flex items-center gap-3">
+                                      <Globe className="w-5 h-5 text-muted-foreground" />
+                                      <a 
+                                        href={profile.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-primary hover:underline font-medium"
+                                      >
+                                        Site web
+                                      </a>
+                                    </div>
+                                  )}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          )}
+                        </div>
                         <ArtistPhotoPreview artistProfileId={profile.id} />
                       </div>
                     </div>
