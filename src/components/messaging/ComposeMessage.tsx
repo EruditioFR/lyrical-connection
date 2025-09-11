@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -39,6 +39,7 @@ export const ComposeMessage = ({
   const [attachments, setAttachments] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const { sendMessage, isSending, saveDraft } = useMailbox();
   const { toast } = useToast();
@@ -96,6 +97,46 @@ export const ComposeMessage = ({
       setContent(`\n\n--- Message original ---\n${replyTo.content}`);
     }
   }, [replyTo]);
+
+  // Auto-save draft with debounce
+  const autoSaveDraft = useCallback(async () => {
+    if ((!recipient && !subject.trim() && !content.trim()) || replyTo) {
+      return; // Don't save empty drafts or reply drafts
+    }
+
+    try {
+      await saveDraft({
+        recipient_id: recipient || undefined,
+        subject: subject.trim() || undefined,
+        content: content.trim() || undefined,
+        attachment_urls: attachments.length > 0 ? attachments : undefined,
+      });
+    } catch (error) {
+      console.error('Error auto-saving draft:', error);
+    }
+  }, [recipient, subject, content, attachments, replyTo, saveDraft]);
+
+  // Auto-save effect with debounce
+  useEffect(() => {
+    // Clear previous timeout
+    if (autoSaveTimeout) {
+      clearTimeout(autoSaveTimeout);
+    }
+
+    // Set new timeout for auto-save
+    const timeout = setTimeout(() => {
+      autoSaveDraft();
+    }, 3000); // Auto-save after 3 seconds of inactivity
+
+    setAutoSaveTimeout(timeout);
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [recipient, subject, content, attachments, autoSaveDraft]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
