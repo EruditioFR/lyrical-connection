@@ -9,15 +9,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import type { DateRange } from "react-day-picker";
 
 export interface MessageFilters {
   isRead?: boolean;
   isStarred?: boolean;
   hasAttachments?: boolean;
-  dateRange?: {
-    from?: Date;
-    to?: Date;
-  };
+  dateRange?: DateRange;
   sender?: string;
   sortBy: 'date' | 'sender' | 'subject';
   sortOrder: 'asc' | 'desc';
@@ -145,6 +143,7 @@ export const AdvancedFilters = ({
                 selected={localFilters.dateRange}
                 onSelect={(range) => updateFilter('dateRange', range)}
                 numberOfMonths={2}
+                className="pointer-events-auto"
               />
             </PopoverContent>
           </Popover>

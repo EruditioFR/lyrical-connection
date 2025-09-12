@@ -184,7 +184,7 @@ const Navbar = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate(isArtist && artistProfile ? `/artistes/${artistProfile.id}` : isProfessional ? '/professional-profile' : '/profil')}>
+                  <DropdownMenuItem onClick={() => navigate(isArtist && artistProfile ? `/artistes/${artistProfile.id}` : isProfessional ? '/profil-professionnel' : '/profil')}>
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('navigation:profile')}</span>
                   </DropdownMenuItem>
@@ -238,7 +238,7 @@ const Navbar = () => {
                       Menu Professionnel
                     </div>
                     <Link
-                      to="/professional-events"
+                      to="/mes-evenements"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -252,14 +252,14 @@ const Navbar = () => {
                       Castings
                     </Link>
                     <Link
-                      to="/received-applications"
+                      to="/candidatures-reçues"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Candidatures reçues
                     </Link>
                     <Link
-                      to="/professional-messages"
+                      to="/messages"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
@@ -295,7 +295,7 @@ const Navbar = () => {
                       Castings
                     </Link>
                     <Link
-                      to="/my-applications"
+                      to="/mes-candidatures"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >

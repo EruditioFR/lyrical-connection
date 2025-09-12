@@ -85,6 +85,7 @@ export const AppRouter = () => {
       <Route path="/dashboard" element={<AuthGuard><SubscriptionGuard><Dashboard /></SubscriptionGuard></AuthGuard>} />
       <Route path="/profil" element={<AuthGuard><SubscriptionGuard><Profile /></SubscriptionGuard></AuthGuard>} />
       <Route path="/professional-profile" element={<AuthGuard><SubscriptionGuard><ProfessionalProfile /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/profil-professionnel" element={<AuthGuard><SubscriptionGuard><ProfessionalProfile /></SubscriptionGuard></AuthGuard>} />
       <Route path="/artistes/:id" element={<AuthGuard><SubscriptionGuard><ArtistProfile /></SubscriptionGuard></AuthGuard>} />
       <Route path="/professionnel/:id" element={<AuthGuard><SubscriptionGuard><ProfessionalProfile /></SubscriptionGuard></AuthGuard>} />
       
