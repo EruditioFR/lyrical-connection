@@ -252,6 +252,13 @@ const Navbar = () => {
                       Castings
                     </Link>
                     <Link
+                      to="/casting-dashboard"
+                      className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Tableau de bord casting
+                    </Link>
+                    <Link
                       to="/candidatures-reçues"
                       className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}

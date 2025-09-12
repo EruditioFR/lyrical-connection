@@ -53,6 +53,7 @@ import Blog from '@/pages/Blog';
 import BlogPost from '@/pages/BlogPost';
 import CastingDetail from '@/pages/CastingDetail';
 import Billing from '@/pages/Billing';
+import CastingDashboardPage from '@/pages/CastingDashboard';
 
 export const AppRouter = () => {
   return (
@@ -93,6 +94,7 @@ export const AppRouter = () => {
       <Route path="/castings/nouveau" element={<AuthGuard><SubscriptionGuard><CreateCasting /></SubscriptionGuard></AuthGuard>} />
       <Route path="/castings/:id" element={<AuthGuard><SubscriptionGuard><CastingDetail /></SubscriptionGuard></AuthGuard>} />
       <Route path="/castings/:id/postuler" element={<AuthGuard><SubscriptionGuard><CastingApplication /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/casting-dashboard" element={<AuthGuard><SubscriptionGuard><CastingDashboardPage /></SubscriptionGuard></AuthGuard>} />
       <Route path="/mes-candidatures" element={<AuthGuard><SubscriptionGuard><MyApplications /></SubscriptionGuard></AuthGuard>} />
       <Route path="/candidatures-reçues" element={<AuthGuard><SubscriptionGuard><ReceivedApplications /></SubscriptionGuard></AuthGuard>} />
       <Route path="/professional/castings/:castingId/applications" element={<AuthGuard><SubscriptionGuard><ProfessionalApplications /></SubscriptionGuard></AuthGuard>} />
