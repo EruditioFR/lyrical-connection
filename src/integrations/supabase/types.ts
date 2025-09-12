@@ -867,8 +867,13 @@ export type Database = {
           production_type: string
           professional_profile_id: string
           repertoire_requirements: string[] | null
+          required_age_max: number | null
+          required_age_min: number | null
           required_experience_level: string[] | null
+          required_genders: string[] | null
           required_languages: string[] | null
+          required_min_experience: number | null
+          required_nationalities: string[] | null
           required_voice_types: string[] | null
           results_published: boolean | null
           specific_requirements: string | null
@@ -898,8 +903,13 @@ export type Database = {
           production_type: string
           professional_profile_id: string
           repertoire_requirements?: string[] | null
+          required_age_max?: number | null
+          required_age_min?: number | null
           required_experience_level?: string[] | null
+          required_genders?: string[] | null
           required_languages?: string[] | null
+          required_min_experience?: number | null
+          required_nationalities?: string[] | null
           required_voice_types?: string[] | null
           results_published?: boolean | null
           specific_requirements?: string | null
@@ -929,8 +939,13 @@ export type Database = {
           production_type?: string
           professional_profile_id?: string
           repertoire_requirements?: string[] | null
+          required_age_max?: number | null
+          required_age_min?: number | null
           required_experience_level?: string[] | null
+          required_genders?: string[] | null
           required_languages?: string[] | null
+          required_min_experience?: number | null
+          required_nationalities?: string[] | null
           required_voice_types?: string[] | null
           results_published?: boolean | null
           specific_requirements?: string | null
@@ -2931,6 +2946,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      artist_matches_casting_criteria: {
+        Args: { artist_profile_id_param: string; casting_id_param: string }
+        Returns: boolean
+      }
       cleanup_expired_idempotency_keys: {
         Args: Record<PropertyKey, never>
         Returns: undefined
