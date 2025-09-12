@@ -53,6 +53,57 @@ export type Database = {
         }
         Relationships: []
       }
+      application_scores: {
+        Row: {
+          application_id: string
+          created_at: string
+          criteria_id: string
+          id: string
+          notes: string | null
+          raw_score: number | null
+          scored_at: string | null
+          scored_by: string | null
+          weighted_score: number | null
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          criteria_id: string
+          id?: string
+          notes?: string | null
+          raw_score?: number | null
+          scored_at?: string | null
+          scored_by?: string | null
+          weighted_score?: number | null
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          criteria_id?: string
+          id?: string
+          notes?: string | null
+          raw_score?: number | null
+          scored_at?: string | null
+          scored_by?: string | null
+          weighted_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_scores_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "application_scores_criteria_id_fkey"
+            columns: ["criteria_id"]
+            isOneToOne: false
+            referencedRelation: "casting_scoring_criteria"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       applications: {
         Row: {
           additional_documents: string[] | null
@@ -67,6 +118,7 @@ export type Database = {
           motivation: string | null
           professional_notes: string | null
           status: string
+          tenant_id: string | null
           updated_at: string
         }
         Insert: {
@@ -82,6 +134,7 @@ export type Database = {
           motivation?: string | null
           professional_notes?: string | null
           status?: string
+          tenant_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -97,6 +150,7 @@ export type Database = {
           motivation?: string | null
           professional_notes?: string | null
           status?: string
+          tenant_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -112,6 +166,13 @@ export type Database = {
             columns: ["casting_id"]
             isOneToOne: false
             referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -359,6 +420,7 @@ export type Database = {
           social_links: Json | null
           spoken_languages: string[] | null
           stage_name: string
+          tenant_id: string | null
           updated_at: string
           user_id: string
           voice_type: string | null
@@ -387,6 +449,7 @@ export type Database = {
           social_links?: Json | null
           spoken_languages?: string[] | null
           stage_name: string
+          tenant_id?: string | null
           updated_at?: string
           user_id: string
           voice_type?: string | null
@@ -415,12 +478,21 @@ export type Database = {
           social_links?: Json | null
           spoken_languages?: string[] | null
           stage_name?: string
+          tenant_id?: string | null
           updated_at?: string
           user_id?: string
           voice_type?: string | null
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "artist_profiles_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       artist_repertoire: {
         Row: {
@@ -681,6 +753,60 @@ export type Database = {
           },
         ]
       }
+      casting_scoring_criteria: {
+        Row: {
+          casting_id: string | null
+          created_at: string
+          criteria_name: string
+          id: string
+          max_value: number | null
+          min_value: number | null
+          scoring_method: string
+          settings: Json | null
+          tenant_id: string | null
+          weight: number
+        }
+        Insert: {
+          casting_id?: string | null
+          created_at?: string
+          criteria_name: string
+          id?: string
+          max_value?: number | null
+          min_value?: number | null
+          scoring_method?: string
+          settings?: Json | null
+          tenant_id?: string | null
+          weight?: number
+        }
+        Update: {
+          casting_id?: string | null
+          created_at?: string
+          criteria_name?: string
+          id?: string
+          max_value?: number | null
+          min_value?: number | null
+          scoring_method?: string
+          settings?: Json | null
+          tenant_id?: string | null
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_scoring_criteria_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_scoring_criteria_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       castings: {
         Row: {
           age_range_max: number | null
@@ -697,6 +823,7 @@ export type Database = {
           is_active: boolean | null
           is_featured: boolean | null
           location: string | null
+          org_id: string | null
           production_type: string
           professional_profile_id: string
           repertoire_requirements: string[] | null
@@ -706,6 +833,7 @@ export type Database = {
           results_published: boolean | null
           specific_requirements: string | null
           start_date: string | null
+          tenant_id: string | null
           title: string
           updated_at: string
           venue: string | null
@@ -726,6 +854,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           location?: string | null
+          org_id?: string | null
           production_type: string
           professional_profile_id: string
           repertoire_requirements?: string[] | null
@@ -735,6 +864,7 @@ export type Database = {
           results_published?: boolean | null
           specific_requirements?: string | null
           start_date?: string | null
+          tenant_id?: string | null
           title: string
           updated_at?: string
           venue?: string | null
@@ -755,6 +885,7 @@ export type Database = {
           is_active?: boolean | null
           is_featured?: boolean | null
           location?: string | null
+          org_id?: string | null
           production_type?: string
           professional_profile_id?: string
           repertoire_requirements?: string[] | null
@@ -764,6 +895,7 @@ export type Database = {
           results_published?: boolean | null
           specific_requirements?: string | null
           start_date?: string | null
+          tenant_id?: string | null
           title?: string
           updated_at?: string
           venue?: string | null
@@ -771,10 +903,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "castings_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "castings_professional_profile_id_fkey"
             columns: ["professional_profile_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "castings_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -1409,6 +1555,44 @@ export type Database = {
           },
         ]
       }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          settings: Json | null
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          settings?: Json | null
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          settings?: Json | null
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -1602,6 +1786,7 @@ export type Database = {
           location: string | null
           longitude: number | null
           max_participants: number | null
+          org_id: string | null
           participation_rules: string | null
           price: number | null
           professional_profile_id: string
@@ -1611,6 +1796,7 @@ export type Database = {
           results_published: boolean | null
           start_date: string
           status: Database["public"]["Enums"]["event_status"]
+          tenant_id: string | null
           title: string
           updated_at: string
           venue: string | null
@@ -1635,6 +1821,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           max_participants?: number | null
+          org_id?: string | null
           participation_rules?: string | null
           price?: number | null
           professional_profile_id: string
@@ -1644,6 +1831,7 @@ export type Database = {
           results_published?: boolean | null
           start_date: string
           status?: Database["public"]["Enums"]["event_status"]
+          tenant_id?: string | null
           title: string
           updated_at?: string
           venue?: string | null
@@ -1668,6 +1856,7 @@ export type Database = {
           location?: string | null
           longitude?: number | null
           max_participants?: number | null
+          org_id?: string | null
           participation_rules?: string | null
           price?: number | null
           professional_profile_id?: string
@@ -1677,6 +1866,7 @@ export type Database = {
           results_published?: boolean | null
           start_date?: string
           status?: Database["public"]["Enums"]["event_status"]
+          tenant_id?: string | null
           title?: string
           updated_at?: string
           venue?: string | null
@@ -1695,6 +1885,20 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "event_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
           {
@@ -1782,6 +1986,7 @@ export type Database = {
           public_visibility_premium: boolean | null
           social_links: Json | null
           team_description: string | null
+          tenant_id: string | null
           updated_at: string
           user_id: string
           website: string | null
@@ -1805,6 +2010,7 @@ export type Database = {
           public_visibility_premium?: boolean | null
           social_links?: Json | null
           team_description?: string | null
+          tenant_id?: string | null
           updated_at?: string
           user_id: string
           website?: string | null
@@ -1828,11 +2034,20 @@ export type Database = {
           public_visibility_premium?: boolean | null
           social_links?: Json | null
           team_description?: string | null
+          tenant_id?: string | null
           updated_at?: string
           user_id?: string
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "professional_profiles_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       professional_target_profiles: {
         Row: {
@@ -2102,6 +2317,74 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tenant_users: {
+        Row: {
+          created_at: string
+          id: string
+          permissions: Json | null
+          role: string
+          tenant_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          permissions?: Json | null
+          role?: string
+          tenant_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          permissions?: Json | null
+          role?: string
+          tenant_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_users_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          created_at: string
+          domain: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          settings: Json | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          domain?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          settings?: Json | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          domain?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          settings?: Json | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       translation_keys: {
         Row: {
@@ -2422,6 +2705,10 @@ export type Database = {
         Args: { p_entity_id: string; p_entity_type: string }
         Returns: undefined
       }
+      current_tenant_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       delete_user_completely: {
         Args: { user_id_to_delete: string }
         Returns: boolean
@@ -2439,6 +2726,10 @@ export type Database = {
       }
       user_can_access_conversation: {
         Args: { conversation_id: string; user_id: string }
+        Returns: boolean
+      }
+      user_has_tenant_access: {
+        Args: { p_tenant_id: string; p_user_id: string }
         Returns: boolean
       }
     }
