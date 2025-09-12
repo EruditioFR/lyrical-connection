@@ -2,61 +2,60 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
-// Mock API interface until database tables are created
 interface ApiKey {
   id: string;
   name: string;
   key_hash: string;
+  key_prefix: string;
   is_active: boolean;
   created_at: string;
+  updated_at: string;
   last_used_at: string | null;
-  tenant_id: string;
+  expires_at: string | null;
+  tenant_id: string | null;
+  user_id: string;
 }
 
 export const useCastingApi = () => {
   const queryClient = useQueryClient();
 
-  // Mock implementation - will be replaced with real Supabase calls once tables exist
   const { data: apiKeys, isLoading } = useQuery({
     queryKey: ['casting-api-keys'],
     queryFn: async (): Promise<ApiKey[]> => {
-      // Simulate API call - would be replaced with real Supabase query
-      return [
-        {
-          id: '1',
-          name: 'Production API',
-          key_hash: 'sk-cast-prod-************************',
-          is_active: true,
-          created_at: '2024-01-10T10:00:00Z',
-          last_used_at: '2024-01-15T08:30:00Z',
-          tenant_id: 'tenant_1'
-        },
-        {
-          id: '2', 
-          name: 'Staging API',
-          key_hash: 'sk-cast-staging-*********************',
-          is_active: false,
-          created_at: '2024-01-05T14:30:00Z',
-          last_used_at: null,
-          tenant_id: 'tenant_1'
-        }
-      ];
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as ApiKey[];
     }
   });
 
   const createApiKey = useMutation({
     mutationFn: async ({ name }: { name: string }) => {
-      // Mock implementation - would call Supabase
-      const newKey = {
-        id: Date.now().toString(),
-        name,
-        key_hash: `sk-cast-${Math.random().toString(36).substr(2, 32)}`,
-        is_active: true,
-        created_at: new Date().toISOString(),
-        last_used_at: null,
-        tenant_id: 'tenant_1'
-      };
-      return newKey;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      // Generate secure API key
+      const keyPrefix = 'sk-cast-';
+      const randomPart = Math.random().toString(36).substr(2, 32);
+      const keyHash = keyPrefix + randomPart;
+
+      const { data, error } = await supabase
+        .from('api_keys')
+        .insert([{ 
+          name,
+          key_hash: keyHash,
+          key_prefix: keyPrefix,
+          user_id: user.id,
+          is_active: true
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['casting-api-keys'] });
@@ -65,8 +64,12 @@ export const useCastingApi = () => {
 
   const deleteApiKey = useMutation({
     mutationFn: async (keyId: string) => {
-      // Mock implementation - would call Supabase
-      console.log('Deleting API key:', keyId);
+      const { error } = await supabase
+        .from('api_keys')
+        .delete()
+        .eq('id', keyId);
+      
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['casting-api-keys'] });
@@ -79,8 +82,20 @@ export const useCastingApi = () => {
 
   const toggleApiKey = useMutation({
     mutationFn: async (keyId: string) => {
-      // Mock implementation - would call Supabase
-      console.log('Toggling API key:', keyId);
+      const { data: currentKey, error: fetchError } = await supabase
+        .from('api_keys')
+        .select('is_active')
+        .eq('id', keyId)
+        .single();
+      
+      if (fetchError) throw fetchError;
+      
+      const { error } = await supabase
+        .from('api_keys')
+        .update({ is_active: !currentKey.is_active })
+        .eq('id', keyId);
+      
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['casting-api-keys'] });

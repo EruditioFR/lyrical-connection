@@ -127,7 +127,7 @@ export const CastingApiSettings = () => {
                       <Input
                         readOnly
                         type={showKeys[apiKey.id] ? "text" : "password"}
-                        value={apiKey.key_hash} // In real implementation, show actual key only on creation
+                        value={showKeys[apiKey.id] ? apiKey.key_hash : "••••••••••••••••••••••••••••••••"}
                         className="font-mono text-sm"
                       />
                       <Button
@@ -144,7 +144,8 @@ export const CastingApiSettings = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleCopyKey(apiKey.key_hash)}
+                        onClick={() => handleCopyKey(showKeys[apiKey.id] ? apiKey.key_hash : "••••••••••••••••••••••••••••••••")}
+                        disabled={!showKeys[apiKey.id]}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
