@@ -8,7 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useCreateCasting } from '@/hooks/useCastings';
-import { Calendar, MapPin, Users, Euro, Clock, Loader2 } from 'lucide-react';
+import { Calendar, MapPin, Users, Euro, Clock, Loader2, Filter } from 'lucide-react';
+import { voiceTypes } from '@/constants/voiceTypes';
+import { languages } from '@/constants/languages';
+import { countries } from '@/constants/countries';
 
 const productionTypes = [
   { value: 'opera', label: 'Opéra' },
@@ -26,15 +29,17 @@ const compensationTypes = [
   { value: 'accommodation_covered', label: 'Hébergement couvert' },
 ];
 
-const voiceTypes = [
-  'Soprano colorature', 'Soprano lyrique', 'Soprano dramatique',
-  'Mezzo-soprano', 'Alto', 'Contralto',
-  'Ténor léger', 'Ténor lyrique', 'Ténor dramatique',
-  'Baryton', 'Basse-baryton', 'Basse'
+const experienceLevels = [
+  { value: 'beginner', label: 'Débutant' },
+  { value: 'intermediate', label: 'Intermédiaire' },
+  { value: 'advanced', label: 'Avancé' },
+  { value: 'professional', label: 'Professionnel' }
 ];
 
-const experienceLevels = [
-  'beginner', 'intermediate', 'advanced', 'professional'
+const genderOptions = [
+  { value: 'male', label: 'Masculin' },
+  { value: 'female', label: 'Féminin' },
+  { value: 'non-binary', label: 'Non-binaire' }
 ];
 
 const CastingForm = () => {
@@ -53,13 +58,15 @@ const CastingForm = () => {
     audition_location: '',
     compensation_type: '',
     compensation_amount: '',
-    age_range_min: '',
-    age_range_max: '',
     specific_requirements: '',
+    // Critères de sélection
     required_voice_types: [] as string[],
-    required_experience_level: [] as string[],
+    required_age_min: '',
+    required_age_max: '',
+    required_min_experience: '',
     required_languages: [] as string[],
-    repertoire_requirements: [] as string[],
+    required_nationalities: [] as string[],
+    required_genders: [] as string[],
   });
 
   const handleChange = (field: string, value: any) => {
@@ -91,8 +98,9 @@ const CastingForm = () => {
     const submitData = {
       ...formData,
       compensation_amount: formData.compensation_amount ? parseInt(formData.compensation_amount) : null,
-      age_range_min: formData.age_range_min ? parseInt(formData.age_range_min) : null,
-      age_range_max: formData.age_range_max ? parseInt(formData.age_range_max) : null,
+      required_age_min: formData.required_age_min ? parseInt(formData.required_age_min) : null,
+      required_age_max: formData.required_age_max ? parseInt(formData.required_age_max) : null,
+      required_min_experience: formData.required_min_experience ? parseInt(formData.required_min_experience) : null,
       start_date: formData.start_date || null,
       end_date: formData.end_date || null,
       application_deadline: formData.application_deadline || null,
@@ -289,38 +297,48 @@ const CastingForm = () => {
               </CardContent>
             </Card>
 
-            {/* Exigences */}
+            {/* Critères de sélection */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Profil recherché</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  Critères de sélection
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Définissez les critères que les artistes doivent respecter pour voir et postuler à ce casting.
+                </p>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="age_range_min">Âge minimum</Label>
-                    <Input
-                      id="age_range_min"
-                      type="number"
-                      value={formData.age_range_min}
-                      onChange={(e) => handleChange('age_range_min', e.target.value)}
-                      placeholder="Ex: 25"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="age_range_max">Âge maximum</Label>
-                    <Input
-                      id="age_range_max"
-                      type="number"
-                      value={formData.age_range_max}
-                      onChange={(e) => handleChange('age_range_max', e.target.value)}
-                      placeholder="Ex: 40"
-                    />
+              <CardContent className="space-y-6">
+                {/* Âge */}
+                <div>
+                  <h4 className="font-medium mb-3">Tranche d'âge</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="required_age_min">Âge minimum</Label>
+                      <Input
+                        id="required_age_min"
+                        type="number"
+                        value={formData.required_age_min}
+                        onChange={(e) => handleChange('required_age_min', e.target.value)}
+                        placeholder="Ex: 25"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="required_age_max">Âge maximum</Label>
+                      <Input
+                        id="required_age_max"
+                        type="number"
+                        value={formData.required_age_max}
+                        onChange={(e) => handleChange('required_age_max', e.target.value)}
+                        placeholder="Ex: 40"
+                      />
+                    </div>
                   </div>
                 </div>
 
+                {/* Types de voix */}
                 <div>
-                  <Label>Types de voix recherchés</Label>
+                  <Label>Types de voix requis</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {formData.required_voice_types.map(voice => (
                       <Badge 
@@ -347,28 +365,99 @@ const CastingForm = () => {
                   </Select>
                 </div>
 
+                {/* Expérience minimum */}
                 <div>
-                  <Label>Niveau d'expérience requis</Label>
+                  <Label htmlFor="required_min_experience">Expérience minimum (années)</Label>
+                  <Input
+                    id="required_min_experience"
+                    type="number"
+                    value={formData.required_min_experience}
+                    onChange={(e) => handleChange('required_min_experience', e.target.value)}
+                    placeholder="Ex: 5"
+                  />
+                </div>
+
+                {/* Langues */}
+                <div>
+                  <Label>Langues requises</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {formData.required_experience_level.map(level => (
+                    {formData.required_languages.map(language => (
                       <Badge 
-                        key={level} 
+                        key={language} 
                         variant="secondary"
                         className="cursor-pointer"
-                        onClick={() => handleArrayRemove('required_experience_level', level)}
+                        onClick={() => handleArrayRemove('required_languages', language)}
                       >
-                        {level} ×
+                        {language} ×
                       </Badge>
                     ))}
                   </div>
-                  <Select onValueChange={(value) => handleArrayAdd('required_experience_level', value)}>
+                  <Select onValueChange={(value) => handleArrayAdd('required_languages', value)}>
                     <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Ajouter un niveau" />
+                      <SelectValue placeholder="Ajouter une langue" />
                     </SelectTrigger>
                     <SelectContent>
-                      {experienceLevels.map(level => (
-                        <SelectItem key={level} value={level}>
-                          {level}
+                      {languages.map(language => (
+                        <SelectItem key={language} value={language}>
+                          {language}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Nationalités */}
+                <div>
+                  <Label>Nationalités acceptées</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.required_nationalities.map(nationality => (
+                      <Badge 
+                        key={nationality} 
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => handleArrayRemove('required_nationalities', nationality)}
+                      >
+                        {nationality} ×
+                      </Badge>
+                    ))}
+                  </div>
+                  <Select onValueChange={(value) => handleArrayAdd('required_nationalities', value)}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Ajouter une nationalité" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map(country => (
+                        <SelectItem key={country} value={country}>
+                          {country}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Genres */}
+                <div>
+                  <Label>Genres acceptés</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {formData.required_genders.map(gender => (
+                      <Badge 
+                        key={gender} 
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => handleArrayRemove('required_genders', gender)}
+                      >
+                        {genderOptions.find(g => g.value === gender)?.label || gender} ×
+                      </Badge>
+                    ))}
+                  </div>
+                  <Select onValueChange={(value) => handleArrayAdd('required_genders', value)}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Ajouter un genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {genderOptions.map(gender => (
+                        <SelectItem key={gender.value} value={gender.value}>
+                          {gender.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
