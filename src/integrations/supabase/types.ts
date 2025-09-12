@@ -150,57 +150,6 @@ export type Database = {
           },
         ]
       }
-      application_scores: {
-        Row: {
-          application_id: string
-          created_at: string
-          criteria_id: string
-          id: string
-          notes: string | null
-          raw_score: number | null
-          scored_at: string | null
-          scored_by: string | null
-          weighted_score: number | null
-        }
-        Insert: {
-          application_id: string
-          created_at?: string
-          criteria_id: string
-          id?: string
-          notes?: string | null
-          raw_score?: number | null
-          scored_at?: string | null
-          scored_by?: string | null
-          weighted_score?: number | null
-        }
-        Update: {
-          application_id?: string
-          created_at?: string
-          criteria_id?: string
-          id?: string
-          notes?: string | null
-          raw_score?: number | null
-          scored_at?: string | null
-          scored_by?: string | null
-          weighted_score?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "application_scores_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "applications"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "application_scores_criteria_id_fkey"
-            columns: ["criteria_id"]
-            isOneToOne: false
-            referencedRelation: "casting_scoring_criteria"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       applications: {
         Row: {
           additional_documents: string[] | null
@@ -715,6 +664,54 @@ export type Database = {
         }
         Relationships: []
       }
+      candidate_scores: {
+        Row: {
+          application_id: string
+          comments: string | null
+          created_at: string
+          criteria_id: string
+          id: string
+          score: number
+          scored_by: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          comments?: string | null
+          created_at?: string
+          criteria_id: string
+          id?: string
+          score: number
+          scored_by: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          comments?: string | null
+          created_at?: string
+          criteria_id?: string
+          id?: string
+          score?: number
+          scored_by?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_candidate_scores_application"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_candidate_scores_criteria"
+            columns: ["criteria_id"]
+            isOneToOne: false
+            referencedRelation: "custom_criteria"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       casting_favorites: {
         Row: {
           artist_profile_id: string
@@ -846,60 +843,6 @@ export type Database = {
             columns: ["casting_id"]
             isOneToOne: false
             referencedRelation: "castings"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      casting_scoring_criteria: {
-        Row: {
-          casting_id: string | null
-          created_at: string
-          criteria_name: string
-          id: string
-          max_value: number | null
-          min_value: number | null
-          scoring_method: string
-          settings: Json | null
-          tenant_id: string | null
-          weight: number
-        }
-        Insert: {
-          casting_id?: string | null
-          created_at?: string
-          criteria_name: string
-          id?: string
-          max_value?: number | null
-          min_value?: number | null
-          scoring_method?: string
-          settings?: Json | null
-          tenant_id?: string | null
-          weight?: number
-        }
-        Update: {
-          casting_id?: string | null
-          created_at?: string
-          criteria_name?: string
-          id?: string
-          max_value?: number | null
-          min_value?: number | null
-          scoring_method?: string
-          settings?: Json | null
-          tenant_id?: string | null
-          weight?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "casting_scoring_criteria_casting_id_fkey"
-            columns: ["casting_id"]
-            isOneToOne: false
-            referencedRelation: "castings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "casting_scoring_criteria_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -1063,6 +1006,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      custom_criteria: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          professional_profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          professional_profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          professional_profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_custom_criteria_professional_profile"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       event_applications: {
         Row: {
@@ -2455,56 +2439,6 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "subscription_plans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      tenant_scoring_criteria: {
-        Row: {
-          created_at: string | null
-          criteria_name: string
-          id: string
-          is_active: boolean | null
-          max_value: number | null
-          min_value: number | null
-          scoring_method: string | null
-          settings: Json | null
-          tenant_id: string | null
-          updated_at: string | null
-          weight: number
-        }
-        Insert: {
-          created_at?: string | null
-          criteria_name: string
-          id?: string
-          is_active?: boolean | null
-          max_value?: number | null
-          min_value?: number | null
-          scoring_method?: string | null
-          settings?: Json | null
-          tenant_id?: string | null
-          updated_at?: string | null
-          weight: number
-        }
-        Update: {
-          created_at?: string | null
-          criteria_name?: string
-          id?: string
-          is_active?: boolean | null
-          max_value?: number | null
-          min_value?: number | null
-          scoring_method?: string | null
-          settings?: Json | null
-          tenant_id?: string | null
-          updated_at?: string | null
-          weight?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "tenant_scoring_criteria_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]

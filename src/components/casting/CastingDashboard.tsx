@@ -2,30 +2,33 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CastingApiSettings } from './CastingApiSettings';
-import { ScoringCriteriaManager } from './ScoringCriteriaManager';
+import CustomCriteriaManager from './CustomCriteriaManager';
 import { CastingAnalytics } from './CastingAnalytics';
 import { WebhookDeliveries } from './WebhookDeliveries';
 import { Settings, Target, BarChart3, Webhook } from 'lucide-react';
+import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 
 const CastingDashboard = () => {
+  const { profile: professionalProfile } = useProfessionalProfile();
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Tableau de bord Casting</h1>
         <p className="text-muted-foreground mt-2">
-          Gérez vos API, critères de notation et intégrations casting multi-locataires
+          Gérez vos critères de notation, API et intégrations casting
         </p>
       </div>
 
-      <Tabs defaultValue="api" className="space-y-6">
+      <Tabs defaultValue="criteria" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="criteria" className="flex items-center gap-2">
+            <Target className="h-4 w-4" />
+            Critères
+          </TabsTrigger>
           <TabsTrigger value="api" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
             API & Clés
-          </TabsTrigger>
-          <TabsTrigger value="scoring" className="flex items-center gap-2">
-            <Target className="h-4 w-4" />
-            Critères
           </TabsTrigger>
           <TabsTrigger value="analytics" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
@@ -51,16 +54,18 @@ const CastingDashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="scoring" className="space-y-4">
+        <TabsContent value="criteria" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Critères de notation</CardTitle>
               <CardDescription>
-                Configurez les critères et poids pour l'évaluation automatique des candidats
+                Créez et gérez vos critères personnalisés pour évaluer les candidats (note de 1 à 20)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ScoringCriteriaManager />
+              {professionalProfile && (
+                <CustomCriteriaManager professionalProfileId={professionalProfile.id} />
+              )}
             </CardContent>
           </Card>
         </TabsContent>
