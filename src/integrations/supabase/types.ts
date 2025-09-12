@@ -53,6 +53,103 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          metadata: Json | null
+          name: string
+          permissions: Json | null
+          tenant_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          metadata?: Json | null
+          name: string
+          permissions?: Json | null
+          tenant_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          metadata?: Json | null
+          name?: string
+          permissions?: Json | null
+          tenant_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_keys_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_rate_limits: {
+        Row: {
+          api_key_id: string | null
+          created_at: string | null
+          endpoint: string
+          id: string
+          max_requests: number | null
+          requests_count: number | null
+          window_size_seconds: number | null
+          window_start: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          max_requests?: number | null
+          requests_count?: number | null
+          window_size_seconds?: number | null
+          window_start?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          max_requests?: number | null
+          requests_count?: number | null
+          window_size_seconds?: number | null
+          window_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_rate_limits_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       application_scores: {
         Row: {
           application_id: string
@@ -1038,6 +1135,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      idempotency_keys: {
+        Row: {
+          api_key_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          key_hash: string
+          request_method: string
+          request_path: string
+          response_body: Json | null
+          response_status: number | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          key_hash: string
+          request_method: string
+          request_path: string
+          response_body?: Json | null
+          response_status?: number | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          key_hash?: string
+          request_method?: string
+          request_path?: string
+          response_body?: Json | null
+          response_status?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "idempotency_keys_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoices: {
         Row: {
@@ -2318,6 +2459,56 @@ export type Database = {
           },
         ]
       }
+      tenant_scoring_criteria: {
+        Row: {
+          created_at: string | null
+          criteria_name: string
+          id: string
+          is_active: boolean | null
+          max_value: number | null
+          min_value: number | null
+          scoring_method: string | null
+          settings: Json | null
+          tenant_id: string | null
+          updated_at: string | null
+          weight: number
+        }
+        Insert: {
+          created_at?: string | null
+          criteria_name: string
+          id?: string
+          is_active?: boolean | null
+          max_value?: number | null
+          min_value?: number | null
+          scoring_method?: string | null
+          settings?: Json | null
+          tenant_id?: string | null
+          updated_at?: string | null
+          weight: number
+        }
+        Update: {
+          created_at?: string | null
+          criteria_name?: string
+          id?: string
+          is_active?: boolean | null
+          max_value?: number | null
+          min_value?: number | null
+          scoring_method?: string | null
+          settings?: Json | null
+          tenant_id?: string | null
+          updated_at?: string | null
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_scoring_criteria_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_users: {
         Row: {
           created_at: string
@@ -2633,6 +2824,121 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_deliveries: {
+        Row: {
+          attempts: number | null
+          created_at: string | null
+          delivered_at: string | null
+          endpoint_id: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          idempotency_key: string | null
+          next_retry_at: string | null
+          payload: Json
+          response_body: string | null
+          response_code: number | null
+          status: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string | null
+          delivered_at?: string | null
+          endpoint_id?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          idempotency_key?: string | null
+          next_retry_at?: string | null
+          payload: Json
+          response_body?: string | null
+          response_code?: number | null
+          status?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string | null
+          delivered_at?: string | null
+          endpoint_id?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          idempotency_key?: string | null
+          next_retry_at?: string | null
+          payload?: Json
+          response_body?: string | null
+          response_code?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_deliveries_endpoint_id_fkey"
+            columns: ["endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_endpoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_endpoints: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          events: Json | null
+          failure_count: number | null
+          id: string
+          is_active: boolean | null
+          last_delivery_at: string | null
+          max_retries: number | null
+          retry_delay_seconds: number | null
+          secret: string | null
+          tenant_id: string | null
+          updated_at: string | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          events?: Json | null
+          failure_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_delivery_at?: string | null
+          max_retries?: number | null
+          retry_delay_seconds?: number | null
+          secret?: string | null
+          tenant_id?: string | null
+          updated_at?: string | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          events?: Json | null
+          failure_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_delivery_at?: string | null
+          max_retries?: number | null
+          retry_delay_seconds?: number | null
+          secret?: string | null
+          tenant_id?: string | null
+          updated_at?: string | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_endpoints_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       work_roles: {
         Row: {
           aria_title: string | null
@@ -2691,6 +2997,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_idempotency_keys: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_notification_system: {
         Args: {
           p_content: string
@@ -2722,6 +3032,10 @@ export type Database = {
       }
       increment_casting_views: {
         Args: { casting_id: string }
+        Returns: undefined
+      }
+      reset_rate_limit_windows: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       user_can_access_conversation: {
