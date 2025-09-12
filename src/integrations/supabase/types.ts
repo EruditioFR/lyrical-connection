@@ -2968,6 +2968,10 @@ export type Database = {
         Args: { casting_id: string }
         Returns: undefined
       }
+      is_tenant_admin: {
+        Args: { target_tenant_id: string }
+        Returns: boolean
+      }
       reset_rate_limit_windows: {
         Args: Record<PropertyKey, never>
         Returns: undefined
