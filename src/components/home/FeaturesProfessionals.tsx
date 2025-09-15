@@ -128,6 +128,26 @@ const FeaturesProfessionals = () => {
           </Button>
         </div>
 
+        {/* Castings Section */}
+        <div className="mt-12 md:mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-2xl p-6 md:p-8 border border-lyrical-200">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-lyrical-500 to-lyrical-600 rounded-xl flex items-center justify-center">
+              <Users className="h-6 w-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg md:text-xl font-semibold mb-2 text-lyrical-800">
+                Castings : Gagnez du temps en ciblant votre recherche de talents grâce à la puissance de nos filtres
+              </h3>
+              <p className="text-lyrical-700/80 text-sm md:text-base mb-4">
+                Créez des appels à candidatures précis avec des critères de sélection avancés
+              </p>
+              <Button size="sm" className="bg-lyrical-600 hover:bg-lyrical-700 text-white" asChild>
+                <Link to="/castings">Découvrir les castings</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom CTA */}
         <div ref={ctaRef} className="mt-16 md:mt-20 text-center bg-muted rounded-2xl p-6 md:p-12 text-appear">
           <h3 className="text-xl md:text-2xl lg:text-3xl font-serif font-bold mb-4 leading-tight">
