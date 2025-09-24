@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2, Loader2, Heart, BarChart3, Star } from 'lucide-react';
+import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2, Loader2, Heart, BarChart3, Star, Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
 import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
@@ -58,6 +58,15 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
     setShowEvaluationDialog(true);
   };
 
+  const handleToggleAudio = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isPlaying) {
+      stopAudioPreview();
+    } else {
+      startAudioPreview();
+    }
+  };
+
   const evaluation = professionalProfileId ? getEvaluation(artist.id) : null;
   const isFav = professionalProfileId ? isFavorite(artist.id) : false;
 
@@ -85,8 +94,6 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         isAnalyzing ? 'ring-2 ring-muted-foreground/50' : ''
       }`}
       onClick={handleCardClick}
-      onMouseEnter={hasAudioTracks ? startAudioPreview : undefined}
-      onMouseLeave={hasAudioTracks ? stopAudioPreview : undefined}
     >
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
@@ -94,28 +101,40 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
             <div className="flex items-center gap-2 mb-3">
               <h3 className="artist-name-card flex items-center gap-2">
                 {artist.stage_name}
-                {isPlaying && (
-                  <Volume2 className="w-4 h-4 text-primary animate-pulse" />
-                )}
-                {isAnalyzing && (
-                  <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
-                )}
                 {showProfessionalActions && isFav && (
                   <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                 )}
               </h3>
-              {artist.public_visibility_premium && (
-                <Badge variant="default" className="bg-primary text-primary-foreground">
-                  <Crown className="w-3 h-3 mr-1" />
-                  Premium
-                </Badge>
-              )}
-              {showProfessionalActions && averageScore && (
-                <Badge variant="outline" className="text-xs">
-                  <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                  {averageScore}/10
-                </Badge>
-              )}
+              <div className="flex items-center gap-2">
+                {hasAudioTracks && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleToggleAudio}
+                    className="p-1 h-6 w-6 hover:bg-primary/10"
+                  >
+                    {isAnalyzing ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : isPlaying ? (
+                      <Pause className="w-3 h-3" />
+                    ) : (
+                      <Play className="w-3 h-3" />
+                    )}
+                  </Button>
+                )}
+                {artist.public_visibility_premium && (
+                  <Badge variant="default" className="bg-primary text-primary-foreground">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Premium
+                  </Badge>
+                )}
+                {showProfessionalActions && averageScore && (
+                  <Badge variant="outline" className="text-xs">
+                    <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                    {averageScore}/10
+                  </Badge>
+                )}
+              </div>
             </div>
             
             {artist.voice_type && (
