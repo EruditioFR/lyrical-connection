@@ -398,6 +398,69 @@ export type Database = {
           },
         ]
       }
+      artist_evaluations: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          language_mastery: number | null
+          notes: string | null
+          pitch_accuracy: number | null
+          professional_profile_id: string
+          stage_presence: number | null
+          updated_at: string
+          vocal_quality: number | null
+          vocal_technique: number | null
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          language_mastery?: number | null
+          notes?: string | null
+          pitch_accuracy?: number | null
+          professional_profile_id: string
+          stage_presence?: number | null
+          updated_at?: string
+          vocal_quality?: number | null
+          vocal_technique?: number | null
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          language_mastery?: number | null
+          notes?: string | null
+          pitch_accuracy?: number | null
+          professional_profile_id?: string
+          stage_presence?: number | null
+          updated_at?: string
+          vocal_quality?: number | null
+          vocal_technique?: number | null
+        }
+        Relationships: []
+      }
+      artist_favorites: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          professional_profile_id: string
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          professional_profile_id: string
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          professional_profile_id?: string
+        }
+        Relationships: []
+      }
       artist_photos: {
         Row: {
           artist_profile_id: string

@@ -1,28 +1,38 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2, Loader2 } from 'lucide-react';
+import { MapPin, User, Calendar, Globe, Mail, Phone, MessageCircle, Crown, Volume2, Loader2, Heart, BarChart3, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Artist } from '@/hooks/useArtists';
 import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
+import { useArtistFavorites } from '@/hooks/useArtistFavorites';
+import { useArtistEvaluations } from '@/hooks/useArtistEvaluations';
+import ArtistEvaluationDialog from './ArtistEvaluationDialog';
 
 interface ArtistCardProps {
   artist: Artist;
   onClick?: () => void;
   showContactInfo?: boolean;
   isUserAuthenticated?: boolean;
+  professionalProfileId?: string;
+  showProfessionalActions?: boolean;
 }
 
 const ArtistCard: React.FC<ArtistCardProps> = ({ 
   artist, 
   onClick, 
   showContactInfo = false,
-  isUserAuthenticated = true
+  isUserAuthenticated = true,
+  professionalProfileId,
+  showProfessionalActions = false
 }) => {
   const navigate = useNavigate();
   const { startAudioPreview, stopAudioPreview, isPlaying, isAnalyzing, hasAudioTracks } = useArtistAudioPreview(artist.id);
+  const { isFavorite, toggleFavorite } = useArtistFavorites(professionalProfileId);
+  const { getEvaluation } = useArtistEvaluations(professionalProfileId);
+  const [showEvaluationDialog, setShowEvaluationDialog] = useState(false);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (onClick && !e.defaultPrevented) {
@@ -34,6 +44,37 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
     e.stopPropagation();
     navigate(`/artistes/${artist.id}`);
   };
+
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (professionalProfileId) {
+      await toggleFavorite.mutateAsync(artist.id);
+    }
+  };
+
+  const handleOpenEvaluation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowEvaluationDialog(true);
+  };
+
+  const evaluation = professionalProfileId ? getEvaluation(artist.id) : null;
+  const isFav = professionalProfileId ? isFavorite(artist.id) : false;
+
+  const getAverageScore = () => {
+    if (!evaluation) return null;
+    const scores = [
+      evaluation.vocal_quality,
+      evaluation.vocal_technique,
+      evaluation.stage_presence,
+      evaluation.language_mastery,
+      evaluation.pitch_accuracy
+    ].filter(score => score !== null && score !== undefined) as number[];
+    
+    if (scores.length === 0) return null;
+    return Math.round((scores.reduce((sum, score) => sum + score, 0) / scores.length) * 10) / 10;
+  };
+
+  const averageScore = getAverageScore();
 
   return (
     <Card 
@@ -58,11 +99,20 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                 {isAnalyzing && (
                   <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
                 )}
+                {showProfessionalActions && isFav && (
+                  <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+                )}
               </h3>
               {artist.public_visibility_premium && (
                 <Badge variant="default" className="bg-primary text-primary-foreground">
                   <Crown className="w-3 h-3 mr-1" />
                   Premium
+                </Badge>
+              )}
+              {showProfessionalActions && averageScore && (
+                <Badge variant="outline" className="text-xs">
+                  <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                  {averageScore}/10
                 </Badge>
               )}
             </div>
@@ -169,26 +219,52 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         )}
 
         {isUserAuthenticated ? (
-          <div className="flex justify-between items-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleViewProfile}
-            >
-              Voir le profil
-            </Button>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleViewProfile}
+              >
+                Voir le profil
+              </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log('Contact artist:', artist.stage_name);
-              }}
-            >
-              <MessageCircle className="w-4 w-4 mr-1" />
-              Contacter
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Contact artist:', artist.stage_name);
+                }}
+              >
+                <MessageCircle className="w-4 w-4 mr-1" />
+                Contacter
+              </Button>
+            </div>
+
+            {showProfessionalActions && professionalProfileId && (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleToggleFavorite}
+                  disabled={toggleFavorite.isPending}
+                  className={isFav ? "text-red-600 border-red-200 hover:bg-red-50" : ""}
+                >
+                  <Heart className={`w-4 h-4 mr-1 ${isFav ? 'fill-red-500 text-red-500' : ''}`} />
+                  {isFav ? 'Favori' : 'Favoris'}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleOpenEvaluation}
+                >
+                  <BarChart3 className="w-4 h-4 mr-1" />
+                  Évaluer
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="text-center">
@@ -196,6 +272,16 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
               Aperçu limité - Inscrivez-vous pour plus d'informations
             </p>
           </div>
+        )}
+
+        {showEvaluationDialog && professionalProfileId && (
+          <ArtistEvaluationDialog
+            isOpen={showEvaluationDialog}
+            onClose={() => setShowEvaluationDialog(false)}
+            artistProfileId={artist.id}
+            artistName={artist.stage_name}
+            professionalProfileId={professionalProfileId}
+          />
         )}
       </CardContent>
     </Card>

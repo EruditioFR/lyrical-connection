@@ -12,6 +12,8 @@ interface ArtistsGridProps {
   selectedVoiceTypes: string[];
   onResetFilters: () => void;
   isUserAuthenticated?: boolean;
+  professionalProfileId?: string;
+  showProfessionalActions?: boolean;
 }
 
 const ArtistsGrid: React.FC<ArtistsGridProps> = ({
@@ -21,7 +23,9 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
   searchQuery,
   selectedVoiceTypes,
   onResetFilters,
-  isUserAuthenticated = true
+  isUserAuthenticated = true,
+  professionalProfileId,
+  showProfessionalActions = false
 }) => {
   console.log('ArtistsGrid - Rendering with:', {
     artists: artists.length,
@@ -90,7 +94,12 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
                       animationFillMode: 'backwards'
                     }}
                   >
-                    <ArtistCard artist={artist} isUserAuthenticated={isUserAuthenticated} />
+                    <ArtistCard 
+                      artist={artist} 
+                      isUserAuthenticated={isUserAuthenticated}
+                      professionalProfileId={professionalProfileId}
+                      showProfessionalActions={showProfessionalActions}
+                    />
                   </div>
                 );
               })}

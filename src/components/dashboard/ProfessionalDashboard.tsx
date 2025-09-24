@@ -20,6 +20,7 @@ import { useProfessionalEvents } from '@/hooks/useEvents';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
 import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
+import ArtistsManagement from '@/components/professional/ArtistsManagement';
 
 const ProfessionalDashboard = () => {
   const { data: events = [] } = useProfessionalEvents();
@@ -103,6 +104,7 @@ const ProfessionalDashboard = () => {
         <TabsList>
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="events">Mes événements</TabsTrigger>
+          <TabsTrigger value="artists">Gestion artistes</TabsTrigger>
           <TabsTrigger value="promotion">Promotion</TabsTrigger>
           <TabsTrigger value="analytics">Analytiques</TabsTrigger>
         </TabsList>
@@ -169,9 +171,9 @@ const ProfessionalDashboard = () => {
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-start">
-                  <Link to="/professional-events">
+                  <Link to="/artistes">
                     <Users className="h-4 w-4 mr-2" />
-                    Gérer les inscriptions
+                    Gérer les artistes
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full justify-start">
@@ -204,6 +206,10 @@ const ProfessionalDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="artists">
+          <ArtistsManagement />
         </TabsContent>
 
         <TabsContent value="promotion">
