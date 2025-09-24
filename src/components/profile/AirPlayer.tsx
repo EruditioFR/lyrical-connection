@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Play, Pause, ExternalLink, Music, Video, Link } from 'lucide-react';
 import { useArtistAirs } from '@/hooks/useArtistAirs';
 import VideoPlayerModal from './VideoPlayerModal';
+import { useIsMobile } from '@/hooks/use-mobile';
 interface AirPlayerProps {
   artistProfileId: string;
 }
@@ -19,6 +20,7 @@ const AirPlayer: React.FC<AirPlayerProps> = ({
   const [audioElements, setAudioElements] = useState<Record<string, HTMLAudioElement>>({});
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<any>(null);
+  const isMobile = useIsMobile();
   const activeAirs = airs.filter(air => air.is_active);
   const handlePlayPause = (air: any) => {
     const airId = air.id;
@@ -101,36 +103,49 @@ const AirPlayer: React.FC<AirPlayerProps> = ({
         <CardTitle>Ecouter ou regarder les prestations</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+        <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4'}`}>
           {activeAirs.map(air => {
           const IconComponent = getAirIcon(air.type);
           const isPlaying = currentPlaying === air.id;
-          return <div key={air.id} className="p-4 border rounded-lg text-center space-y-3">
+          return <div key={air.id} className={`${isMobile ? 'p-3' : 'p-4'} border rounded-lg text-center space-y-3`}>
                 <div className="flex flex-col items-center space-y-2">
-                  <IconComponent className="h-8 w-8 text-muted-foreground" />
+                  <IconComponent className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-muted-foreground`} />
                   <div className="space-y-1">
-                    <h4 className="font-medium text-sm leading-tight">{air.title}</h4>
-                    {air.description && <p className="text-xs text-muted-foreground line-clamp-2">{air.description}</p>}
+                    <h4 className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'} leading-tight`}>{air.title}</h4>
+                    {air.description && <p className={`${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground line-clamp-2`}>{air.description}</p>}
                   </div>
                 </div>
                 
                 <div className="flex justify-center">
-                  {air.type === 'audio' && <Button variant="outline" size="sm" onClick={() => handlePlayPause(air)} className="flex items-center space-x-2">
+                  {air.type === 'audio' && <Button 
+                    variant="outline" 
+                    size={isMobile ? "sm" : "sm"} 
+                    onClick={() => handlePlayPause(air)} 
+                    className={`flex items-center ${isMobile ? 'space-x-1 text-xs px-2' : 'space-x-2'}`}
+                  >
                       {isPlaying ? <>
                           <Pause className="h-4 w-4" />
-                          <span>Pause</span>
+                          <span>{isMobile ? 'Pause' : 'Pause'}</span>
                         </> : <>
                           <Play className="h-4 w-4" />
-                          <span>Écouter</span>
+                          <span>{isMobile ? 'Écouter' : 'Écouter'}</span>
                         </>}
                     </Button>}
                   
-                  {air.type === 'video' && <Button variant="outline" size="sm" onClick={() => handleVideoPlay(air)} className="flex items-center space-x-2">
+                  {air.type === 'video' && <Button 
+                    variant="outline" 
+                    size={isMobile ? "sm" : "sm"} 
+                    onClick={() => handleVideoPlay(air)} 
+                    className={`flex items-center ${isMobile ? 'space-x-1 text-xs px-2' : 'space-x-2'}`}
+                  >
                       <Play className="h-4 w-4" />
-                      <span>Voir la vidéo</span>
+                      <span>{isMobile ? 'Vidéo' : 'Voir la vidéo'}</span>
                     </Button>}
                   
-                  {air.type === 'url' && <Button variant="outline" size="sm" onClick={() => {
+                  {air.type === 'url' && <Button 
+                    variant="outline" 
+                    size={isMobile ? "sm" : "sm"} 
+                    onClick={() => {
                 // Si l'URL contient des mots-clés vidéo, ouvrir dans la modale
                 const isVideoUrl = air.external_url && (air.external_url.includes('youtube') || air.external_url.includes('vimeo') || air.external_url.includes('dailymotion') || air.external_url.includes('.mp4') || air.external_url.includes('.webm') || air.external_url.includes('.mov'));
                 if (isVideoUrl) {
@@ -138,14 +153,16 @@ const AirPlayer: React.FC<AirPlayerProps> = ({
                 } else {
                   openExternalLink(air.external_url!);
                 }
-              }} className="flex items-center space-x-2">
+              }} 
+                    className={`flex items-center ${isMobile ? 'space-x-1 text-xs px-2' : 'space-x-2'}`}
+                  >
                       {/* Afficher le texte approprié selon le type de contenu */}
                       {air.external_url && (air.external_url.includes('youtube') || air.external_url.includes('vimeo') || air.external_url.includes('dailymotion') || air.external_url.includes('.mp4') || air.external_url.includes('.webm') || air.external_url.includes('.mov')) ? <>
                           <Play className="h-4 w-4" />
-                          <span>Voir la vidéo</span>
+                          <span>{isMobile ? 'Vidéo' : 'Voir la vidéo'}</span>
                         </> : <>
                           <ExternalLink className="h-4 w-4" />
-                          <span>Consulter</span>
+                          <span>{isMobile ? 'Lien' : 'Consulter'}</span>
                         </>}
                     </Button>}
                 </div>
