@@ -10,6 +10,7 @@ import { useArtistAudioPreview } from '@/hooks/useArtistAudioPreview';
 import { useArtistFavorites } from '@/hooks/useArtistFavorites';
 import { useArtistEvaluations } from '@/hooks/useArtistEvaluations';
 import ArtistEvaluationDialog from './ArtistEvaluationDialog';
+import EvaluationChart from './EvaluationChart';
 
 interface ArtistCardProps {
   artist: Artist;
@@ -148,6 +149,16 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
           <p className="text-gray-600 text-sm mb-4 line-clamp-3">
             {artist.bio}
           </p>
+        )}
+
+        {/* Diagramme d'évaluation */}
+        {showProfessionalActions && evaluation && (
+          <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+            <div className="text-sm font-medium text-center mb-2">Évaluation</div>
+            <div className="flex justify-center">
+              <EvaluationChart evaluation={evaluation} size={100} />
+            </div>
+          </div>
         )}
 
         <div className="flex flex-wrap gap-2 mb-4">
