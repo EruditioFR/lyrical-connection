@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -85,6 +85,7 @@ const ArtistEvaluationDialog: React.FC<ArtistEvaluationDialogProps> = ({
           size="sm"
           onClick={() => onChange(null)}
           className="text-xs px-2"
+          aria-label="Marquer comme non évalué"
         >
           Non évalué
         </Button>
@@ -94,7 +95,15 @@ const ArtistEvaluationDialog: React.FC<ArtistEvaluationDialogProps> = ({
               key={rating}
               type="button"
               onClick={() => onChange(rating)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onChange(rating);
+                }
+              }}
               className="p-1 hover:scale-110 transition-transform"
+              aria-label={`Noter ${rating}/10`}
+              title={`Noter ${rating}/10`}
             >
               <Star
                 className={`h-4 w-4 ${
@@ -114,10 +123,13 @@ const ArtistEvaluationDialog: React.FC<ArtistEvaluationDialogProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Évaluer {artistName}</DialogTitle>
+          <DialogDescription id="evaluation-desc">
+            Sélectionnez une note de 0 à 10 (ou « Non évalué ») pour chaque critère.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-6">
