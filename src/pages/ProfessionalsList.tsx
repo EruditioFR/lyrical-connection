@@ -22,6 +22,7 @@ interface Professional {
   intervention_radius: number;
   bio: string;
   logo_url: string;
+  profile_image_url?: string;
   is_verified: boolean;
   public_visibility_premium?: boolean;
   premium_subscription_end?: string | null;
@@ -117,15 +118,15 @@ const ProfessionalsList = () => {
             </div>
 
             <div className="ml-4">
-              {professional.logo_url ? (
+              {professional.profile_image_url || professional.logo_url ? (
                 <img
-                  src={professional.logo_url}
+                  src={professional.profile_image_url || professional.logo_url}
                   alt={professional.company_name}
-                  className="w-20 h-20 rounded-full object-cover"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-border"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
-                  <Building className="w-8 h-8 text-gray-400" />
+                <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-2 border-border">
+                  <Building className="w-8 h-8 text-muted-foreground" />
                 </div>
               )}
             </div>
