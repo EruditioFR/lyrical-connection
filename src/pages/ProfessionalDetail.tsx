@@ -122,14 +122,46 @@ const ProfessionalDetail = () => {
               className="w-full h-full object-cover"
             />
           ) : heroMedia?.media_type === 'video' && heroMedia?.file_path ? (
-            <video 
-              src={heroMedia.file_path}
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-            />
+            (() => {
+              const url = heroMedia.file_path;
+              // Vimeo embed
+              if (url.includes('vimeo.com')) {
+                const vimeoId = url.split('/').pop();
+                return (
+                  <iframe
+                    src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&muted=1`}
+                    className="w-full h-full"
+                    style={{ border: 'none' }}
+                    allow="autoplay; fullscreen; picture-in-picture"
+                  />
+                );
+              }
+              // YouTube embed
+              if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                const videoId = url.includes('youtu.be') 
+                  ? url.split('/').pop()
+                  : new URL(url).searchParams.get('v');
+                return (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&controls=0&playlist=${videoId}`}
+                    className="w-full h-full"
+                    style={{ border: 'none' }}
+                    allow="autoplay; fullscreen; picture-in-picture"
+                  />
+                );
+              }
+              // Direct video file
+              return (
+                <video 
+                  src={url}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              );
+            })()
           ) : (
             <div className="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20" />
           )}
