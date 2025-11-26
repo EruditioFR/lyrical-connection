@@ -104,7 +104,7 @@ const Navbar = () => {
     };
   }, []);
 
-    return <nav className="bg-white shadow-sm border-b sticky top-0 z-50" ref={navRef}>
+    return <nav className="bg-white shadow-sm border-b sticky top-0 z-50 pt-safe" ref={navRef} style={{ paddingTop: 'max(env(safe-area-inset-top, 0px), 0px)' }}>
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between min-h-[64px]">
         {/* Logo */}
         <Link to="/" className="flex items-center">
