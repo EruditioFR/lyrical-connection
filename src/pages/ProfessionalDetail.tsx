@@ -42,7 +42,6 @@ const ProfessionalDetail = () => {
         .select('*')
         .eq('professional_profile_id', id)
         .eq('is_active', true)
-        .eq('media_type', 'image')
         .order('display_order', { ascending: true })
         .limit(1);
       
@@ -116,12 +115,53 @@ const ProfessionalDetail = () => {
       <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
         {/* Hero Section */}
         <div className="relative h-64 md:h-80 overflow-hidden">
-          {heroMedia?.file_path ? (
+          {heroMedia?.media_type === 'image' && heroMedia?.file_path ? (
             <img 
               src={heroMedia.file_path} 
               alt={heroMedia.title || professional.company_name}
               className="w-full h-full object-cover"
             />
+          ) : heroMedia?.media_type === 'video' && heroMedia?.file_path ? (
+            (() => {
+              const url = heroMedia.file_path;
+              // Vimeo embed
+              if (url.includes('vimeo.com')) {
+                const vimeoId = url.split('/').pop();
+                return (
+                  <iframe
+                    src={`https://player.vimeo.com/video/${vimeoId}?background=1&autoplay=1&loop=1&muted=1`}
+                    className="w-full h-full"
+                    style={{ border: 'none' }}
+                    allow="autoplay; fullscreen; picture-in-picture"
+                  />
+                );
+              }
+              // YouTube embed
+              if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                const videoId = url.includes('youtu.be') 
+                  ? url.split('/').pop()
+                  : new URL(url).searchParams.get('v');
+                return (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&controls=0&playlist=${videoId}`}
+                    className="w-full h-full"
+                    style={{ border: 'none' }}
+                    allow="autoplay; fullscreen; picture-in-picture"
+                  />
+                );
+              }
+              // Direct video file
+              return (
+                <video 
+                  src={url}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              );
+            })()
           ) : (
             <div className="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20" />
           )}
