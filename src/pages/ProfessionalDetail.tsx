@@ -32,6 +32,27 @@ const ProfessionalDetail = () => {
     enabled: !!id,
   });
 
+  const { data: media } = useQuery({
+    queryKey: ['professional-media', id],
+    queryFn: async () => {
+      if (!id) return [];
+      
+      const { data, error } = await supabase
+        .from('professional_media')
+        .select('*')
+        .eq('professional_profile_id', id)
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .limit(1);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+
+  const heroMedia = media?.[0];
+
   const getRoleLabel = (role: string) => {
     const roleLabels: Record<string, string> = {
       'casting_director': 'Directeur de casting',
@@ -93,9 +114,26 @@ const ProfessionalDetail = () => {
     <Layout breadcrumbTitle={professional?.company_name}>
       <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
         {/* Hero Section */}
-        <div className="relative h-64 bg-gradient-to-r from-primary/20 to-primary/10">
-          <div className="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20" />
-          <div className="absolute inset-0 bg-black/20" />
+        <div className="relative h-64 md:h-80 overflow-hidden">
+          {heroMedia?.media_type === 'image' && heroMedia?.file_path ? (
+            <img 
+              src={heroMedia.file_path} 
+              alt={heroMedia.title || professional.company_name}
+              className="w-full h-full object-cover"
+            />
+          ) : heroMedia?.media_type === 'video' && heroMedia?.file_path ? (
+            <video 
+              src={heroMedia.file_path}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20" />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
         </div>
 
         <div className="container mx-auto px-4 -mt-24 pb-12">
