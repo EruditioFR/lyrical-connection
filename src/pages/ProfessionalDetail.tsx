@@ -7,7 +7,9 @@ import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Building, MapPin, Globe, Phone, Mail, ExternalLink, Loader2 } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { Building, MapPin, Globe, Phone, Mail, ExternalLink, Loader2, Users, Award, CheckCircle } from 'lucide-react';
 
 const ProfessionalDetail = () => {
   const { id } = useParams();
@@ -78,166 +80,187 @@ const ProfessionalDetail = () => {
     );
   }
 
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* En-tête du profil */}
-          <Card className="mb-8">
-            <CardContent className="p-8">
-              <div className="flex items-start gap-6">
-                {professional.logo_url ? (
-                  <img
-                    src={professional.logo_url}
-                    alt={professional.company_name || 'Logo'}
-                    className="w-24 h-24 rounded-lg object-cover"
-                  />
-                ) : (
-                  <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <Building className="h-12 w-12 text-gray-400" />
-                  </div>
-                )}
-                
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h1 className="text-3xl font-bold text-gray-900">
-                      {professional.company_name || 'Professionnel'}
-                    </h1>
-                    {professional.is_verified && (
-                      <Badge variant="secondary">
-                        Vérifié
-                      </Badge>
-                    )}
-                  </div>
+      <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
+        {/* Hero Section */}
+        <div className="relative h-64 bg-gradient-to-r from-primary/20 to-primary/10">
+          <div className="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20" />
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
+
+        <div className="container mx-auto px-4 -mt-24 pb-12">
+          <div className="max-w-6xl mx-auto">
+            {/* Carte profil principal */}
+            <Card className="mb-8">
+              <CardContent className="p-8">
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                  <Avatar className="w-32 h-32 border-4 border-background shadow-xl">
+                    <AvatarImage src={professional.logo_url || ''} />
+                    <AvatarFallback className="text-2xl">
+                      {getInitials(professional.company_name || 'P')}
+                    </AvatarFallback>
+                  </Avatar>
                   
-                  <Badge variant="outline" className="mb-4">
-                    {getRoleLabel(professional.professional_role)}
-                  </Badge>
+                  <div className="flex-1">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-2">
+                          <h1 className="text-3xl md:text-4xl font-serif font-bold">
+                            {professional.company_name || 'Professionnel'}
+                          </h1>
+                          {professional.is_verified && (
+                            <Badge className="bg-green-100 text-green-800">
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                              Vérifié
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          <Badge variant="secondary" className="text-sm">
+                            {getRoleLabel(professional.professional_role)}
+                          </Badge>
+                        </div>
 
-                  {professional.location && (
-                    <div className="flex items-center gap-2 text-gray-600 mb-4">
-                      <MapPin className="h-4 w-4" />
-                      <span>{professional.location}</span>
+                        {professional.location && (
+                          <div className="flex items-center gap-2 text-white mb-2">
+                            <MapPin className="h-4 w-4" />
+                            <span>{professional.location}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        {professional.contact_email && (
+                          <Button
+                            variant="default"
+                            onClick={() => window.open(`mailto:${professional.contact_email}`)}
+                          >
+                            <Mail className="h-4 w-4 mr-2" />
+                            Contacter
+                          </Button>
+                        )}
+
+                        {professional.website && (
+                          <Button
+                            variant="outline"
+                            onClick={() => window.open(professional.website, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Site web
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  )}
 
-                  <div className="flex flex-wrap gap-2">
-                    {professional.contact_email && (
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(`mailto:${professional.contact_email}`)}
-                      >
-                        <Mail className="h-4 w-4 mr-2" />
-                        Contact
-                      </Button>
-                    )}
-
-                    {professional.website && (
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(professional.website, '_blank')}
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Site web
-                      </Button>
-                    )}
-
-                    {professional.phone && (
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open(`tel:${professional.phone}`)}
-                      >
-                        <Phone className="h-4 w-4 mr-2" />
-                        Appeler
-                      </Button>
+                    {professional.bio && (
+                      <p className="text-white leading-relaxed">
+                        {professional.bio}
+                      </p>
                     )}
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Détails du profil */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Présentation */}
-            {professional.bio && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Présentation</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {professional.bio}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Équipe */}
-            {professional.team_description && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Notre équipe</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {professional.team_description}
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Informations de contact */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informations de contact</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {professional.contact_email && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-700">{professional.contact_email}</span>
-                  </div>
-                )}
-                
-                {professional.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-700">{professional.phone}</span>
-                  </div>
-                )}
-                
-                {professional.website && (
-                  <div className="flex items-center gap-3">
-                    <Globe className="h-5 w-5 text-gray-400" />
-                    <a 
-                      href={professional.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >
-                      {professional.website}
-                    </a>
-                  </div>
-                )}
-
-                {professional.location && (
-                  <div className="flex items-center gap-3">
-                    <MapPin className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-700">{professional.location}</span>
-                  </div>
-                )}
-
-                {professional.intervention_radius && (
-                  <div className="flex items-center gap-3">
-                    <Building className="h-5 w-5 text-gray-400" />
-                    <span className="text-gray-700">
-                      Rayon d'intervention: {professional.intervention_radius} km
-                    </span>
-                  </div>
-                )}
               </CardContent>
             </Card>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Colonne principale */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Équipe */}
+                {professional.team_description && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Users className="h-5 w-5" />
+                        Notre équipe
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-white whitespace-pre-wrap leading-relaxed">
+                        {professional.team_description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* Colonne latérale */}
+              <div className="space-y-8">
+                {/* Informations de contact */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Contact</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {professional.contact_email && (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                          <span className="text-white text-sm break-all">{professional.contact_email}</span>
+                        </div>
+                        <Separator />
+                      </>
+                    )}
+                    
+                    {professional.phone && (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                          <span className="text-white text-sm">{professional.phone}</span>
+                        </div>
+                        <Separator />
+                      </>
+                    )}
+                    
+                    {professional.website && (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <Globe className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                          <a 
+                            href={professional.website} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline text-sm break-all"
+                          >
+                            {professional.website.replace(/^https?:\/\//, '')}
+                          </a>
+                        </div>
+                        <Separator />
+                      </>
+                    )}
+
+                    {professional.location && (
+                      <>
+                        <div className="flex items-center gap-3">
+                          <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                          <span className="text-white text-sm">{professional.location}</span>
+                        </div>
+                        {professional.intervention_radius && <Separator />}
+                      </>
+                    )}
+
+                    {professional.intervention_radius && (
+                      <div className="flex items-center gap-3">
+                        <Building className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-white text-sm">
+                          Rayon: {professional.intervention_radius} km
+                        </span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
