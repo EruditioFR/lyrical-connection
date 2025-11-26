@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { useArtists } from '@/hooks/useArtists';
 import { useArtistFavorites } from '@/hooks/useArtistFavorites';
 import { useArtistEvaluations } from '@/hooks/useArtistEvaluations';
@@ -62,13 +64,17 @@ const ArtistsManagement = () => {
   if (!professionalProfile) {
     return (
       <Card>
-        <CardContent className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold mb-2">Profil requis</h3>
-            <p className="text-muted-foreground">
-              Vous devez avoir un profil professionnel pour gérer les artistes
+        <CardContent className="flex flex-col items-center justify-center h-64 space-y-4">
+          <Users className="h-16 w-16 text-muted-foreground/50" />
+          <div className="text-center space-y-2">
+            <h3 className="text-xl font-semibold">Créez votre profil professionnel</h3>
+            <p className="text-muted-foreground max-w-md">
+              Pour accéder à la gestion des artistes, vous devez d'abord compléter votre profil professionnel
             </p>
           </div>
+          <Button asChild size="lg">
+            <Link to="/profile">Créer mon profil</Link>
+          </Button>
         </CardContent>
       </Card>
     );
