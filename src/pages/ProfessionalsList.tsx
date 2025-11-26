@@ -74,7 +74,7 @@ const ProfessionalsList = () => {
     const navigate = useNavigate();
 
     const handleViewProfile = () => {
-      navigate(`/professional/${professional.id}`);
+      navigate(`/professionnels/${professional.id}`);
     };
 
     return (
