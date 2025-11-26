@@ -101,12 +101,12 @@ const ProfessionalsPreview: React.FC<ProfessionalsPreviewProps> = ({ professiona
                     {professional.company_name}
                   </p>
                   
-                  <p className="text-xs text-primary font-medium mb-1">
+                  <p className="text-xs text-white font-medium mb-1">
                     {professional.professional_role}
                   </p>
                   
                   {professional.location && (
-                    <div className="flex items-center text-xs text-muted-foreground">
+                    <div className="flex items-center text-xs text-white">
                       <MapPin className="h-3 w-3 mr-1" />
                       {professional.location}
                     </div>
