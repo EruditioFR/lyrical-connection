@@ -99,11 +99,11 @@ const ProfessionalsMarketing = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex items-center text-sm text-muted-foreground">
+                  <div className="flex items-center text-sm text-white">
                     <MapPin className="w-4 h-4 mr-2" />
                     {prof.location}
                   </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
+                  <div className="flex items-center text-sm text-white">
                     <Award className="w-4 h-4 mr-2" />
                     {prof.experience} d'expérience
                   </div>
