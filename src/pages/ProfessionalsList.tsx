@@ -83,7 +83,7 @@ const ProfessionalsList = () => {
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-xl font-semibold text-gray-900">
+                <h3 className="text-xl font-semibold text-white">
                   {professional.company_name}
                 </h3>
                 {professional.public_visibility_premium && (
@@ -103,13 +103,13 @@ const ProfessionalsList = () => {
                 {professional.professional_role === 'producer' && 'Producteur'}
               </Badge>
               
-              <div className="flex items-center text-gray-600 text-sm mb-2">
+              <div className="flex items-center text-white text-sm mb-2">
                 <MapPin className="w-4 h-4 mr-1" />
                 {professional.location || 'Lieu non spécifié'}
               </div>
               
               {isUserAuthenticated && (
-                <div className="flex items-center text-gray-600 text-sm">
+                <div className="flex items-center text-white text-sm">
                   <Target className="w-4 h-4 mr-1" />
                   Rayon: {professional.intervention_radius || 50} km
                 </div>
@@ -132,7 +132,7 @@ const ProfessionalsList = () => {
           </div>
 
           {professional.bio && (
-            <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            <p className="text-white text-sm mb-4 line-clamp-3">
               {professional.bio}
             </p>
           )}
