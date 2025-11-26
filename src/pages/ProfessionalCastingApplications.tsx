@@ -10,7 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User, CheckCheck, XCircle, RotateCcw } from 'lucide-react';
+import { Users, TrendingUp, BarChart3, Award, Calendar, Mail, Phone, MapPin, User, CheckCheck, XCircle, RotateCcw, Star } from 'lucide-react';
+import CandidateScoring from '@/components/casting/CandidateScoring';
+import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
+import { useCandidateScores } from '@/hooks/useCandidateScores';
+import { ApplicationScoreDisplay } from '@/components/casting/ApplicationScoreDisplay';
 
 const ProfessionalCastingApplications = () => {
   const { user, loading } = useAuth();
@@ -19,12 +23,17 @@ const ProfessionalCastingApplications = () => {
   const castingIdFromUrl = searchParams.get('castingId');
   const [selectedCasting, setSelectedCasting] = useState<string>(castingIdFromUrl || '');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [scoringApplication, setScoringApplication] = useState<{
+    id: string;
+    candidateName: string;
+  } | null>(null);
   
   const { castings: myCastings, isLoading: castingsLoading } = useMyCastings();
   const { applications, isLoading: applicationsLoading } = useCastingApplications(selectedCasting);
   const updateApplication = useUpdateApplication();
   const publishResults = usePublishCastingResults();
   const unpublishResults = useUnpublishCastingResults();
+  const { profile: professionalProfile } = useProfessionalProfile();
 
   if (loading || castingsLoading) {
     return <Layout><div className="container mx-auto px-4 py-20 text-center">Chargement...</div></Layout>;
@@ -329,6 +338,7 @@ const ProfessionalCastingApplications = () => {
                           
                           <div className="flex flex-col items-end gap-2">
                             {getStatusBadge(application.status)}
+                            <ApplicationScoreDisplay applicationId={application.id} />
                           </div>
                         </div>
                       </CardHeader>
@@ -362,6 +372,18 @@ const ProfessionalCastingApplications = () => {
                             onClick={() => navigate(`/artiste/${application.artist_profiles?.id}`)}
                           >
                             Voir le profil complet
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setScoringApplication({
+                              id: application.id,
+                              candidateName: application.artist_profiles?.stage_name || 'Candidat'
+                            })}
+                          >
+                            <Star className="h-4 w-4 mr-1" />
+                            Noter
                           </Button>
                           
                           {application.status === 'pending' && (
@@ -514,6 +536,16 @@ const ProfessionalCastingApplications = () => {
               <p className="text-gray-500">Sélectionnez un casting pour voir les candidatures.</p>
             </CardContent>
           </Card>
+        )}
+
+        {scoringApplication && professionalProfile && (
+          <CandidateScoring
+            isOpen={!!scoringApplication}
+            onClose={() => setScoringApplication(null)}
+            applicationId={scoringApplication.id}
+            candidateName={scoringApplication.candidateName}
+            professionalProfileId={professionalProfile.id}
+          />
         )}
       </div>
     </Layout>
