@@ -1583,7 +1583,7 @@ export type Database = {
           entity_id: string
           entity_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           user_agent: string | null
           user_id: string | null
@@ -1594,7 +1594,7 @@ export type Database = {
           entity_id: string
           entity_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           user_agent?: string | null
           user_id?: string | null
@@ -1605,7 +1605,7 @@ export type Database = {
           entity_id?: string
           entity_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           user_agent?: string | null
           user_id?: string | null
@@ -2300,7 +2300,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           profile_type: string
           session_id: string | null
           user_agent: string | null
@@ -2310,7 +2310,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           profile_type: string
           session_id?: string | null
           user_agent?: string | null
@@ -2320,7 +2320,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           profile_type?: string
           session_id?: string | null
           user_agent?: string | null
@@ -3013,10 +3013,7 @@ export type Database = {
         Args: { artist_profile_id_param: string; casting_id_param: string }
         Returns: boolean
       }
-      cleanup_expired_idempotency_keys: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_expired_idempotency_keys: { Args: never; Returns: undefined }
       create_notification_system: {
         Args: {
           p_content: string
@@ -3031,10 +3028,7 @@ export type Database = {
         Args: { p_entity_id: string; p_entity_type: string }
         Returns: undefined
       }
-      current_tenant_id: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      current_tenant_id: { Args: never; Returns: string }
       delete_user_completely: {
         Args: { user_id_to_delete: string }
         Returns: boolean
@@ -3050,14 +3044,8 @@ export type Database = {
         Args: { casting_id: string }
         Returns: undefined
       }
-      is_tenant_admin: {
-        Args: { target_tenant_id: string }
-        Returns: boolean
-      }
-      reset_rate_limit_windows: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      is_tenant_admin: { Args: { target_tenant_id: string }; Returns: boolean }
+      reset_rate_limit_windows: { Args: never; Returns: undefined }
       user_can_access_conversation: {
         Args: { conversation_id: string; user_id: string }
         Returns: boolean

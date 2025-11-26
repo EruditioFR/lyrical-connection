@@ -143,7 +143,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
               </Badge>
             )}
             
-            <div className="flex items-center text-gray-600 text-sm mb-2">
+            <div className="flex items-center text-white text-sm mb-2">
               <MapPin className="w-4 h-4 mr-1" />
               {artist.location || 'Lieu non spécifié'}
             </div>
@@ -165,7 +165,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         </div>
 
         {artist.bio && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+          <p className="text-white text-sm mb-4 line-clamp-3">
             {artist.bio}
           </p>
         )}
