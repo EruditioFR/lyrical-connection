@@ -10,9 +10,10 @@ import { useRealtimeNotifications } from '@/hooks/useRealtimeNotifications';
 
 interface LayoutProps {
   children: React.ReactNode;
+  breadcrumbTitle?: string;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, breadcrumbTitle }) => {
   const { user, isAccountActive } = useAuth();
   
   // Initialize realtime notifications
@@ -26,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <NavigationBreadcrumb />
+      <NavigationBreadcrumb customTitle={breadcrumbTitle} />
       <main className="flex-1">
         {children}
       </main>

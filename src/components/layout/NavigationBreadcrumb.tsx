@@ -16,7 +16,11 @@ interface BreadcrumbItem {
   icon?: React.ComponentType<any>;
 }
 
-const NavigationBreadcrumb: React.FC = () => {
+interface NavigationBreadcrumbProps {
+  customTitle?: string;
+}
+
+const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({ customTitle }) => {
   const location = useLocation();
 
   const breadcrumbs = useMemo(() => {
@@ -67,7 +71,10 @@ const NavigationBreadcrumb: React.FC = () => {
         const parentSegment = pathSegments[index - 1];
         let label = 'Détail';
         
-        if (parentSegment === 'artistes') {
+        // Utiliser le titre personnalisé si fourni
+        if (customTitle && index === pathSegments.length - 1) {
+          label = customTitle;
+        } else if (parentSegment === 'artistes') {
           label = 'Profil artiste';
         } else if (parentSegment === 'professionnels') {
           label = 'Profil professionnel';
@@ -92,7 +99,7 @@ const NavigationBreadcrumb: React.FC = () => {
     });
 
     return crumbs;
-  }, [location.pathname]);
+  }, [location.pathname, customTitle]);
 
   // Ne pas afficher le breadcrumb sur la page d'accueil
   if (location.pathname === '/') {

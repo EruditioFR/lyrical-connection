@@ -90,7 +90,7 @@ const ProfessionalDetail = () => {
   };
 
   return (
-    <Layout>
+    <Layout breadcrumbTitle={professional?.company_name}>
       <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
         {/* Hero Section */}
         <div className="relative h-64 bg-gradient-to-r from-primary/20 to-primary/10">
