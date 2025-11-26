@@ -57,7 +57,7 @@ const ProfessionalsMarketing = () => {
           <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6">
             Professionnels du Chant Lyrique
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-white mb-8 max-w-3xl mx-auto">
             Découvrez les meilleurs coaches vocaux, directeurs artistiques et accompagnateurs pour développer votre art
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -142,10 +142,10 @@ const ProfessionalsMarketing = () => {
                 <Music className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Coaches Vocaux</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-white mb-4">
                 Perfectionnez votre technique vocale avec des professeurs expérimentés
               </p>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-white space-y-1">
                 <li>• Technique respiratoire</li>
                 <li>• Travail vocal personnalisé</li>
                 <li>• Préparation d'auditions</li>
@@ -156,10 +156,10 @@ const ProfessionalsMarketing = () => {
                 <Briefcase className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Directeurs Artistiques</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-white mb-4">
                 Bénéficiez de l'expertise de directeurs d'opéra reconnus
               </p>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-white space-y-1">
                 <li>• Interprétation scénique</li>
                 <li>• Préparation de rôles</li>
                 <li>• Coaching artistique</li>
@@ -170,10 +170,10 @@ const ProfessionalsMarketing = () => {
                 <Users className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Accompagnateurs</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-white mb-4">
                 Travaillez avec des pianistes spécialisés dans le répertoire lyrique
               </p>
-              <ul className="text-sm text-muted-foreground space-y-1">
+              <ul className="text-sm text-white space-y-1">
                 <li>• Accompagnement piano</li>
                 <li>• Préparation de récitals</li>
                 <li>• Coaching musical</li>
@@ -197,7 +197,7 @@ const ProfessionalsMarketing = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Professionnels vérifiés</h3>
-                  <p className="text-muted-foreground">Tous nos partenaires sont sélectionnés et vérifiés pour leur expertise</p>
+                  <p className="text-white">Tous nos partenaires sont sélectionnés et vérifiés pour leur expertise</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
@@ -206,7 +206,7 @@ const ProfessionalsMarketing = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Recherche personnalisée</h3>
-                  <p className="text-muted-foreground">Trouvez le professionnel idéal selon vos besoins et votre localisation</p>
+                  <p className="text-white">Trouvez le professionnel idéal selon vos besoins et votre localisation</p>
                 </div>
               </div>
               <div className="flex items-start space-x-4">
@@ -215,13 +215,13 @@ const ProfessionalsMarketing = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1">Communication directe</h3>
-                  <p className="text-muted-foreground">Échangez directement avec les professionnels via notre messagerie</p>
+                  <p className="text-white">Échangez directement avec les professionnels via notre messagerie</p>
                 </div>
               </div>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-lg">
               <h3 className="text-2xl font-serif font-bold mb-4">Rejoignez notre réseau</h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-white mb-6">
                 Accédez à notre réseau exclusif de professionnels du chant lyrique et développez votre carrière artistique.
               </p>
               <Button asChild className="w-full">
