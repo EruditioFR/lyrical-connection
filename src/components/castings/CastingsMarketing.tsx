@@ -196,7 +196,7 @@ const CastingsMarketing = () => {
             <div className="bg-card border border-border rounded-lg p-8 max-w-md mx-auto">
               <h3 className="text-xl font-semibold mb-4">Voir tous les castings</h3>
               <p className="text-muted-foreground mb-6">
-                Inscrivez-vous pour accéder à plus de 50 castings actifs
+                Inscrivez-vous pour accéder à l'ensemble des castings actifs
               </p>
               <Button asChild className="w-full">
                 <Link to="/auth">
