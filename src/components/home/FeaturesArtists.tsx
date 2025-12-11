@@ -134,8 +134,7 @@ const FeaturesArtists = () => {
             Prêt à développer votre carrière ?
           </h3>
           <p className="text-foreground/80 mb-6 md:mb-8 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-            Rejoignez plus de 400 artistes lyriques qui utilisent déjà Lyrisphere 
-            pour développer leur visibilité et décrocher des opportunités.
+            Rejoignez les artistes lyriques qui utilisent déjà Lyrisphere, développez votre visibilité et décrochez des opportunités.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
