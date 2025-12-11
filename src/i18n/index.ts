@@ -45,11 +45,7 @@ const resources = {
         subtitle: 'La première plateforme dédiée aux chanteurs lyriques et aux professionnels de l\'opéra. Créez votre profil, découvrez des opportunités et développez votre carrière.',
         createProfile: 'Créer mon profil',
         discoverArtists: 'Découvrir les artistes',
-        stats: {
-          artists: 'Artistes',
-          professionals: 'Professionnels', 
-          events: 'Événements'
-        }
+        tagline: 'Artistes, professionnels, opportunités. Tout l\'univers lyrique réuni.'
       },
       features: {
         title: 'Une plateforme pensée pour tous les acteurs du lyrique',
@@ -135,11 +131,7 @@ const resources = {
         subtitle: 'The first platform dedicated to opera singers and opera professionals. Create your profile, discover opportunities and develop your career.',
         createProfile: 'Create my profile',
         discoverArtists: 'Discover artists',
-        stats: {
-          artists: 'Artists',
-          professionals: 'Professionals',
-          events: 'Events'
-        }
+        tagline: 'Artists, professionals, opportunities. The entire lyrical world united.'
       },
       features: {
         title: 'A platform designed for all opera stakeholders',
@@ -225,11 +217,7 @@ const resources = {
         subtitle: 'Die erste Plattform für Opernsänger und Opernprofis. Erstellen Sie Ihr Profil, entdecken Sie Möglichkeiten und entwickeln Sie Ihre Karriere.',
         createProfile: 'Mein Profil erstellen',
         discoverArtists: 'Künstler entdecken',
-        stats: {
-          artists: 'Künstler',
-          professionals: 'Profis',
-          events: 'Veranstaltungen'
-        }
+        tagline: 'Künstler, Profis, Möglichkeiten. Die gesamte lyrische Welt vereint.'
       },
       features: {
         title: 'Eine Plattform für alle Akteure der Oper',
@@ -315,11 +303,7 @@ const resources = {
         subtitle: 'La prima piattaforma dedicata ai cantanti lirici e ai professionisti dell\'opera. Crea il tuo profilo, scopri opportunità e sviluppa la tua carriera.',
         createProfile: 'Crea il mio profilo',
         discoverArtists: 'Scopri gli artisti',
-        stats: {
-          artists: 'Artisti',
-          professionals: 'Professionisti',
-          events: 'Eventi'
-        }
+        tagline: 'Artisti, professionisti, opportunità. Tutto l\'universo lirico riunito.'
       },
       features: {
         title: 'Una piattaforma pensata per tutti gli attori del lirico',
@@ -405,11 +389,7 @@ const resources = {
         subtitle: '首个专门为歌剧歌手和歌剧专业人士打造的平台。创建您的档案，发现机会，发展您的事业。',
         createProfile: '创建我的档案',
         discoverArtists: '发现艺术家',
-        stats: {
-          artists: '艺术家',
-          professionals: '专业人士',
-          events: '活动'
-        }
+        tagline: '艺术家、专业人士、机会。整个抒情世界汇聚于此。'
       },
       features: {
         title: '为歌剧界所有参与者设计的平台',

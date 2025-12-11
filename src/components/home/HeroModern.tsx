@@ -47,21 +47,10 @@ const HeroModern = () => {
               </Button>
             </div>
             
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-4 lg:gap-6 max-w-xs sm:max-w-sm lg:max-w-md mx-auto lg:mx-0">
-              <div className="text-center lg:text-left">
-                <div className="text-xl lg:text-2xl xl:text-3xl font-bold text-lyrical-700">500+</div>
-                <div className="text-xs lg:text-sm text-muted-foreground">{t('hero.stats.artists')}</div>
-              </div>
-              <div className="text-center lg:text-left">
-                <div className="text-xl lg:text-2xl xl:text-3xl font-bold text-lyrical-700">150+</div>
-                <div className="text-xs lg:text-sm text-muted-foreground">{t('hero.stats.professionals')}</div>
-              </div>
-              <div className="text-center lg:text-left">
-                <div className="text-xl lg:text-2xl xl:text-3xl font-bold text-lyrical-700">200+</div>
-                <div className="text-xs lg:text-sm text-muted-foreground">{t('hero.stats.events')}</div>
-              </div>
-            </div>
+            {/* Tagline */}
+            <p className="text-base lg:text-lg text-lyrical-600 font-medium max-w-md lg:max-w-lg mx-auto lg:mx-0 border-l-4 border-gold-400 pl-4 italic">
+              {t('hero.tagline')}
+            </p>
           </div>
           
           {/* Right Content */}
