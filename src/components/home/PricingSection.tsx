@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Crown, Zap, Plus } from 'lucide-react';
+import { Check, Star, Crown, Zap, Plus, Clock } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 import { useUserType } from '@/hooks/useUserType';
 import { usePremiumVisibility } from '@/hooks/usePremiumVisibility';
@@ -62,6 +62,10 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
   const getFilteredPlans = () => {
     // If a user type is selected on homepage, filter by that
     if (selectedUserType) {
+      // For public visitors, only show artist plans (professional coming soon)
+      if (selectedUserType === 'professional') {
+        return []; // No plans to show for professional section (coming soon)
+      }
       return allPlans.filter(plan => plan.userType === selectedUserType);
     }
     
@@ -70,8 +74,8 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
       // Professionals only see their plan
       return allPlans.filter(plan => plan.userType === "professional");
     }
-    // Artists and unknown users see all plans
-    return allPlans;
+    // Artists see only artist plans on public site
+    return allPlans.filter(plan => plan.userType === "artist");
   };
   
   const plans = getFilteredPlans();
