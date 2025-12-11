@@ -35,7 +35,7 @@ const testimonials = [
 
 const TestimonialsSection = () => {
   const headerRef = useAnimateOnScroll();
-  const statsRef = useAnimateOnScroll();
+  
   
   return (
     <section className="py-24 bg-gradient-to-b from-background to-muted/30">
@@ -96,28 +96,6 @@ const TestimonialsSection = () => {
             };
             return <TestimonialCard key={index} />;
           })}
-        </div>
-
-        {/* Stats Section */}
-        <div ref={statsRef} className="mt-20 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-2xl p-12 text-appear">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-lyrical-700 mb-2">98%</div>
-              <div className="text-sm text-muted-foreground">Satisfaction client</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-lyrical-700 mb-2">650+</div>
-              <div className="text-sm text-muted-foreground">Utilisateurs actifs</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-lyrical-700 mb-2">200+</div>
-              <div className="text-sm text-muted-foreground">Événements organisés</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold text-lyrical-700 mb-2">150+</div>
-              <div className="text-sm text-muted-foreground">Connexions réussies</div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
