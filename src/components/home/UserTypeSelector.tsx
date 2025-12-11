@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Mic, Globe, ArrowLeft, Clock } from 'lucide-react';
+import { Mic, Globe, ArrowLeft } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 interface UserTypeSelectorProps {
@@ -29,13 +28,17 @@ const UserTypeSelector = ({ selectedType, onSelectType, onBack }: UserTypeSelect
             >
               Artiste
             </button>
-            <div className="relative px-6 py-3 text-base font-medium rounded-full min-w-[120px] text-muted-foreground/60 cursor-not-allowed flex items-center justify-center gap-2">
+            <button
+              onClick={() => onSelectType('professional')}
+              className={cn(
+                "px-6 py-3 text-base font-medium rounded-full transition-all duration-200 min-w-[120px]",
+                selectedType === 'professional'
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
+            >
               Professionnel
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0.5 bg-muted text-muted-foreground">
-                <Clock className="h-2.5 w-2.5 mr-0.5" />
-                Prochainement
-              </Badge>
-            </div>
+            </button>
           </div>
         </div>
       </div>

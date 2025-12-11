@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
   Mic, 
   Users, 
@@ -11,8 +10,7 @@ import {
   Search, 
   MessageSquare,
   BarChart3,
-  Settings,
-  Clock
+  Settings
 } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 
@@ -109,18 +107,10 @@ const PortalsSection = () => {
             </div>
           </div>
 
-          {/* Portail Professionnels - Prochainement */}
-          <div ref={prosPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg transition-all duration-300 text-appear relative opacity-75">
-            {/* Coming Soon Overlay */}
-            <div className="absolute top-4 right-4 z-10">
-              <Badge className="bg-muted text-muted-foreground text-sm px-3 py-1">
-                <Clock className="h-3.5 w-3.5 mr-1.5" />
-                Prochainement
-              </Badge>
-            </div>
-            
+          {/* Portail Professionnels */}
+          <div ref={prosPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
             {/* Header Card */}
-            <div className="bg-gradient-to-br from-gold-500/70 to-gold-600/70 p-8 text-white">
+            <div className="bg-gradient-to-br from-gold-500 to-gold-600 p-8 text-white">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="bg-white/20 p-3 rounded-xl">
                   <Users className="h-8 w-8 text-white" />
@@ -145,40 +135,46 @@ const PortalsSection = () => {
                   <div className="bg-gold-100 p-2 rounded-lg">
                     <Search className="h-4 w-4 text-gold-700" />
                   </div>
-                  <span className="text-sm text-muted-foreground">Recherche avancée dans la base d'artistes</span>
+                  <span className="text-sm">Recherche avancée dans la base d'artistes</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="bg-gold-100 p-2 rounded-lg">
                     <Calendar className="h-4 w-4 text-gold-700" />
                   </div>
-                  <span className="text-sm text-muted-foreground">Création et gestion d'événements</span>
+                  <span className="text-sm">Création et gestion d'événements</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="bg-gold-100 p-2 rounded-lg">
                     <Settings className="h-4 w-4 text-gold-700" />
                   </div>
-                  <span className="text-sm text-muted-foreground">Outils de casting et de sélection</span>
+                  <span className="text-sm">Outils de casting et de sélection</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="bg-gold-100 p-2 rounded-lg">
                     <BarChart3 className="h-4 w-4 text-gold-700" />
                   </div>
-                  <span className="text-sm text-muted-foreground">Tableau de bord et analytics</span>
+                  <span className="text-sm">Tableau de bord et analytics</span>
                 </div>
               </div>
 
-              {/* CTA - Disabled */}
+              {/* CTA */}
               <div className="space-y-4">
                 <Button 
-                  className="w-full bg-muted text-muted-foreground cursor-not-allowed"
-                  disabled
+                  className="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white"
+                  asChild
                 >
-                  <Clock className="mr-2 h-4 w-4" />
-                  Bientôt disponible
+                  <Link to="/auth">
+                    Accéder à l'espace pro
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </Button>
-                <p className="text-center text-sm text-muted-foreground">
-                  Inscrivez-vous pour être notifié du lancement
-                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-gold-200 hover:bg-gold-50"
+                  asChild
+                >
+                  <Link to="/evenements">Voir les événements</Link>
+                </Button>
               </div>
             </div>
           </div>
