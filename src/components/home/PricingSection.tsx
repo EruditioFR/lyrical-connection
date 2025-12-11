@@ -7,9 +7,7 @@ import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 import { useUserType } from '@/hooks/useUserType';
 import { usePremiumVisibility } from '@/hooks/usePremiumVisibility';
 import { useAuth } from '@/hooks/useAuth';
-
-const allPlans = [
-{
+const allPlans = [{
   name: "Artistes",
   price: "9",
   period: "mois",
@@ -20,8 +18,7 @@ const allPlans = [
   icon: Star,
   gradient: "from-lyrical-600 to-lyrical-700",
   userType: "artist"
-}, 
-{
+}, {
   name: "Premium Visibilité",
   price: "29",
   period: "mois",
@@ -33,8 +30,7 @@ const allPlans = [
   gradient: "from-amber-600 to-amber-700",
   userType: "artist",
   isPremiumAddon: true
-},
-{
+}, {
   name: "Professionnel",
   price: "49",
   period: "mois",
@@ -46,25 +42,34 @@ const allPlans = [
   gradient: "from-gold-500 to-gold-600",
   userType: "professional"
 }];
-
 interface PricingSectionProps {
   selectedUserType?: 'artist' | 'professional' | null;
 }
-
-const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
+const PricingSection = ({
+  selectedUserType
+}: PricingSectionProps) => {
   const headerRef = useAnimateOnScroll();
   const bottomRef = useAnimateOnScroll();
-  const { userType, isProfessional, artistProfile } = useUserType();
-  const { createPremium, isCreatingPremium } = usePremiumVisibility();
-  const { user } = useAuth();
-  
+  const {
+    userType,
+    isProfessional,
+    artistProfile
+  } = useUserType();
+  const {
+    createPremium,
+    isCreatingPremium
+  } = usePremiumVisibility();
+  const {
+    user
+  } = useAuth();
+
   // Filter plans based on selected user type or authenticated user type
   const getFilteredPlans = () => {
     // If a user type is selected on homepage, filter by that
     if (selectedUserType) {
       return allPlans.filter(plan => plan.userType === selectedUserType);
     }
-    
+
     // Otherwise use the existing logic for authenticated users
     if (isProfessional) {
       // Professionals only see their plan
@@ -73,9 +78,8 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
     // Artists and unknown users see all plans
     return allPlans;
   };
-  
   const plans = getFilteredPlans();
-  
+
   // Handle premium visibility subscription
   const handlePremiumVisibility = () => {
     if (!user || !artistProfile) {
@@ -83,13 +87,11 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
       window.location.href = '/auth';
       return;
     }
-    
-    createPremium({ 
-      profileType: 'artist', 
-      profileId: artistProfile.id 
+    createPremium({
+      profileType: 'artist',
+      profileId: artistProfile.id
     });
   };
-  
   return <section className="py-24 bg-gradient-to-b from-muted/30 to-background">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
@@ -101,40 +103,29 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
             Choisissez le plan qui vous correspond
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Des tarifs adaptés à vos besoins, que vous soyez artiste ou professionnel
-          </p>
+          <p className="text-lg text-muted-foreground">Des tarifs adaptés à vos besoins</p>
         </div>
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => {
-            const PricingCard = () => {
-              const cardRef = useAnimateOnScroll();
-              return (
-                <div 
-                  ref={cardRef}
-                  key={plan.name} 
-                  className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-amber-200 bg-gradient-to-br from-amber-50/50 to-orange-50/30' : ''}`}
-                >
+          const PricingCard = () => {
+            const cardRef = useAnimateOnScroll();
+            return <div ref={cardRef} key={plan.name} className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-amber-200 bg-gradient-to-br from-amber-50/50 to-orange-50/30' : ''}`}>
               {/* Popular Badge */}
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              {plan.popular && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white">
                     ✨ Recommandé
                   </Badge>
-                </div>
-              )}
+                </div>}
 
               {/* Premium Add-on Badge */}
-              {plan.isPremiumAddon && (
-                <div className="absolute -top-3 right-6">
+              {plan.isPremiumAddon && <div className="absolute -top-3 right-6">
                   <Badge variant="outline" className="border-amber-300 text-amber-700 bg-amber-100">
                     <Plus className="h-3 w-3 mr-1" />
                     Add-on
                   </Badge>
-                </div>
-              )}
+                </div>}
 
               {/* Plan Header */}
               <div className="text-center mb-8">
@@ -150,56 +141,39 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
                   <span className="text-muted-foreground">/ {plan.period}</span>
                 </div>
                 
-                {plan.isPremiumAddon && (
-                  <p className="text-xs text-amber-600 mt-2">
+                {plan.isPremiumAddon && <p className="text-xs text-amber-600 mt-2">
                     En complément de votre abonnement principal
-                  </p>
-                )}
+                  </p>}
               </div>
 
               {/* Features */}
               <div className="space-y-4 mb-8">
-                {plan.features.map((feature, featureIndex) => (
-                  <div key={featureIndex} className="flex items-start space-x-3">
+                {plan.features.map((feature, featureIndex) => <div key={featureIndex} className="flex items-start space-x-3">
                     <div className={`mt-1 p-1 rounded-full bg-gradient-to-r ${plan.gradient}`}>
                       <Check className="h-3 w-3 text-white" />
                     </div>
                     <span className="text-sm">{feature}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
 
               {/* CTA */}
-              {plan.isPremiumAddon ? (
-                <Button 
-                  onClick={handlePremiumVisibility}
-                  disabled={isCreatingPremium}
-                  className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`}
-                >
-                  {isCreatingPremium ? (
-                    <>
+              {plan.isPremiumAddon ? <Button onClick={handlePremiumVisibility} disabled={isCreatingPremium} className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`}>
+                  {isCreatingPremium ? <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                       Activation...
-                    </>
-                  ) : (
-                    plan.cta
-                  )}
-                </Button>
-              ) : (
-                <Button className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`} asChild>
+                    </> : plan.cta}
+                </Button> : <Button className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`} asChild>
                   <Link to="/pricing">{plan.cta}</Link>
-                </Button>
-              )}
+                </Button>}
 
               {/* Additional Info */}
               <p className="text-center text-xs text-muted-foreground mt-4">
                 Sans engagement • Résiliation à tout moment
               </p>
-                </div>
-              );
-            };
-            return <PricingCard key={index} />;
-          })}
+                </div>;
+          };
+          return <PricingCard key={index} />;
+        })}
         </div>
 
         {/* Bottom Info */}
