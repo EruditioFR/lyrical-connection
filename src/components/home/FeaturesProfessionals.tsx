@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
   Globe, 
   Database, 
@@ -9,7 +10,8 @@ import {
   Calendar, 
   MessageSquare, 
   Users, 
-  Activity 
+  Activity,
+  Clock
 } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
 
@@ -62,14 +64,21 @@ const FeaturesProfessionals = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <div ref={sectionRef} className="text-appear">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif font-bold mb-4 leading-tight">Fonctionnalités pour les Professionnels</h2>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif font-bold leading-tight">Fonctionnalités pour les Professionnels</h2>
+              <Badge className="bg-muted text-muted-foreground text-sm px-3 py-1">
+                <Clock className="h-3.5 w-3.5 mr-1.5" />
+                Prochainement
+              </Badge>
+            </div>
             <p className="text-foreground/80 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
               Trouvez les talents qui correspondent exactement à vos besoins artistiques
             </p>
           </div>
           <div className="mt-8">
-            <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
-              <Link to="/auth">Créez votre compte pro</Link>
+            <Button className="bg-muted text-muted-foreground cursor-not-allowed" disabled>
+              <Clock className="mr-2 h-4 w-4" />
+              Bientôt disponible
             </Button>
           </div>
         </div>
@@ -123,8 +132,9 @@ const FeaturesProfessionals = () => {
         
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
-          <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
-            <Link to="/auth">Créez votre compte pro</Link>
+          <Button className="bg-muted text-muted-foreground cursor-not-allowed" disabled>
+            <Clock className="mr-2 h-4 w-4" />
+            Bientôt disponible
           </Button>
         </div>
 
@@ -150,19 +160,23 @@ const FeaturesProfessionals = () => {
 
         {/* Bottom CTA */}
         <div ref={ctaRef} className="mt-16 md:mt-20 text-center bg-muted rounded-2xl p-6 md:p-12 text-appear">
+          <Badge className="bg-gold-100 text-gold-700 text-sm px-3 py-1 mb-4">
+            <Clock className="h-3.5 w-3.5 mr-1.5" />
+            Prochainement
+          </Badge>
           <h3 className="text-xl md:text-2xl lg:text-3xl font-serif font-bold mb-4 leading-tight">
             Optimisez votre recherche de talents
           </h3>
           <p className="text-foreground/80 mb-6 md:mb-8 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-            Plus de 250 professionnels utilisent déjà nos outils pour dénicher 
-            les meilleurs artistes lyriques et organiser leurs événements.
+            L'espace professionnel sera bientôt disponible. Inscrivez-vous pour être notifié du lancement.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
-              <Link to="/auth">Créez votre compte pro</Link>
+            <Button size="lg" className="bg-muted text-muted-foreground border border-border cursor-not-allowed" disabled>
+              <Clock className="mr-2 h-4 w-4" />
+              Bientôt disponible
             </Button>
             <Button variant="outline" size="lg" asChild>
-              <Link to="/professionnels">Voir des profils pros</Link>
+              <Link to="/contact">Être notifié du lancement</Link>
             </Button>
           </div>
         </div>
