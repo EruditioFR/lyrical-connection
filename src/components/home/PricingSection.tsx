@@ -96,7 +96,7 @@ const PricingSection = ({ selectedUserType }: PricingSectionProps) => {
         <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 text-appear">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-lyrical-100/80 text-lyrical-700 text-sm font-medium mb-6">
             <Zap className="h-4 w-4 mr-2" />
-            Tarifs transparents
+            Tarifs
           </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
             Choisissez le plan qui vous correspond
