@@ -19,10 +19,11 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
+		fontFamily: {
 				sans: ["Inter", "Open Sans", "sans-serif"],
 				serif: ["Playfair Display", "Merriweather", "serif"],
 				body: ["Open Sans", "Inter", "sans-serif"],
+				cormorant: ["Cormorant Garamond", "serif"],
 			},
 			fontSize: {
 				'title-main': ['2rem', { lineHeight: '2.5rem', fontWeight: '600' }],       // 32px

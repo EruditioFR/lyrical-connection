@@ -25,7 +25,7 @@ const HeroModern = () => {
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-16 xl:pr-20 text-center lg:text-left text-appear">
             {/* Main Title */}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-serif font-bold leading-tight mb-4 lg:mb-6 text-foreground">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cormorant font-semibold leading-tight mb-4 lg:mb-6 text-foreground">
               {t('hero.title')}
             </h1>
             
