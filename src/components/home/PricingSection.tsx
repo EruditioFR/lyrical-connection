@@ -119,13 +119,6 @@ const PricingSection = ({
                   </Badge>
                 </div>}
 
-              {/* Premium Add-on Badge */}
-              {plan.isPremiumAddon && <div className="absolute -top-3 right-6">
-                  <Badge variant="outline" className="border-amber-300 text-amber-700 bg-amber-100">
-                    <Plus className="h-3 w-3 mr-1" />
-                    Add-on
-                  </Badge>
-                </div>}
 
               {/* Plan Header */}
               <div className="text-center mb-8">
