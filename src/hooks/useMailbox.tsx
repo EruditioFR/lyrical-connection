@@ -77,14 +77,14 @@ const handleAuthError = async (error: any, refreshSession: () => Promise<void>, 
 export const useMailbox = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { refreshSession } = useAuth();
+  const { refreshSession, user } = useAuth();
 
   // Fetch inbox messages
   const { data: inboxMessages = [], isLoading: isLoadingInbox } = useQuery({
-    queryKey: ['mailbox', 'inbox'],
+    queryKey: ['mailbox', 'inbox', user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('mail_messages')
@@ -133,10 +133,10 @@ export const useMailbox = () => {
 
   // Fetch sent messages
   const { data: sentMessages = [], isLoading: isLoadingSent } = useQuery({
-    queryKey: ['mailbox', 'sent'],
+    queryKey: ['mailbox', 'sent', user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('mail_messages')
@@ -185,10 +185,10 @@ export const useMailbox = () => {
 
   // Fetch starred messages
   const { data: starredMessages = [], isLoading: isLoadingStarred } = useQuery({
-    queryKey: ['mailbox', 'starred'],
+    queryKey: ['mailbox', 'starred', user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('mail_messages')
@@ -222,10 +222,10 @@ export const useMailbox = () => {
 
   // Fetch drafts
   const { data: drafts = [], isLoading: isLoadingDrafts } = useQuery({
-    queryKey: ['mailbox', 'drafts'],
+    queryKey: ['mailbox', 'drafts', user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('mail_drafts')
@@ -485,10 +485,10 @@ export const useMailbox = () => {
 
   // Fetch trash messages
   const { data: trashMessages = [], isLoading: isLoadingTrash } = useQuery({
-    queryKey: ['mailbox', 'trash'],
+    queryKey: ['mailbox', 'trash', user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('mail_messages')
@@ -582,33 +582,28 @@ export const useMailbox = () => {
 
   // Real-time subscription
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    if (!user?.id) return;
 
-      const channel = supabase
-        .channel('mail_messages_changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'mail_messages',
-            filter: `recipient_id=eq.${user.id}`,
-          },
-          () => {
-            queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-          }
-        )
-        .subscribe();
+    const channel = supabase
+      .channel('mail_messages_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'mail_messages',
+          filter: `recipient_id=eq.${user.id}`,
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['mailbox'] });
+        }
+      )
+      .subscribe();
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
+    return () => {
+      supabase.removeChannel(channel);
     };
-
-    getUser();
-  }, [queryClient]);
+  }, [queryClient, user?.id]);
 
   const unreadCount = inboxMessages.filter(msg => !msg.is_read).length;
 
