@@ -84,13 +84,17 @@ export const MessageList = ({
       if (searchQuery) {
         const searchLower = searchQuery.toLowerCase();
         const senderInfo = getSenderInfo(message);
-        
+
+        const subject = (message.subject ?? "").toString().toLowerCase();
+        const body = (message.content ?? "").toString().toLowerCase();
+        const senderName = (senderInfo.name ?? "").toString().toLowerCase();
+
         const matchesSearch = (
-          message.subject.toLowerCase().includes(searchLower) ||
-          message.content.toLowerCase().includes(searchLower) ||
-          senderInfo.name.toLowerCase().includes(searchLower)
+          subject.includes(searchLower) ||
+          body.includes(searchLower) ||
+          senderName.includes(searchLower)
         );
-        
+
         if (!matchesSearch) return false;
       }
       
@@ -468,10 +472,10 @@ export const MessageList = ({
                       "text-sm truncate",
                       !message.is_read && "font-medium"
                     )}>
-                      {message.subject || '(sans objet)'}
+                      {(message.subject ?? '(sans objet)').toString()}
                     </p>
                     <p className="text-xs text-muted-foreground truncate mt-0.5">
-                      {message.content.replace(/<[^>]*>/g, '')}
+                      {(message.content ?? "").toString().replace(/<[^>]*>/g, '')}
                     </p>
                   </div>
                 </div>
