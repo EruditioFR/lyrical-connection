@@ -423,50 +423,62 @@ export const ComposeMessage = ({
         )}
 
         {/* Actions principales */}
-          <div className="flex items-center justify-between pt-4 border-t">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const fileInput = document.createElement('input');
-                  fileInput.type = 'file';
-                  fileInput.multiple = true;
-                  fileInput.accept = '*/*';
-                  fileInput.onchange = (e) => {
-                    const files = (e.target as HTMLInputElement).files;
-                    if (files) {
-                      handleFileSelect(files);
-                    }
-                  };
-                  fileInput.click();
-                }}
-                disabled={uploadingFiles.size > 0}
-              >
-                <Paperclip className="w-4 h-4 mr-2" />
-                Joindre
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                (Max. {formatFileSize(MAX_FILE_SIZE)} par fichier)
-              </span>
+        <div className="flex flex-col gap-3 pt-4 border-t">
+          {/* Bouton Envoyer en premier sur mobile */}
+          <Button 
+            onClick={handleSend}
+            disabled={!canSend || isSending || uploadingFiles.size > 0}
+            className="w-full sm:hidden"
+            size="lg"
+          >
+            <Send className="w-4 h-4 mr-2" />
+            {isSending ? 'Envoi...' : 'Envoyer'}
+          </Button>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleSaveDraft}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Brouillon
-              </Button>
-            </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.multiple = true;
+                fileInput.accept = '*/*';
+                fileInput.onchange = (e) => {
+                  const files = (e.target as HTMLInputElement).files;
+                  if (files) {
+                    handleFileSelect(files);
+                  }
+                };
+                fileInput.click();
+              }}
+              disabled={uploadingFiles.size > 0}
+            >
+              <Paperclip className="w-4 h-4 mr-2" />
+              Joindre
+            </Button>
+            <span className="text-xs text-muted-foreground hidden sm:inline">
+              (Max. {formatFileSize(MAX_FILE_SIZE)})
+            </span>
 
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSaveDraft}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Brouillon
+            </Button>
+
+            <Button variant="outline" size="sm" onClick={onClose}>
               Annuler
             </Button>
+
+            {/* Bouton Envoyer visible uniquement sur desktop */}
             <Button 
               onClick={handleSend}
               disabled={!canSend || isSending || uploadingFiles.size > 0}
+              className="hidden sm:flex ml-auto"
             >
               <Send className="w-4 h-4 mr-2" />
               {isSending ? 'Envoi...' : 'Envoyer'}
