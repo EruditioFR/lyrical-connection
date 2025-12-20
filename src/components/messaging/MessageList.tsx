@@ -283,12 +283,22 @@ export const MessageList = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [filteredMessages, selectedMessageIndex, onMessageClick, onMarkAsRead, onStarToggle, onSelectAll, onMessageSelect]);
 
-  if (filteredMessages.length === 0 && !searchQuery) {
+  if (messages.length === 0) {
     return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        <div className="text-center">
-          <p className="text-lg font-medium mb-2">Aucun message</p>
-          <p className="text-sm">Cette boîte est vide.</p>
+      <div className="flex-1 flex flex-col">
+        <MessageSearch 
+          onSearch={setSearchQuery} 
+          onFilter={() => setShowFilters(!showFilters)}
+          filters={filters}
+          onFiltersChange={setFilters}
+          senders={[]}
+          onKeyboardShortcuts={() => setShowKeyboardShortcuts(true)}
+        />
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <div className="text-center">
+            <p className="text-lg font-medium mb-2">Aucun message</p>
+            <p className="text-sm">Cette boîte est vide.</p>
+          </div>
         </div>
       </div>
     );
