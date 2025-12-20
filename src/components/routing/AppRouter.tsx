@@ -54,6 +54,7 @@ import BlogPost from '@/pages/BlogPost';
 import CastingDetail from '@/pages/CastingDetail';
 import Billing from '@/pages/Billing';
 import CastingDashboardPage from '@/pages/CastingDashboard';
+import Install from '@/pages/Install';
 
 export const AppRouter = () => {
   return (
@@ -73,6 +74,7 @@ export const AppRouter = () => {
       <Route path="/cgu" element={<TermsOfService />} />
       <Route path="/cookies" element={<CookiesPolicy />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/installer" element={<Install />} />
       
       {/* Castings route - accessible publiquement pour afficher la page marketing */}
       <Route path="/castings" element={<Castings />} />
