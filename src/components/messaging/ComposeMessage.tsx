@@ -8,13 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { X, Send, Save, Paperclip, User, Building2, Upload, FileText, Settings, ChevronsUpDown, Check } from "lucide-react";
+import { X, Send, Save, Paperclip, User, Building2, Upload, ChevronsUpDown, Check } from "lucide-react";
 import { useMailbox } from "@/hooks/useMailbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { MessageTemplates } from "./MessageTemplates";
-import { MessageSignature } from "./MessageSignature";
 import { cn } from "@/lib/utils";
 
 interface ComposeMessageProps {
@@ -424,45 +422,7 @@ export const ComposeMessage = ({
           </div>
         )}
 
-        {/* Templates et Signature */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="w-full">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Modèles de messages
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Choisir un modèle</DialogTitle>
-                </DialogHeader>
-                <MessageTemplates 
-                  onTemplateSelect={(template) => {
-                    if (template.subject) setSubject(template.subject);
-                    setContent(template.content);
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="w-full">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Signature
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Gestion des signatures</DialogTitle>
-                </DialogHeader>
-                <MessageSignature />
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          {/* Actions principales */}
+        {/* Actions principales */}
           <div className="flex items-center justify-between pt-4 border-t">
             <div className="flex items-center gap-2">
               <Button
