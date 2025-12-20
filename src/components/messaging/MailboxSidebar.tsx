@@ -7,7 +7,9 @@ import {
   FileText, 
   PenTool,
   Trash2,
-  Trash
+  Trash,
+  Menu,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -21,6 +23,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useState } from "react";
 
 interface MailboxSidebarProps {
   selectedFolder: string;
@@ -33,6 +43,14 @@ interface MailboxSidebarProps {
   starredCount?: number;
 }
 
+const folderLabels: Record<string, string> = {
+  inbox: 'Boîte de réception',
+  sent: 'Messages envoyés',
+  starred: 'Favoris',
+  drafts: 'Brouillons',
+  trash: 'Corbeille',
+};
+
 export const MailboxSidebar = ({ 
   selectedFolder, 
   onFolderSelect, 
@@ -43,6 +61,8 @@ export const MailboxSidebar = ({
   draftsCount,
   starredCount 
 }: MailboxSidebarProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const folders = [
     { 
       id: 'inbox', 
@@ -75,10 +95,20 @@ export const MailboxSidebar = ({
     },
   ];
 
-  return (
-    <div className="w-64 bg-card border-r border-border p-4 space-y-2">
+  const handleFolderSelect = (folderId: string) => {
+    onFolderSelect(folderId);
+    setIsOpen(false);
+  };
+
+  const handleCompose = () => {
+    onCompose();
+    setIsOpen(false);
+  };
+
+  const SidebarContent = () => (
+    <div className="space-y-2">
       <Button 
-        onClick={onCompose}
+        onClick={handleCompose}
         className="w-full mb-4 bg-primary hover:bg-primary/90"
         size="lg"
       >
@@ -99,7 +129,7 @@ export const MailboxSidebar = ({
                 "w-full justify-start text-left font-normal",
                 isSelected && "bg-secondary/80 text-secondary-foreground"
               )}
-              onClick={() => onFolderSelect(folder.id)}
+              onClick={() => handleFolderSelect(folder.id)}
             >
               <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
               <span className="flex-1">{folder.label}</span>
@@ -158,5 +188,51 @@ export const MailboxSidebar = ({
         </div>
       )}
     </div>
+  );
+
+  // Get current folder icon
+  const CurrentFolderIcon = folders.find(f => f.id === selectedFolder)?.icon || Inbox;
+
+  return (
+    <>
+      {/* Mobile: Sheet trigger button + current folder indicator */}
+      <div className="md:hidden border-b border-border p-3 flex items-center justify-between bg-card">
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="sm" className="gap-2">
+              <Menu className="h-5 w-5" />
+              <CurrentFolderIcon className="h-4 w-4" />
+              <span className="font-medium">{folderLabels[selectedFolder]}</span>
+              {unreadCount > 0 && selectedFolder === 'inbox' && (
+                <Badge variant="default" className="bg-primary text-primary-foreground text-xs px-1.5 py-0">
+                  {unreadCount}
+                </Badge>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-[280px] sm:w-[320px]">
+            <SheetHeader className="mb-4">
+              <SheetTitle>Messagerie</SheetTitle>
+            </SheetHeader>
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+
+        {/* Mobile compose button */}
+        <Button 
+          onClick={onCompose}
+          size="sm"
+          className="bg-primary hover:bg-primary/90"
+        >
+          <PenTool className="w-4 h-4 mr-2" />
+          Composer
+        </Button>
+      </div>
+
+      {/* Desktop: Regular sidebar */}
+      <div className="hidden md:block w-64 bg-card border-r border-border p-4">
+        <SidebarContent />
+      </div>
+    </>
   );
 };
