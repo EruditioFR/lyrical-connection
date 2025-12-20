@@ -208,9 +208,9 @@ const MessagesContent = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-6">
-        {/* Session refresh button for debugging */}
-        <div className="mb-4 flex justify-end">
+      <div className="container mx-auto px-2 md:px-4 py-4 md:py-6">
+        {/* Session refresh button - hidden on mobile */}
+        <div className="mb-4 hidden md:flex justify-end">
           <Button
             variant="outline"
             size="sm"
@@ -223,9 +223,9 @@ const MessagesContent = () => {
           </Button>
         </div>
 
-        <div className="h-[85vh] bg-background rounded-lg border border-border shadow-sm overflow-hidden">
+        <div className="h-[calc(100vh-180px)] md:h-[85vh] bg-background rounded-lg border border-border shadow-sm overflow-hidden">
           {showCompose ? (
-            <div className="h-full p-6 overflow-auto">
+            <div className="h-full p-4 md:p-6 overflow-auto">
               <ComposeMessage 
                 onClose={() => setShowCompose(false)}
                 replyTo={replyToMessage ? {
@@ -237,8 +237,8 @@ const MessagesContent = () => {
               />
             </div>
           ) : (
-            <div className="flex h-full">
-              {/* Sidebar */}
+            <div className="flex flex-col md:flex-row h-full">
+              {/* Sidebar - now handles mobile via Sheet internally */}
               <MailboxSidebar
                 selectedFolder={selectedFolder}
                 onFolderSelect={setSelectedFolder}
@@ -251,9 +251,9 @@ const MessagesContent = () => {
               />
 
               {/* Main Content */}
-              <div className="flex-1 flex">
+              <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                 {/* Mobile: Show message list or viewer */}
-                <div className="md:hidden w-full">
+                <div className="md:hidden flex-1 overflow-hidden">
                   {selectedMessage ? (
                     <MessageViewer
                       message={selectedMessage}
