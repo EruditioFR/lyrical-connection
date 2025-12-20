@@ -287,8 +287,8 @@ export const ComposeMessage = ({
   const canSend = recipient && subject.trim() && content.trim();
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card className="w-full max-w-4xl mx-auto flex flex-col sm:h-auto h-[calc(100dvh-7rem)]">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 shrink-0">
         <CardTitle className="text-lg font-semibold">
           {replyTo ? 'Répondre' : 'Nouveau message'}
         </CardTitle>
@@ -297,74 +297,76 @@ export const ComposeMessage = ({
         </Button>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="recipient">Destinataire</Label>
-          {replyTo || recipientId ? (
-            <Input
-              id="recipient"
-              value={recipientName || recipient}
-              disabled
-            />
-          ) : (
-            <Popover open={openContactSearch} onOpenChange={setOpenContactSearch}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openContactSearch}
-                  className="w-full justify-between font-normal"
-                >
-                  {recipientDisplayName || "Sélectionner un destinataire..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
-                <Command shouldFilter={false}>
-                  <CommandInput 
-                    placeholder="Rechercher un contact..." 
-                    value={searchQuery}
-                    onValueChange={setSearchQuery}
-                  />
-                  <CommandList>
-                    <CommandEmpty>
-                      {searchQuery.length < 2 
-                        ? "Tapez au moins 2 caractères..." 
-                        : "Aucun contact trouvé."}
-                    </CommandEmpty>
-                    <CommandGroup>
-                      {contacts.map((contact) => (
-                        <CommandItem
-                          key={contact.id}
-                          value={contact.id}
-                          onSelect={() => {
-                            setRecipient(contact.id);
-                            setRecipientDisplayName(contact.name);
-                            setOpenContactSearch(false);
-                            setSearchQuery("");
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              recipient === contact.id ? "opacity-100" : "opacity-0"
+      <CardContent className="flex-1 min-h-0 flex flex-col gap-4 overflow-y-auto">
+        <div className="flex-1 min-h-0 space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="recipient">Destinataire</Label>
+            {replyTo || recipientId ? (
+              <Input
+                id="recipient"
+                value={recipientName || recipient}
+                disabled
+              />
+            ) : (
+              <Popover open={openContactSearch} onOpenChange={setOpenContactSearch}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openContactSearch}
+                    className="w-full justify-between font-normal"
+                  >
+                    {recipientDisplayName || "Sélectionner un destinataire..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command shouldFilter={false}>
+                    <CommandInput 
+                      placeholder="Rechercher un contact..." 
+                      value={searchQuery}
+                      onValueChange={setSearchQuery}
+                    />
+                    <CommandList>
+                      <CommandEmpty>
+                        {searchQuery.length < 2 
+                          ? "Tapez au moins 2 caractères..." 
+                          : "Aucun contact trouvé."}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {contacts.map((contact) => (
+                          <CommandItem
+                            key={contact.id}
+                            value={contact.id}
+                            onSelect={() => {
+                              setRecipient(contact.id);
+                              setRecipientDisplayName(contact.name);
+                              setOpenContactSearch(false);
+                              setSearchQuery("");
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                recipient === contact.id ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {contact.type === 'artist' ? (
+                              <User className="mr-2 h-4 w-4" />
+                            ) : (
+                              <Building2 className="mr-2 h-4 w-4" />
                             )}
-                          />
-                          {contact.type === 'artist' ? (
-                            <User className="mr-2 h-4 w-4" />
-                          ) : (
-                            <Building2 className="mr-2 h-4 w-4" />
-                          )}
-                          <span>{contact.name}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          )}
-        </div>
+                            <span>{contact.name}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+
 
         <div className="space-y-2">
           <Label htmlFor="subject">Objet</Label>
@@ -422,8 +424,11 @@ export const ComposeMessage = ({
           </div>
         )}
 
+
+        </div>
+
         {/* Actions principales */}
-        <div className="flex flex-col gap-3 pt-4 border-t">
+        <div className="sticky bottom-0 mt-auto flex flex-col gap-3 border-t bg-background/95 backdrop-blur pt-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)]">
           {/* Bouton Envoyer en premier sur mobile */}
           <Button 
             onClick={handleSend}
