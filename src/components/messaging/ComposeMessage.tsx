@@ -5,15 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { X, Send, Save, Paperclip, User, Building2, Upload, FileText, Settings } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { X, Send, Save, Paperclip, User, Building2, Upload, FileText, Settings, ChevronsUpDown, Check } from "lucide-react";
 import { useMailbox } from "@/hooks/useMailbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { MessageTemplates } from "./MessageTemplates";
 import { MessageSignature } from "./MessageSignature";
+import { cn } from "@/lib/utils";
 
 interface ComposeMessageProps {
   onClose: () => void;
@@ -37,10 +39,12 @@ export const ComposeMessage = ({
   recipientName 
 }: ComposeMessageProps) => {
   const [recipient, setRecipient] = useState(recipientId || "");
+  const [recipientDisplayName, setRecipientDisplayName] = useState(recipientName || "");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const [attachments, setAttachments] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openContactSearch, setOpenContactSearch] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
   const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -305,32 +309,62 @@ export const ComposeMessage = ({
               disabled
             />
           ) : (
-            <Select value={recipient} onValueChange={setRecipient}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un destinataire..." />
-              </SelectTrigger>
-              <SelectContent>
-                <div className="p-2">
-                  <Input
-                    placeholder="Rechercher un contact..."
+            <Popover open={openContactSearch} onOpenChange={setOpenContactSearch}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openContactSearch}
+                  className="w-full justify-between font-normal"
+                >
+                  {recipientDisplayName || "Sélectionner un destinataire..."}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command shouldFilter={false}>
+                  <CommandInput 
+                    placeholder="Rechercher un contact..." 
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onValueChange={setSearchQuery}
                   />
-                </div>
-                {contacts.map((contact) => (
-                  <SelectItem key={contact.id} value={contact.id}>
-                    <div className="flex items-center gap-2">
-                      {contact.type === 'artist' ? (
-                        <User className="w-4 h-4" />
-                      ) : (
-                        <Building2 className="w-4 h-4" />
-                      )}
-                      <span>{contact.name}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  <CommandList>
+                    <CommandEmpty>
+                      {searchQuery.length < 2 
+                        ? "Tapez au moins 2 caractères..." 
+                        : "Aucun contact trouvé."}
+                    </CommandEmpty>
+                    <CommandGroup>
+                      {contacts.map((contact) => (
+                        <CommandItem
+                          key={contact.id}
+                          value={contact.id}
+                          onSelect={() => {
+                            setRecipient(contact.id);
+                            setRecipientDisplayName(contact.name);
+                            setOpenContactSearch(false);
+                            setSearchQuery("");
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              recipient === contact.id ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {contact.type === 'artist' ? (
+                            <User className="mr-2 h-4 w-4" />
+                          ) : (
+                            <Building2 className="mr-2 h-4 w-4" />
+                          )}
+                          <span>{contact.name}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           )}
         </div>
 
