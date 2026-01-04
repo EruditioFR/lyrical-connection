@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, MapPin, Users, Euro, Edit, Eye } from 'lucide-react';
+import { CalendarDays, MapPin, Users, Euro, Edit, Eye, ClipboardList } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -67,6 +67,11 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
   const handleViewApplications = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/professional/event-applications?eventId=${event.id}`);
+  };
+
+  const handleViewEvaluations = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/contest-synthesis/${event.id}`);
   };
 
   return (
@@ -136,6 +141,18 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
             >
               <Users className="h-4 w-4" />
               Candidatures ({event.applications_count || 0})
+            </Button>
+          )}
+          
+          {event.event_type === 'concours' && event.status === 'published' && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleViewEvaluations}
+              className="flex items-center gap-2"
+            >
+              <ClipboardList className="h-4 w-4" />
+              Évaluations
             </Button>
           )}
           
