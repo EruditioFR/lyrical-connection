@@ -39,7 +39,7 @@ import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ArtistBadges from '@/components/profile/ArtistBadges';
 import JuryEvaluationPanel from '@/components/jury/JuryEvaluationPanel';
-import { useCastings } from '@/hooks/useCastings';
+
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,9 +49,9 @@ const ArtistProfile = () => {
   const [selectedContestId, setSelectedContestId] = React.useState<string | null>(null);
   const isMobile = useIsMobile();
 
-  // Fetch professional's castings for jury evaluation
-  const { data: myCastings } = useQuery({
-    queryKey: ['my-castings-for-jury'],
+  // Fetch professional's contests for jury evaluation
+  const { data: myContests } = useQuery({
+    queryKey: ['my-contests-for-jury'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
@@ -65,10 +65,11 @@ const ArtistProfile = () => {
       if (!profile) return [];
 
       const { data } = await supabase
-        .from('castings')
+        .from('professional_events')
         .select('id, title')
         .eq('professional_profile_id', profile.id)
-        .eq('is_active', true);
+        .eq('event_type', 'concours')
+        .eq('status', 'published');
 
       return data || [];
     },
@@ -402,8 +403,8 @@ const ArtistProfile = () => {
             </Card>
           </div>
 
-          {/* Jury Evaluation Panel - Only for professionals with active castings */}
-          {isProfessional && myCastings && myCastings.length > 0 && !isOwnProfile && (
+          {/* Jury Evaluation Panel - Only for professionals with active contests */}
+          {isProfessional && myContests && myContests.length > 0 && !isOwnProfile && (
             <div className="mb-8">
               <Card>
                 <CardHeader>
@@ -413,23 +414,23 @@ const ArtistProfile = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {myCastings.length === 1 ? (
+                  {myContests.length === 1 ? (
                     <JuryEvaluationPanel
-                      contestId={myCastings[0].id}
+                      contestId={myContests[0].id}
                       artistProfileId={profile.id}
                       artistName={profile.stage_name}
                     />
                   ) : (
                     <div className="space-y-4">
                       <div className="flex flex-wrap gap-2">
-                        {myCastings.map(casting => (
+                        {myContests.map(contest => (
                           <Button
-                            key={casting.id}
-                            variant={selectedContestId === casting.id ? "default" : "outline"}
+                            key={contest.id}
+                            variant={selectedContestId === contest.id ? "default" : "outline"}
                             size="sm"
-                            onClick={() => setSelectedContestId(casting.id)}
+                            onClick={() => setSelectedContestId(contest.id)}
                           >
-                            {casting.title}
+                            {contest.title}
                           </Button>
                         ))}
                       </div>

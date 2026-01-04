@@ -19,7 +19,6 @@ import {
 import { Link } from 'react-router-dom';
 import { useProfessionalEvents } from '@/hooks/useEvents';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { useMyCastings } from '@/hooks/useCastings';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
 import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 import ArtistsManagement from '@/components/professional/ArtistsManagement';
@@ -27,7 +26,9 @@ import ArtistsManagement from '@/components/professional/ArtistsManagement';
 const ProfessionalDashboard = () => {
   const { data: events = [] } = useProfessionalEvents();
   const { data: analytics } = useAnalytics();
-  const { castings = [] } = useMyCastings();
+  
+  // Get contests (events with type 'concours')
+  const contests = events.filter(e => e.event_type === 'concours' && e.status === 'published');
 
   // Statistiques rapides
   const publishedEvents = events.filter(e => e.status === 'published');
@@ -191,9 +192,9 @@ const ProfessionalDashboard = () => {
                     Mon profil
                   </Link>
                 </Button>
-                {castings.length > 0 && (
+                {contests.length > 0 && (
                   <Button asChild variant="outline" className="w-full justify-start bg-primary/5 border-primary/30 hover:bg-primary/10">
-                    <Link to={`/concours/${castings[0].id}/synthese`}>
+                    <Link to={`/concours/${contests[0].id}/synthese`}>
                       <Trophy className="h-4 w-4 mr-2 text-primary" />
                       Synthèse du concours
                     </Link>
