@@ -38,13 +38,60 @@ import ArtistPhotoPreview from '@/components/profile/ArtistPhotoPreview';
 import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ArtistBadges from '@/components/profile/ArtistBadges';
+import JuryEvaluationPanel from '@/components/jury/JuryEvaluationPanel';
+import { useCastings } from '@/hooks/useCastings';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { artistProfile: currentUserProfile, isProfessional } = useUserType();
   const [showComposeMessage, setShowComposeMessage] = React.useState(false);
+  const [selectedContestId, setSelectedContestId] = React.useState<string | null>(null);
   const isMobile = useIsMobile();
+
+  // Fetch professional's castings for jury evaluation
+  const { data: myCastings } = useQuery({
+    queryKey: ['my-castings-for-jury'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      const { data: profile } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!profile) return [];
+
+      const { data } = await supabase
+        .from('castings')
+        .select('id, title')
+        .eq('professional_profile_id', profile.id)
+        .eq('is_active', true);
+
+      return data || [];
+    },
+    enabled: isProfessional
+  });
+
+  // Get professional profile ID for jury panel
+  const { data: professionalProfileId } = useQuery({
+    queryKey: ['my-professional-profile-id'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data } = await supabase
+        .from('professional_profiles')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      return data?.id || null;
+    },
+    enabled: isProfessional
+  });
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['artist-profile-public', id],
@@ -355,6 +402,55 @@ const ArtistProfile = () => {
             </Card>
           </div>
 
+          {/* Jury Evaluation Panel - Only for professionals with active castings */}
+          {isProfessional && myCastings && myCastings.length > 0 && !isOwnProfile && (
+            <div className="mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Music className="w-5 h-5" />
+                    Évaluation Jury
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {myCastings.length === 1 ? (
+                    <JuryEvaluationPanel
+                      contestId={myCastings[0].id}
+                      artistProfileId={profile.id}
+                      artistName={profile.stage_name}
+                    />
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap gap-2">
+                        {myCastings.map(casting => (
+                          <Button
+                            key={casting.id}
+                            variant={selectedContestId === casting.id ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setSelectedContestId(casting.id)}
+                          >
+                            {casting.title}
+                          </Button>
+                        ))}
+                      </div>
+                      {selectedContestId && (
+                        <JuryEvaluationPanel
+                          contestId={selectedContestId}
+                          artistProfileId={profile.id}
+                          artistName={profile.stage_name}
+                        />
+                      )}
+                      {!selectedContestId && (
+                        <p className="text-muted-foreground text-sm">
+                          Sélectionnez un concours pour évaluer ce candidat.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
         </div>
       </div>
