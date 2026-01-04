@@ -71,7 +71,7 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
 
   const handleViewEvaluations = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/contest-synthesis/${event.id}`);
+    navigate(`/concours/${event.id}/synthese`);
   };
 
   return (
