@@ -73,15 +73,16 @@ const ContestSynthesis = () => {
   const [sortKey, setSortKey] = useState<SortKey>('average');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
-  // Fetch contest info
+  // Fetch contest info from professional_events
   const { data: contest, isLoading: contestLoading } = useQuery({
     queryKey: ['contest-detail', contestId],
     queryFn: async () => {
       if (!contestId) return null;
       const { data, error } = await supabase
-        .from('castings')
+        .from('professional_events')
         .select('*')
         .eq('id', contestId)
+        .eq('event_type', 'concours')
         .single();
       if (error) throw error;
       return data;

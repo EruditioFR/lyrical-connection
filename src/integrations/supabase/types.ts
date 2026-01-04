@@ -1193,7 +1193,7 @@ export type Database = {
             foreignKeyName: "contest_evaluations_contest_id_fkey"
             columns: ["contest_id"]
             isOneToOne: false
-            referencedRelation: "castings"
+            referencedRelation: "professional_events"
             referencedColumns: ["id"]
           },
           {
