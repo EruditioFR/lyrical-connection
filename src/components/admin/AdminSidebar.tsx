@@ -11,7 +11,8 @@ import {
   Music,
   Database,
   Mail,
-  BookOpen
+  BookOpen,
+  Ticket
 } from 'lucide-react';
 import {
   Sidebar,
@@ -44,6 +45,7 @@ const menuGroups = [
     items: [
       { id: "upgrades", title: "Upgrades", icon: CreditCard },
       { id: "payments", title: "Paiements", icon: CreditCard },
+      { id: "promo-codes", title: "Codes Promo", icon: Ticket },
     ]
   },
   {

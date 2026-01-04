@@ -55,6 +55,7 @@ import CastingDetail from '@/pages/CastingDetail';
 import Billing from '@/pages/Billing';
 import CastingDashboardPage from '@/pages/CastingDashboard';
 import Install from '@/pages/Install';
+import SumiJoOnboarding from '@/pages/SumiJoOnboarding';
 
 export const AppRouter = () => {
   return (
@@ -75,7 +76,7 @@ export const AppRouter = () => {
       <Route path="/cookies" element={<CookiesPolicy />} />
       <Route path="/faq" element={<FAQ />} />
       <Route path="/installer" element={<Install />} />
-      
+      <Route path="/sumi-jo" element={<SumiJoOnboarding />} />
       {/* Castings route - accessible publiquement pour afficher la page marketing */}
       <Route path="/castings" element={<Castings />} />
       <Route path="/evenements" element={<Events />} />

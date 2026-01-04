@@ -2,6 +2,7 @@
 import Layout from '@/components/layout/Layout';
 import ProfessionalDashboard from '@/components/dashboard/ProfessionalDashboard';
 import AnalyticsDashboard from '@/components/dashboard/AnalyticsDashboard';
+import SumiJoBanner from '@/components/dashboard/SumiJoBanner';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
 import { Card, CardContent } from '@/components/ui/card';
@@ -71,6 +72,9 @@ const Dashboard = () => {
           <ProfessionalDashboard />
         ) : isArtist ? (
           <div className="space-y-6">
+            {/* Sumi Jo Banner */}
+            <SumiJoBanner artistProfileId={artistProfile?.id} />
+            
             {/* Hero Banner pour artiste */}
             <div 
               className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
