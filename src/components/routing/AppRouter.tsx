@@ -56,6 +56,7 @@ import Billing from '@/pages/Billing';
 import CastingDashboardPage from '@/pages/CastingDashboard';
 import Install from '@/pages/Install';
 import SumiJoOnboarding from '@/pages/SumiJoOnboarding';
+import ContestSynthesis from '@/pages/ContestSynthesis';
 
 export const AppRouter = () => {
   return (
@@ -102,6 +103,7 @@ export const AppRouter = () => {
       <Route path="/candidatures-reçues" element={<AuthGuard><SubscriptionGuard><ReceivedApplications /></SubscriptionGuard></AuthGuard>} />
       <Route path="/professional/castings/:castingId/applications" element={<AuthGuard><SubscriptionGuard><ProfessionalApplications /></SubscriptionGuard></AuthGuard>} />
       <Route path="/professional/casting-applications" element={<AuthGuard><SubscriptionGuard><ProfessionalCastingApplications /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/concours/:contestId/synthese" element={<AuthGuard><SubscriptionGuard><ContestSynthesis /></SubscriptionGuard></AuthGuard>} />
       
       {/* Protected event routes with subscription required */}
       <Route path="/evenements/nouveau" element={<AuthGuard><SubscriptionGuard><CreateEvent /></SubscriptionGuard></AuthGuard>} />

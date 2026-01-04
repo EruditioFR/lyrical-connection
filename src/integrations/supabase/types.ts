@@ -1132,6 +1132,79 @@ export type Database = {
         }
         Relationships: []
       }
+      contest_evaluations: {
+        Row: {
+          artist_profile_id: string
+          average_score: number | null
+          contest_id: string
+          created_at: string
+          evaluator_id: string
+          id: string
+          is_rejected: boolean
+          language_mastery: number | null
+          notes: string | null
+          pitch_accuracy: number | null
+          stage_presence: number | null
+          updated_at: string
+          vocal_quality: number | null
+          vocal_technique: number | null
+        }
+        Insert: {
+          artist_profile_id: string
+          average_score?: number | null
+          contest_id: string
+          created_at?: string
+          evaluator_id: string
+          id?: string
+          is_rejected?: boolean
+          language_mastery?: number | null
+          notes?: string | null
+          pitch_accuracy?: number | null
+          stage_presence?: number | null
+          updated_at?: string
+          vocal_quality?: number | null
+          vocal_technique?: number | null
+        }
+        Update: {
+          artist_profile_id?: string
+          average_score?: number | null
+          contest_id?: string
+          created_at?: string
+          evaluator_id?: string
+          id?: string
+          is_rejected?: boolean
+          language_mastery?: number | null
+          notes?: string | null
+          pitch_accuracy?: number | null
+          stage_presence?: number | null
+          updated_at?: string
+          vocal_quality?: number | null
+          vocal_technique?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_evaluations_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_evaluations_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_evaluations_evaluator_id_fkey"
+            columns: ["evaluator_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custom_criteria: {
         Row: {
           created_at: string
