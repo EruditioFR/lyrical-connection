@@ -37,6 +37,7 @@ import AirPlayer from '@/components/profile/AirPlayer';
 import ArtistPhotoPreview from '@/components/profile/ArtistPhotoPreview';
 import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
+import ArtistBadges from '@/components/profile/ArtistBadges';
 
 const ArtistProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -202,6 +203,8 @@ const ArtistProfile = () => {
                       {profile.stage_name}
                     </h1>
                     
+                    {/* Badges */}
+                    <ArtistBadges artistProfileId={profile.id} className="mb-3" />
                     <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-center gap-4'} text-gray-600 mb-4`}>
                       {profile.voice_type && (
                         <Badge variant="secondary" className="text-sm w-fit">

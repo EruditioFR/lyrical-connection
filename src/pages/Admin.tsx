@@ -13,6 +13,7 @@ import { LyricalWorksManager } from '@/components/admin/LyricalWorksManager';
 import OperaDatabaseManager from '@/components/admin/OperaDatabaseManager';
 import NoticeManager from '@/components/admin/NoticeManager';
 import { QuickResendInvitation } from '@/components/admin/QuickResendInvitation';
+import PromoCodeManager from '@/components/admin/PromoCodeManager';
 import { useUserRoles } from '@/hooks/useUserRoles';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
@@ -75,6 +76,8 @@ const Admin = () => {
         return <AutomatedWorkflows />;
       case 'invitations':
         return <QuickResendInvitation />;
+      case 'promo-codes':
+        return <PromoCodeManager />;
       case 'translations':
         return <div className="p-6">Translation Manager - Coming Soon</div>;
       case 'lyrical-works':
