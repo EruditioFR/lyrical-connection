@@ -32,3 +32,6 @@ verify_jwt = true
 
 [functions.redeem-promo-code]
 verify_jwt = true
+
+[functions.send-contest-results]
+verify_jwt = true
