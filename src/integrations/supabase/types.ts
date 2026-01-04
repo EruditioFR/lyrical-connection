@@ -1137,6 +1137,7 @@ export type Database = {
           artist_profile_id: string
           average_score: number | null
           contest_id: string
+          contest_status: string
           created_at: string
           evaluator_id: string
           id: string
@@ -1153,6 +1154,7 @@ export type Database = {
           artist_profile_id: string
           average_score?: number | null
           contest_id: string
+          contest_status?: string
           created_at?: string
           evaluator_id: string
           id?: string
@@ -1169,6 +1171,7 @@ export type Database = {
           artist_profile_id?: string
           average_score?: number | null
           contest_id?: string
+          contest_status?: string
           created_at?: string
           evaluator_id?: string
           id?: string
