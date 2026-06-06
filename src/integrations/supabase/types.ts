@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -391,53 +391,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "artist_airs_artist_profile_id_fkey"
-            columns: ["artist_profile_id"]
-            isOneToOne: false
-            referencedRelation: "artist_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      artist_badges: {
-        Row: {
-          artist_profile_id: string
-          awarded_at: string
-          awarded_by: string | null
-          badge_icon: string | null
-          badge_name: string
-          badge_type: string
-          expires_at: string | null
-          id: string
-          is_active: boolean
-          metadata: Json | null
-        }
-        Insert: {
-          artist_profile_id: string
-          awarded_at?: string
-          awarded_by?: string | null
-          badge_icon?: string | null
-          badge_name: string
-          badge_type: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          metadata?: Json | null
-        }
-        Update: {
-          artist_profile_id?: string
-          awarded_at?: string
-          awarded_by?: string | null
-          badge_icon?: string | null
-          badge_name?: string
-          badge_type?: string
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          metadata?: Json | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "artist_badges_artist_profile_id_fkey"
             columns: ["artist_profile_id"]
             isOneToOne: false
             referencedRelation: "artist_profiles"
@@ -1131,82 +1084,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }
-      contest_evaluations: {
-        Row: {
-          artist_profile_id: string
-          average_score: number | null
-          contest_id: string
-          contest_status: string
-          created_at: string
-          evaluator_id: string
-          id: string
-          is_rejected: boolean
-          language_mastery: number | null
-          notes: string | null
-          pitch_accuracy: number | null
-          stage_presence: number | null
-          updated_at: string
-          vocal_quality: number | null
-          vocal_technique: number | null
-        }
-        Insert: {
-          artist_profile_id: string
-          average_score?: number | null
-          contest_id: string
-          contest_status?: string
-          created_at?: string
-          evaluator_id: string
-          id?: string
-          is_rejected?: boolean
-          language_mastery?: number | null
-          notes?: string | null
-          pitch_accuracy?: number | null
-          stage_presence?: number | null
-          updated_at?: string
-          vocal_quality?: number | null
-          vocal_technique?: number | null
-        }
-        Update: {
-          artist_profile_id?: string
-          average_score?: number | null
-          contest_id?: string
-          contest_status?: string
-          created_at?: string
-          evaluator_id?: string
-          id?: string
-          is_rejected?: boolean
-          language_mastery?: number | null
-          notes?: string | null
-          pitch_accuracy?: number | null
-          stage_presence?: number | null
-          updated_at?: string
-          vocal_quality?: number | null
-          vocal_technique?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "contest_evaluations_artist_profile_id_fkey"
-            columns: ["artist_profile_id"]
-            isOneToOne: false
-            referencedRelation: "artist_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contest_evaluations_contest_id_fkey"
-            columns: ["contest_id"]
-            isOneToOne: false
-            referencedRelation: "professional_events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contest_evaluations_evaluator_id_fkey"
-            columns: ["evaluator_id"]
-            isOneToOne: false
-            referencedRelation: "professional_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       custom_criteria: {
         Row: {
@@ -2451,119 +2328,6 @@ export type Database = {
           viewer_id?: string | null
         }
         Relationships: []
-      }
-      promo_code_redemptions: {
-        Row: {
-          artist_profile_id: string | null
-          badges_granted: string[] | null
-          id: string
-          promo_code_id: string
-          redeemed_at: string
-          subscription_granted_until: string | null
-          user_id: string
-        }
-        Insert: {
-          artist_profile_id?: string | null
-          badges_granted?: string[] | null
-          id?: string
-          promo_code_id: string
-          redeemed_at?: string
-          subscription_granted_until?: string | null
-          user_id: string
-        }
-        Update: {
-          artist_profile_id?: string | null
-          badges_granted?: string[] | null
-          id?: string
-          promo_code_id?: string
-          redeemed_at?: string
-          subscription_granted_until?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "promo_code_redemptions_artist_profile_id_fkey"
-            columns: ["artist_profile_id"]
-            isOneToOne: false
-            referencedRelation: "artist_profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "promo_code_redemptions_promo_code_id_fkey"
-            columns: ["promo_code_id"]
-            isOneToOne: false
-            referencedRelation: "promo_codes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      promo_codes: {
-        Row: {
-          campaign_name: string
-          code: string
-          created_at: string
-          created_by: string | null
-          current_uses: number
-          description: string | null
-          discount_type: string
-          discount_value: number | null
-          expires_at: string | null
-          id: string
-          is_active: boolean
-          max_uses: number | null
-          metadata: Json | null
-          plan_id: string | null
-          starts_at: string | null
-          subscription_months: number
-          updated_at: string
-        }
-        Insert: {
-          campaign_name: string
-          code: string
-          created_at?: string
-          created_by?: string | null
-          current_uses?: number
-          description?: string | null
-          discount_type?: string
-          discount_value?: number | null
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          max_uses?: number | null
-          metadata?: Json | null
-          plan_id?: string | null
-          starts_at?: string | null
-          subscription_months?: number
-          updated_at?: string
-        }
-        Update: {
-          campaign_name?: string
-          code?: string
-          created_at?: string
-          created_by?: string | null
-          current_uses?: number
-          description?: string | null
-          discount_type?: string
-          discount_value?: number | null
-          expires_at?: string | null
-          id?: string
-          is_active?: boolean
-          max_uses?: number | null
-          metadata?: Json | null
-          plan_id?: string | null
-          starts_at?: string | null
-          subscription_months?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "promo_codes_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_plans"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       saved_searches: {
         Row: {
