@@ -35,7 +35,7 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
 
   const getMenuItems = () => {
