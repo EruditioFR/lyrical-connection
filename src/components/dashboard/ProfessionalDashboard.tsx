@@ -22,6 +22,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
 import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 import ArtistsManagement from '@/components/professional/ArtistsManagement';
+import SectionTitle from '@/components/dashboard/SectionTitle';
 
 const ProfessionalDashboard = () => {
   const { data: events = [] } = useProfessionalEvents();
