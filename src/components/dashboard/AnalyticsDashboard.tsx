@@ -125,7 +125,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
         {/* Daily Views Chart */}
         <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
           <CardHeader>
-            <CardTitle className="text-lyrical-800 dark:text-lyrical-200">Vues quotidiennes</CardTitle>
+            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Vues quotidiennes</CardTitle>
             <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
               Évolution des vues sur les 30 derniers jours
             </CardDescription>
