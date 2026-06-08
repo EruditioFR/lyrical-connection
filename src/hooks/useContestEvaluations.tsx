@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase as any;
 import { useToast } from '@/hooks/use-toast';
 
 export interface ContestEvaluation {
