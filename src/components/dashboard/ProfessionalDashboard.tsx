@@ -239,8 +239,8 @@ const ProfessionalDashboard = () => {
         <TabsContent value="analytics">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+                <TrendingUp className="h-5 w-5 text-gold-600" />
                 Analytiques
               </CardTitle>
             </CardHeader>
