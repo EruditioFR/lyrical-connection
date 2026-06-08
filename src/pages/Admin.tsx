@@ -105,8 +105,15 @@ const Admin = () => {
                 <Menu className="h-4 w-4" />
               </SidebarTrigger>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">Administration</h1>
-                <p className="text-muted-foreground text-sm">Gestion de la plateforme Lyrisphere</p>
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-600 dark:text-gold-400 mb-1">
+                  <span className="h-px w-6 bg-gold-500/60" />
+                  Espace privé
+                </div>
+                <h1 className="text-2xl md:text-3xl font-serif font-semibold tracking-tight text-foreground leading-tight">
+                  Administration
+                </h1>
+                <div className="mt-2 h-[2px] w-12 rounded-full bg-gradient-to-r from-gold-500 to-gold-300" />
+                <p className="text-muted-foreground text-sm mt-2">Gestion de la plateforme Lyrisphere</p>
               </div>
             </div>
             
