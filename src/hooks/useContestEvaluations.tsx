@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase as any;
 import { useToast } from '@/hooks/use-toast';
 
 export interface ContestEvaluation {
@@ -54,7 +55,7 @@ export const useContestEvaluations = (contestId?: string, evaluatorId?: string) 
     queryFn: async (): Promise<ContestEvaluation[]> => {
       if (!contestId) return [];
 
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('contest_evaluations')
         .select('*')
         .eq('contest_id', contestId);
@@ -87,7 +88,7 @@ export const useContestEvaluations = (contestId?: string, evaluatorId?: string) 
 
       const average_score = data.is_rejected ? null : calculateAverage(data);
 
-      const { data: result, error } = await supabase
+      const { data: result, error } = await sb
         .from('contest_evaluations')
         .upsert({
           contest_id: contestId,
@@ -140,7 +141,7 @@ export const useContestSynthesis = (contestId?: string) => {
       if (!contestId) return [];
 
       // Fetch all evaluations for this contest with artist profiles
-      const { data: evaluations, error: evalError } = await supabase
+      const { data: evaluations, error: evalError } = await sb
         .from('contest_evaluations')
         .select(`
           *,

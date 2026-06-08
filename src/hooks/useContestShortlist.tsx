@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase as any;
 import { useToast } from '@/hooks/use-toast';
 
 interface ArtistSynthesis {
@@ -87,7 +88,7 @@ export const useContestShortlist = (contestId?: string) => {
 
       // Update shortlisted candidates
       if (shortlistedIds.length > 0) {
-        const { error: shortlistError } = await supabase
+        const { error: shortlistError } = await sb
           .from('contest_evaluations')
           .update({ contest_status: 'shortlisted' })
           .eq('contest_id', contestId)
@@ -98,7 +99,7 @@ export const useContestShortlist = (contestId?: string) => {
 
       // Update rejected candidates
       if (rejectedIds.length > 0) {
-        const { error: rejectError } = await supabase
+        const { error: rejectError } = await sb
           .from('contest_evaluations')
           .update({ contest_status: 'rejected' })
           .eq('contest_id', contestId)
@@ -180,7 +181,7 @@ export const useContestShortlist = (contestId?: string) => {
     }) => {
       if (!contestId) throw new Error('Contest ID required');
 
-      const { error } = await supabase
+      const { error } = await sb
         .from('contest_evaluations')
         .update({ contest_status: newStatus })
         .eq('contest_id', contestId)

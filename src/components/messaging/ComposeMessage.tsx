@@ -44,7 +44,7 @@ export const ComposeMessage = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [openContactSearch, setOpenContactSearch] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
-  const [autoSaveTimeout, setAutoSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const { sendMessage, isSending, saveDraft } = useMailbox();
   const { toast } = useToast();

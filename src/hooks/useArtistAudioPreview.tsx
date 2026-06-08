@@ -33,7 +33,7 @@ const setGlobalAudioState = (newState: Partial<AudioPreviewState>) => {
 export const useArtistAudioPreview = (artistId: string) => {
   const { airs, getFileUrl } = useArtistAirs(artistId);
   const [localState, setLocalState] = useState(globalAudioState);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout>();
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Subscribe to global state changes
   useEffect(() => {
