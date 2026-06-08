@@ -22,6 +22,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
 import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 import ArtistsManagement from '@/components/professional/ArtistsManagement';
+import SectionTitle from '@/components/dashboard/SectionTitle';
 
 const ProfessionalDashboard = () => {
   const { data: events = [] } = useProfessionalEvents();
@@ -61,7 +62,14 @@ const ProfessionalDashboard = () => {
       </div>
 
       {/* En-tête avec statistiques */}
+      <SectionTitle
+        eyebrow="Aperçu"
+        title="Vos chiffres clés"
+        subtitle="Une vue d'ensemble de votre activité sur la plateforme."
+        size="md"
+      />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Événements publiés</CardTitle>
@@ -118,8 +126,8 @@ const ProfessionalDashboard = () => {
             {/* Événements récents */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
+                <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+                  <Calendar className="h-5 w-5 text-gold-600" />
                   Événements récents
                 </CardTitle>
               </CardHeader>
@@ -165,7 +173,7 @@ const ProfessionalDashboard = () => {
             {/* Actions rapides */}
             <Card>
               <CardHeader>
-                <CardTitle>Actions rapides</CardTitle>
+                <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Actions rapides</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button asChild className="w-full justify-start">
@@ -208,7 +216,7 @@ const ProfessionalDashboard = () => {
         <TabsContent value="events">
           <Card>
             <CardHeader>
-              <CardTitle>Mes événements</CardTitle>
+              <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Mes événements</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center">
@@ -231,8 +239,8 @@ const ProfessionalDashboard = () => {
         <TabsContent value="analytics">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+                <TrendingUp className="h-5 w-5 text-gold-600" />
                 Analytiques
               </CardTitle>
             </CardHeader>
