@@ -62,7 +62,14 @@ const ProfessionalDashboard = () => {
       </div>
 
       {/* En-tête avec statistiques */}
+      <SectionTitle
+        eyebrow="Aperçu"
+        title="Vos chiffres clés"
+        subtitle="Une vue d'ensemble de votre activité sur la plateforme."
+        size="md"
+      />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Événements publiés</CardTitle>
