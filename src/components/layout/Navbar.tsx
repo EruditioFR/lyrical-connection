@@ -216,9 +216,11 @@ const Navbar = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div> : <>
-              <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
-                {t('navigation:login')}
-              </Button>
+              {!isMobile && (
+                <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
+                  {t('navigation:login')}
+                </Button>
+              )}
               <Button size="sm" onClick={() => navigate('/auth?tab=signup')}>
                 {t('navigation:register')}
               </Button>
@@ -334,6 +336,31 @@ const Navbar = () => {
             ) : (
               /* Menu pour visiteurs non connectés */
               <>
+                {/* Bloc authentification en tête */}
+                <div className="space-y-2 pb-3 border-b">
+                  <Button
+                    size="lg"
+                    className="w-full"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate('/auth?tab=signup');
+                    }}
+                  >
+                    {t('navigation:register')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate('/auth');
+                    }}
+                  >
+                    {t('navigation:login')}
+                  </Button>
+                </div>
+
                 <div className="text-sm font-semibold text-gray-900 border-b pb-2">
                   Découvrir Lyrisphere
                 </div>
