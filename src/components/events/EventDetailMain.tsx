@@ -71,7 +71,7 @@ const EventDetailMain: React.FC<EventDetailMainProps> = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-white mb-4">
               Cet événement dispose d'un règlement spécifique incluant les conditions de participation, 
               le code de conduite et la politique d'annulation.
             </p>
