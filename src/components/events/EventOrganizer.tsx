@@ -20,11 +20,11 @@ const EventOrganizer: React.FC<EventOrganizerProps> = ({ professionalProfile }) 
           {professionalProfile.company_name}
         </h3>
         {professionalProfile.bio && (
-          <p className="text-muted-foreground">
+          <p className="text-white">
             {professionalProfile.bio}
           </p>
         )}
-        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap gap-4 text-sm text-white">
           {professionalProfile.location && (
             <div className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />

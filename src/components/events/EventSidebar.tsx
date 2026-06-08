@@ -39,22 +39,22 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
         
         <div className="space-y-4 mb-6">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Date de début</span>
+            <span className="text-white">Date de début</span>
             <span className="font-medium">{format(new Date(event.start_date), 'dd/MM/yyyy HH:mm', { locale: fr })}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Date de fin</span>
+            <span className="text-white">Date de fin</span>
             <span className="font-medium">{format(new Date(event.end_date), 'dd/MM/yyyy HH:mm', { locale: fr })}</span>
           </div>
           {event.registration_deadline && (
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Date limite d'inscription</span>
+              <span className="text-white">Date limite d'inscription</span>
               <span className="font-medium">{format(new Date(event.registration_deadline), 'dd/MM/yyyy', { locale: fr })}</span>
             </div>
           )}
           {event.price && (
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Prix</span>
+              <span className="text-white">Prix</span>
               <span className="font-medium">
                 {event.price} {event.currency || 'EUR'} ({getCurrencySymbol(event.currency || 'EUR')})
               </span>
@@ -62,12 +62,12 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
           )}
           {event.max_participants && (
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Places disponibles</span>
+              <span className="text-white">Places disponibles</span>
               <span className="font-medium">{event.max_participants - applicationsCount} / {event.max_participants}</span>
             </div>
           )}
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Inscriptions</span>
+            <span className="text-white">Inscriptions</span>
             <span className="font-medium">{applicationsCount}</span>
           </div>
         </div>
