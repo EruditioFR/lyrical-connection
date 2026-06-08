@@ -76,7 +76,7 @@ const PromoCodeManager = () => {
   const { data: promoCodes = [], isLoading } = useQuery({
     queryKey: ['adminPromoCodes'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('promo_codes')
         .select('*')
         .order('created_at', { ascending: false });
@@ -92,7 +92,7 @@ const PromoCodeManager = () => {
     queryFn: async () => {
       if (!selectedCode) return [];
       
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('promo_code_redemptions')
         .select(`
           id,
@@ -119,7 +119,7 @@ const PromoCodeManager = () => {
       if (data.badge_name) metadata.badge_name = data.badge_name;
       if (data.badge_icon) metadata.badge_icon = data.badge_icon;
 
-      const { error } = await supabase
+      const { error } = await sb
         .from('promo_codes')
         .insert({
           code: data.code.toUpperCase().trim(),
@@ -149,7 +149,7 @@ const PromoCodeManager = () => {
   // Toggle active mutation
   const toggleActiveMutation = useMutation({
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      const { error } = await supabase
+      const { error } = await sb
         .from('promo_codes')
         .update({ is_active: isActive })
         .eq('id', id);
@@ -165,7 +165,7 @@ const PromoCodeManager = () => {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await sb
         .from('promo_codes')
         .delete()
         .eq('id', id);
