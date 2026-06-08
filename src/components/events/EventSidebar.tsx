@@ -78,7 +78,7 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
             <Card className="bg-muted/50">
               <CardContent className="p-4 space-y-3">
                 <h4 className="font-medium text-sm">Mon inscription</h4>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 text-sm text-white">
                   <Calendar className="w-4 h-4" />
                   Inscrit le {format(new Date(artistApplication.applied_at), 'dd MMMM yyyy', { locale: fr })}
                 </div>
