@@ -173,7 +173,7 @@ const ProfessionalDashboard = () => {
             {/* Actions rapides */}
             <Card>
               <CardHeader>
-                <CardTitle>Actions rapides</CardTitle>
+                <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Actions rapides</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button asChild className="w-full justify-start">
