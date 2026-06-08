@@ -51,7 +51,7 @@ const EventRulesModal: React.FC<EventRulesModalProps> = ({
             {event.participation_rules && (
               <div>
                 <h3 className="font-semibold text-lg mb-3">Conditions de participation</h3>
-                <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                <p className="text-white whitespace-pre-wrap leading-relaxed">
                   {event.participation_rules}
                 </p>
               </div>
@@ -62,7 +62,7 @@ const EventRulesModal: React.FC<EventRulesModalProps> = ({
                 {event.participation_rules && <Separator />}
                 <div>
                   <h3 className="font-semibold text-lg mb-3">Code de conduite</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                <p className="text-white whitespace-pre-wrap leading-relaxed">
                     {event.code_of_conduct}
                   </p>
                 </div>
@@ -74,7 +74,7 @@ const EventRulesModal: React.FC<EventRulesModalProps> = ({
                 {(event.participation_rules || event.code_of_conduct) && <Separator />}
                 <div>
                   <h3 className="font-semibold text-lg mb-3">Politique d'annulation</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                <p className="text-white whitespace-pre-wrap leading-relaxed">
                     {event.cancellation_policy}
                   </p>
                 </div>
@@ -86,7 +86,7 @@ const EventRulesModal: React.FC<EventRulesModalProps> = ({
                 {(event.participation_rules || event.code_of_conduct || event.cancellation_policy) && <Separator />}
                 <div>
                   <h3 className="font-semibold text-lg mb-3">Décharge de responsabilité</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                  <p className="text-white whitespace-pre-wrap leading-relaxed">
                     {event.liability_waiver}
                   </p>
                 </div>
