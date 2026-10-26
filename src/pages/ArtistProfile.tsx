@@ -39,6 +39,7 @@ import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ArtistBadges from '@/components/profile/ArtistBadges';
 import JuryEvaluationPanel from '@/components/jury/JuryEvaluationPanel';
+import ProfessionalArtistTools from '@/components/professional/ProfessionalArtistTools';
 
 
 const ArtistProfile = () => {
@@ -378,6 +379,17 @@ const ArtistProfile = () => {
                   <ArtistPhotoPreview artistProfileId={profile.id} />
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {/* Suivi privé du professionnel : listes de projet, notes, étiquettes */}
+          {isProfessional && !isOwnProfile && professionalProfileId && (
+            <div className="mb-8">
+              <ProfessionalArtistTools
+                professionalProfileId={professionalProfileId}
+                artistProfileId={profile.id}
+                artistName={profile.stage_name}
+              />
             </div>
           )}
 

@@ -40,7 +40,7 @@ for (const [path, title] of publicPages) {
 const privatePages = [
   '/dashboard', '/profil', '/profil-professionnel', '/messages', '/notifications',
   '/mes-candidatures', '/mes-evenements', '/recherche-artistes', '/casting-dashboard',
-  '/castings/nouveau', '/evenements/nouveau', '/facturation', '/subscription', '/admin',
+  '/castings/nouveau', '/evenements/nouveau', '/facturation', '/subscription', '/admin', '/comparer',
 ];
 
 for (const path of privatePages) {

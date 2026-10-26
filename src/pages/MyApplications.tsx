@@ -59,7 +59,7 @@ const MyApplications = () => {
       accepted: { label: 'Accepté', variant: 'default' as const, icon: CheckCircle },
       rejected: { label: 'Refusé', variant: 'destructive' as const, icon: XCircle },
       withdrawn: { label: 'Retiré', variant: 'outline' as const, icon: AlertCircle },
-      waitlisted: { label: 'Liste d\'attente', variant: 'secondary' as const, icon: AlertCircle },
+      waitlisted: { label: 'Présélectionné(e)', variant: 'default' as const, icon: Eye },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig];
@@ -203,7 +203,7 @@ const MyApplications = () => {
               Refusées ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'rejected').length})
             </TabsTrigger>
             <TabsTrigger value="waitlisted">
-              En attente ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'waitlisted').length})
+              Présélectionnées ({typeFilteredApplications.filter(a => getEffectiveStatus(a) === 'waitlisted').length})
             </TabsTrigger>
           </TabsList>
 

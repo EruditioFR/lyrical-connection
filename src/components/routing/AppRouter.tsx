@@ -24,6 +24,7 @@ import EventDetail from '@/pages/EventDetail';
 import ProfessionalEvents from '@/pages/ProfessionalEvents';
 import ArtistsList from '@/pages/ArtistsList';
 import ArtistSearch from '@/pages/ArtistSearch';
+import CompareArtists from '@/pages/CompareArtists';
 import Messages from '@/pages/Messages';
 import ProfessionalMessages from '@/pages/ProfessionalMessages';
 import Pricing from '@/pages/Pricing';
@@ -114,6 +115,7 @@ export const AppRouter = () => {
       
       {/* Protected artist routes with subscription required */}
       <Route path="/recherche-artistes" element={<AuthGuard><SubscriptionGuard><ArtistSearch /></SubscriptionGuard></AuthGuard>} />
+      <Route path="/comparer" element={<AuthGuard><SubscriptionGuard><CompareArtists /></SubscriptionGuard></AuthGuard>} />
       
       {/* Protected professional routes with subscription required */}
       <Route path="/professionnels/:id" element={<AuthGuard><SubscriptionGuard><ProfessionalDetail /></SubscriptionGuard></AuthGuard>} />

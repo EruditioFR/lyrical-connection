@@ -1916,6 +1916,125 @@ export type Database = {
         }
         Relationships: []
       }
+      professional_artist_list_items: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          list_id: string
+          role_name: string | null
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          list_id: string
+          role_name?: string | null
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          list_id?: string
+          role_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_artist_list_items_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_artist_list_items_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "professional_artist_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_artist_lists: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          professional_profile_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          professional_profile_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          professional_profile_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_artist_lists_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_artist_notes: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          note: string
+          professional_profile_id: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          note?: string
+          professional_profile_id: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          professional_profile_id?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_artist_notes_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_artist_notes_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_availability: {
         Row: {
           created_at: string

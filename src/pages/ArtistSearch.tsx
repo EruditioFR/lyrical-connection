@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import SearchFilters from '@/components/artists/SearchFilters';
 import ArtistsGrid from '@/components/artists/ArtistsGrid';
@@ -22,6 +22,9 @@ const ArtistSearch = () => {
   const [location, setLocation] = useState('');
   const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
   const [showSavedSearches, setShowSavedSearches] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const toggleCompare = (id: string) =>
+    setCompareIds(ids => ids.includes(id) ? ids.filter(i => i !== id) : ids.length < 4 ? [...ids, id] : ids);
 
   const filters = {
     searchTerm,
@@ -262,7 +265,27 @@ const ArtistSearch = () => {
           searchQuery={searchTerm}
           selectedVoiceTypes={selectedVoiceTypes}
           onResetFilters={handleResetFilters}
+          compareIds={compareIds}
+          onToggleCompare={toggleCompare}
         />
+
+        {/* Barre du comparateur */}
+        {compareIds.length > 0 && (
+          <div className="sticky bottom-4 z-20 mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4 shadow-lg">
+            <p className="text-sm">
+              {compareIds.length} artiste(s) sélectionné(s) — jusqu'à 4
+            </p>
+            <div className="flex gap-2">
+              <Button variant="ghost" onClick={() => setCompareIds([])}>Effacer</Button>
+              <Button asChild disabled={compareIds.length < 2}>
+                <Link to={`/comparer?ids=${compareIds.join(',')}`} aria-disabled={compareIds.length < 2}
+                  onClick={e => { if (compareIds.length < 2) e.preventDefault(); }}>
+                  Comparer
+                </Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );

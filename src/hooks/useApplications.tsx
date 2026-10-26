@@ -9,7 +9,7 @@ type ApplicationInsert = TablesInsert<'applications'>;
 type ApplicationUpdate = TablesUpdate<'applications'>;
 
 // Application avec les données liées incluant le profil artiste complet
-type ApplicationWithDetails = Application & {
+export type ApplicationWithDetails = Application & {
   castings?: Tables<'castings'>;
   artist_profiles?: {
     id: string;
@@ -253,7 +253,7 @@ export const useApplicationStats = (castingId: string) => {
       const stats = {
         total: data.length,
         pending: data.filter(app => app.status === 'pending').length,
-        shortlisted: data.filter(app => app.status === 'shortlisted').length,
+        waitlisted: data.filter(app => app.status === 'waitlisted').length,
         accepted: data.filter(app => app.status === 'accepted').length,
         rejected: data.filter(app => app.status === 'rejected').length,
       };

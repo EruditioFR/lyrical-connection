@@ -15,8 +15,11 @@ import { useAuth } from '@/hooks/useAuth';
 import { 
   Calendar, MapPin, User, FileText, MessageSquare,
   Clock, CheckCircle, XCircle, AlertCircle,
-  Loader2, Save
+  Loader2, Save, List, Columns3, CalendarClock
 } from 'lucide-react';
+import ApplicationsPipeline from '@/components/casting/ApplicationsPipeline';
+import AuditionScheduler from '@/components/casting/AuditionScheduler';
+import type { ApplicationStatus } from '@/constants/applicationStatus';
 
 const ProfessionalApplications = () => {
   const { castingId } = useParams<{ castingId: string }>();
@@ -25,6 +28,7 @@ const ProfessionalApplications = () => {
   const { applications, isLoading: applicationsLoading } = useCastingApplications(castingId!);
   const { mutate: updateApplication, isPending: isUpdating } = useUpdateApplication();
   const [activeTab, setActiveTab] = useState('all');
+  const [view, setView] = useState('list');
   const [selectedApplication, setSelectedApplication] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [auditionDate, setAuditionDate] = useState('');
@@ -33,7 +37,7 @@ const ProfessionalApplications = () => {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending: { label: 'En attente', variant: 'secondary' as const, icon: Clock },
-      shortlisted: { label: 'Présélectionné', variant: 'default' as const, icon: AlertCircle },
+      waitlisted: { label: 'Présélectionné', variant: 'default' as const, icon: AlertCircle },
       accepted: { label: 'Accepté', variant: 'default' as const, icon: CheckCircle },
       rejected: { label: 'Refusé', variant: 'destructive' as const, icon: XCircle },
     };
@@ -50,7 +54,7 @@ const ProfessionalApplications = () => {
     );
   };
 
-  const handleStatusChange = (applicationId: string, newStatus: string) => {
+  const handleStatusChange = (applicationId: string, newStatus: ApplicationStatus) => {
     updateApplication({
       id: applicationId,
       updates: { status: newStatus }
@@ -115,16 +119,50 @@ const ProfessionalApplications = () => {
           </p>
         </div>
 
+        <Tabs value={view} onValueChange={setView}>
+          <TabsList className="mb-6 h-auto flex-wrap justify-start">
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              Liste
+            </TabsTrigger>
+            <TabsTrigger value="pipeline" className="flex items-center gap-2">
+              <Columns3 className="h-4 w-4" />
+              Pipeline
+            </TabsTrigger>
+            <TabsTrigger value="planning" className="flex items-center gap-2">
+              <CalendarClock className="h-4 w-4" />
+              Planning des auditions
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="pipeline">
+            <ApplicationsPipeline
+              applications={applications}
+              castingTitle={casting?.title || 'casting'}
+              isUpdating={isUpdating}
+              onMove={handleStatusChange}
+            />
+          </TabsContent>
+
+          <TabsContent value="planning">
+            <AuditionScheduler
+              applications={applications}
+              castingTitle={casting?.title || 'casting'}
+              defaultLocation={casting?.audition_location}
+            />
+          </TabsContent>
+
+          <TabsContent value="list">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList>
+          <TabsList className="h-auto flex-wrap justify-start">
             <TabsTrigger value="all">
               Toutes ({applications.length})
             </TabsTrigger>
             <TabsTrigger value="pending">
               En attente ({applications.filter(a => a.status === 'pending').length})
             </TabsTrigger>
-            <TabsTrigger value="shortlisted">
-              Présélectionnées ({applications.filter(a => a.status === 'shortlisted').length})
+            <TabsTrigger value="waitlisted">
+              Présélectionnées ({applications.filter(a => a.status === 'waitlisted').length})
             </TabsTrigger>
             <TabsTrigger value="accepted">
               Acceptées ({applications.filter(a => a.status === 'accepted').length})
@@ -250,8 +288,8 @@ const ProfessionalApplications = () => {
                           </Button>
                           <Button
                             size="sm"
-                            variant={application.status === 'shortlisted' ? 'default' : 'outline'}
-                            onClick={() => handleStatusChange(application.id, 'shortlisted')}
+                            variant={application.status === 'waitlisted' ? 'default' : 'outline'}
+                            onClick={() => handleStatusChange(application.id, 'waitlisted')}
                             disabled={isUpdating}
                           >
                             Présélectionner
@@ -347,6 +385,8 @@ const ProfessionalApplications = () => {
                 ))}
               </div>
             )}
+          </TabsContent>
+        </Tabs>
           </TabsContent>
         </Tabs>
       </div>

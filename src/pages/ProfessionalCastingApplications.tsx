@@ -108,7 +108,7 @@ const ProfessionalCastingApplications = () => {
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       pending: { label: 'En attente', variant: 'secondary' as const },
-      shortlisted: { label: 'Présélectionné', variant: 'outline' as const },
+      waitlisted: { label: 'Présélectionné', variant: 'outline' as const },
       accepted: { label: 'Accepté', variant: 'default' as const },
       rejected: { label: 'Refusé', variant: 'destructive' as const },
     };
@@ -125,7 +125,7 @@ const ProfessionalCastingApplications = () => {
   const statusCounts = {
     all: applications?.length || 0,
     pending: applications?.filter(app => app.status === 'pending').length || 0,
-    shortlisted: applications?.filter(app => app.status === 'shortlisted').length || 0,
+    waitlisted: applications?.filter(app => app.status === 'waitlisted').length || 0,
     accepted: applications?.filter(app => app.status === 'accepted').length || 0,
     rejected: applications?.filter(app => app.status === 'rejected').length || 0,
   };
@@ -232,11 +232,11 @@ const ProfessionalCastingApplications = () => {
                     En attente ({statusCounts.pending})
                   </Button>
                   <Button
-                    variant={statusFilter === 'shortlisted' ? 'default' : 'outline'}
-                    onClick={() => setStatusFilter('shortlisted')}
+                    variant={statusFilter === 'waitlisted' ? 'default' : 'outline'}
+                    onClick={() => setStatusFilter('waitlisted')}
                     size="sm"
                   >
-                    Présélectionnés ({statusCounts.shortlisted})
+                    Présélectionnés ({statusCounts.waitlisted})
                   </Button>
                   <Button
                     variant={statusFilter === 'accepted' ? 'default' : 'outline'}
@@ -261,7 +261,7 @@ const ProfessionalCastingApplications = () => {
                         {statusFilter === 'all' 
                           ? 'Aucune candidature trouvée pour ce casting.'
                           : `Aucune candidature ${statusFilter === 'pending' ? 'en attente' : 
-                            statusFilter === 'shortlisted' ? 'présélectionnée' :
+                            statusFilter === 'waitlisted' ? 'présélectionnée' :
                             statusFilter === 'accepted' ? 'acceptée' : 'refusée'} trouvée.`
                         }
                       </p>
@@ -393,7 +393,7 @@ const ProfessionalCastingApplications = () => {
                                 size="sm"
                                 onClick={() => updateApplication.mutate({ 
                                   id: application.id, 
-                                  updates: { status: 'shortlisted' }
+                                  updates: { status: 'waitlisted' }
                                 })}
                                 disabled={updateApplication.isPending}
                               >
@@ -459,7 +459,7 @@ const ProfessionalCastingApplications = () => {
                         {Object.entries(statistics.statusStats).map(([status, count]) => (
                           <div key={status} className="flex justify-between">
                             <span>{status === 'pending' ? 'En attente' : 
-                                   status === 'shortlisted' ? 'Présélectionnés' :
+                                   status === 'waitlisted' ? 'Présélectionnés' :
                                    status === 'accepted' ? 'Acceptés' : 'Refusés'}</span>
                             <span className="font-bold">{count as number}</span>
                           </div>

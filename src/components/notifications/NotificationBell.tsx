@@ -143,7 +143,7 @@ const NotificationBell = () => {
                         <span className={`text-xs font-medium ${getStatusColor(notification.data.status)}`}>
                           Statut: {notification.data.status === 'accepted' ? 'Accepté' : 
                                   notification.data.status === 'rejected' ? 'Refusé' :
-                                  notification.data.status === 'waitlisted' ? 'Liste d\'attente' :
+                                  notification.data.status === 'waitlisted' ? 'Présélectionné(e)' :
                                   notification.data.status === 'shortlisted' ? 'Présélectionné' : 'En attente'}
                         </span>
                       </div>

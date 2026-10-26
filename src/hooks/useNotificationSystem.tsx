@@ -218,7 +218,7 @@ const getStatusText = (status: string): string => {
     case 'rejected':
       return 'refusé(e)';
     case 'waitlisted':
-      return 'mis(e) en liste d\'attente';
+      return 'présélectionné(e)';
     case 'shortlisted':
       return 'présélectionné(e)';
     case 'pending':
