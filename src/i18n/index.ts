@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 
-const resources = {
+export const resources = {
   fr: {
     common: {
       loading: 'Chargement...',
@@ -475,11 +475,7 @@ const resources = {
         subtitle: '오페라 가수와 오페라 전문가들을 위한 최초의 플랫폼입니다. 프로필을 만들고, 기회를 발견하고, 경력을 발전시키세요.',
         createProfile: '내 프로필 만들기',
         discoverArtists: '아티스트 발견',
-        stats: {
-          artists: '아티스트',
-          professionals: '전문가',
-          events: '이벤트'
-        }
+        tagline: '아티스트, 전문가, 기회. 성악의 모든 세계가 한곳에.'
       },
       features: {
         title: '오페라계 모든 참여자를 위해 설계된 플랫폼',

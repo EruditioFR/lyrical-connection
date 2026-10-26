@@ -269,9 +269,12 @@ export const useUpdateEvent = () => {
     mutationFn: async (updatedEvent: Event) => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      // applications_count is computed client-side, not a table column
+      const { applications_count, ...eventColumns } = updatedEvent;
+
       const { data, error } = await supabase
         .from('professional_events')
-        .update(updatedEvent)
+        .update(eventColumns)
         .eq('id', updatedEvent.id)
         .select()
         .single();

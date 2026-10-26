@@ -187,9 +187,11 @@ export const useOperaDatabase = (filters?: {
   // Update aria
   const updateAria = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<AriaWithDetails> }) => {
+      // Joined relations are not columns of the arias table
+      const { lyrical_works, work_roles, aria_texts, sheet_music, opera_recordings, ...ariaColumns } = data;
       const { data: updatedData, error } = await supabase
         .from('arias')
-        .update(data)
+        .update(ariaColumns)
         .eq('id', id)
         .select()
         .single();

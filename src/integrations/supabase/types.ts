@@ -398,6 +398,45 @@ export type Database = {
           },
         ]
       }
+      artist_badges: {
+        Row: {
+          artist_profile_id: string
+          awarded_at: string
+          awarded_by: string | null
+          badge_icon: string | null
+          badge_name: string
+          badge_type: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          metadata: Json | null
+        }
+        Insert: {
+          artist_profile_id: string
+          awarded_at?: string
+          awarded_by?: string | null
+          badge_icon?: string | null
+          badge_name: string
+          badge_type: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json | null
+        }
+        Update: {
+          artist_profile_id?: string
+          awarded_at?: string
+          awarded_by?: string | null
+          badge_icon?: string | null
+          badge_name?: string
+          badge_type?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
       artist_evaluations: {
         Row: {
           artist_profile_id: string
