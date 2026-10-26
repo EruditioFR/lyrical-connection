@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+// artist_badges n'existe pas dans les types générés -> client casté
+const sb = supabase as any;
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -86,7 +88,7 @@ export const useArtistBadges = (artistProfileId: string | undefined) => {
     queryFn: async (): Promise<ArtistBadge[]> => {
       if (!artistProfileId) return [];
 
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('artist_badges')
         .select('*')
         .eq('artist_profile_id', artistProfileId)

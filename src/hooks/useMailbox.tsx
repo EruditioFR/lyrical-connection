@@ -376,7 +376,9 @@ export const useMailbox = () => {
       console.log('Champ à mettre à jour:', updateField);
       
       // Créer l'objet de mise à jour
-      const updateData = isSender ? { is_deleted_by_sender: true } : { is_deleted_by_recipient: true };
+      const updateData = isSender
+        ? { is_deleted_by_sender: true }
+        : { is_deleted_by_recipient: true };
       console.log('Données de mise à jour:', updateData);
 
       // Effectuer la mise à jour
