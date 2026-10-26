@@ -376,7 +376,9 @@ export const useMailbox = () => {
       console.log('Champ à mettre à jour:', updateField);
       
       // Créer l'objet de mise à jour
-      const updateData = { [updateField]: true };
+      const updateData = isSender
+        ? { is_deleted_by_sender: true }
+        : { is_deleted_by_recipient: true };
       console.log('Données de mise à jour:', updateData);
 
       // Effectuer la mise à jour
@@ -525,7 +527,7 @@ export const useMailbox = () => {
       const updateField = isSender ? 'is_deleted_by_sender' : 'is_deleted_by_recipient';
       const { error } = await supabase
         .from('mail_messages')
-        .update({ [updateField]: false })
+        .update(isSender ? { is_deleted_by_sender: false } : { is_deleted_by_recipient: false })
         .eq('id', messageId);
 
       if (error) throw error;
