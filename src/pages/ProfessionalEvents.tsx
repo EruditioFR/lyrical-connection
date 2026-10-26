@@ -69,11 +69,6 @@ const ProfessionalEvents = () => {
             <p className="text-gray-600 mt-2">
               Gérez vos masterclass, stages et concours avec un formulaire amélioré
             </p>
-            <div className="mt-2 text-xs text-gray-500">
-              <p>Utilisateur: {user?.email}</p>
-              <p>Événements trouvés: {events.length}</p>
-              {error && <p className="text-red-500">Erreur: {error.message}</p>}
-            </div>
           </div>
           <div className="flex gap-2">
             <Button 
