@@ -102,17 +102,23 @@
 
   body {
     @apply bg-background text-foreground font-body;
+    font-size: 1rem;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
-  h1 {
-    @apply font-serif text-gold-600;
-    line-height: 1.3;
-  }
-
-  h2, h3, h4, h5, h6 {
+  /* Titres en serif, couleur héritée du texte (lisible sur fond clair comme sombre) ;
+     petits titres en sans-serif */
+  h1, h2, h3 {
     @apply font-serif;
-    line-height: 1.3;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  h4, h5, h6 {
+    @apply font-body font-semibold;
+    line-height: 1.4;
   }
 
   /* Typography utility classes */

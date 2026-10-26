@@ -131,7 +131,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
               </div>
               <p className="text-sm">{key.french_text}</p>
               {key.context && (
-                <p className="text-xs text-gray-600 mt-2 italic">
+                <p className="text-xs text-muted-foreground mt-2 italic">
                   Contexte: {key.context}
                 </p>
               )}
@@ -240,7 +240,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
                         ) : translation ? (
                           <p className="text-sm">{translation.translated_text}</p>
                         ) : (
-                          <p className="text-sm text-gray-400 italic">
+                          <p className="text-sm text-muted-foreground italic">
                             Traduction manquante
                           </p>
                         )}
@@ -257,7 +257,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
       {translationKeys.length === 0 && (
         <Card>
           <CardContent className="p-8 text-center">
-            <p className="text-gray-500">Aucune clé de traduction trouvée.</p>
+            <p className="text-muted-foreground">Aucune clé de traduction trouvée.</p>
           </CardContent>
         </Card>
       )}

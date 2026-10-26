@@ -20,7 +20,7 @@ const MailIcon = () => {
       onClick={handleClick}
       className="relative p-2 hover:bg-gray-100"
     >
-      <Mail className="h-5 w-5 text-gray-600" />
+      <Mail className="h-5 w-5 text-muted-foreground" />
       {unreadCount > 0 && (
         <Badge
           variant="destructive"

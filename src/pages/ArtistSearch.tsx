@@ -184,8 +184,8 @@ const ArtistSearch = () => {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Recherche d'artistes</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-foreground">Recherche d'artistes</h1>
+            <p className="text-muted-foreground mt-2">
               Trouvez les artistes parfaits pour vos productions
             </p>
           </div>
@@ -245,7 +245,7 @@ const ArtistSearch = () => {
 
         {/* Indicateur de critères actifs */}
         {hasActiveFilters && (
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-4 text-sm text-muted-foreground">
             <span className="font-medium">Critères actifs :</span>
             {searchTerm && <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-md">"{searchTerm}"</span>}
             {voiceType && <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-md">{voiceType}</span>}

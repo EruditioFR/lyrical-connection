@@ -314,8 +314,8 @@ const Auth = () => {
                 </div>
                 
                 <div className="text-left space-y-2">
-                  <h4 className="font-medium text-gray-900">Étapes suivantes :</h4>
-                  <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                  <h4 className="font-medium text-foreground">Étapes suivantes :</h4>
+                  <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
                     <li>Vérifiez votre boîte de réception (et dossier spam)</li>
                     <li>Cliquez sur le lien de confirmation dans l'email</li>
                     <li>Vous pourrez ensuite vous connecter à votre compte</li>

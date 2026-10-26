@@ -108,7 +108,7 @@ const AutomatedWorkflows = () => {
                   {workflow.active ? (
                     <CheckCircle2 className="h-5 w-5 text-green-500" />
                   ) : (
-                    <AlertCircle className="h-5 w-5 text-gray-400" />
+                    <AlertCircle className="h-5 w-5 text-muted-foreground" />
                   )}
                   <div>
                     <p className="font-medium">{workflow.name}</p>

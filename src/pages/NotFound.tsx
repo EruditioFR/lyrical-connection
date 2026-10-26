@@ -19,7 +19,7 @@ const NotFound = () => {
     <Layout>
       <div className="min-h-[70vh] flex flex-col items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
-          <h1 className="text-9xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-lyrical-700 to-gold-500">404</h1>
+          <h1 className="text-9xl font-serif font-bold text-foreground">404</h1>
           <h2 className="text-2xl md:text-3xl font-serif font-bold mt-4 mb-6">Page non trouvée</h2>
           <p className="text-muted-foreground mb-8">
             La page que vous recherchez n'existe pas ou a été déplacée.

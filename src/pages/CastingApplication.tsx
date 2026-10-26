@@ -56,10 +56,10 @@ const CastingApplication = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Connexion requise
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             Vous devez être connecté pour postuler à un casting.
           </p>
           <Button onClick={() => navigate('/auth')}>
@@ -84,7 +84,7 @@ const CastingApplication = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Casting non trouvé
           </h1>
           <Button onClick={() => navigate('/castings')}>
@@ -108,10 +108,10 @@ const CastingApplication = () => {
             Retour au casting
           </Button>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Postuler : {casting.title}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Complétez votre candidature pour ce casting
           </p>
         </div>
@@ -210,20 +210,20 @@ const CastingApplication = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-1">Titre</h4>
-                  <p className="text-gray-700">{casting.title}</p>
+                  <h4 className="font-medium text-foreground mb-1">Titre</h4>
+                  <p className="text-muted-foreground">{casting.title}</p>
                 </div>
 
                 {casting.location && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Lieu</h4>
-                    <p className="text-gray-700">{casting.location}</p>
+                    <h4 className="font-medium text-foreground mb-1">Lieu</h4>
+                    <p className="text-muted-foreground">{casting.location}</p>
                   </div>
                 )}
 
                 {casting.application_deadline && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Date limite</h4>
+                    <h4 className="font-medium text-foreground mb-1">Date limite</h4>
                     <p className="text-red-600 font-medium">
                       {new Date(casting.application_deadline).toLocaleDateString('fr-FR')}
                     </p>
@@ -232,8 +232,8 @@ const CastingApplication = () => {
 
                 {casting.required_voice_types && casting.required_voice_types.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Types de voix</h4>
-                    <p className="text-gray-700">
+                    <h4 className="font-medium text-foreground mb-1">Types de voix</h4>
+                    <p className="text-muted-foreground">
                       {casting.required_voice_types.join(', ')}
                     </p>
                   </div>

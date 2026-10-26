@@ -155,8 +155,8 @@ const ProfessionalCastingApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Candidatures aux Castings</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">Candidatures aux Castings</h1>
+          <p className="text-muted-foreground mt-2">
             Gérez les candidatures reçues pour vos castings avec des statistiques détaillées
           </p>
         </div>
@@ -179,8 +179,8 @@ const ProfessionalCastingApplications = () => {
         {selectedCasting && selectedCastingInfo && (
           <div className="mb-6 flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">{selectedCastingInfo.title}</h2>
-              <p className="text-sm text-gray-600">
+              <h2 className="text-xl font-semibold text-foreground">{selectedCastingInfo.title}</h2>
+              <p className="text-sm text-muted-foreground">
                 Résultats : {selectedCastingInfo.results_published ? 'Publiés' : 'Non publiés'}
               </p>
             </div>
@@ -257,7 +257,7 @@ const ProfessionalCastingApplications = () => {
                 {filteredApplications.length === 0 ? (
                   <Card>
                     <CardContent className="p-8 text-center">
-                      <p className="text-gray-500">
+                      <p className="text-muted-foreground">
                         {statusFilter === 'all' 
                           ? 'Aucune candidature trouvée pour ce casting.'
                           : `Aucune candidature ${statusFilter === 'pending' ? 'en attente' : 
@@ -288,7 +288,7 @@ const ProfessionalCastingApplications = () => {
                                 {application.artist_profiles?.stage_name}
                               </CardTitle>
                               
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm text-gray-600">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-2">
                                   <User className="h-4 w-4" />
                                   <span>Type de voix: {application.artist_profiles?.voice_type || 'Non spécifié'}</span>
@@ -347,21 +347,21 @@ const ProfessionalCastingApplications = () => {
                         {application.artist_profiles?.bio && (
                           <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                             <h4 className="font-medium mb-2">Biographie</h4>
-                            <p className="text-sm text-gray-700">{application.artist_profiles.bio}</p>
+                            <p className="text-sm text-muted-foreground">{application.artist_profiles.bio}</p>
                           </div>
                         )}
                         
                         {application.motivation && (
                           <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                             <h4 className="font-medium mb-2">Motivation</h4>
-                            <p className="text-sm text-gray-700">{application.motivation}</p>
+                            <p className="text-sm text-muted-foreground">{application.motivation}</p>
                           </div>
                         )}
                         
                         {application.cover_letter && (
                           <div className="mb-4 p-3 bg-green-50 rounded-lg">
                             <h4 className="font-medium mb-2">Lettre de motivation</h4>
-                            <p className="text-sm text-gray-700">{application.cover_letter}</p>
+                            <p className="text-sm text-muted-foreground">{application.cover_letter}</p>
                           </div>
                         )}
 
@@ -533,7 +533,7 @@ const ProfessionalCastingApplications = () => {
         {!selectedCasting && (
           <Card>
             <CardContent className="p-8 text-center">
-              <p className="text-gray-500">Sélectionnez un casting pour voir les candidatures.</p>
+              <p className="text-muted-foreground">Sélectionnez un casting pour voir les candidatures.</p>
             </CardContent>
           </Card>
         )}

@@ -314,8 +314,8 @@ const MediaUploadSection: React.FC<MediaUploadSectionProps> = ({ profileId }) =>
                     <div className="w-full h-32 bg-gray-100 rounded flex items-center justify-center">
                       {isExternalUrl(item.file_path) ? (
                         <div className="text-center">
-                          <Video className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                          <p className="text-xs text-gray-500">Lien externe</p>
+                          <Video className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                          <p className="text-xs text-muted-foreground">Lien externe</p>
                         </div>
                       ) : (
                         <video
@@ -332,8 +332,8 @@ const MediaUploadSection: React.FC<MediaUploadSectionProps> = ({ profileId }) =>
                       {isExternalUrl(item.file_path) ? (
                         <div className="h-12 bg-gray-100 rounded flex items-center justify-center">
                           <div className="text-center">
-                            <Music className="h-6 w-6 mx-auto mb-1 text-gray-400" />
-                            <p className="text-xs text-gray-500">Lien externe</p>
+                            <Music className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
+                            <p className="text-xs text-muted-foreground">Lien externe</p>
                           </div>
                         </div>
                       ) : (

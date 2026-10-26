@@ -27,10 +27,10 @@ const MyApplications = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Connexion requise
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-muted-foreground mb-6">
             Vous devez être connecté pour voir vos candidatures.
           </p>
           <Button onClick={() => navigate('/auth')}>
@@ -80,7 +80,7 @@ const MyApplications = () => {
       stage: { label: 'Stage', icon: Music, color: 'bg-green-100 text-green-800' },
       concours: { label: 'Concours', icon: Trophy, color: 'bg-yellow-100 text-yellow-800' },
       atelier: { label: 'Atelier', icon: Mic, color: 'bg-purple-100 text-purple-800' },
-      conference: { label: 'Conférence', icon: Users, color: 'bg-gray-100 text-gray-800' },
+      conference: { label: 'Conférence', icon: Users, color: 'bg-gray-100 text-foreground' },
     };
 
     const config = typeConfig[eventType as keyof typeof typeConfig];
@@ -161,8 +161,8 @@ const MyApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Mes candidatures</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">Mes candidatures</h1>
+          <p className="text-muted-foreground mt-2">
             Suivez l'état de vos candidatures aux castings et inscriptions aux événements
           </p>
         </div>
@@ -211,11 +211,11 @@ const MyApplications = () => {
             {filteredApplications.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">
                     Aucune candidature
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-muted-foreground mb-4">
                     {activeTab === 'all' 
                       ? typeFilter === 'all'
                         ? "Vous n'avez pas encore postulé à des castings ou événements."
@@ -261,7 +261,7 @@ const MyApplications = () => {
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <MapPin className="h-4 w-4" />
                               {application.location}
@@ -281,10 +281,10 @@ const MyApplications = () => {
                         {((application.type === 'casting' && application.cover_letter) || 
                           (application.type === 'event' && application.motivation)) && (
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2">
+                            <h4 className="font-medium text-foreground mb-2">
                               {application.type === 'casting' ? 'Lettre de motivation' : 'Motivation'}
                             </h4>
-                            <p className="text-gray-700 text-sm line-clamp-3">
+                            <p className="text-muted-foreground text-sm line-clamp-3">
                               {application.type === 'casting' ? application.cover_letter : application.motivation}
                             </p>
                           </div>
@@ -324,8 +324,8 @@ const MyApplications = () => {
                         {/* Dates de l'événement */}
                         {application.type === 'event' && application.eventDetails && (
                           <div className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-gray-900 mb-2">Dates de l'événement</h4>
-                            <p className="text-gray-700 text-sm">
+                            <h4 className="font-medium text-foreground mb-2">Dates de l'événement</h4>
+                            <p className="text-muted-foreground text-sm">
                               Du {new Date(application.eventDetails.start_date).toLocaleDateString('fr-FR')} 
                               {application.eventDetails.end_date && 
                                 ` au ${new Date(application.eventDetails.end_date).toLocaleDateString('fr-FR')}`

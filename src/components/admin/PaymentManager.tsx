@@ -92,7 +92,7 @@ const PaymentManager = () => {
       case 'failed':
         return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Échoué</Badge>;
       case 'refunded':
-        return <Badge className="bg-gray-100 text-gray-800">Remboursé</Badge>;
+        return <Badge className="bg-gray-100 text-foreground">Remboursé</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }

@@ -37,8 +37,8 @@ const ReceivedApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Candidatures Reçues</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">Candidatures Reçues</h1>
+          <p className="text-muted-foreground mt-2">
             Gérez toutes les candidatures reçues pour vos castings et événements
           </p>
         </div>
@@ -113,10 +113,10 @@ const ReceivedApplications = () => {
                           )}
                         </div>
                         <h3 className="font-semibold text-lg">{casting.title}</h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           {casting.production_type} • {casting.location}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Créé le {new Date(casting.created_at).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
@@ -146,10 +146,10 @@ const ReceivedApplications = () => {
                           )}
                         </div>
                         <h3 className="font-semibold text-lg">{event.title}</h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           {event.event_type} • {event.location}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Du {new Date(event.start_date).toLocaleDateString('fr-FR')} au {new Date(event.end_date).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
@@ -169,9 +169,9 @@ const ReceivedApplications = () => {
 
             {totalCastings === 0 && totalEvents === 0 && (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun casting ni événement</h3>
-                <p className="text-gray-600">
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">Aucun casting ni événement</h3>
+                <p className="text-muted-foreground">
                   Vous n'avez créé aucun casting ou événement pour le moment.
                 </p>
                 <div className="flex gap-4 justify-center mt-4">
@@ -212,10 +212,10 @@ const ReceivedApplications = () => {
                           )}
                         </div>
                         <h3 className="font-semibold text-lg">{casting.title}</h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           {casting.production_type} • {casting.location}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Créé le {new Date(casting.created_at).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
@@ -235,9 +235,9 @@ const ReceivedApplications = () => {
 
             {!castings?.length && (
               <div className="text-center py-12">
-                <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun casting</h3>
-                <p className="text-gray-600">
+                <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">Aucun casting</h3>
+                <p className="text-muted-foreground">
                   Vous n'avez créé aucun casting pour le moment.
                 </p>
                 <Button asChild className="mt-4">
@@ -271,10 +271,10 @@ const ReceivedApplications = () => {
                           )}
                         </div>
                         <h3 className="font-semibold text-lg">{event.title}</h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                           {event.event_type} • {event.location}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Du {new Date(event.start_date).toLocaleDateString('fr-FR')} au {new Date(event.end_date).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
@@ -294,9 +294,9 @@ const ReceivedApplications = () => {
 
             {!events?.length && (
               <div className="text-center py-12">
-                <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun événement</h3>
-                <p className="text-gray-600">
+                <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">Aucun événement</h3>
+                <p className="text-muted-foreground">
                   Vous n'avez créé aucun événement pour le moment.
                 </p>
                 <Button asChild className="mt-4">

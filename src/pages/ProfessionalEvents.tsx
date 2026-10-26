@@ -65,8 +65,8 @@ const ProfessionalEvents = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Mes Événements</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-foreground">Mes Événements</h1>
+            <p className="text-muted-foreground mt-2">
               Gérez vos masterclass, stages et concours avec un formulaire amélioré
             </p>
           </div>
@@ -167,10 +167,10 @@ const ProfessionalEvents = () => {
           <TabsContent value="published">
             {publishedEvents.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-foreground mb-2">
                   Aucun événement publié
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Publiez vos premiers événements pour commencer à recevoir des inscriptions
                 </p>
               </div>
@@ -190,10 +190,10 @@ const ProfessionalEvents = () => {
           <TabsContent value="draft">
             {draftEvents.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-foreground mb-2">
                   Aucun brouillon
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Créez un nouvel événement pour commencer
                 </p>
               </div>
@@ -213,10 +213,10 @@ const ProfessionalEvents = () => {
           <TabsContent value="completed">
             {completedEvents.length === 0 ? (
               <div className="text-center py-12">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-foreground mb-2">
                   Aucun événement terminé
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-muted-foreground">
                   Vos événements passés apparaîtront ici
                 </p>
               </div>

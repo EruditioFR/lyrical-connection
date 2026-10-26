@@ -158,7 +158,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
               />
             ) : (
               <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
-                <User className="w-8 h-8 text-gray-400" />
+                <User className="w-8 h-8 text-muted-foreground" />
               </div>
             )}
           </div>
@@ -182,7 +182,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
 
         <div className="flex flex-wrap gap-2 mb-4">
           {artist.experience_years && (
-            <div className="flex items-center text-gray-600 text-sm">
+            <div className="flex items-center text-muted-foreground text-sm">
               <Calendar className="w-4 h-4 mr-1" />
               {artist.experience_years} ans d'expérience
             </div>
@@ -198,7 +198,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         {showContactInfo && isUserAuthenticated && (
           <div className="space-y-2 mb-4 p-3 bg-gray-50 rounded-lg">
             {artist.contact_email && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Mail className="w-4 h-4 mr-2" />
                 <a 
                   href={`mailto:${artist.contact_email}`}
@@ -211,7 +211,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
             )}
             
             {artist.phone && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Phone className="w-4 h-4 mr-2" />
                 <a 
                   href={`tel:${artist.phone}`}
@@ -224,7 +224,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
             )}
             
             {artist.website && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Globe className="w-4 h-4 mr-2" />
                 <a 
                   href={artist.website}

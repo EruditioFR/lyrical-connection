@@ -85,7 +85,7 @@ const ProfessionalApplications = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             Connexion requise
           </h1>
         </div>
@@ -107,10 +107,10 @@ const ProfessionalApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-foreground">
             Candidatures : {casting?.title}
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-muted-foreground mt-2">
             Gérez les candidatures reçues pour ce casting
           </p>
         </div>
@@ -138,11 +138,11 @@ const ProfessionalApplications = () => {
             {filteredApplications.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-foreground mb-2">
                     Aucune candidature
                   </h3>
-                  <p className="text-gray-600">
+                  <p className="text-muted-foreground">
                     {activeTab === 'all' 
                       ? "Aucune candidature reçue pour ce casting."
                       : `Aucune candidature ${activeTab}.`
@@ -157,12 +157,12 @@ const ProfessionalApplications = () => {
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
-                          <User className="h-8 w-8 text-gray-400" />
+                          <User className="h-8 w-8 text-muted-foreground" />
                           <div>
                             <CardTitle className="text-lg">
                               {application.artist_profiles?.stage_name}
                             </CardTitle>
-                            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
                               <div className="flex items-center gap-1">
                                 <Calendar className="h-4 w-4" />
                                 Postulé le {new Date(application.created_at).toLocaleDateString('fr-FR')}
@@ -184,8 +184,8 @@ const ProfessionalApplications = () => {
                       <div className="space-y-4">
                         {application.cover_letter && (
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2">Lettre de motivation</h4>
-                            <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-lg">
+                            <h4 className="font-medium text-foreground mb-2">Lettre de motivation</h4>
+                            <p className="text-muted-foreground text-sm bg-gray-50 p-3 rounded-lg">
                               {application.cover_letter}
                             </p>
                           </div>
@@ -193,8 +193,8 @@ const ProfessionalApplications = () => {
 
                         {application.motivation && (
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2">Motivation</h4>
-                            <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-lg">
+                            <h4 className="font-medium text-foreground mb-2">Motivation</h4>
+                            <p className="text-muted-foreground text-sm bg-gray-50 p-3 rounded-lg">
                               {application.motivation}
                             </p>
                           </div>
@@ -202,8 +202,8 @@ const ProfessionalApplications = () => {
 
                         {application.availability_notes && (
                           <div>
-                            <h4 className="font-medium text-gray-900 mb-2">Disponibilités</h4>
-                            <p className="text-gray-700 text-sm bg-gray-50 p-3 rounded-lg">
+                            <h4 className="font-medium text-foreground mb-2">Disponibilités</h4>
+                            <p className="text-muted-foreground text-sm bg-gray-50 p-3 rounded-lg">
                               {application.availability_notes}
                             </p>
                           </div>

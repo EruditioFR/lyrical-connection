@@ -279,7 +279,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {sections.map((section, sectionIndex) => (
             <div key={sectionIndex}>
-              <h3 className="font-semibold text-gray-900 mb-4 text-sm uppercase tracking-wide">
+              <h3 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wide">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -294,10 +294,10 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
                         <item.icon className="w-5 h-5 text-primary" />
                       </div>
                       <div className="ml-3">
-                        <p className="font-medium text-gray-900 group-hover:text-primary transition-colors">
+                        <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                           {item.label}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {item.description}
                         </p>
                       </div>

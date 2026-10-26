@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <span className="text-xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-lyrical-700 to-gold-500">
+              <span className="text-xl font-serif font-semibold text-primary">
                 Lyrisphere
               </span>
             </Link>

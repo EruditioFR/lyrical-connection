@@ -32,7 +32,7 @@ const NotificationBell = () => {
       case 'shortlisted':
         return <Eye className="h-4 w-4 text-blue-600" />;
       default:
-        return <Clock className="h-4 w-4 text-gray-600" />;
+        return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -47,7 +47,7 @@ const NotificationBell = () => {
       case 'shortlisted':
         return 'text-blue-800';
       default:
-        return 'text-gray-800';
+        return 'text-foreground';
     }
   };
 
@@ -105,7 +105,7 @@ const NotificationBell = () => {
         <DropdownMenuSeparator />
         
         {notifications.length === 0 ? (
-          <div className="p-4 text-center text-gray-500">
+          <div className="p-4 text-center text-muted-foreground">
             <Megaphone className="h-8 w-8 mx-auto mb-2 text-gray-300" />
             <p className="text-sm">Aucune notification</p>
           </div>
@@ -124,7 +124,7 @@ const NotificationBell = () => {
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
-                      <p className={`text-sm font-medium ${!notification.is_read ? 'text-gray-900' : 'text-gray-700'}`}>
+                      <p className={`text-sm font-medium ${!notification.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {notification.title}
                       </p>
                       {!notification.is_read && (
@@ -133,7 +133,7 @@ const NotificationBell = () => {
                     </div>
                     
                     {notification.content && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                         {notification.content}
                       </p>
                     )}
@@ -149,7 +149,7 @@ const NotificationBell = () => {
                       </div>
                     )}
                     
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-muted-foreground mt-2">
                       {formatDistanceToNow(new Date(notification.created_at), { 
                         addSuffix: true, 
                         locale: fr 

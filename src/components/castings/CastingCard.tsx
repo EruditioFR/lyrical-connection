@@ -69,14 +69,14 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
       accepted: 'bg-green-100 text-green-800',
       rejected: 'bg-red-100 text-red-800'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-foreground';
   };
 
   return (
     <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/castings/${casting.id}`)}>
       <CardHeader className="space-y-2">
         <div className="flex items-start justify-between">
-          <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">{casting.title}</h3>
+          <h3 className="font-semibold text-lg text-foreground line-clamp-2">{casting.title}</h3>
           {casting.is_featured && (
             <Badge variant="destructive" className="ml-2">
               Mis en avant
@@ -84,7 +84,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
           )}
         </div>
         
-        <div className="flex items-center gap-4 text-sm text-gray-500">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <MapPin className="h-4 w-4" />
             {casting.location}
@@ -102,7 +102,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
 
       <CardContent className="space-y-4">
         {casting.description && (
-          <p className="text-sm text-gray-600 line-clamp-3">
+          <p className="text-sm text-muted-foreground line-clamp-3">
             {casting.description}
           </p>
         )}
@@ -110,21 +110,21 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
         <div className="space-y-2">
           {casting.venue && (
             <div className="flex items-center gap-2 text-sm">
-              <Users className="h-4 w-4 text-gray-400" />
+              <Users className="h-4 w-4 text-muted-foreground" />
               <span>{casting.venue}</span>
             </div>
           )}
 
           {casting.application_deadline && (
             <div className="flex items-center gap-2 text-sm">
-              <Calendar className="h-4 w-4 text-gray-400" />
+              <Calendar className="h-4 w-4 text-muted-foreground" />
               <span>Candidature avant le {formatDate(casting.application_deadline)}</span>
             </div>
           )}
 
           {casting.compensation_type && (
             <div className="flex items-center gap-2 text-sm">
-              <Euro className="h-4 w-4 text-gray-400" />
+              <Euro className="h-4 w-4 text-muted-foreground" />
               <span>
                 {getCompensationLabel(casting.compensation_type)}
                 {casting.compensation_amount && ` - ${casting.compensation_amount}€`}
@@ -135,7 +135,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
 
         {(casting.required_voice_types && casting.required_voice_types.length > 0) && (
           <div className="space-y-1">
-            <p className="text-xs font-medium text-gray-500">Types de voix recherchés :</p>
+            <p className="text-xs font-medium text-muted-foreground">Types de voix recherchés :</p>
             <div className="flex flex-wrap gap-1">
               {casting.required_voice_types.slice(0, 3).map((voice, index) => (
                 <Badge key={index} variant="secondary" className="text-xs">
@@ -154,7 +154,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
         {/* Affichage du statut de candidature pour les artistes */}
         {isArtist && user && application && (
           <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-muted-foreground">
               Candidature envoyée le {format(new Date(application.created_at), 'dd MMMM yyyy', { locale: fr })}
             </div>
             {casting.results_published && (

@@ -77,9 +77,9 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
     return (
       <Card>
         <CardContent className="p-8 text-center">
-          <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <Sparkles className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-medium mb-2">Aucune suggestion en attente</h3>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Les suggestions de traduction générées par l'IA apparaîtront ici.
           </p>
         </CardContent>
@@ -120,7 +120,7 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
                     <div 
                       className={`w-2 h-2 rounded-full ${getConfidenceColor(suggestion.ai_confidence)}`}
                     />
-                    <span className="text-xs text-gray-600">
+                    <span className="text-xs text-muted-foreground">
                       Confiance: {getConfidenceLabel(suggestion.ai_confidence)}
                     </span>
                   </div>
@@ -158,7 +158,7 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
               {/* Contexte utilisé */}
               {suggestion.context_used && (
                 <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xs text-gray-600 mb-1">Contexte fourni à l'IA:</p>
+                  <p className="text-xs text-muted-foreground mb-1">Contexte fourni à l'IA:</p>
                   <p className="text-xs italic">{suggestion.context_used}</p>
                 </div>
               )}
@@ -186,7 +186,7 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
               </div>
 
               {/* Métadonnées */}
-              <div className="mt-3 pt-3 border-t text-xs text-gray-500">
+              <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
                 Créé le {new Date(suggestion.created_at).toLocaleDateString('fr-FR', {
                   day: 'numeric',
                   month: 'long',

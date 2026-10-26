@@ -152,7 +152,7 @@ export const TranslationSyncPanel: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-muted-foreground">
           <p>
             Cette fonction permet de pré-remplir automatiquement la base de données 
             avec toutes les phrases françaises des pages publiques du site.
@@ -207,7 +207,7 @@ export const TranslationSyncPanel: React.FC = () => {
           </Badge>
         </div>
 
-        <div className="text-xs text-gray-500">
+        <div className="text-xs text-muted-foreground">
           <p>
             <strong>Sections incluses :</strong> Navigation, Accueil, Fonctionnalités, 
             Artistes en vedette, Tarifs, Appel à l'action, Actions communes

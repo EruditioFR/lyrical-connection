@@ -60,8 +60,8 @@ const ProfessionalMessages = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Messages & Invitations</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">Messages & Invitations</h1>
+          <p className="text-muted-foreground mt-2">
             Gérez vos communications avec les artistes
           </p>
         </div>
@@ -87,8 +87,8 @@ const ProfessionalMessages = () => {
               ) : invitations.length === 0 ? (
                 <Card>
                   <CardContent className="text-center py-8">
-                    <UserPlus className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Aucune invitation envoyée</p>
+                    <UserPlus className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">Aucune invitation envoyée</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -100,7 +100,7 @@ const ProfessionalMessages = () => {
                           <CardTitle className="text-lg">
                             {invitation.artist_profiles?.stage_name}
                           </CardTitle>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-muted-foreground">
                             {invitation.castings?.title} - {invitation.castings?.production_type}
                           </p>
                         </div>
@@ -109,7 +109,7 @@ const ProfessionalMessages = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             {format(new Date(invitation.created_at), 'dd MMM yyyy', { locale: fr })}
@@ -154,8 +154,8 @@ const ProfessionalMessages = () => {
               ) : contacts.length === 0 ? (
                 <Card>
                   <CardContent className="text-center py-8">
-                    <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Aucun message envoyé</p>
+                    <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">Aucun message envoyé</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -167,7 +167,7 @@ const ProfessionalMessages = () => {
                           <CardTitle className="text-lg">
                             {contact.artist_profiles?.stage_name}
                           </CardTitle>
-                          <p className="text-sm text-gray-600 font-medium">
+                          <p className="text-sm text-muted-foreground font-medium">
                             {contact.subject}
                           </p>
                         </div>
@@ -176,7 +176,7 @@ const ProfessionalMessages = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
                             {format(new Date(contact.created_at), 'dd MMM yyyy', { locale: fr })}

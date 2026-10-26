@@ -37,7 +37,7 @@ const CastingDetail = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Casting non trouvé</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-4">Casting non trouvé</h1>
           <Button onClick={() => navigate('/castings')}>
             Retour aux castings
           </Button>
@@ -94,10 +94,10 @@ const CastingDetail = () => {
           
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-foreground mb-2">
                 {casting.title}
               </h1>
-              <div className="flex items-center gap-4 text-gray-500 mb-4">
+              <div className="flex items-center gap-4 text-muted-foreground mb-4">
                 <div className="flex items-center gap-1">
                   <MapPin className="h-4 w-4" />
                   {casting.location}
@@ -179,7 +179,7 @@ const CastingDetail = () => {
                   <CardTitle>Description</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 whitespace-pre-wrap">
+                  <p className="text-muted-foreground whitespace-pre-wrap">
                     {casting.description}
                   </p>
                 </CardContent>
@@ -194,8 +194,8 @@ const CastingDetail = () => {
               <CardContent className="space-y-4">
                 {(casting.age_range_min || casting.age_range_max) && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Âge</h4>
-                    <p className="text-gray-700">
+                    <h4 className="font-medium text-foreground mb-2">Âge</h4>
+                    <p className="text-muted-foreground">
                       {casting.age_range_min && casting.age_range_max
                         ? `Entre ${casting.age_range_min} et ${casting.age_range_max} ans`
                         : casting.age_range_min
@@ -208,7 +208,7 @@ const CastingDetail = () => {
 
                 {casting.required_voice_types && casting.required_voice_types.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Types de voix</h4>
+                    <h4 className="font-medium text-foreground mb-2">Types de voix</h4>
                     <div className="flex flex-wrap gap-2">
                       {casting.required_voice_types.map((voice, index) => (
                         <Badge key={index} variant="secondary">
@@ -221,7 +221,7 @@ const CastingDetail = () => {
 
                 {casting.required_experience_level && casting.required_experience_level.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Niveau d'expérience</h4>
+                    <h4 className="font-medium text-foreground mb-2">Niveau d'expérience</h4>
                     <div className="flex flex-wrap gap-2">
                       {casting.required_experience_level.map((level, index) => (
                         <Badge key={index} variant="secondary">
@@ -234,7 +234,7 @@ const CastingDetail = () => {
 
                 {casting.required_languages && casting.required_languages.length > 0 && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Langues requises</h4>
+                    <h4 className="font-medium text-foreground mb-2">Langues requises</h4>
                     <div className="flex flex-wrap gap-2">
                       {casting.required_languages.map((language, index) => (
                         <Badge key={index} variant="secondary">
@@ -247,8 +247,8 @@ const CastingDetail = () => {
 
                 {casting.specific_requirements && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Exigences spécifiques</h4>
-                    <p className="text-gray-700 whitespace-pre-wrap">
+                    <h4 className="font-medium text-foreground mb-2">Exigences spécifiques</h4>
+                    <p className="text-muted-foreground whitespace-pre-wrap">
                       {casting.specific_requirements}
                     </p>
                   </div>
@@ -288,29 +288,29 @@ const CastingDetail = () => {
               <CardContent className="space-y-4">
                 {casting.venue && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Lieu</h4>
-                    <p className="text-gray-700">{casting.venue}</p>
+                    <h4 className="font-medium text-foreground mb-1">Lieu</h4>
+                    <p className="text-muted-foreground">{casting.venue}</p>
                   </div>
                 )}
 
                 {casting.start_date && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Date de début</h4>
-                    <p className="text-gray-700">{formatDate(casting.start_date)}</p>
+                    <h4 className="font-medium text-foreground mb-1">Date de début</h4>
+                    <p className="text-muted-foreground">{formatDate(casting.start_date)}</p>
                   </div>
                 )}
 
                 {casting.end_date && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Date de fin</h4>
-                    <p className="text-gray-700">{formatDate(casting.end_date)}</p>
+                    <h4 className="font-medium text-foreground mb-1">Date de fin</h4>
+                    <p className="text-muted-foreground">{formatDate(casting.end_date)}</p>
                   </div>
                 )}
 
                 {casting.application_deadline && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Date limite</h4>
-                    <p className="text-gray-700 font-medium text-red-600">
+                    <h4 className="font-medium text-foreground mb-1">Date limite</h4>
+                    <p className="text-muted-foreground font-medium text-red-600">
                       {formatDate(casting.application_deadline)}
                     </p>
                   </div>
@@ -318,15 +318,15 @@ const CastingDetail = () => {
 
                 {casting.audition_date && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Date d'audition</h4>
-                    <p className="text-gray-700">{formatDate(casting.audition_date)}</p>
+                    <h4 className="font-medium text-foreground mb-1">Date d'audition</h4>
+                    <p className="text-muted-foreground">{formatDate(casting.audition_date)}</p>
                   </div>
                 )}
 
                 {casting.audition_location && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-1">Lieu d'audition</h4>
-                    <p className="text-gray-700">{casting.audition_location}</p>
+                    <h4 className="font-medium text-foreground mb-1">Lieu d'audition</h4>
+                    <p className="text-muted-foreground">{casting.audition_location}</p>
                   </div>
                 )}
               </CardContent>
@@ -342,7 +342,7 @@ const CastingDetail = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700">
+                  <p className="text-muted-foreground">
                     {getCompensationLabel(casting.compensation_type)}
                     {casting.compensation_amount && (
                       <span className="font-medium"> - {casting.compensation_amount}€</span>

@@ -179,7 +179,7 @@ const SumiJoOnboarding = () => {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-6 shadow-lg shadow-amber-500/30">
                 <Star className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold mb-4 text-foreground">
                 Concours International Sumi Jo 2026
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg mx-auto">

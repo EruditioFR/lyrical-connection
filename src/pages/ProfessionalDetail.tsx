@@ -86,10 +86,10 @@ const ProfessionalDetail = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl font-bold text-foreground mb-4">
               Professionnel non trouvé
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Le professionnel que vous recherchez n'existe pas ou n'est plus actif.
             </p>
             <Button onClick={() => window.history.back()}>

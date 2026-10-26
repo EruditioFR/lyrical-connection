@@ -14,7 +14,7 @@ interface SectionTitleProps {
 
 /**
  * Elegant section title used across user / admin dashboards.
- * - Playfair Display serif heading
+ * - Source Serif 4 heading
  * - Gold eyebrow + accent underline
  */
 const SectionTitle = ({

@@ -128,7 +128,7 @@ const Features = () => {
             <Badge className="mb-6 bg-lyrical-100 text-lyrical-700 border-lyrical-200">
               Plateforme complète
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 bg-gradient-to-r from-lyrical-900 to-gold-800 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-foreground">
               Toutes les fonctionnalités pour réussir dans le lyrique
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
@@ -264,7 +264,7 @@ const Features = () => {
             <Button size="lg" className="bg-white hover:bg-white/90 text-lyrical-900" asChild>
               <Link to="/auth">Commencer gratuitement</Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10" asChild>
+            <Button variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10 hover:text-white" asChild>
               <Link to="/contact">Nous contacter</Link>
             </Button>
           </div>

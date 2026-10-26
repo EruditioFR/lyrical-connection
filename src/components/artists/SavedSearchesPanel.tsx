@@ -43,7 +43,7 @@ const SavedSearchesPanel: React.FC<SavedSearchesPanelProps> = ({ onLoadSearch })
       </CardHeader>
       <CardContent>
         {searches.length === 0 ? (
-          <p className="text-gray-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             Aucune recherche sauvegardée
           </p>
         ) : (

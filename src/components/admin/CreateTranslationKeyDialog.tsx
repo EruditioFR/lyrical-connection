@@ -83,7 +83,7 @@ export const CreateTranslationKeyDialog: React.FC<CreateTranslationKeyDialogProp
               onChange={(e) => setFormData(prev => ({ ...prev, keyPath: e.target.value }))}
               required
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Format: section.element (ex: navigation.home, common.loading)
             </p>
           </div>
@@ -138,7 +138,7 @@ export const CreateTranslationKeyDialog: React.FC<CreateTranslationKeyDialogProp
               onChange={(e) => setFormData(prev => ({ ...prev, context: e.target.value }))}
               rows={2}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Décrivez où et comment ce texte est utilisé pour de meilleures traductions
             </p>
           </div>
