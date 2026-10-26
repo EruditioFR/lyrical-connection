@@ -102,3 +102,25 @@ test.describe('affichage mobile', () => {
     });
   }
 });
+
+test("un article du blog s'affiche sans boucle de requêtes", async ({ page }) => {
+  let articleRequests = 0;
+  page.on('request', r => { if (r.url().includes('/blog_posts?') && r.url().includes('slug=eq.')) articleRequests++; });
+  await page.goto('/blog');
+  const firstArticle = page.locator('a[href^="/blog/"]').first();
+  const hasArticle = await firstArticle.waitFor({ timeout: 10_000 }).then(() => true, () => false);
+  test.skip(!hasArticle, 'aucun article publié');
+  await firstArticle.click();
+  await expect(page.locator('h1').first()).not.toBeEmpty();
+  await page.waitForTimeout(2000);
+  expect(articleRequests).toBeLessThanOrEqual(2);
+});
+
+test('la liste des professionnels affiche un contenu ou un message', async ({ page }) => {
+  await page.goto('/professionnels');
+  await expect(page.locator('h1')).toHaveText('Liste des professionnels');
+  await expect(
+    page.getByText('Aucun professionnel à afficher pour le moment.').or(page.getByRole('button', { name: /Voir le profil/ }).first())
+      .or(page.getByText('Aperçu limité').first())
+  ).toBeVisible();
+});

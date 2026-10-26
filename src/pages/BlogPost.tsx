@@ -50,7 +50,7 @@ const BlogPostComponent = () => {
         const postData = await fetchPostBySlug(slug);
         setPost(postData);
         // Incrémenter le compteur de vues
-        await incrementViewCount(postData.id);
+        await incrementViewCount(postData);
       } catch (err) {
         setError('Article non trouvé');
         console.error(err);
