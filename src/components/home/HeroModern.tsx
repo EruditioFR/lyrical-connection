@@ -2,26 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
-import { Music, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+import { useArtists } from '@/hooks/useArtists';
 
 const HeroModern = () => {
   const { t } = useTranslation('home');
   const leftContentRef = useAnimateOnScroll();
-  const rightContentRef = useAnimateOnScroll();
+  // Vrais artistes de la plateforme plutôt qu'une image d'illustration
+  const { artists } = useArtists({});
+  const portraits = artists.filter(artist => artist.profile_image_url).slice(0, 4);
 
-  console.log('HeroModern rendered');
-  
   return (
     <section className="relative min-h-[60vh] lg:min-h-[90vh] bg-gradient-to-br from-background via-muted/30 to-background overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 bg-[url('/lovable-uploads/b68db290-37e4-4a2d-bfeb-ef949fb2dd4b.png')] bg-cover bg-center opacity-10"></div>
-      
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-lyrical-50/50 via-transparent to-gold-50/30"></div>
       
       <div className="container mx-auto px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center min-h-[60vh] lg:min-h-[90vh] py-12 lg:py-0">
+        <div className="flex flex-col lg:flex-row items-center min-h-[60vh] lg:min-h-[90vh] py-12 lg:py-16">
           {/* Left Content */}
           <div ref={leftContentRef} className="lg:w-1/2 lg:pr-16 xl:pr-20 text-center lg:text-left text-appear">
             {/* Main Title */}
@@ -54,17 +52,29 @@ const HeroModern = () => {
           </div>
           
           {/* Right Content */}
-          <div ref={rightContentRef} className="lg:w-1/2 mt-8 lg:mt-0 text-appear w-full">
-            <div className="relative">
-              {/* Main Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Performance d'opéra" className="w-full h-[500px] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-lyrical-900/40 to-transparent">
-                  <img alt="Intérieur d'opéra" className="w-full h-full object-cover opacity-80" src="/lovable-uploads/bc42b65f-33b1-4117-9ae5-5771d3bf8825.png" />
-                </div>
+          {portraits.length > 0 && (
+            <div className="lg:w-1/2 mt-8 lg:mt-0 w-full">
+              <div className="grid grid-cols-2 gap-3 lg:gap-4">
+                {portraits.map(artist => (
+                  <Link
+                    key={artist.id}
+                    to={`/artistes/${artist.id}`}
+                    className="group relative block aspect-[3/4] overflow-hidden rounded-lg"
+                  >
+                    <img
+                      src={artist.profile_image_url as string}
+                      alt={artist.stage_name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-white">
+                      <p className="font-serif text-base lg:text-lg leading-tight">{artist.stage_name}</p>
+                      {artist.voice_type && <p className="text-xs lg:text-sm opacity-90">{artist.voice_type}</p>}
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

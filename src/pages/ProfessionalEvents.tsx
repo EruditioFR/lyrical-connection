@@ -63,14 +63,14 @@ const ProfessionalEvents = () => {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Mes Événements</h1>
             <p className="text-gray-600 mt-2">
               Gérez vos masterclass, stages et concours avec un formulaire amélioré
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button 
               variant="outline" 
               onClick={handleRefresh}

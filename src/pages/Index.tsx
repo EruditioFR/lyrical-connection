@@ -11,7 +11,6 @@ import FeaturedEvents from '@/components/home/FeaturedEvents';
 import UpcomingEvents from '@/components/home/UpcomingEvents';
 import PricingSection from '@/components/home/PricingSection';
 import PortalsSection from '@/components/home/PortalsSection';
-import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CtaSection from '@/components/home/CtaSection';
 import Layout from '@/components/layout/Layout';
 
@@ -53,7 +52,6 @@ const Index = () => {
           <FeaturedArtists />
           <UpcomingEvents />
           <PricingSection selectedUserType="artist" />
-          <TestimonialsSection />
           <CtaSection />
         </>
       )}
@@ -63,7 +61,6 @@ const Index = () => {
           <FeaturesProfessionals />
           <FeaturedEvents />
           <PricingSection selectedUserType="professional" />
-          <TestimonialsSection />
           <CtaSection />
         </>
       )}
@@ -74,7 +71,6 @@ const Index = () => {
           <FeaturedEvents />
           <UpcomingEvents />
           <PortalsSection />
-          <TestimonialsSection />
         </>
       )}
     </Layout>

@@ -1,6 +1,9 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { differenceInCalendarDays, format } from 'date-fns';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -50,35 +53,38 @@ const CastingsMarketing = () => {
     }
   ];
 
-  const mockCastings = [
-    {
-      title: "Carmen - Rôle Titre",
-      company: "Opéra National de Paris",
-      location: "Paris, France",
-      type: "Opéra",
-      tessiture: "Mezzo-soprano",
-      compensation: "Rémunéré",
-      deadline: "15 jours restants"
+  const productionTypeLabels: Record<string, string> = {
+    opera: 'Opéra',
+    operetta: 'Opérette',
+    concert: 'Concert',
+    competition: 'Concours',
+    masterclass: 'Masterclass',
+    other: 'Autre'
+  };
+
+  const compensationLabels: Record<string, string> = {
+    paid: 'Rémunéré',
+    unpaid: 'Non rémunéré',
+    travel_covered: 'Transport couvert',
+    accommodation_covered: 'Hébergement couvert'
+  };
+
+  // Aperçu des vrais castings ouverts (candidature encore possible)
+  const { data: openCastings = [] } = useQuery({
+    queryKey: ['castings-marketing-preview'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('castings')
+        .select('id, title, location, production_type, required_voice_types, compensation_type, application_deadline')
+        .eq('is_active', true)
+        .gte('application_deadline', format(new Date(), 'yyyy-MM-dd'))
+        .order('application_deadline', { ascending: true })
+        .limit(3);
+
+      if (error) throw error;
+      return data;
     },
-    {
-      title: "Les Misérables - Éponine",
-      company: "Théâtre du Châtelet",
-      location: "Paris, France", 
-      type: "Comédie musicale",
-      tessiture: "Soprano",
-      compensation: "Rémunéré",
-      deadline: "8 jours restants"
-    },
-    {
-      title: "Don Giovanni - Leporello",
-      company: "Festival d'Aix-en-Provence",
-      location: "Aix-en-Provence, France",
-      type: "Opéra",
-      tessiture: "Basse",
-      compensation: "Rémunéré",
-      deadline: "22 jours restants"
-    }
-  ];
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
@@ -144,53 +150,63 @@ const CastingsMarketing = () => {
         </div>
       </section>
 
-      {/* Mock Castings Preview */}
+      {/* Open Castings Preview */}
       <section className="py-16 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-foreground mb-4">
-              Castings Actuels
+              Castings ouverts
             </h2>
             <p className="text-lg text-muted-foreground">
-              Aperçu des opportunités disponibles pour nos membres
+              {openCastings.length > 0
+                ? 'Aperçu des castings en cours sur la plateforme'
+                : 'Aucun casting ouvert pour le moment. Inscrivez-vous pour être averti des prochains.'}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {mockCastings.map((casting, index) => (
-              <Card key={index} className="border-border">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <CardTitle className="text-lg">{casting.title}</CardTitle>
-                    <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
-                      {casting.type}
-                    </span>
-                  </div>
-                  <CardDescription className="font-medium">
-                    {casting.company}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    {casting.location}
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Users className="h-4 w-4 mr-2" />
-                    {casting.tessiture}
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Euro className="h-4 w-4 mr-2" />
-                    {casting.compensation}
-                  </div>
-                  <div className="flex items-center text-sm text-primary font-medium">
-                    <Clock className="h-4 w-4 mr-2" />
-                    {casting.deadline}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {openCastings.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {openCastings.map((casting) => {
+                const daysLeft = differenceInCalendarDays(new Date(casting.application_deadline), new Date());
+                return (
+                  <Card key={casting.id} className="border-border">
+                    <CardHeader>
+                      <div className="flex justify-between items-start mb-2">
+                        <CardTitle className="text-lg">{casting.title}</CardTitle>
+                        <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
+                          {productionTypeLabels[casting.production_type] || casting.production_type}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      {casting.location && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4 mr-2" />
+                          {casting.location}
+                        </div>
+                      )}
+                      {casting.required_voice_types && casting.required_voice_types.length > 0 && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Users className="h-4 w-4 mr-2" />
+                          {casting.required_voice_types.join(', ')}
+                        </div>
+                      )}
+                      {casting.compensation_type && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Euro className="h-4 w-4 mr-2" />
+                          {compensationLabels[casting.compensation_type] || casting.compensation_type}
+                        </div>
+                      )}
+                      <div className="flex items-center text-sm text-primary font-medium">
+                        <Clock className="h-4 w-4 mr-2" />
+                        {daysLeft === 0 ? 'Dernier jour' : `${daysLeft} jour${daysLeft > 1 ? 's' : ''} restant${daysLeft > 1 ? 's' : ''}`}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
 
           <div className="text-center">
             <div className="bg-card border border-border rounded-lg p-8 max-w-md mx-auto">

@@ -46,6 +46,8 @@ export const EventFormProgress: React.FC<EventFormProgressProps> = ({ steps, cur
               <span
                 className={cn(
                   "ml-2 text-sm font-medium",
+                  // Sur mobile, seul le titre de l'étape en cours tient sur la ligne
+                  !isActive && "hidden sm:inline",
                   isActive && "text-primary",
                   isPassed && "text-green-600",
                   !isActive && !isPassed && "text-muted-foreground"
@@ -54,7 +56,7 @@ export const EventFormProgress: React.FC<EventFormProgressProps> = ({ steps, cur
                 {step.title}
               </span>
               {index < steps.length - 1 && (
-                <div className="w-8 h-px bg-border mx-4" />
+                <div className="hidden sm:block w-8 h-px bg-border mx-4" />
               )}
             </div>
           );

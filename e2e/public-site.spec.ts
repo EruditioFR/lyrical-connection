@@ -124,3 +124,12 @@ test('la liste des professionnels affiche un contenu ou un message', async ({ pa
       .or(page.getByText('Aperçu limité').first())
   ).toBeVisible();
 });
+
+test("aucun contenu fictif présenté comme réel", async ({ page }) => {
+  await page.goto('/');
+  await page.locator('h1').first().waitFor();
+  await expect(page.getByText('Sophie Martineau')).toHaveCount(0);
+  await page.goto('/castings');
+  await page.locator('h1').first().waitFor();
+  await expect(page.getByText('Opéra National de Paris')).toHaveCount(0);
+});

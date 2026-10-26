@@ -225,7 +225,7 @@ const MyApplications = () => {
                       : `Aucune candidature ${activeTab === 'pending' ? 'en attente' : activeTab}.`
                     }
                   </p>
-                  <div className="flex gap-3 justify-center">
+                  <div className="flex flex-wrap gap-3 justify-center">
                     {(typeFilter === 'all' || typeFilter === 'castings') && (
                       <Button onClick={() => navigate('/castings')}>
                         Découvrir les castings

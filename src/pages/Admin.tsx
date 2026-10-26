@@ -98,8 +98,8 @@ const Admin = () => {
       <div className="min-h-screen flex w-full bg-background">
         <AdminSidebar activeTab={activeTab} onTabChange={handleTabChange} />
         
-        <main className="flex-1 flex flex-col">
-          <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
+        <main className="flex-1 min-w-0 flex flex-col">
+          <header className="h-16 border-b border-border bg-card flex items-center justify-between gap-2 px-4 sm:px-6">
             <div className="flex items-center">
               <SidebarTrigger className="mr-4">
                 <Menu className="h-4 w-4" />
@@ -122,20 +122,22 @@ const Admin = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleProfileClick}
+                aria-label="Mon profil"
                 className="flex items-center gap-2"
               >
                 <User className="h-4 w-4" />
-                Mon profil
+                <span className="hidden sm:inline">Mon profil</span>
               </Button>
               
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
+                aria-label="Déconnexion"
                 className="flex items-center gap-2 text-muted-foreground hover:text-destructive"
               >
                 <LogOut className="h-4 w-4" />
-                Déconnexion
+                <span className="hidden sm:inline">Déconnexion</span>
               </Button>
             </div>
           </header>

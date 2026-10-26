@@ -20,7 +20,6 @@ import { Link } from 'react-router-dom';
 import { useProfessionalEvents } from '@/hooks/useEvents';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
-import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 import ArtistsManagement from '@/components/professional/ArtistsManagement';
 import SectionTitle from '@/components/dashboard/SectionTitle';
 
@@ -39,16 +38,10 @@ const ProfessionalDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Hero Banner avec image d'opéra */}
+      {/* Hero Banner */}
       <div 
         className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
-        style={{
-          backgroundImage: `url(${operaDashboardHero})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
       >
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
         <div className="relative h-full flex items-center justify-center text-center px-6">
           <div className="text-white">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-2">
@@ -113,7 +106,7 @@ const ProfessionalDashboard = () => {
 
       {/* Contenu principal avec onglets */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
+        <TabsList className="h-auto flex-wrap justify-start">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="events">Mes événements</TabsTrigger>
           <TabsTrigger value="artists">Gestion artistes</TabsTrigger>
