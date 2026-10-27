@@ -15,8 +15,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { 
   Calendar, MapPin, User, FileText, MessageSquare,
   Clock, CheckCircle, XCircle, AlertCircle,
-  Loader2, Save, List, Columns3, CalendarClock
+  Loader2, Save, List, Columns3, CalendarClock, Gavel
 } from 'lucide-react';
+import JuryPanel from '@/components/casting/JuryPanel';
 import ApplicationsPipeline from '@/components/casting/ApplicationsPipeline';
 import AuditionScheduler from '@/components/casting/AuditionScheduler';
 import type { ApplicationStatus } from '@/constants/applicationStatus';
@@ -133,7 +134,22 @@ const ProfessionalApplications = () => {
               <CalendarClock className="h-4 w-4" />
               Planning des auditions
             </TabsTrigger>
+            <TabsTrigger value="jury" className="flex items-center gap-2">
+              <Gavel className="h-4 w-4" />
+              Jury
+            </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="jury">
+            {casting && (
+              <JuryPanel
+                castingId={casting.id}
+                castingTitle={casting.title}
+                ownerProfessionalProfileId={casting.professional_profile_id}
+                applications={applications}
+              />
+            )}
+          </TabsContent>
 
           <TabsContent value="pipeline">
             <ApplicationsPipeline

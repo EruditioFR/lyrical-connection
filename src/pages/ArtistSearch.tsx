@@ -8,6 +8,9 @@ import SavedSearchesPanel from '@/components/artists/SavedSearchesPanel';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useArtists } from '@/hooks/useArtists';
+import { useUnavailableArtistIds } from '@/hooks/useArtistAvailability';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useSaveSearch } from '@/hooks/useSavedSearches';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save, Download } from 'lucide-react';
@@ -23,6 +26,10 @@ const ArtistSearch = () => {
   const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
   const [showSavedSearches, setShowSavedSearches] = useState(false);
   const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [availableFrom, setAvailableFrom] = useState('');
+  const [availableTo, setAvailableTo] = useState('');
+  const availabilityTo = availableTo || availableFrom;
+  const { unavailableIds, featureUnavailable } = useUnavailableArtistIds(availableFrom || undefined, availabilityTo || undefined);
   const toggleCompare = (id: string) =>
     setCompareIds(ids => ids.includes(id) ? ids.filter(i => i !== id) : ids.length < 4 ? [...ids, id] : ids);
 
@@ -40,12 +47,11 @@ const ArtistSearch = () => {
   const saveSearchMutation = useSaveSearch();
 
   // Filter artists based on current criteria
+  // Disponibilité : exclure les artistes ayant un engagement ou une indisponibilité sur la période
   const filteredArtists = useMemo(() => {
-    return artists.filter(artist => {
-      // Additional client-side filtering if needed
-      return true;
-    });
-  }, [artists]);
+    if (!unavailableIds) return artists;
+    return artists.filter(artist => !unavailableIds.has(artist.id));
+  }, [artists, unavailableIds]);
 
   // Get selected voice types for display
   const selectedVoiceTypes = useMemo(() => {
@@ -245,6 +251,29 @@ const ArtistSearch = () => {
             onRepertoireFiltersChange={setRepertoireFilters}
           />
         </div>
+
+        {/* Disponibilité */}
+        <fieldset className="mb-8 flex flex-wrap items-end gap-4 rounded-lg border p-4">
+          <legend className="px-1 text-sm font-medium">Disponible</legend>
+          <div>
+            <Label htmlFor="available-from">Du</Label>
+            <Input id="available-from" type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="available-to">Au</Label>
+            <Input id="available-to" type="date" min={availableFrom || undefined} value={availableTo} onChange={e => setAvailableTo(e.target.value)} />
+          </div>
+          {(availableFrom || availableTo) && (
+            <Button variant="ghost" onClick={() => { setAvailableFrom(''); setAvailableTo(''); }}>Effacer les dates</Button>
+          )}
+          <p className="basis-full text-sm text-muted-foreground">
+            {featureUnavailable
+              ? 'Le filtre de disponibilité sera actif après la mise à jour de la base de données.'
+              : unavailableIds
+                ? `${unavailableIds.size} artiste(s) indisponible(s) sur cette période, masqué(s) des résultats.`
+                : "D'après l'agenda déclaré par chaque artiste."}
+          </p>
+        </fieldset>
 
         {/* Indicateur de critères actifs */}
         {hasActiveFilters && (

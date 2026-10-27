@@ -40,6 +40,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ArtistBadges from '@/components/profile/ArtistBadges';
 import JuryEvaluationPanel from '@/components/jury/JuryEvaluationPanel';
 import ProfessionalArtistTools from '@/components/professional/ProfessionalArtistTools';
+import AvailabilityTab from '@/components/profile/AvailabilityTab';
 
 
 const ArtistProfile = () => {
@@ -390,6 +391,13 @@ const ArtistProfile = () => {
                 artistProfileId={profile.id}
                 artistName={profile.stage_name}
               />
+            </div>
+          )}
+
+          {/* Agenda déclaré par l'artiste (masqué s'il est vide) */}
+          {isProfessional && !isOwnProfile && (
+            <div className="mb-8">
+              <AvailabilityTab artistProfileId={profile.id} readOnly />
             </div>
           )}
 

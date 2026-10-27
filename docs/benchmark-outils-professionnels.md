@@ -31,8 +31,18 @@ API de casting et webhooks.
 | 4 | **Planning d'auditions par créneaux** + export agenda (.ics) et CSV | Acceptd | Programmer 20 à 60 passages à la main est la tâche la plus longue d'un casting |
 | 5 | **Comparateur d'artistes** (2 à 4 côte à côte : tessiture, répertoire, enregistrements, évaluations, notes) | Backstage (grille), Operabase (répertoire) | Décider entre les finalistes d'un rôle |
 
-## Pistes suivantes (non réalisées)
+## Deuxième lot (réalisé)
 
-- **Disponibilités des artistes** et recherche « disponible le … » (Operabase jump-in) : demande aux artistes de tenir un calendrier.
-- **Partage d'une liste avec des collaborateurs** (Backstage, Casting It) : nécessite une notion d'équipe par organisation.
-- **Jurys par session d'audition** avec grille de notation en direct (Acceptd) : combinable avec les critères personnalisés existants.
+| # | Fonctionnalité | Inspirée de | Détail |
+|---|---|---|---|
+| 6 | **Disponibilités des artistes** | Operabase (jump-in) | L'artiste déclare engagements et indisponibilités (onglet Agenda) ; la recherche filtre « disponible du … au … » ; agenda visible sur la fiche et dans le comparateur. Visible des membres connectés uniquement |
+| 7 | **Partage d'une liste par lien** | Backstage, Cast It | Lien en lecture seule, sans compte, désactivable ; montre artistes et rôles envisagés, jamais les notes privées |
+| 8 | **Jury à plusieurs et séance d'audition** | Acceptd | Le responsable invite des professionnels inscrits ; chaque juré note les candidats sur les critères du casting (1 à 20) en séance, dans l'ordre de passage, avec chronomètre ; synthèse par juré et moyenne, export CSV |
+
+Base de données : migration `20261027100000_availability_sharing_jury.sql`. Règles d'accès vérifiées
+par `supabase/tests/run_rls_tests.sh` (30 cas : propriétaire, juré, professionnel extérieur, artiste, anonyme).
+
+## Pistes suivantes
+
+- Notifications aux jurés invités et aux candidats programmés (e-mail).
+- Synchronisation de l'agenda de l'artiste avec un calendrier externe (iCal).

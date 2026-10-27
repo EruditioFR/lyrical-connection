@@ -706,6 +706,47 @@ export type Database = {
           },
         ]
       }
+      artist_unavailabilities: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          end_date: string
+          id: string
+          kind: string
+          start_date: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          kind?: string
+          start_date: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          kind?: string
+          start_date?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_unavailabilities_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           content: string
@@ -901,6 +942,42 @@ export type Database = {
           },
           {
             foreignKeyName: "casting_invitations_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      casting_jury_members: {
+        Row: {
+          casting_id: string
+          created_at: string
+          id: string
+          professional_profile_id: string
+        }
+        Insert: {
+          casting_id: string
+          created_at?: string
+          id?: string
+          professional_profile_id: string
+        }
+        Update: {
+          casting_id?: string
+          created_at?: string
+          id?: string
+          professional_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_jury_members_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_jury_members_professional_profile_id_fkey"
             columns: ["professional_profile_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
@@ -1962,6 +2039,7 @@ export type Database = {
           id: string
           name: string
           professional_profile_id: string
+          share_token: string | null
           updated_at: string
         }
         Insert: {
@@ -1970,6 +2048,7 @@ export type Database = {
           id?: string
           name: string
           professional_profile_id: string
+          share_token?: string | null
           updated_at?: string
         }
         Update: {
@@ -1978,6 +2057,7 @@ export type Database = {
           id?: string
           name?: string
           professional_profile_id?: string
+          share_token?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -3167,6 +3247,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_shared_artist_list: { Args: { p_token: string }; Returns: Json }
+      is_application_juror: { Args: { p_application_id: string }; Returns: boolean }
+      is_casting_juror: { Args: { p_casting_id: string }; Returns: boolean }
+      is_casting_owner: { Args: { p_casting_id: string }; Returns: boolean }
+      is_juror_for_professional: { Args: { p_professional_profile_id: string }; Returns: boolean }
       artist_matches_casting_criteria: {
         Args: { artist_profile_id_param: string; casting_id_param: string }
         Returns: boolean

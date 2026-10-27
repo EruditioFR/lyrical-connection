@@ -8,9 +8,7 @@ export type ArtistList = Tables<'professional_artist_lists'> & {
 };
 export type ArtistNote = Tables<'professional_artist_notes'>;
 
-// Tant que la migration n'est pas appliquée, PostgREST répond « table introuvable »
-const isMissingTable = (error: { code?: string } | null) =>
-  !!error && (error.code === 'PGRST205' || error.code === '42P01');
+import { isMissingTable } from '@/lib/supabaseErrors';
 
 const notifyError = (error: Error) =>
   toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
@@ -101,6 +99,21 @@ export const useArtistLists = (professionalProfileId?: string) => {
     onError: notifyError,
   });
 
+  // Lien de partage en lecture seule : un jeton aléatoire, ou null pour désactiver le lien
+  const setSharing = useMutation({
+    mutationFn: async ({ listId, enabled }: { listId: string; enabled: boolean }) => {
+      const share_token = enabled ? crypto.randomUUID() : null;
+      const { error } = await supabase.from('professional_artist_lists').update({ share_token }).eq('id', listId);
+      if (error) throw error;
+      return share_token;
+    },
+    onSuccess: (token) => {
+      invalidate();
+      toast({ title: token ? 'Lien de partage créé' : 'Lien de partage désactivé' });
+    },
+    onError: notifyError,
+  });
+
   return {
     lists: data?.lists || [],
     unavailable: data?.unavailable || false,
@@ -109,6 +122,7 @@ export const useArtistLists = (professionalProfileId?: string) => {
     deleteList,
     toggleArtist,
     setRole,
+    setSharing,
   };
 };
 

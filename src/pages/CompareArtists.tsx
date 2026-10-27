@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
 import { useArtistEvaluations } from '@/hooks/useArtistEvaluations';
 import { useArtistNotes } from '@/hooks/useArtistLists';
+import { useUnavailabilitiesFor, formatPeriod, UNAVAILABILITY_LABELS, type UnavailabilityKind } from '@/hooks/useArtistAvailability';
 
 const MAX_COMPARE = 4;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -35,6 +36,7 @@ const CompareArtists = () => {
   const { profile: professionalProfile } = useProfessionalProfile();
   const { evaluations } = useArtistEvaluations(professionalProfile?.id);
   const { noteFor } = useArtistNotes(professionalProfile?.id);
+  const periods = useUnavailabilitiesFor(ids);
 
   const { data, isLoading } = useQuery({
     queryKey: ['compare-artists', ids],
@@ -139,6 +141,26 @@ const CompareArtists = () => {
                 <tr>
                   <th scope="row" className={rowHeader}>Langues</th>
                   {profiles.map(p => <td key={p.id} className={cell}>{p.spoken_languages?.length ? p.spoken_languages.join(', ') : '—'}</td>)}
+                </tr>
+                <tr>
+                  <th scope="row" className={rowHeader}>Agenda à venir</th>
+                  {profiles.map(p => {
+                    const own = periods.filter(u => u.artist_profile_id === p.id).slice(0, 5);
+                    return (
+                      <td key={p.id} className={cell}>
+                        {own.length === 0 ? <span className="text-muted-foreground">Aucune indisponibilité déclarée</span> : (
+                          <ul className="space-y-1">
+                            {own.map(u => (
+                              <li key={u.id}>
+                                <span className="tabular-nums">{formatPeriod(u.start_date, u.end_date)}</span>
+                                <span className="text-muted-foreground"> · {u.title || UNAVAILABILITY_LABELS[u.kind as UnavailabilityKind] || u.kind}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
                 <tr>
                   <th scope="row" className={rowHeader}>Répertoire</th>

@@ -26,7 +26,7 @@ const CandidateScoring = ({
   professionalProfileId 
 }: CandidateScoringProps) => {
   const { criteria } = useCustomCriteria(professionalProfileId);
-  const { scores, upsertScore, averageScore } = useCandidateScores(applicationId);
+  const { myScores: scores, upsertScore, averageScore } = useCandidateScores(applicationId);
   const [localScores, setLocalScores] = useState<Record<string, { score: number; comments: string }>>({});
 
   useEffect(() => {

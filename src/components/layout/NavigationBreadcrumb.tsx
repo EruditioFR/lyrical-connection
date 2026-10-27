@@ -58,7 +58,10 @@ const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({ customTitle
       'cookies': 'Politique des cookies',
       'creer-evenement': 'Créer un événement',
       'creer-casting': 'Créer un casting',
-      'modifier-mot-de-passe': 'Modifier le mot de passe'
+      'modifier-mot-de-passe': 'Modifier le mot de passe',
+      'comparer': 'Comparer des artistes',
+      'liste': 'Liste partagée',
+      'seance': 'Séance d\'audition'
     };
 
     let currentPath = '';

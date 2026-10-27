@@ -40,7 +40,7 @@ for (const [path, title] of publicPages) {
 const privatePages = [
   '/dashboard', '/profil', '/profil-professionnel', '/messages', '/notifications',
   '/mes-candidatures', '/mes-evenements', '/recherche-artistes', '/casting-dashboard',
-  '/castings/nouveau', '/evenements/nouveau', '/facturation', '/subscription', '/admin', '/comparer',
+  '/castings/nouveau', '/evenements/nouveau', '/facturation', '/subscription', '/admin', '/comparer', '/professional/castings/00000000-0000-4000-8000-000000000000/seance',
 ];
 
 for (const path of privatePages) {
@@ -132,4 +132,9 @@ test("aucun contenu fictif présenté comme réel", async ({ page }) => {
   await page.goto('/castings');
   await page.locator('h1').first().waitFor();
   await expect(page.getByText('Opéra National de Paris')).toHaveCount(0);
+});
+
+test("un lien de liste partagée invalide affiche « Liste introuvable »", async ({ page }) => {
+  await page.goto('/liste/pas-un-jeton');
+  await expect(page.locator('h1')).toHaveText('Liste introuvable');
 });

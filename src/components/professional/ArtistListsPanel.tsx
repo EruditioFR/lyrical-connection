@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Columns3, ListChecks, Plus, Trash2, X } from 'lucide-react';
+import { Columns3, ListChecks, Plus, Trash2, X, Share2, Copy } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 import { useArtistLists, useArtistNotes } from '@/hooks/useArtistLists';
 import { useArtists } from '@/hooks/useArtists';
 
@@ -17,11 +18,20 @@ interface ArtistListsPanelProps {
 const ArtistListsPanel = ({ professionalProfileId }: ArtistListsPanelProps) => {
   // Tous les artistes, indépendamment des filtres de recherche en cours
   const { artists } = useArtists({ isUserAuthenticated: true });
-  const { lists, unavailable, createList, deleteList, toggleArtist, setRole } = useArtistLists(professionalProfileId);
+  const { lists, unavailable, createList, deleteList, toggleArtist, setRole, setSharing } = useArtistLists(professionalProfileId);
   const { noteFor, allTags } = useArtistNotes(professionalProfileId);
   const [newListName, setNewListName] = useState('');
   const [tagFilter, setTagFilter] = useState<string | null>(null);
   const artistById = new Map(artists.map(a => [a.id, a]));
+  const shareUrl = (token: string) => `${window.location.origin}/liste/${token}`;
+  const copyLink = async (token: string) => {
+    try {
+      await navigator.clipboard.writeText(shareUrl(token));
+      toast({ title: 'Lien copié', description: 'Toute personne qui a ce lien voit la liste, sans vos notes.' });
+    } catch {
+      toast({ title: 'Copie impossible', description: shareUrl(token) });
+    }
+  };
 
   if (unavailable) {
     return (
@@ -116,6 +126,31 @@ const ArtistListsPanel = ({ professionalProfileId }: ArtistListsPanelProps) => {
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
+                </div>
+                <div className="basis-full flex flex-wrap items-center gap-2 pt-2">
+                  {list.share_token ? (
+                    <>
+                      <Label htmlFor={`share-${list.id}`} className="sr-only">Lien de partage de {list.name}</Label>
+                      <Input id={`share-${list.id}`} readOnly value={shareUrl(list.share_token)} className="flex-1 min-w-[220px] text-sm" onFocus={e => e.target.select()} />
+                      <Button size="sm" variant="outline" onClick={() => copyLink(list.share_token!)}>
+                        <Copy className="w-4 h-4 mr-1" />
+                        Copier
+                      </Button>
+                      <Button size="sm" variant="ghost" disabled={setSharing.isPending} onClick={() => setSharing.mutate({ listId: list.id, enabled: false })}>
+                        Désactiver le lien
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={setSharing.isPending || list.items.length === 0}
+                      onClick={() => setSharing.mutate({ listId: list.id, enabled: true }, { onSuccess: token => token && copyLink(token) })}
+                    >
+                      <Share2 className="w-4 h-4 mr-1" />
+                      Partager en lecture seule
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
