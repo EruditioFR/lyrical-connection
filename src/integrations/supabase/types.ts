@@ -1554,8 +1554,12 @@ export type Database = {
           id: string
           is_deleted_by_recipient: boolean
           is_deleted_by_sender: boolean
+          is_purged_by_recipient: boolean
+          is_purged_by_sender: boolean
           is_read: boolean
           is_starred: boolean
+          is_starred_by_recipient: boolean
+          is_starred_by_sender: boolean
           read_at: string | null
           recipient_id: string
           reply_to_id: string | null
@@ -1570,8 +1574,12 @@ export type Database = {
           id?: string
           is_deleted_by_recipient?: boolean
           is_deleted_by_sender?: boolean
+          is_purged_by_recipient?: boolean
+          is_purged_by_sender?: boolean
           is_read?: boolean
           is_starred?: boolean
+          is_starred_by_recipient?: boolean
+          is_starred_by_sender?: boolean
           read_at?: string | null
           recipient_id: string
           reply_to_id?: string | null
@@ -1586,8 +1594,12 @@ export type Database = {
           id?: string
           is_deleted_by_recipient?: boolean
           is_deleted_by_sender?: boolean
+          is_purged_by_recipient?: boolean
+          is_purged_by_sender?: boolean
           is_read?: boolean
           is_starred?: boolean
+          is_starred_by_recipient?: boolean
+          is_starred_by_sender?: boolean
           read_at?: string | null
           recipient_id?: string
           reply_to_id?: string | null
@@ -3248,6 +3260,7 @@ export type Database = {
     }
     Functions: {
       get_shared_artist_list: { Args: { p_token: string }; Returns: Json }
+      purge_mail_messages: { Args: { p_ids: string[] }; Returns: number }
       is_application_juror: { Args: { p_application_id: string }; Returns: boolean }
       is_casting_juror: { Args: { p_casting_id: string }; Returns: boolean }
       is_casting_owner: { Args: { p_casting_id: string }; Returns: boolean }

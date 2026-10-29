@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,8 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { X, Send, Save, Paperclip, User, Building2, Upload, ChevronsUpDown, Check } from "lucide-react";
-import { useMailbox } from "@/hooks/useMailbox";
+import { useMailbox, type MailDraft } from "@/hooks/useMailbox";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { uploadAttachment, removeAttachment as removeStoredAttachment, attachmentName } from "@/lib/messageAttachments";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -25,6 +27,8 @@ interface ComposeMessageProps {
   };
   recipientId?: string;
   recipientName?: string;
+  /** Brouillon à reprendre */
+  draft?: MailDraft;
 }
 
 // Constante pour la taille maximale des fichiers (2MB)
@@ -34,19 +38,22 @@ export const ComposeMessage = ({
   onClose, 
   replyTo, 
   recipientId, 
-  recipientName 
+  recipientName,
+  draft
 }: ComposeMessageProps) => {
-  const [recipient, setRecipient] = useState(recipientId || "");
-  const [recipientDisplayName, setRecipientDisplayName] = useState(recipientName || "");
-  const [subject, setSubject] = useState("");
-  const [content, setContent] = useState("");
-  const [attachments, setAttachments] = useState<string[]>([]);
+  const draftRecipientName = draft?.recipient?.stage_name || draft?.recipient?.company_name || "";
+  const [recipient, setRecipient] = useState(recipientId || draft?.recipient_id || "");
+  const [recipientDisplayName, setRecipientDisplayName] = useState(recipientName || draftRecipientName);
+  const [subject, setSubject] = useState(draft?.subject || "");
+  const [content, setContent] = useState(draft?.content || "");
+  const [attachments, setAttachments] = useState<string[]>(draft?.attachment_urls || []);
+  // Un seul brouillon par message en cours, mis à jour à chaque sauvegarde
+  const draftIdRef = useRef<string | undefined>(draft?.id);
   const [searchQuery, setSearchQuery] = useState("");
   const [openContactSearch, setOpenContactSearch] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<Set<string>>(new Set());
-  const [autoSaveTimeout, setAutoSaveTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
-
-  const { sendMessage, isSending, saveDraft } = useMailbox();
+  const { user } = useAuth();
+  const { sendMessageAsync, isSending, saveDraftAsync, deleteDraftAsync } = useMailbox();
   const { toast } = useToast();
 
   // Fetch available contacts
@@ -103,45 +110,28 @@ export const ComposeMessage = ({
     }
   }, [replyTo]);
 
-  // Auto-save draft with debounce
-  const autoSaveDraft = useCallback(async () => {
-    if ((!recipient && !subject.trim() && !content.trim()) || replyTo) {
-      return; // Don't save empty drafts or reply drafts
-    }
+  const persistDraft = useCallback(async () => {
+    const saved = await saveDraftAsync({
+      id: draftIdRef.current,
+      recipient_id: recipient || undefined,
+      subject: subject.trim() || undefined,
+      content: content.trim() || undefined,
+      attachment_urls: attachments.length > 0 ? attachments : undefined,
+    });
+    draftIdRef.current = saved?.id ?? draftIdRef.current;
+  }, [recipient, subject, content, attachments, saveDraftAsync]);
 
-    try {
-      await saveDraft({
-        recipient_id: recipient || undefined,
-        subject: subject.trim() || undefined,
-        content: content.trim() || undefined,
-        attachment_urls: attachments.length > 0 ? attachments : undefined,
-      });
-    } catch (error) {
-      console.error('Error auto-saving draft:', error);
-    }
-  }, [recipient, subject, content, attachments, replyTo, saveDraft]);
-
-  // Auto-save effect with debounce
+  // Sauvegarde automatique après 3 secondes sans frappe (pas pour une réponse ni un message vide)
+  const isFirstRender = useRef(true);
   useEffect(() => {
-    // Clear previous timeout
-    if (autoSaveTimeout) {
-      clearTimeout(autoSaveTimeout);
-    }
-
-    // Set new timeout for auto-save
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    if (replyTo || (!recipient && !subject.trim() && !content.trim())) return;
     const timeout = setTimeout(() => {
-      autoSaveDraft();
-    }, 3000); // Auto-save after 3 seconds of inactivity
-
-    setAutoSaveTimeout(timeout);
-
-    // Cleanup timeout on unmount
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [recipient, subject, content, attachments, autoSaveDraft]);
+      persistDraft().catch(error => console.error('Error auto-saving draft:', error));
+    }, 3000);
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipient, subject, content, attachments]);
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
@@ -167,25 +157,9 @@ export const ComposeMessage = ({
     if (!validateFileSize(file)) {
       throw new Error('Fichier trop volumineux');
     }
-
-    const fileName = `${Date.now()}-${file.name}`;
-    const filePath = `${fileName}`;
-
-    const { data, error } = await supabase.storage
-      .from('message-attachments')
-      .upload(filePath, file);
-
-    if (error) {
-      console.error('Erreur upload:', error);
-      throw new Error(`Erreur lors de l'upload: ${error.message}`);
-    }
-
-    // Récupérer l'URL publique du fichier
-    const { data: urlData } = supabase.storage
-      .from('message-attachments')
-      .getPublicUrl(filePath);
-
-    return urlData.publicUrl;
+    if (!user) throw new Error('Utilisateur non connecté');
+    // Espace privé : seuls les participants du message pourront l'ouvrir
+    return uploadAttachment(file, user.id);
   };
 
   const handleFileSelect = async (files: FileList) => {
@@ -225,62 +199,46 @@ export const ComposeMessage = ({
     }
   };
 
-  const removeAttachment = async (attachmentUrl: string) => {
+  const removeAttachment = async (attachment: string) => {
     try {
-      // Extraire le nom du fichier depuis l'URL pour le supprimer du storage
-      const urlParts = attachmentUrl.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      
-      if (fileName && attachmentUrl.includes('supabase')) {
-        await supabase.storage
-          .from('message-attachments')
-          .remove([fileName]);
-      }
-      
-      setAttachments(prev => prev.filter(url => url !== attachmentUrl));
+      await removeStoredAttachment(attachment);
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
     }
+    setAttachments(prev => prev.filter(a => a !== attachment));
   };
 
-  const getFileNameFromUrl = (url: string) => {
-    try {
-      const urlParts = url.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      // Enlever le timestamp ajouté
-      return fileName.split('-').slice(1).join('-') || fileName;
-    } catch {
-      return 'fichier';
-    }
-  };
+  const getFileNameFromUrl = attachmentName;
 
   const handleSend = async () => {
     if (!recipient || !subject.trim()) return;
 
     try {
-      await sendMessage({
+      await sendMessageAsync({
         recipient_id: recipient,
         subject: subject.trim(),
         content: content.trim(),
         reply_to_id: replyTo?.id,
         attachment_urls: attachments.length > 0 ? attachments : undefined,
       });
-      onClose();
     } catch (error) {
+      // L'erreur est affichée par useMailbox ; la fenêtre reste ouverte et le texte est conservé
       console.error('Error sending message:', error);
+      return;
     }
+    if (draftIdRef.current) {
+      await deleteDraftAsync(draftIdRef.current).catch(() => undefined);
+    }
+    onClose();
   };
 
   const handleSaveDraft = async () => {
     try {
-      await saveDraft({
-        recipient_id: recipient || undefined,
-        subject: subject.trim() || undefined,
-        content: content.trim() || undefined,
-        attachment_urls: attachments.length > 0 ? attachments : undefined,
-      });
+      await persistDraft();
+      toast({ title: "Brouillon enregistré" });
     } catch (error) {
       console.error('Error saving draft:', error);
+      toast({ title: "Le brouillon n'a pas pu être enregistré", variant: "destructive" });
     }
   };
 

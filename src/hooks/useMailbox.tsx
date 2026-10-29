@@ -1,39 +1,34 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { isMissingColumn, isMissingFunction } from '@/lib/supabaseErrors';
+import { sortIntoFolders, isStarredBy, type RawMailMessage } from '@/utils/mailFolders';
 
-interface MailMessage {
-  id: string;
-  sender_id: string;
-  recipient_id: string;
+interface Party {
+  stage_name?: string;
+  company_name?: string;
+  profile_image_url?: string | null;
+  logo_url?: string | null;
+}
+
+export interface MailMessage extends RawMailMessage {
   subject: string;
   content: string;
   is_read: boolean;
+  /** Favori de l'utilisateur connecté (chaque participant a le sien) */
   is_starred: boolean;
-  is_deleted_by_sender: boolean;
-  is_deleted_by_recipient: boolean;
   reply_to_id?: string;
   attachment_urls?: string[];
   created_at: string;
   read_at?: string;
   updated_at: string;
-  sender?: {
-    stage_name?: string;
-    company_name?: string;
-    profile_image_url?: string;
-    logo_url?: string;
-  };
-  recipient?: {
-    stage_name?: string;
-    company_name?: string;
-    profile_image_url?: string;
-    logo_url?: string;
-  };
+  sender?: Party | null;
+  recipient?: Party | null;
 }
 
-interface MailDraft {
+export interface MailDraft {
   id: string;
   user_id: string;
   recipient_id?: string;
@@ -42,203 +37,81 @@ interface MailDraft {
   attachment_urls?: string[];
   created_at: string;
   updated_at: string;
+  recipient?: Party | null;
 }
 
-// Helper function to handle authentication errors
-const handleAuthError = async (error: any, refreshSession: () => Promise<void>, toast: any) => {
-  if (error?.code === '42501' || error?.message?.includes('row-level security')) {
-    console.log('=== ERREUR D\'AUTHENTIFICATION DÉTECTÉE ===');
-    toast({
-      title: "Session expirée",
-      description: "Votre session a expiré. Reconnexion en cours...",
-      variant: "destructive",
-    });
-    
-    try {
-      await refreshSession();
-      toast({
-        title: "Session restaurée",
-        description: "Veuillez réessayer votre action.",
-      });
-    } catch (refreshError) {
-      console.error('Impossible de rafraîchir la session:', refreshError);
-      toast({
-        title: "Reconnexion nécessaire",
-        description: "Veuillez vous reconnecter pour continuer.",
-        variant: "destructive",
-      });
-      // Redirection vers la page de connexion sera gérée par le composant
-    }
-    return true;
-  }
-  return false;
+type Raw = Omit<MailMessage, 'sender' | 'recipient' | 'is_starred'> & { is_starred?: boolean };
+
+/** Noms et avatars de tous les correspondants, en deux requêtes au lieu de deux par message */
+const fetchParties = async (userIds: string[]): Promise<Map<string, Party>> => {
+  const map = new Map<string, Party>();
+  if (userIds.length === 0) return map;
+  const [artists, pros] = await Promise.all([
+    supabase.from('artist_profiles').select('user_id, stage_name, profile_image_url').in('user_id', userIds),
+    supabase.from('professional_profiles').select('user_id, company_name, logo_url').in('user_id', userIds),
+  ]);
+  (pros.data || []).forEach(p => p.user_id && map.set(p.user_id, { company_name: p.company_name, logo_url: p.logo_url }));
+  (artists.data || []).forEach(a => a.user_id && map.set(a.user_id, { stage_name: a.stage_name, profile_image_url: a.profile_image_url }));
+  return map;
 };
+
+const MAILBOX_LIMIT = 1000;
 
 export const useMailbox = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { refreshSession, user } = useAuth();
+  const { user } = useAuth();
+  const userId = user?.id;
 
-  // Fetch inbox messages
-  const { data: inboxMessages = [], isLoading: isLoadingInbox } = useQuery({
-    queryKey: ['mailbox', 'inbox', user?.id],
-    enabled: !!user?.id,
+  const notifyError = (title: string) => (error: Error) =>
+    toast({ title, description: error.message, variant: 'destructive' });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['mailbox'] });
+
+  // Une seule requête pour tous les dossiers ; les règles d'accès ne renvoient que la copie de l'utilisateur
+  const { data, isLoading } = useQuery({
+    queryKey: ['mailbox', 'all', userId],
+    enabled: !!userId,
     queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
+      const [messages, drafts] = await Promise.all([
+        supabase
+          .from('mail_messages')
+          .select('*')
+          .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`)
+          .order('created_at', { ascending: false })
+          .limit(MAILBOX_LIMIT),
+        supabase.from('mail_drafts').select('*').eq('user_id', userId as string).order('updated_at', { ascending: false }),
+      ]);
+      if (messages.error) throw messages.error;
+      if (drafts.error) throw drafts.error;
 
-      const { data, error } = await supabase
-        .from('mail_messages')
-        .select('*')
-        .eq('recipient_id', user.id)
-        .eq('is_deleted_by_recipient', false)
-        .order('created_at', { ascending: false });
+      const raw = (messages.data || []) as Raw[];
+      const others = new Set<string>();
+      raw.forEach(m => { others.add(m.sender_id); others.add(m.recipient_id); });
+      (drafts.data || []).forEach(d => d.recipient_id && others.add(d.recipient_id));
+      others.delete(userId as string);
+      const parties = await fetchParties([...others]);
 
-      if (error) throw error;
-
-      // Récupérer les profils des expéditeurs
-      const messagesWithProfiles = await Promise.all(
-        (data || []).map(async (message) => {
-          const [artistProfile, professionalProfile] = await Promise.all([
-            supabase
-              .from('artist_profiles')
-              .select('stage_name, profile_image_url, user_id')
-              .eq('user_id', message.sender_id)
-              .single(),
-            supabase
-              .from('professional_profiles')
-              .select('company_name, logo_url, user_id')
-              .eq('user_id', message.sender_id)
-              .single()
-          ]);
-
-          const sender = artistProfile.data 
-            ? { 
-                stage_name: artistProfile.data.stage_name, 
-                profile_image_url: artistProfile.data.profile_image_url 
-              }
-            : professionalProfile.data 
-            ? { 
-                company_name: professionalProfile.data.company_name, 
-                logo_url: professionalProfile.data.logo_url 
-              }
-            : null;
-
-          return { ...message, sender };
-        })
-      );
-
-      return messagesWithProfiles as MailMessage[];
+      const withParties: MailMessage[] = raw.map(m => ({
+        ...m,
+        is_starred: isStarredBy(m, userId as string),
+        sender: parties.get(m.sender_id) ?? null,
+        recipient: parties.get(m.recipient_id) ?? null,
+      }));
+      const draftsWithRecipient: MailDraft[] = (drafts.data || []).map(d => ({
+        ...d,
+        recipient: d.recipient_id ? parties.get(d.recipient_id) ?? null : null,
+      })) as MailDraft[];
+      return { messages: withParties, drafts: draftsWithRecipient };
     },
   });
 
-  // Fetch sent messages
-  const { data: sentMessages = [], isLoading: isLoadingSent } = useQuery({
-    queryKey: ['mailbox', 'sent', user?.id],
-    enabled: !!user?.id,
-    queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
+  const folders = useMemo(
+    () => sortIntoFolders(data?.messages || [], userId || ''),
+    [data?.messages, userId]
+  );
+  const findMessage = (id: string) => data?.messages.find(m => m.id === id);
+  const sideOf = (m: MailMessage) => ({ isSender: m.sender_id === userId, isRecipient: m.recipient_id === userId });
 
-      const { data, error } = await supabase
-        .from('mail_messages')
-        .select('*')
-        .eq('sender_id', user.id)
-        .eq('is_deleted_by_sender', false)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Récupérer les profils des destinataires
-      const messagesWithProfiles = await Promise.all(
-        (data || []).map(async (message) => {
-          const [artistProfile, professionalProfile] = await Promise.all([
-            supabase
-              .from('artist_profiles')
-              .select('stage_name, profile_image_url, user_id')
-              .eq('user_id', message.recipient_id)
-              .single(),
-            supabase
-              .from('professional_profiles')
-              .select('company_name, logo_url, user_id')
-              .eq('user_id', message.recipient_id)
-              .single()
-          ]);
-
-          const recipient = artistProfile.data 
-            ? { 
-                stage_name: artistProfile.data.stage_name, 
-                profile_image_url: artistProfile.data.profile_image_url 
-              }
-            : professionalProfile.data 
-            ? { 
-                company_name: professionalProfile.data.company_name, 
-                logo_url: professionalProfile.data.logo_url 
-              }
-            : null;
-
-          return { ...message, recipient };
-        })
-      );
-
-      return messagesWithProfiles as MailMessage[];
-    },
-  });
-
-  // Fetch starred messages
-  const { data: starredMessages = [], isLoading: isLoadingStarred } = useQuery({
-    queryKey: ['mailbox', 'starred', user?.id],
-    enabled: !!user?.id,
-    queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('mail_messages')
-        .select('*')
-        .eq('is_starred', true)
-        .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.false),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.false)`)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Récupérer les profils pour les messages favoris
-      const messagesWithProfiles = await Promise.all(
-        (data || []).map(async (message) => {
-          const [senderArtist, senderPro, recipientArtist, recipientPro] = await Promise.all([
-            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.sender_id).single(),
-            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.sender_id).single(),
-            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.recipient_id).single(),
-            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.recipient_id).single()
-          ]);
-
-          const sender = senderArtist.data || senderPro.data;
-          const recipient = recipientArtist.data || recipientPro.data;
-
-          return { ...message, sender, recipient };
-        })
-      );
-
-      return messagesWithProfiles as MailMessage[];
-    },
-  });
-
-  // Fetch drafts
-  const { data: drafts = [], isLoading: isLoadingDrafts } = useQuery({
-    queryKey: ['mailbox', 'drafts', user?.id],
-    enabled: !!user?.id,
-    queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('mail_drafts')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      return data as MailDraft[];
-    },
-  });
-
-  // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (message: {
       recipient_id: string;
@@ -247,184 +120,133 @@ export const useMailbox = () => {
       reply_to_id?: string;
       attachment_urls?: string[];
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
+      if (!userId) throw new Error('Utilisateur non connecté');
       const { data, error } = await supabase
         .from('mail_messages')
-        .insert({
-          sender_id: user.id,
-          ...message,
-        })
+        .insert({ sender_id: userId, ...message })
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-      toast({
-        title: "Message envoyé",
-        description: "Votre message a été envoyé avec succès.",
-      });
+      invalidate();
+      toast({ title: 'Message envoyé', description: 'Votre message a été envoyé avec succès.' });
     },
-    onError: (error) => {
-      toast({
-        title: "Erreur",
-        description: "Impossible d'envoyer le message.",
-        variant: "destructive",
-      });
-    },
+    onError: notifyError("Le message n'a pas pu être envoyé"),
   });
 
-  // Mark as read mutation
   const markAsReadMutation = useMutation({
     mutationFn: async (messageId: string) => {
-      console.log('Marquage comme lu du message:', messageId);
-      
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) {
-        console.error('Problème d\'authentification:', authError);
-        throw new Error('Utilisateur non authentifié');
-      }
-      console.log('Utilisateur actuel:', user.id);
-
+      const m = findMessage(messageId);
+      // Seul le destinataire marque un message comme lu
+      if (!m || m.recipient_id !== userId || m.is_read) return;
       const { error } = await supabase
         .from('mail_messages')
         .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('id', messageId);
-
-      if (error) {
-        console.error('Erreur lors du marquage comme lu:', error);
-        throw error;
-      }
-      console.log('Message marqué comme lu avec succès');
+      if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-    },
-    onError: async (error) => {
-      await handleAuthError(error, refreshSession, toast);
-    },
+    onSuccess: invalidate,
+    onError: notifyError('Erreur'),
   });
 
-  // Toggle star mutation
   const toggleStarMutation = useMutation({
     mutationFn: async ({ messageId, isStarred }: { messageId: string; isStarred: boolean }) => {
-      console.log('Basculement étoile pour le message:', { messageId, isStarred });
-      
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) {
-        console.error('Problème d\'authentification:', authError);
-        throw new Error('Utilisateur non authentifié');
+      const m = findMessage(messageId);
+      if (!m) return;
+      const { isSender, isRecipient } = sideOf(m);
+      const update = {
+        ...(isSender ? { is_starred_by_sender: !isStarred } : {}),
+        ...(isRecipient ? { is_starred_by_recipient: !isStarred } : {}),
+      };
+      let { error } = await supabase.from('mail_messages').update(update).eq('id', messageId);
+      if (isMissingColumn(error)) {
+        // Base pas encore migrée : ancien favori commun
+        ({ error } = await supabase.from('mail_messages').update({ is_starred: !isStarred }).eq('id', messageId));
       }
-      console.log('Utilisateur actuel:', user.id);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+    onError: notifyError('Erreur'),
+  });
 
+  // Mettre à la corbeille (chacun a la sienne)
+  const deleteMessageMutation = useMutation({
+    mutationFn: async ({ messageId }: { messageId: string; isSender?: boolean }) => {
+      const m = findMessage(messageId);
+      if (!m) return;
+      const { isSender, isRecipient } = sideOf(m);
       const { error } = await supabase
         .from('mail_messages')
-        .update({ is_starred: !isStarred })
+        .update({
+          ...(isSender ? { is_deleted_by_sender: true } : {}),
+          ...(isRecipient ? { is_deleted_by_recipient: true } : {}),
+        })
         .eq('id', messageId);
-
-      if (error) {
-        console.error('Erreur lors du basculement étoile:', error);
-        throw error;
-      }
-      console.log('Étoile basculée avec succès');
+      if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
+      invalidate();
+      toast({ title: 'Message déplacé dans la corbeille' });
     },
-    onError: async (error) => {
-      await handleAuthError(error, refreshSession, toast);
-    },
+    onError: notifyError('Impossible de supprimer le message'),
   });
 
-  // Delete message mutation
-  const deleteMessageMutation = useMutation({
-    mutationFn: async ({ messageId, isSender }: { messageId: string; isSender: boolean }) => {
-      console.log('=== DÉBUT SUPPRESSION MESSAGE ===');
-      console.log('ID du message:', messageId);
-      console.log('Est expéditeur:', isSender);
-      
-      // Vérifier l'authentification avant la suppression
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) {
-        console.error('Problème d\'authentification:', authError);
-        throw new Error('Utilisateur non authentifié');
-      }
-      console.log('ID utilisateur actuel:', user.id);
-
-      // Récupérer les détails du message pour vérification
-      const { data: messageData, error: fetchError } = await supabase
+  const restoreMessageMutation = useMutation({
+    mutationFn: async ({ messageId }: { messageId: string; isSender?: boolean }) => {
+      const m = findMessage(messageId);
+      if (!m) return;
+      const { isSender, isRecipient } = sideOf(m);
+      const { error } = await supabase
         .from('mail_messages')
-        .select('id, sender_id, recipient_id, subject, is_deleted_by_sender, is_deleted_by_recipient')
-        .eq('id', messageId)
-        .single();
-
-      if (fetchError) {
-        console.error('Erreur lors de la récupération du message:', fetchError);
-        throw fetchError;
-      }
-
-      console.log('Détails du message:', messageData);
-      console.log('Utilisateur est expéditeur:', messageData.sender_id === user.id);
-      console.log('Utilisateur est destinataire:', messageData.recipient_id === user.id);
-
-      // Déterminer le champ à mettre à jour
-      const updateField = isSender ? 'is_deleted_by_sender' : 'is_deleted_by_recipient';
-      console.log('Champ à mettre à jour:', updateField);
-      
-      // Créer l'objet de mise à jour
-      const updateData = isSender
-        ? { is_deleted_by_sender: true }
-        : { is_deleted_by_recipient: true };
-      console.log('Données de mise à jour:', updateData);
-
-      // Effectuer la mise à jour
-      const { data: updateResult, error } = await supabase
-        .from('mail_messages')
-        .update(updateData)
-        .eq('id', messageId)
-        .select();
-
-      if (error) {
-        console.error('=== ERREUR LORS DE LA SUPPRESSION ===');
-        console.error('Code d\'erreur:', error.code);
-        console.error('Message d\'erreur:', error.message);
-        console.error('Détails:', error.details);
-        console.error('Hint:', error.hint);
-        throw error;
-      }
-      
-      console.log('=== SUPPRESSION RÉUSSIE ===');
-      console.log('Résultat de la mise à jour:', updateResult);
-      return updateResult;
+        .update({
+          ...(isSender ? { is_deleted_by_sender: false } : {}),
+          ...(isRecipient ? { is_deleted_by_recipient: false } : {}),
+        })
+        .eq('id', messageId);
+      if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-      toast({
-        title: "Message supprimé",
-        description: "Le message a été supprimé.",
-      });
+      invalidate();
+      toast({ title: 'Message restauré' });
     },
-    onError: async (error) => {
-      console.error('Erreur dans onError:', error);
-      
-      // Gérer spécifiquement les erreurs d'authentification
-      const isAuthError = await handleAuthError(error, refreshSession, toast);
-      
-      if (!isAuthError) {
-        toast({
-          title: "Erreur",
-          description: "Impossible de supprimer le message.",
-          variant: "destructive",
-        });
-      }
-    },
+    onError: notifyError('Impossible de restaurer le message'),
   });
 
-  // Save draft mutation
+  // Suppression définitive de SA copie : le message reste chez l'autre participant
+  const purge = async (messages: MailMessage[]) => {
+    if (messages.length === 0) return;
+    const ids = messages.map(m => m.id);
+    let { error } = await supabase.rpc('purge_mail_messages', { p_ids: ids });
+    if (isMissingFunction(error)) {
+      // Base pas encore migrée : ancien comportement (suppression de la ligne)
+      ({ error } = await supabase.from('mail_messages').delete().in('id', ids));
+    }
+    if (error) throw error;
+  };
+
+  const permanentDeleteMutation = useMutation({
+    mutationFn: async (messageId: string) => {
+      const m = findMessage(messageId);
+      if (m) await purge([m]);
+    },
+    onSuccess: () => {
+      invalidate();
+      toast({ title: 'Message supprimé définitivement' });
+    },
+    onError: notifyError('Impossible de supprimer le message'),
+  });
+
+  const emptyTrashMutation = useMutation({
+    mutationFn: async () => purge(folders.trash),
+    onSuccess: () => {
+      invalidate();
+      toast({ title: 'Corbeille vidée' });
+    },
+    onError: notifyError('Impossible de vider la corbeille'),
+  });
+
   const saveDraftMutation = useMutation({
     mutationFn: async (draft: {
       id?: string;
@@ -433,190 +255,52 @@ export const useMailbox = () => {
       content?: string;
       attachment_urls?: string[];
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      if (draft.id) {
-        const { data, error } = await supabase
-          .from('mail_drafts')
-          .update({
-            recipient_id: draft.recipient_id,
-            subject: draft.subject,
-            content: draft.content,
-            attachment_urls: draft.attachment_urls,
-          })
-          .eq('id', draft.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      } else {
-        const { data, error } = await supabase
-          .from('mail_drafts')
-          .insert({
-            user_id: user.id,
-            ...draft,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      }
+      if (!userId) throw new Error('Utilisateur non connecté');
+      const { id, ...fields } = draft;
+      const row = {
+        recipient_id: fields.recipient_id ?? null,
+        subject: fields.subject ?? null,
+        content: fields.content ?? null,
+        attachment_urls: fields.attachment_urls ?? null,
+      };
+      const { data, error } = id
+        ? await supabase.from('mail_drafts').update(row).eq('id', id).select().single()
+        : await supabase.from('mail_drafts').insert({ user_id: userId, ...row }).select().single();
+      if (error) throw error;
+      return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox', 'drafts'] });
-    },
+    onSuccess: invalidate,
   });
 
-  // Delete draft mutation
   const deleteDraftMutation = useMutation({
     mutationFn: async (draftId: string) => {
-      const { error } = await supabase
-        .from('mail_drafts')
-        .delete()
-        .eq('id', draftId);
-
+      const { error } = await supabase.from('mail_drafts').delete().eq('id', draftId);
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox', 'drafts'] });
-    },
+    onSuccess: invalidate,
   });
 
-  // Fetch trash messages
-  const { data: trashMessages = [], isLoading: isLoadingTrash } = useQuery({
-    queryKey: ['mailbox', 'trash', user?.id],
-    enabled: !!user?.id,
-    queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('mail_messages')
-        .select('*')
-        .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.true),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.true)`)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Récupérer les profils pour les messages de la corbeille
-      const messagesWithProfiles = await Promise.all(
-        (data || []).map(async (message) => {
-          const [senderArtist, senderPro, recipientArtist, recipientPro] = await Promise.all([
-            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.sender_id).single(),
-            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.sender_id).single(),
-            supabase.from('artist_profiles').select('stage_name, profile_image_url').eq('user_id', message.recipient_id).single(),
-            supabase.from('professional_profiles').select('company_name, logo_url').eq('user_id', message.recipient_id).single()
-          ]);
-
-          const sender = senderArtist.data || senderPro.data;
-          const recipient = recipientArtist.data || recipientPro.data;
-
-          return { ...message, sender, recipient };
-        })
-      );
-
-      return messagesWithProfiles as MailMessage[];
-    },
-  });
-
-  // Restore message mutation
-  const restoreMessageMutation = useMutation({
-    mutationFn: async ({ messageId, isSender }: { messageId: string; isSender: boolean }) => {
-      const { error } = await supabase
-        .from('mail_messages')
-        .update(isSender ? { is_deleted_by_sender: false } : { is_deleted_by_recipient: false })
-        .eq('id', messageId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-      toast({
-        title: "Message restauré",
-        description: "Le message a été restauré.",
-      });
-    },
-  });
-
-  // Permanently delete message mutation
-  const permanentDeleteMutation = useMutation({
-    mutationFn: async (messageId: string) => {
-      const { error } = await supabase
-        .from('mail_messages')
-        .delete()
-        .eq('id', messageId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-      toast({
-        title: "Message supprimé définitivement",
-        description: "Le message a été supprimé définitivement.",
-      });
-    },
-  });
-
-  // Empty trash mutation
-  const emptyTrashMutation = useMutation({
-    mutationFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      const { error } = await supabase
-        .from('mail_messages')
-        .delete()
-        .or(`and(recipient_id.eq.${user.id},is_deleted_by_recipient.eq.true),and(sender_id.eq.${user.id},is_deleted_by_sender.eq.true)`);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-      toast({
-        title: "Corbeille vidée",
-        description: "Tous les messages de la corbeille ont été supprimés définitivement.",
-      });
-    },
-  });
-
-  // Real-time subscription
+  // Nouveaux messages reçus en temps réel
   useEffect(() => {
-    if (!user?.id) return;
-
+    if (!userId) return;
     const channel = supabase
-      .channel(`mail_messages_changes_${user.id}_${Math.random().toString(36).slice(2)}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'mail_messages',
-          filter: `recipient_id=eq.${user.id}`,
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['mailbox'] });
-        }
-      )
+      .channel(`mail_messages_changes_${userId}_${Math.random().toString(36).slice(2)}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mail_messages', filter: `recipient_id=eq.${userId}` }, invalidate)
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient, user?.id]);
-
-  const unreadCount = inboxMessages.filter(msg => !msg.is_read).length;
+    return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   return {
-    inboxMessages,
-    sentMessages,
-    starredMessages,
-    drafts,
-    trashMessages,
-    unreadCount,
-    isLoading: isLoadingInbox || isLoadingSent || isLoadingStarred || isLoadingDrafts || isLoadingTrash,
+    inboxMessages: folders.inbox,
+    sentMessages: folders.sent,
+    starredMessages: folders.starred,
+    drafts: data?.drafts || [],
+    trashMessages: folders.trash,
+    unreadCount: folders.inbox.filter(m => !m.is_read).length,
+    isLoading,
     sendMessage: sendMessageMutation.mutate,
+    sendMessageAsync: sendMessageMutation.mutateAsync,
     isSending: sendMessageMutation.isPending,
     markAsRead: markAsReadMutation.mutate,
     toggleStar: toggleStarMutation.mutate,
@@ -625,6 +309,42 @@ export const useMailbox = () => {
     permanentDelete: permanentDeleteMutation.mutate,
     emptyTrash: emptyTrashMutation.mutate,
     saveDraft: saveDraftMutation.mutate,
+    saveDraftAsync: saveDraftMutation.mutateAsync,
     deleteDraft: deleteDraftMutation.mutate,
+    deleteDraftAsync: deleteDraftMutation.mutateAsync,
   };
+};
+
+/** Compteur de messages non lus pour l'icône du menu : une seule requête de comptage */
+export const useUnreadCount = () => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const userId = user?.id;
+
+  const { data = 0 } = useQuery({
+    queryKey: ['mailbox', 'unread-count', userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('mail_messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('recipient_id', userId as string)
+        .eq('is_read', false)
+        .eq('is_deleted_by_recipient', false);
+      if (error) throw error;
+      return count || 0;
+    },
+  });
+
+  useEffect(() => {
+    if (!userId) return;
+    const channel = supabase
+      .channel(`mail_unread_${userId}_${Math.random().toString(36).slice(2)}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mail_messages', filter: `recipient_id=eq.${userId}` },
+        () => queryClient.invalidateQueries({ queryKey: ['mailbox'] }))
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [userId, queryClient]);
+
+  return data;
 };

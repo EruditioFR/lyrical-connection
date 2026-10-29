@@ -31,7 +31,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
 import PhotosTab from '@/components/profile/PhotosTab';
 import RepertoireTab from '@/components/profile/RepertoireTab';
-import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 import AirPlayer from '@/components/profile/AirPlayer';
 import ArtistPhotoPreview from '@/components/profile/ArtistPhotoPreview';
@@ -348,16 +347,11 @@ const ArtistProfile = () => {
                   {!isMobile && (
                     <div className="flex gap-2">
                       {!isOwnProfile && isProfessional && (
-                        <ContactArtistDialog 
-                          artistId={profile.id}
-                          artistName={profile.stage_name}
-                          trigger={
-                            <Button>
-                              <MessageCircle className="w-4 h-4 mr-2" />
-                              Contacter
-                            </Button>
-                          }
-                        />
+                        // Même chemin que sur mobile : le message arrive dans la messagerie de l'artiste
+                        <Button onClick={() => setShowComposeMessage(true)}>
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Contacter
+                        </Button>
                       )}
                     </div>
                   )}

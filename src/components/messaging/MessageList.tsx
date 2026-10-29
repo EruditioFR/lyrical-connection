@@ -412,6 +412,8 @@ export const MessageList = ({
                     variant="ghost"
                     size="sm"
                     className="p-1 h-auto"
+                    aria-label={message.is_starred ? "Retirer des favoris" : "Ajouter aux favoris"}
+                    aria-pressed={message.is_starred}
                     onClick={(e) => {
                       e.stopPropagation();
                       onStarToggle(message.id, message.is_starred);

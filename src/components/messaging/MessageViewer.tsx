@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { attachmentName, attachmentSignedUrl } from "@/lib/messageAttachments";
 
 interface Message {
   id: string;
@@ -80,16 +80,7 @@ export const MessageViewer = ({
   const contactName = contactInfo?.stage_name || contactInfo?.company_name || 'Utilisateur';
   const contactAvatar = contactInfo?.profile_image_url || contactInfo?.logo_url;
 
-  const getFileNameFromUrl = (url: string) => {
-    try {
-      const urlParts = url.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      // Enlever le timestamp ajouté lors de l'upload
-      return fileName.split('-').slice(1).join('-') || fileName;
-    } catch {
-      return 'fichier_' + Date.now();
-    }
-  };
+  const getFileNameFromUrl = attachmentName;
 
   const downloadAttachment = async (url: string) => {
     console.log('Téléchargement de la pièce jointe:', url);
@@ -98,8 +89,9 @@ export const MessageViewer = ({
     setDownloadingFiles(prev => new Set(prev).add(url));
 
     try {
-      // Pour les URLs Supabase Storage, on peut télécharger directement
-      const response = await fetch(url, {
+      // Pièces jointes privées : lien temporaire réservé aux participants du message
+      const signedUrl = await attachmentSignedUrl(url);
+      const response = await fetch(signedUrl, {
         method: 'GET',
         mode: 'cors',
       });
@@ -171,6 +163,8 @@ export const MessageViewer = ({
               variant="ghost"
               size="sm"
               onClick={() => onStarToggle(message.id, message.is_starred)}
+              aria-label={message.is_starred ? "Retirer des favoris" : "Ajouter aux favoris"}
+              aria-pressed={message.is_starred}
             >
               <Star 
                 className={cn(
@@ -288,10 +282,10 @@ export const MessageViewer = ({
 
           {/* Message Body */}
           <div className="prose prose-sm max-w-none">
-            <div 
-              className="whitespace-pre-wrap text-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: message.content }}
-            />
+            {/* Texte brut : le contenu d'un message n'est jamais interprété comme du HTML */}
+            <div className="whitespace-pre-wrap break-words text-foreground leading-relaxed">
+              {message.content}
+            </div>
           </div>
         </div>
       </div>
