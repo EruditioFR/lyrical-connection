@@ -110,7 +110,7 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
             </EventApplicationDialog>
           ) : !isArtist && (
             <Button className="w-full" asChild>
-              <Link to={`/evenements/${event.id}/inscriptions`}>
+              <Link to={`/professional/event-applications?eventId=${event.id}`}>
                 <Users className="w-4 h-4 mr-2" />
                 Voir les inscriptions
               </Link>

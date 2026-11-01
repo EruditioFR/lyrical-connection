@@ -20,12 +20,12 @@ const CtaSection = () => {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
             <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-card hover:bg-white/90 text-lyrical-900" asChild>
-              <Link to="/inscription">
+              <Link to="/auth">
                 {t('cta.createAccount')}
               </Link>
             </Button>
             <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg border-white text-white hover:bg-card hover:text-lyrical-900 bg-transparent" asChild>
-              <Link to="/abonnements">
+              <Link to="/pricing">
                 {t('cta.viewPlans')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>

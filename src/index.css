@@ -48,6 +48,9 @@
     --input: 40 13% 70%;
     --ring: 350 71% 36%;
 
+    /* Série de graphique unique : rideau (validé contre le papier) */
+    --chart-1: 350 71% 36%;
+
     --radius: 0.125rem;
 
     --sidebar-background: 40 17% 7%;
@@ -98,6 +101,8 @@
     --border: 40 8% 24%;
     --input: 40 8% 32%;
     --ring: 350 70% 70%;
+
+    --chart-1: 350 59% 58%;
 
     --sidebar-background: 40 10% 6%;
     --sidebar-foreground: 43 19% 92%;

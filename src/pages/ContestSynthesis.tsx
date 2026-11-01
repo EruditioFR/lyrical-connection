@@ -459,7 +459,7 @@ const ContestSynthesis = () => {
                                 {index + 1}
                               </TableCell>
                               <TableCell>
-                                <Link to={`/artiste/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
+                                <Link to={`/artistes/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
                                   <Avatar className="w-8 h-8">
                                     <AvatarImage src={item.artist?.profile_image_url || ''} />
                                     <AvatarFallback>{item.artist?.stage_name?.charAt(0) || '?'}</AvatarFallback>
@@ -590,7 +590,7 @@ const ContestSynthesis = () => {
                             <TableRow key={item.artist?.id} className="hover:bg-gold-50/50 dark:hover:bg-gold-900/10">
                               <TableCell className="text-center font-bold text-gold-600">{index + 1}</TableCell>
                               <TableCell>
-                                <Link to={`/artiste/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
+                                <Link to={`/artistes/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
                                   <Avatar className="w-10 h-10 border-2 border-gold-200">
                                     <AvatarImage src={item.artist?.profile_image_url || ''} />
                                     <AvatarFallback className="bg-gold-100 text-gold-800">

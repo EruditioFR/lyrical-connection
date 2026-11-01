@@ -204,7 +204,7 @@ const Navbar = () => {
                         <span>{t('navigation:admin')}</span>
                       </DropdownMenuItem>
                     </>}
-                  {user.app_metadata.provider === 'email' && <DropdownMenuItem onClick={() => navigate('/auth/update-password')}>
+                  {user.app_metadata.provider === 'email' && <DropdownMenuItem onClick={() => navigate('/change-password')}>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Changer le mot de passe</span>
                     </DropdownMenuItem>}

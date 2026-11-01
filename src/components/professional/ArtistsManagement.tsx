@@ -74,7 +74,7 @@ const ArtistsManagement = () => {
             </p>
           </div>
           <Button asChild size="lg">
-            <Link to="/profile">Créer mon profil</Link>
+            <Link to="/profil-professionnel">Créer mon profil</Link>
           </Button>
         </CardContent>
       </Card>

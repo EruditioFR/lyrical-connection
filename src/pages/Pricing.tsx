@@ -84,7 +84,7 @@ export default function Pricing() {
       // If user already has a paid subscription, add premium visibility
       if (subscription && subscription.plan_id !== 'gratuit') {
         console.log('User has paid subscription, redirecting to profile for premium visibility');
-        window.location.href = '/profile?tab=premium';
+        window.location.href = '/profil';
         return;
       }
       

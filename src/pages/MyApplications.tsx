@@ -342,16 +342,6 @@ const MyApplications = () => {
                           >
                             {application.type === 'casting' ? 'Voir le casting' : 'Voir l\'événement'}
                           </Button>
-                          
-                          {application.status === 'pending' && application.type === 'casting' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => navigate(`/applications/${application.id}/edit`)}
-                            >
-                              Modifier
-                            </Button>
-                          )}
                         </div>
                       </div>
                     </CardContent>

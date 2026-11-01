@@ -57,6 +57,8 @@ prennent la surface sombre du thème.
 | Bouton principal | variante par défaut (encre) — ne pas surcharger la couleur |
 | Bouton secondaire | `variant="outline"` |
 | Carte | contour fin, pas d'ombre ; préférer des listes séparées par des filets |
+| Panneau de tableau de bord | `components/dashboard/Panel.tsx` : `Panel` (filet encre + titre serif + lien d'action), `PanelList`/`PanelLink` (lignes cliquables qui sont de vrais liens), `StatRow`/`Stat` (chiffres clés en serif séparés par des filets, pas de tuiles) |
+| Graphique | série unique en `hsl(var(--chart-1))` (rideau, validé contre le papier et le fond sombre), grille et axes en `--border` / `--muted-foreground`, info-bulle au survol, pas de légende pour une seule série |
 | Page de lecture | `<article>` de 3xl de large, étiquette + titre serif, sections séparées par des filets (`py-8 border-t`), listes de définitions plutôt que des encadrés ; voir `pages/TermsOfService.tsx` |
 | Liste éditoriale | `components/editorial/Editorial.tsx` : `EditorialSection` (étiquette rouge + titre serif à gauche, contenu à droite), `EditorialList` (liste à filets, `numbered` pour « 01, 02… »), `Eyebrow` (étiquette seule) |
 | Écoute | bouton rond de 44 px minimum, `aria-label` « Écouter … », `aria-pressed` |
@@ -78,8 +80,12 @@ prennent la surface sombre du thème.
 décoratif, bouton avec une couleur maison au lieu d'une variante du thème, couleur Tailwind codée en
 dur (`text-green-600`, `bg-gray-100`…), fond `bg-white` opaque.
 
+## Garde-fou des liens
+
+`src/routes.test.ts` échoue si un lien interne (`to=`, `navigate(`, `href=`) ne correspond à aucune route déclarée.
+
 ## Reste à reprendre
 
-- Pages internes (tableaux de bord, administration, candidatures) : couleurs migrées vers les jetons, mise en page encore en cartes ; à reprendre écran par écran.
+- Autres pages internes (candidatures, castings côté pro, administration) : couleurs migrées, mise en page encore en cartes.
 - Mentions légales : éditeur, hébergeur, directeur de la publication et tribunal compétent sont « [À compléter] » (obligation légale, à renseigner par l'éditeur).
 - FAQ : « candidatures prioritaires » (Premium) et limites de taille des fichiers (10 Mo / 50 Mo) ne sont pas vérifiables dans le code ; à confirmer.

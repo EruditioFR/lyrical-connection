@@ -1,4 +1,5 @@
 
+import { getProfessionalRoleLabel } from '@/constants/professionalRoles';
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -53,19 +54,7 @@ const ProfessionalDetail = () => {
 
   const heroMedia = media?.[0];
 
-  const getRoleLabel = (role: string) => {
-    const roleLabels: Record<string, string> = {
-      'casting_director': 'Directeur de casting',
-      'vocal_coach': 'Coach vocal',
-      'conductor': 'Chef d\'orchestre',
-      'opera_house_manager': 'Directeur d\'opéra',
-      'voice_teacher': 'Professeur de chant',
-      'artistic_agent': 'Agent artistique',
-      'producer': 'Producteur',
-      'competition_director': 'Directeur de concours'
-    };
-    return roleLabels[role] || role;
-  };
+  const getRoleLabel = getProfessionalRoleLabel;
 
   if (!id) {
     return <Navigate to="/professionnels" replace />;

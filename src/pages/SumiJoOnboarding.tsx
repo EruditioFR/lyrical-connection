@@ -151,7 +151,7 @@ const SumiJoOnboarding = () => {
                     </Button>
                     <Button 
                       variant="outline"
-                      onClick={() => navigate('/profile')}
+                      onClick={() => navigate('/profil')}
                       className="w-full"
                     >
                       Compléter mon profil

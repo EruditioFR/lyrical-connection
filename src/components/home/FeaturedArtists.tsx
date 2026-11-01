@@ -172,7 +172,7 @@ const FeaturedArtists = () => {
               <Link to="/auth">{t('featuredArtists.becomeArtist.createProfile')}</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link to="/guide-artistes">{t('featuredArtists.becomeArtist.guide')}</Link>
+              <Link to="/faq">{t('featuredArtists.becomeArtist.guide')}</Link>
             </Button>
           </div>
         </div>
