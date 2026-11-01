@@ -141,7 +141,7 @@ const ArtistProfile = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Profil non trouvé</h1>
+          <h1 className="text-2xl font-serif mb-4">Profil non trouvé</h1>
           <p className="text-muted-foreground">Ce profil d'artiste n'existe pas ou n'est plus actif.</p>
           <Button 
             onClick={() => window.history.back()} 
@@ -248,7 +248,7 @@ const ArtistProfile = () => {
               <div className="flex-1 w-full">
                 <div className={`${isMobile ? 'space-y-4' : 'flex items-center justify-between'}`}>
                   <div className="w-full">
-                    <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-foreground mb-2`}>
+                    <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} text-foreground mb-2`}>
                       {profile.stage_name}
                     </h1>
                     

@@ -90,7 +90,7 @@ const ProfessionalApplications = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-serif mb-4">
             Connexion requise
           </h1>
         </div>
@@ -112,7 +112,7 @@ const ProfessionalApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-3xl md:text-4xl font-serif">
             Candidatures : {casting?.title}
           </h1>
           <p className="text-muted-foreground mt-2">

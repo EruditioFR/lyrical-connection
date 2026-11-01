@@ -257,7 +257,7 @@ const ResetPassword = () => {
                 <div className="flex items-center justify-center mb-4">
                   <AlertCircle className="h-16 w-16 text-destructive" />
                 </div>
-                <h1 className="text-2xl font-bold mb-4">Lien invalide</h1>
+                <h1 className="text-2xl font-serif mb-4">Lien invalide</h1>
                 <p className="text-muted-foreground mb-6">
                   Ce lien de réinitialisation de mot de passe est invalide ou a expiré.
                 </p>
@@ -283,7 +283,7 @@ const ResetPassword = () => {
             <div className="flex items-center justify-center mb-4">
               <Lock className="h-12 w-12 text-primary" />
             </div>
-            <h1 className="text-3xl font-serif font-bold mb-2">Nouveau mot de passe</h1>
+            <h1 className="text-3xl font-serif mb-2">Nouveau mot de passe</h1>
             <p className="text-muted-foreground">
               Choisissez un nouveau mot de passe sécurisé
             </p>

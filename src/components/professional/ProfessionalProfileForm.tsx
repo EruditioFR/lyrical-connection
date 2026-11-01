@@ -138,7 +138,7 @@ const ProfessionalProfileForm = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-serif font-bold mb-2">Mon Profil Professionnel</h1>
+        <h1 className="text-3xl font-serif mb-2">Mon Profil Professionnel</h1>
         <p className="text-muted-foreground">
           Gérez vos informations professionnelles et présentez votre activité
         </p>

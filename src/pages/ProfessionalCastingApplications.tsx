@@ -155,7 +155,7 @@ const ProfessionalCastingApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Candidatures aux Castings</h1>
+          <h1 className="text-3xl md:text-4xl font-serif">Candidatures aux castings</h1>
           <p className="text-muted-foreground mt-2">
             Gérez les candidatures reçues pour vos castings avec des statistiques détaillées
           </p>

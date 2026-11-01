@@ -343,7 +343,7 @@ const Auth = () => {
             <div className="flex items-center justify-center mb-4">
               <Music className="h-12 w-12 text-lyrical-600" />
             </div>
-            <h1 className="text-3xl font-serif font-bold mb-2">Espace Connexion</h1>
+            <h1 className="text-3xl font-serif mb-2">Espace Connexion</h1>
             <p className="text-muted-foreground">
               Connectez-vous ou créez votre compte
             </p>

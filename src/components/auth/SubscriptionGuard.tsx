@@ -91,7 +91,7 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
               <div className="flex items-center justify-center mb-4">
                 <CreditCard className="h-16 w-16 text-warning" />
               </div>
-              <h1 className="text-2xl font-bold mb-4">Abonnement requis</h1>
+              <h1 className="text-2xl font-serif mb-4">Abonnement requis</h1>
               <p className="text-muted-foreground mb-6">
                 Vous devez avoir un abonnement actif pour accéder à cette fonctionnalité.
               </p>

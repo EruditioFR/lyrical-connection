@@ -77,8 +77,8 @@ export const UnreadDot = () => (
 );
 
 /** Rangée de chiffres clés : valeurs en serif, séparées par des filets (pas de tuiles). */
-export const StatRow = ({ children }: { children: React.ReactNode }) => (
-  <dl className="grid grid-cols-2 lg:grid-cols-4 border-y border-border lg:divide-x lg:divide-border">{children}</dl>
+export const StatRow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <dl className={cn('grid grid-cols-2 lg:grid-cols-4 border-y border-border lg:divide-x lg:divide-border', className)}>{children}</dl>
 );
 
 export const Stat = ({ label, value, note }: { label: string; value: React.ReactNode; note?: React.ReactNode }) => (

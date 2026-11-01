@@ -188,7 +188,7 @@ const ProfessionalsList = () => {
   return (
     <Layout>
       <div className="container mx-auto py-8">
-        <h1 className="text-2xl font-bold mb-4">Liste des professionnels</h1>
+        <h1 className="text-2xl font-serif mb-4">Liste des professionnels</h1>
 
         <div className="mb-4">
           <Input

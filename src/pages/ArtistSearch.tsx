@@ -193,7 +193,7 @@ const ArtistSearch = () => {
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Recherche d'artistes</h1>
+            <h1 className="text-3xl md:text-4xl font-serif">Recherche d'artistes</h1>
             <p className="text-muted-foreground mt-2">
               Trouvez les artistes parfaits pour vos productions
             </p>

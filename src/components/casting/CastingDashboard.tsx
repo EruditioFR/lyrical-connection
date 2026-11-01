@@ -14,7 +14,7 @@ const CastingDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Tableau de bord Casting</h1>
+        <h1 className="text-3xl md:text-4xl font-serif">Tableau de bord des castings</h1>
         <p className="text-muted-foreground mt-2">
           Gérez vos critères de notation, API et intégrations casting
         </p>

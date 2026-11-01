@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Clock, MapPin, Users } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, MapPin } from 'lucide-react';
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,9 +36,8 @@ const UpcomingEvents = () => {
     date: event.start_date.split('T')[0],
     time: new Date(event.start_date).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
     location: event.location || event.venue || 'Lieu à confirmer',
-    image: event.image_url || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-    featured: Math.random() > 0.5,
-    attendees: Math.floor(Math.random() * 100) + 20 // TODO: Implémenter le vrai nombre de participants
+    image: event.image_url as string | null,
+    featured: !!event.is_featured,
   }));
 
   if (isLoading) {
@@ -87,28 +86,22 @@ const UpcomingEvents = () => {
               className="rounded-xl overflow-hidden border border-border/50 bg-card shadow-sm"
             >
               <div className="relative aspect-[16/9] overflow-hidden">
-                <img 
-                  src={event.image} 
-                  alt={event.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                {event.image ? (
+                  <>
+                    <img src={event.image} alt="" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-muted" aria-hidden="true" />
+                )}
                 
                 {event.featured && (
                   <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full">
                     À ne pas manquer
                   </div>
                 )}
-                
-                {/* Event attendees overlay */}
-                <div className="absolute bottom-3 left-3 flex items-center space-x-2 text-white">
-                  <div className="bg-black/30 backdrop-blur-sm rounded-full px-2 py-1 flex items-center space-x-1">
-                    <Users className="h-3 w-3" />
-                    <span className="text-xs font-medium">{event.attendees}</span>
-                  </div>
-                </div>
               </div>
-              
+
               <div className="p-5">
                 <h3 className="font-serif font-semibold text-lg">
                   <Link to={`/evenements/${event.id}`}>{event.title}</Link>

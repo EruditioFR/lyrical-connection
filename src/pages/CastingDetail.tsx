@@ -37,7 +37,7 @@ const CastingDetail = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Casting non trouvé</h1>
+          <h1 className="text-2xl font-serif mb-4">Casting non trouvé</h1>
           <Button onClick={() => navigate('/castings')}>
             Retour aux castings
           </Button>
@@ -94,7 +94,7 @@ const CastingDetail = () => {
           
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">
+              <h1 className="text-3xl md:text-4xl font-serif mb-2">
                 {casting.title}
               </h1>
               <div className="flex items-center gap-4 text-muted-foreground mb-4">

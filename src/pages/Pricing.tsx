@@ -111,7 +111,7 @@ export default function Pricing() {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold">Plans et Tarifs</h1>
+            <h1 className="text-3xl md:text-4xl font-serif">Plans et tarifs</h1>
             <p className="text-muted-foreground mt-2">
               Choisissez le plan qui correspond à vos besoins
             </p>
@@ -154,7 +154,7 @@ export default function Pricing() {
         )}
         
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-3xl md:text-4xl font-serif">
             {isPostRegistration ? 'Choisissez votre plan' : 'Plans et Tarifs'}
           </h1>
           <p className="text-muted-foreground mt-2">

@@ -124,15 +124,10 @@ const Notifications = () => {
             </Button>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <div className="flex items-center gap-3">
-              {unreadCount > 0 ? (
-                <BellRing className="h-8 w-8 text-info" />
-              ) : (
-                <Bell className="h-8 w-8 text-muted-foreground" />
-              )}
               <div>
-                <h1 className="text-3xl font-bold">Notifications</h1>
+                <h1 className="text-3xl md:text-4xl font-serif">Notifications</h1>
                 <p className="text-muted-foreground">
                   {notifications.length} notification{notifications.length > 1 ? 's' : ''}
                   {unreadCount > 0 && (
@@ -151,7 +146,6 @@ const Notifications = () => {
                 size="sm"
                 className="flex items-center gap-2"
               >
-                <Settings className="h-4 w-4" />
                 Tout marquer comme lu
               </Button>
             )}
@@ -159,80 +153,38 @@ const Notifications = () => {
         </div>
 
         {notifications.length === 0 ? (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <Bell className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-semibold mb-2">Aucune notification</h3>
-              <p className="text-muted-foreground">
-                Vous n'avez pas encore reçu de notifications.
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {notifications.map((notification, index) => (
-              <Card 
-                key={notification.id}
-                className={`transition-all duration-200 ${
-                  !notification.is_read 
-                    ? 'border-info/30 bg-info/50 shadow-md' 
-                    : 'hover:shadow-sm'
-                }`}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      {getNotificationIcon(notification.type)}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <CardTitle className={`text-lg ${
-                            !notification.is_read ? 'font-semibold' : 'font-medium'
-                          }`}>
-                            {notification.title}
-                          </CardTitle>
-                          {!notification.is_read && (
-                            <div className="w-2 h-2 bg-info rounded-full flex-shrink-0" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Badge variant="secondary" className="text-xs">
-                            {getNotificationTypeLabel(notification.type)}
-                          </Badge>
-                          <span>•</span>
-                          <span>{formatNotificationTime(notification.created_at)}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {!notification.is_read && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => markAsRead(notification.id)}
-                        className="text-xs text-info hover:text-info hover:bg-info/10"
-                      >
-                        Marquer comme lu
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-
-                {notification.content && (
-                  <CardContent className="pt-0">
-                    <div className="bg-muted rounded-lg p-4 border-l-4 border-l-info">
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {notification.content}
-                      </p>
-                    </div>
-                  </CardContent>
-                )}
-
-                {index < notifications.length - 1 && (
-                  <Separator className="mt-4" />
-                )}
-              </Card>
-            ))}
+          <div className="border-y border-border py-10">
+            <h2 className="text-xl font-serif mb-2">Aucune notification</h2>
+            <p className="text-muted-foreground">Vous n'avez pas encore reçu de notification.</p>
           </div>
+        ) : (
+          <ul className="divide-y divide-border border-y border-border">
+            {notifications.map((notification) => (
+              <li key={notification.id} className="flex items-start gap-4 py-5">
+                <span
+                  className={`mt-2 h-2 w-2 shrink-0 rounded-full ${notification.is_read ? '' : 'bg-gold-600'}`}
+                  aria-hidden="true"
+                />
+                <div className="flex-1 min-w-0">
+                  <h2 className={`text-lg font-serif ${notification.is_read ? 'font-normal' : ''}`}>
+                    {!notification.is_read && <span className="sr-only">Non lue : </span>}
+                    {notification.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {getNotificationTypeLabel(notification.type)} · {formatNotificationTime(notification.created_at)}
+                  </p>
+                  {notification.content && (
+                    <p className="mt-2 leading-relaxed whitespace-pre-wrap">{notification.content}</p>
+                  )}
+                </div>
+                {!notification.is_read && (
+                  <Button variant="ghost" size="sm" onClick={() => markAsRead(notification.id)} className="shrink-0">
+                    Marquer comme lue
+                  </Button>
+                )}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </Layout>

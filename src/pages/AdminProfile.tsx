@@ -40,7 +40,7 @@ const AdminProfile = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Profil Administrateur</h1>
+          <h1 className="text-3xl md:text-4xl font-serif mb-2">Profil administrateur</h1>
           <p className="text-muted-foreground">
             Gestion de votre compte administrateur sur Lyrisphere
           </p>

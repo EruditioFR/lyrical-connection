@@ -239,7 +239,7 @@ const ContestSynthesis = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Concours non trouvé</h1>
+          <h1 className="text-2xl font-serif mb-4">Concours non trouvé</h1>
           <Button asChild><Link to="/castings">Retour</Link></Button>
         </div>
       </Layout>
@@ -259,7 +259,7 @@ const ContestSynthesis = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold">Synthèse du Concours</h1>
+            <h1 className="text-3xl md:text-4xl font-serif">Synthèse du concours</h1>
           </div>
           <h2 className="text-xl text-muted-foreground">{contest.title}</h2>
         </div>

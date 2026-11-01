@@ -56,7 +56,7 @@ const CastingApplication = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-serif mb-4">
             Connexion requise
           </h1>
           <p className="text-muted-foreground mb-6">
@@ -84,7 +84,7 @@ const CastingApplication = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-serif mb-4">
             Casting non trouvé
           </h1>
           <Button onClick={() => navigate('/castings')}>
@@ -108,7 +108,7 @@ const CastingApplication = () => {
             Retour au casting
           </Button>
           
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl md:text-4xl font-serif mb-2">
             Postuler : {casting.title}
           </h1>
           <p className="text-muted-foreground">

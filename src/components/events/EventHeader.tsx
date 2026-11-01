@@ -86,7 +86,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({
                 )}
               </div>
               
-              <h1 className="text-3xl md:text-4xl font-serif font-bold mb-4 text-white drop-shadow-lg">
+              <h1 className="text-3xl md:text-4xl font-serif mb-4 text-white drop-shadow-lg">
                 {event.title}
               </h1>
               

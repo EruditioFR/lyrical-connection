@@ -8,3 +8,6 @@ export const eventTypes = [
 ] as const;
 
 export type EventType = typeof eventTypes[number]['value'];
+
+export const getEventTypeLabel = (value: string | null | undefined) =>
+  eventTypes.find(t => t.value === value)?.label ?? value ?? '';

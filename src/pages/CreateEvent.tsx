@@ -16,7 +16,7 @@ const CreateEvent = () => {
       <div className="min-h-screen bg-muted/30 py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-serif font-bold mb-8">
+            <h1 className="text-3xl font-serif mb-8">
               Créer un nouvel événement
             </h1>
             <EventFormImproved onClose={handleClose} />

@@ -83,7 +83,7 @@ const Install = () => {
             <div className="mx-auto w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
               <Smartphone className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <h1 className="text-3xl md:text-4xl mb-4">
               Installez Lyrisphere
             </h1>
             <p className="text-muted-foreground text-lg">

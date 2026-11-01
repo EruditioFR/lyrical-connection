@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Stat, StatRow } from '@/components/dashboard/Panel';
+import { getProductionTypeLabel } from '@/constants/productionTypes';
+import { getEventTypeLabel } from '@/constants/eventTypes';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,53 +40,18 @@ const ReceivedApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Candidatures Reçues</h1>
+          <h1 className="text-3xl md:text-4xl font-serif">Candidatures reçues</h1>
           <p className="text-muted-foreground mt-2">
             Gérez toutes les candidatures reçues pour vos castings et événements
           </p>
         </div>
 
         {/* Statistiques rapides */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mes Castings</CardTitle>
-              <Briefcase className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalCastings}</div>
-              <p className="text-xs text-muted-foreground">
-                casting(s) créé(s)
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mes Événements</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalEvents}</div>
-              <p className="text-xs text-muted-foreground">
-                événement(s) créé(s)
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalCastings + totalEvents}</div>
-              <p className="text-xs text-muted-foreground">
-                opportunités actives
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        <StatRow className="mb-8">
+          <Stat label="Castings" value={totalCastings} note="Publiés par vous" />
+          <Stat label="Événements" value={totalEvents} note="Publiés par vous" />
+          <Stat label="Total" value={totalCastings + totalEvents} />
+        </StatRow>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">
@@ -114,7 +82,7 @@ const ReceivedApplications = () => {
                         </div>
                         <h3 className="font-semibold text-lg">{casting.title}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {casting.production_type} • {casting.location}
+                          {[getProductionTypeLabel(casting.production_type), casting.location].filter(Boolean).join(' · ')}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Créé le {new Date(casting.created_at).toLocaleDateString('fr-FR')}
@@ -147,7 +115,7 @@ const ReceivedApplications = () => {
                         </div>
                         <h3 className="font-semibold text-lg">{event.title}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {event.event_type} • {event.location}
+                          {[getEventTypeLabel(event.event_type), event.location].filter(Boolean).join(' · ')}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Du {new Date(event.start_date).toLocaleDateString('fr-FR')} au {new Date(event.end_date).toLocaleDateString('fr-FR')}
@@ -213,7 +181,7 @@ const ReceivedApplications = () => {
                         </div>
                         <h3 className="font-semibold text-lg">{casting.title}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {casting.production_type} • {casting.location}
+                          {[getProductionTypeLabel(casting.production_type), casting.location].filter(Boolean).join(' · ')}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Créé le {new Date(casting.created_at).toLocaleDateString('fr-FR')}
@@ -272,7 +240,7 @@ const ReceivedApplications = () => {
                         </div>
                         <h3 className="font-semibold text-lg">{event.title}</h3>
                         <p className="text-sm text-muted-foreground">
-                          {event.event_type} • {event.location}
+                          {[getEventTypeLabel(event.event_type), event.location].filter(Boolean).join(' · ')}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Du {new Date(event.start_date).toLocaleDateString('fr-FR')} au {new Date(event.end_date).toLocaleDateString('fr-FR')}

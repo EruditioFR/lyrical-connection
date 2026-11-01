@@ -98,7 +98,7 @@ export default function SubscriptionSuccess() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Success Card */}
-          <Card className="border-success/30 bg-success/50">
+          <Card className="border-success/30 bg-success/5">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/15">
                 <CheckCircle className="h-8 w-8 text-success" />

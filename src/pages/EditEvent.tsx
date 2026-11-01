@@ -49,7 +49,7 @@ const EditEvent = () => {
                   <ArrowLeft className="h-4 w-4" />
                   Retour
                 </Button>
-                <h1 className="text-3xl font-serif font-bold">
+                <h1 className="text-3xl font-serif">
                   Événement introuvable
                 </h1>
               </div>
@@ -80,7 +80,7 @@ const EditEvent = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Retour
               </Button>
-              <h1 className="text-3xl font-serif font-bold">
+              <h1 className="text-3xl font-serif">
                 Modifier l'événement
               </h1>
             </div>

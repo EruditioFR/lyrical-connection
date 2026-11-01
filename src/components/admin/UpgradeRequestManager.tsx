@@ -70,13 +70,27 @@ const UpgradeRequestManager = () => {
 
       if (error) throw error;
 
-      // Simulation d'informations utilisateur supplémentaires
-      const enrichedData = data.map(request => ({
-        ...request,
-        user_name: `Utilisateur ${request.user_id.slice(-4)}`,
-        profile_name: request.profile_type === 'artist' ? 'Profil Artiste' : 'Profil Professionnel',
-        contact_email: `user${request.user_id.slice(-4)}@example.com`
-      }));
+      // Nom et contact réels, lus sur le profil concerné
+      const artistIds = data.filter(r => r.profile_type === 'artist').map(r => r.profile_id);
+      const proIds = data.filter(r => r.profile_type !== 'artist').map(r => r.profile_id);
+      const [{ data: artists = [] }, { data: pros = [] }] = await Promise.all([
+        artistIds.length
+          ? supabase.from('artist_profiles').select('id, stage_name, contact_email').in('id', artistIds)
+          : Promise.resolve({ data: [] as { id: string; stage_name: string; contact_email: string | null }[] }),
+        proIds.length
+          ? supabase.from('professional_profiles').select('id, company_name, contact_email').in('id', proIds)
+          : Promise.resolve({ data: [] as { id: string; company_name: string | null; contact_email: string | null }[] }),
+      ]);
+      const enrichedData = data.map(request => {
+        const artist = artists?.find(a => a.id === request.profile_id);
+        const pro = pros?.find(p => p.id === request.profile_id);
+        return {
+          ...request,
+          user_name: artist?.stage_name || pro?.company_name || 'Profil introuvable',
+          profile_name: request.profile_type === 'artist' ? 'Profil artiste' : 'Profil professionnel',
+          contact_email: artist?.contact_email || pro?.contact_email || '',
+        };
+      });
 
       return enrichedData as UpgradeRequest[];
     }
@@ -115,7 +129,7 @@ const UpgradeRequestManager = () => {
       
       toast({
         title: "Lien de paiement créé",
-        description: "Un lien de paiement Stripe a été généré et envoyé à l'utilisateur."
+        description: "Le lien de paiement Stripe a été enregistré sur la demande. Il n'est pas envoyé automatiquement."
       });
     },
     onError: (error) => {
@@ -131,12 +145,11 @@ const UpgradeRequestManager = () => {
   // Envoyer un email personnalisé
   const sendCustomEmail = useMutation({
     mutationFn: async ({ request, message }: { request: UpgradeRequest; message: string }) => {
-      // Ici, on utiliserait une edge function pour envoyer l'email via Resend
-      console.log('Envoi email personnalisé:', { request, message });
-      
-      // Simulation d'envoi d'email
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Envoi réel par la fonction serveur (adresse du compte, via Resend)
+      const { error } = await supabase.functions.invoke('send-upgrade-reminder', {
+        body: { upgrade_request_id: request.id, custom_message: message },
+      });
+      if (error) throw error;
       return { success: true };
     },
     onSuccess: () => {

@@ -73,7 +73,7 @@ const SumiJoOnboarding = () => {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-400 mb-6">
                   <Star className="w-10 h-10 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold mb-4">Concours Sumi Jo 2026</h1>
+                <h1 className="text-3xl md:text-4xl font-serif mb-4">Concours Sumi Jo 2026</h1>
                 <p className="text-muted-foreground">
                   Connectez-vous ou créez un compte pour activer votre code promo
                 </p>
@@ -104,7 +104,7 @@ const SumiJoOnboarding = () => {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h1 className="text-2xl font-bold">Félicitations !</h1>
+                  <h1 className="text-2xl font-serif">Félicitations !</h1>
                 </div>
                 <CardContent className="p-6 space-y-6">
                   <div className="text-center">
@@ -177,7 +177,7 @@ const SumiJoOnboarding = () => {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-400 mb-6">
                 <Star className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold mb-4 text-foreground">
+              <h1 className="text-4xl mb-4 text-foreground">
                 Concours International Sumi Jo 2026
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg mx-auto">

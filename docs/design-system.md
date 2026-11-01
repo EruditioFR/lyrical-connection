@@ -86,6 +86,8 @@ dur (`text-green-600`, `bg-gray-100`…), fond `bg-white` opaque.
 
 ## Reste à reprendre
 
-- Autres pages internes (candidatures, castings côté pro, administration) : couleurs migrées, mise en page encore en cartes.
+- Pages internes encore en cartes à contour fin (conforme, mais moins éditorial) : candidatures côté professionnel, castings, administration. Les chiffres clés y sont déjà en `StatRow`.
+- Statistiques d'administration (âge, nationalité, genre) : cartes avec graphiques, à reprendre avec la méthode des graphiques.
 - Mentions légales : éditeur, hébergeur, directeur de la publication et tribunal compétent sont « [À compléter] » (obligation légale, à renseigner par l'éditeur).
 - FAQ : « candidatures prioritaires » (Premium) et limites de taille des fichiers (10 Mo / 50 Mo) ne sont pas vérifiables dans le code ; à confirmer.
+- Administration, demandes d'upgrade : le lien de paiement Stripe est créé pour le compte de l'administrateur connecté, pas pour le demandeur (fonction `create-subscription`) ; à corriger côté serveur.

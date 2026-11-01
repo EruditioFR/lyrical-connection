@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Stat, StatRow } from '@/components/dashboard/Panel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -143,49 +144,13 @@ const PaymentManager = () => {
   return (
     <div className="space-y-6">
       {/* Statistiques des paiements */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Paiements</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{paymentStats.total}</div>
-          </CardContent>
-        </Card>
+      <StatRow className="mb-8">
+        <Stat label="Paiements" value={paymentStats.total} />
+        <Stat label="Réglés" value={paymentStats.completed} />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Paiements Complétés</CardTitle>
-            <CheckCircle className="h-4 w-4 text-success" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-success">{paymentStats.completed}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">En Attente</CardTitle>
-            <Clock className="h-4 w-4 text-warning" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-warning">{paymentStats.pending}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Revenus Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatAmount(paymentStats.totalRevenue, 'EUR')}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        <Stat label="En attente" value={paymentStats.pending} />
+        <Stat label="Revenus" value={formatAmount(paymentStats.totalRevenue, 'EUR')} />
+      </StatRow>
 
       {/* Filtres et tableau des paiements */}
       <Card>

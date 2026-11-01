@@ -1,4 +1,5 @@
 
+import { getEventTypeLabel } from '@/constants/eventTypes';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -93,7 +94,7 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold line-clamp-1">{event.title}</h3>
-          <Badge variant="secondary">{event.event_type}</Badge>
+          <Badge variant="outline" className="font-normal">{getEventTypeLabel(event.event_type)}</Badge>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">{event.description || 'Aucune description'}</p>
 
