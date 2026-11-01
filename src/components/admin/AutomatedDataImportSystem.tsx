@@ -521,7 +521,7 @@ const AutomatedDataImportSystem = () => {
               </div>
               
               <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-medium mb-2">🌟 Avantages des APIs</h4>
+                <h4 className="font-medium mb-2">Avantages des APIs</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• <strong>Données fiables</strong> : Sources reconnues et vérifiées</li>
                   <li>• <strong>Mise à jour automatique</strong> : Données toujours actuelles</li>

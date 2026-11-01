@@ -68,7 +68,7 @@ const FeaturesProfessionals = () => {
             </p>
           </div>
           <div className="mt-8">
-            <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
+            <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
               <Link to="/auth">Créez votre compte pro</Link>
             </Button>
           </div>
@@ -88,16 +88,16 @@ const FeaturesProfessionals = () => {
                   key={index} 
                   className={`h-full transition-all duration-300 ease-out text-appear group hover:scale-105 ${
                     isLyrical 
-                      ? "bg-gradient-to-br from-background to-lyrical-50/30 border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
-                      : "bg-gradient-to-br from-background to-gold-50/30 border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
+                      ? "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
+                      : "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
                   }`}
                 >
                   <CardContent className="p-4 md:p-6 h-full flex flex-col text-center relative">
                     {/* Icon */}
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto transition-all duration-300 ${
                       isLyrical 
-                        ? "bg-gradient-to-br from-lyrical-100 to-lyrical-200 group-hover:from-lyrical-200 group-hover:to-lyrical-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
-                        : "bg-gradient-to-br from-gold-100 to-gold-200 group-hover:from-gold-200 group-hover:to-gold-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
+                        ? "bg-lyrical-100 group-hover:bg-lyrical-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
+                        : "bg-gold-100 group-hover:bg-gold-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
                     }`}>
                       <IconComponent className={`h-6 w-6 ${
                         isLyrical ? "text-lyrical-700" : "text-gold-700"
@@ -123,15 +123,15 @@ const FeaturesProfessionals = () => {
         
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
-          <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
+          <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
             <Link to="/auth">Créez votre compte pro</Link>
           </Button>
         </div>
 
         {/* Castings Section */}
-        <div className="mt-12 md:mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-2xl p-6 md:p-8 border border-lyrical-200">
+        <div className="mt-12 md:mt-16 bg-lyrical-50 rounded-2xl p-6 md:p-8 border border-lyrical-200">
           <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-lyrical-500 to-lyrical-600 rounded-xl flex items-center justify-center">
+            <div className="flex-shrink-0 w-12 h-12 bg-lyrical-500 rounded-xl flex items-center justify-center">
               <Users className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1">
@@ -141,7 +141,7 @@ const FeaturesProfessionals = () => {
               <p className="text-lyrical-700/80 text-sm md:text-base mb-4">
                 Créez des appels à candidatures précis avec des critères de sélection avancés
               </p>
-              <Button size="sm" className="bg-lyrical-600 hover:bg-lyrical-700 text-white" asChild>
+              <Button size="sm" asChild>
                 <Link to="/castings">Découvrir les castings</Link>
               </Button>
             </div>
@@ -158,7 +158,7 @@ const FeaturesProfessionals = () => {
             les meilleurs artistes lyriques et organiser leurs événements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
+            <Button size="lg" className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
               <Link to="/auth">Créez votre compte pro</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>

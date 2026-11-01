@@ -52,7 +52,7 @@ const AuthenticatedHome = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Hero Banner */}
         <div 
-          className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900 mb-8"
+          className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-lyrical-900 mb-8"
         >
           <div className="relative h-full flex items-center justify-center px-8">
             <div className="text-white text-center">

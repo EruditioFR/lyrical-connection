@@ -321,7 +321,7 @@ const ProfessionalProfileForm = () => {
           <Button
             type="submit"
             disabled={isCreating || isUpdating || !formData.professional_role}
-            className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+           
           >
             {isCreating || isUpdating ? (
               <>

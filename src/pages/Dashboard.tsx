@@ -76,7 +76,7 @@ const Dashboard = () => {
             
             {/* Hero Banner pour artiste */}
             <div 
-              className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
+              className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-lyrical-900"
             >
               <div className="relative h-full flex items-center justify-center text-center px-6">
                 <div className="text-white">

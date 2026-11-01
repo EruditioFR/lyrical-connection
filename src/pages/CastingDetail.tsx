@@ -148,7 +148,7 @@ const CastingDetail = () => {
                 </Card>
               ) : isArtist && user ? (
                 <Button 
-                  className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                 
                   onClick={() => navigate(`/castings/${casting.id}/postuler`)}
                 >
                   <Send className="h-4 w-4 mr-2" />
@@ -384,7 +384,7 @@ const CastingDetail = () => {
               <Card>
                 <CardContent className="pt-6 space-y-3">
                   <Button 
-                    className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                    className="w-full"
                     onClick={() => navigate(`/castings/${casting.id}/postuler`)}
                   >
                     <Send className="h-4 w-4 mr-2" />

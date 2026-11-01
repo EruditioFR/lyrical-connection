@@ -41,7 +41,7 @@ const ProfessionalDashboard = () => {
     <div className="space-y-6">
       {/* Hero Banner */}
       <div 
-        className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
+        className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-lyrical-900"
       >
         <div className="relative h-full flex items-center justify-center text-center px-6">
           <div className="text-white">
@@ -121,7 +121,7 @@ const ProfessionalDashboard = () => {
             {/* Événements récents */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+                <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">
                   <Calendar className="h-5 w-5 text-gold-600" />
                   Événements récents
                 </CardTitle>
@@ -168,7 +168,7 @@ const ProfessionalDashboard = () => {
             {/* Actions rapides */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Actions rapides</CardTitle>
+                <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Actions rapides</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button asChild className="w-full justify-start">
@@ -211,7 +211,7 @@ const ProfessionalDashboard = () => {
         <TabsContent value="events">
           <Card>
             <CardHeader>
-              <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Mes événements</CardTitle>
+              <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Mes événements</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center">
@@ -234,7 +234,7 @@ const ProfessionalDashboard = () => {
         <TabsContent value="analytics">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+              <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">
                 <TrendingUp className="h-5 w-5 text-gold-600" />
                 Analytiques
               </CardTitle>

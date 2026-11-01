@@ -157,7 +157,7 @@ const FeaturedArtists = () => {
         </div>
         
         {/* Call to action section */}
-        <div className="mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-xl p-8 text-center">
+        <div className="mt-16 bg-lyrical-50 rounded-xl p-8 text-center">
           <h3 className="text-xl font-serif font-semibold mb-4">
             {t('featuredArtists.becomeArtist.title')}
           </h3>
@@ -166,7 +166,7 @@ const FeaturedArtists = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800 text-white"
+             
               asChild
             >
               <Link to="/auth">{t('featuredArtists.becomeArtist.createProfile')}</Link>

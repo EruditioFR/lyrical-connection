@@ -104,7 +104,7 @@ const Navbar = () => {
     };
   }, []);
 
-    return <nav className="bg-white shadow-sm border-b sticky top-0 z-50" ref={navRef}>
+    return <nav className="bg-background shadow-sm border-b sticky top-0 z-50" ref={navRef}>
       <div className="container mx-auto px-4 py-2 flex items-center justify-between min-h-[56px]">
         {/* Logo */}
         <Link to="/" className="flex items-center">
@@ -230,7 +230,7 @@ const Navbar = () => {
 
       {/* Menu Mobile */}
       {isMobile && isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg absolute top-full left-0 right-0 z-40">
+        <div className="md:hidden bg-background border-t border-border shadow-lg absolute top-full left-0 right-0 z-40">
           <div className="px-4 py-3 space-y-3">
             {user ? (
               <>
@@ -241,42 +241,42 @@ const Navbar = () => {
                     </div>
                     <Link
                       to="/mes-evenements"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Mes événements
                     </Link>
                     <Link
                       to="/castings"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Castings
                     </Link>
                     <Link
                       to="/casting-dashboard"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Tableau de bord casting
                     </Link>
                     <Link
                       to="/candidatures-reçues"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Candidatures reçues
                     </Link>
                     <Link
                       to="/messages"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Messages
                     </Link>
                     <Link
                       to="/artistes"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Trouver des artistes
@@ -291,35 +291,35 @@ const Navbar = () => {
                     </div>
                     <Link
                       to="/evenements"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Événements
                     </Link>
                     <Link
                       to="/castings"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Castings
                     </Link>
                     <Link
                       to="/mes-candidatures"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Mes candidatures
                     </Link>
                     <Link
                       to="/messages"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Messages
                     </Link>
                     <Link
                       to="/professionnels"
-                      className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                      className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Voir les professionnels
@@ -366,42 +366,42 @@ const Navbar = () => {
                 </div>
                 <Link
                   to="/"
-                  className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Accueil
                 </Link>
                 <Link
                   to="/evenements"
-                  className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Événements
                 </Link>
                 <Link
                   to="/castings"
-                  className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Castings
                 </Link>
                 <Link
                   to="/artistes"
-                  className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Artistes
                 </Link>
                 <Link
                   to="/about"
-                  className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   À propos
                 </Link>
                 <Link
                   to="/pricing"
-                  className="block px-3 py-2 text-muted-foreground hover:bg-gray-100 rounded-md"
+                  className="block px-3 py-2 text-muted-foreground hover:bg-accent rounded-md"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Tarifs

@@ -150,7 +150,7 @@ const UpcomingEvents = () => {
             Créez et promouvez vos événements auprès de notre communauté d'artistes et de professionnels.
           </p>
           <Button 
-            className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white"
+           
             asChild
           >
             <Link to="/evenements/creer">Créer un événement</Link>

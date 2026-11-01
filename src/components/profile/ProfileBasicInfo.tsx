@@ -291,7 +291,7 @@ const ProfileBasicInfo = ({
 
         <Button 
           type="submit" 
-          className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+          className="w-full"
           disabled={isLoading}
         >
           {isLoading ? 'Sauvegarde...' : (profile ? 'Mettre à jour le profil' : 'Créer le profil')}

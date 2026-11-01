@@ -182,7 +182,7 @@ const CastingApplication = () => {
                     <Button
                       type="submit"
                       disabled={isPending}
-                      className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+                     
                     >
                       {isPending ? (
                         <>

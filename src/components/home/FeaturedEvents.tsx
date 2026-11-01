@@ -76,7 +76,7 @@ const FeaturedEvents = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-lyrical-100 to-gold-100 flex items-center justify-center">
+                  <div className="w-full h-full bg-lyrical-100 flex items-center justify-center">
                     <Calendar className="h-12 w-12 text-lyrical-400" />
                   </div>
                 )}

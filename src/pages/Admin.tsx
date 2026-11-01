@@ -112,7 +112,7 @@ const Admin = () => {
                 <h1 className="text-2xl md:text-3xl font-serif font-semibold tracking-tight text-foreground leading-tight">
                   Administration
                 </h1>
-                <div className="mt-2 h-[2px] w-12 rounded-full bg-gradient-to-r from-gold-500 to-gold-300" />
+                <div className="mt-2 h-[2px] w-12 rounded-full bg-gold-500" />
                 <p className="text-muted-foreground text-sm mt-2">Gestion de la plateforme Lyrisphere</p>
               </div>
             </div>

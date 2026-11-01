@@ -52,7 +52,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({
               className="w-full h-full object-cover object-top"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20"></div>
+            <div className="w-full h-full bg-primary/20"></div>
           )}
           {/* Overlay sombre pour améliorer la lisibilité */}
           <div className="absolute inset-0 bg-black/40"></div>

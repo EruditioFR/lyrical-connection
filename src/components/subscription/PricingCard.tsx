@@ -25,7 +25,7 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading, user
   const isPremium = plan.name === "Premium Artistes";
 
   return (
-    <Card className={`relative ${isPopular || isPremium ? 'ring-2 ring-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-accent' : ''} ${isPremium ? 'bg-gradient-to-br from-primary/5 to-accent/5' : ''}`}>
+    <Card className={`relative ${isPopular || isPremium ? 'ring-2 ring-primary' : ''} ${isCurrentPlan ? 'ring-2 ring-accent' : ''} ${isPremium ? 'bg-primary/5' : ''}`}>
       {plan.name === "Artistes" && (
         <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
           Populaire
@@ -37,7 +37,7 @@ export const PricingCard = ({ plan, isCurrentPlan, onSelectPlan, isLoading, user
         </Badge>
       )}
       {plan.name === "Premium Artistes" && (
-        <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-primary to-accent text-white">
+        <Badge className="absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary text-white">
           Premium
         </Badge>
       )}

@@ -109,7 +109,7 @@ pour tous les acteurs du lyrique</h2>
                 Développez votre carrière avec des outils professionnels de promotion et de networking
               </p>
             </div>
-            <Button className="hidden md:flex bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800" asChild>
+            <Button className="hidden md:flex" asChild>
               <Link to="/auth">Créer mon profil artiste</Link>
             </Button>
           </div>
@@ -131,7 +131,7 @@ pour tous les acteurs du lyrique</h2>
           </div>
           
           <div className="md:hidden mt-8 text-center">
-            <Button className="bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800" asChild>
+            <Button asChild>
               <Link to="/auth">Créer mon profil artiste</Link>
             </Button>
           </div>
@@ -190,7 +190,7 @@ pour tous les acteurs du lyrique</h2>
             Découvrez pourquoi Lyrisphere est devenu la référence du secteur.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
+            <Button size="lg" asChild>
               <Link to="/auth">Commencer maintenant</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>

@@ -38,7 +38,7 @@ const PortalsSection = () => {
           {/* Portail Artistes */}
           <div ref={artistsPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
             {/* Header Card */}
-            <div className="bg-gradient-to-br from-lyrical-600 to-lyrical-700 p-8 text-white">
+            <div className="bg-lyrical-600 p-8 text-white">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="bg-white/20 p-3 rounded-xl">
                   <Mic className="h-8 w-8 text-white" />
@@ -88,7 +88,7 @@ const PortalsSection = () => {
               {/* CTA */}
               <div className="space-y-4">
                 <Button 
-                  className="w-full bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800 text-white"
+                  className="w-full"
                   asChild
                 >
                   <Link to="/auth">
@@ -110,7 +110,7 @@ const PortalsSection = () => {
           {/* Portail Professionnels */}
           <div ref={prosPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
             {/* Header Card */}
-            <div className="bg-gradient-to-br from-gold-500 to-gold-600 p-8 text-white">
+            <div className="bg-gold-500 p-8 text-white">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="bg-white/20 p-3 rounded-xl">
                   <Users className="h-8 w-8 text-white" />
@@ -160,7 +160,7 @@ const PortalsSection = () => {
               {/* CTA */}
               <div className="space-y-4">
                 <Button 
-                  className="w-full bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white"
+                  className="w-full bg-gold-500 hover:bg-gold-600 text-white"
                   asChild
                 >
                   <Link to="/auth">

@@ -181,7 +181,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
             </Button>
           ) : (
             <Button 
-              className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+              className="w-full"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/castings/${casting.id}`);

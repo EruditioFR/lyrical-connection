@@ -22,11 +22,11 @@ const SumiJoBanner = ({ artistProfileId }: SumiJoBannerProps) => {
   }
 
   return (
-    <Card className="border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 overflow-hidden">
+    <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 overflow-hidden">
       <CardContent className="p-4 md:p-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
               <Star className="w-6 h-6 text-white" />
             </div>
             <div>

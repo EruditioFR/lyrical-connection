@@ -103,7 +103,7 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
           ) : isArtist && !artistApplication && event.status === 'published' ? (
             // Si artiste et pas encore inscrit, afficher le bouton d'inscription
             <EventApplicationDialog event={event}>
-              <Button className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white">
+              <Button className="w-full">
                 <UserPlus className="w-4 h-4 mr-2" />
                 S'inscrire à l'événement
               </Button>

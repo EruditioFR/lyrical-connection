@@ -7,91 +7,91 @@
 
 @layer base {
   :root {
-    --background: 40 30% 98%;
-    --foreground: 30 25% 10%;
+    /* Direction « Programme de salle » : papier, encre, rideau (accent unique) */
+    --background: 43 19% 94%;
+    --foreground: 40 17% 7%;
 
-    --card: 40 30% 98%;
-    --card-foreground: 30 25% 10%;
+    --card: 45 25% 97%;
+    --card-foreground: 40 17% 7%;
 
-    --popover: 40 30% 98%;
-    --popover-foreground: 30 25% 10%;
+    --popover: 45 25% 97%;
+    --popover-foreground: 40 17% 7%;
 
-    --primary: 30 40% 30%;
-    --primary-foreground: 30 40% 98%;
+    /* Actions principales à l'encre ; le rouge reste réservé aux accents */
+    --primary: 40 17% 9%;
+    --primary-foreground: 43 19% 96%;
 
-    --secondary: 45 60% 50%;
-    --secondary-foreground: 30 25% 10%;
+    --secondary: 40 12% 88%;
+    --secondary-foreground: 40 17% 7%;
 
-    --muted: 30 20% 92%;
-    --muted-foreground: 30 25% 35%;
-    
-    /* Typography semantic colors */
-    --composer-text: 30 40% 45%;
-    --secondary-text: 30 25% 50%;
+    --muted: 40 14% 90%;
+    --muted-foreground: 40 7% 34%;
 
-    --accent: 40 60% 75%;
-    --accent-foreground: 30 25% 10%;
+    --composer-text: 350 71% 36%;
+    --secondary-text: 40 7% 34%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 40 14% 89%;
+    --accent-foreground: 40 17% 7%;
 
-    --border: 30 25% 90%;
-    --input: 30 25% 90%;
-    --ring: 30 40% 30%;
+    --destructive: 4 74% 42%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.4rem;
+    --border: 40 13% 78%;
+    --input: 40 13% 70%;
+    --ring: 350 71% 36%;
 
-    --sidebar-background: 30 25% 10%;
-    --sidebar-foreground: 30 25% 98%;
-    --sidebar-primary: 40 60% 75%;
-    --sidebar-primary-foreground: 30 25% 10%;
-    --sidebar-accent: 30 25% 15%;
-    --sidebar-accent-foreground: 30 25% 98%;
-    --sidebar-border: 30 25% 20%;
-    --sidebar-ring: 40 60% 75%;
+    --radius: 0.125rem;
+
+    --sidebar-background: 40 17% 7%;
+    --sidebar-foreground: 43 19% 94%;
+    --sidebar-primary: 350 70% 72%;
+    --sidebar-primary-foreground: 40 17% 7%;
+    --sidebar-accent: 40 10% 15%;
+    --sidebar-accent-foreground: 43 19% 94%;
+    --sidebar-border: 40 8% 22%;
+    --sidebar-ring: 350 70% 72%;
   }
 
   .dark {
-    --background: 30 25% 10%;
-    --foreground: 30 25% 98%;
+    --background: 40 10% 8%;
+    --foreground: 43 19% 92%;
 
-    --card: 30 25% 10%;
-    --card-foreground: 30 25% 98%;
+    --card: 40 10% 10%;
+    --card-foreground: 43 19% 92%;
 
-    --popover: 30 25% 10%;
-    --popover-foreground: 30 25% 98%;
+    --popover: 40 10% 10%;
+    --popover-foreground: 43 19% 92%;
 
-    --primary: 40 60% 75%;
-    --primary-foreground: 30 25% 10%;
+    --primary: 43 19% 92%;
+    --primary-foreground: 40 17% 9%;
 
-    --secondary: 30 40% 30%;
-    --secondary-foreground: 30 25% 98%;
+    --secondary: 40 8% 18%;
+    --secondary-foreground: 43 19% 92%;
 
-    --muted: 30 25% 20%;
-    --muted-foreground: 30 25% 70%;
-    
-    /* Typography semantic colors - dark mode */
-    --composer-text: 40 60% 65%;
-    --secondary-text: 30 25% 60%;
+    --muted: 40 8% 16%;
+    --muted-foreground: 40 8% 70%;
 
-    --accent: 30 40% 30%;
-    --accent-foreground: 30 25% 98%;
+    --composer-text: 350 70% 74%;
+    --secondary-text: 40 8% 70%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 40 8% 18%;
+    --accent-foreground: 43 19% 92%;
 
-    --border: 30 25% 20%;
-    --input: 30 25% 20%;
-    --ring: 40 60% 75%;
-    
-    --sidebar-background: 30 25% 10%;
-    --sidebar-foreground: 30 25% 98%;
-    --sidebar-primary: 40 60% 75%;
-    --sidebar-primary-foreground: 30 25% 10%;
-    --sidebar-accent: 30 25% 15%;
-    --sidebar-accent-foreground: 30 25% 98%;
-    --sidebar-border: 30 25% 20%;
-    --sidebar-ring: 40 60% 75%;
+    --destructive: 4 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 8% 24%;
+    --input: 40 8% 32%;
+    --ring: 350 70% 70%;
+
+    --sidebar-background: 40 10% 6%;
+    --sidebar-foreground: 43 19% 92%;
+    --sidebar-primary: 350 70% 74%;
+    --sidebar-primary-foreground: 40 17% 7%;
+    --sidebar-accent: 40 8% 14%;
+    --sidebar-accent-foreground: 43 19% 92%;
+    --sidebar-border: 40 8% 20%;
+    --sidebar-ring: 350 70% 74%;
   }
 }
 
@@ -204,8 +204,9 @@
   }
 
   /* Animation de texte */
+  /* Contenu visible d'emblée : l'animation au défilement masquait la page aux captures et à l'impression */
   .text-appear {
-    @apply opacity-0 translate-y-4 transition-all duration-700 ease-out;
+    @apply opacity-100;
   }
   .text-appear.appear {
     @apply opacity-100 translate-y-0;
@@ -244,4 +245,15 @@
     animation: fade-in 0.6s ease-out forwards;
     opacity: 0;
   }
+}
+
+/* Mode sombre : les teintes foncées des palettes maison, pensées pour le fond papier,
+   sont éclaircies pour rester lisibles sur fond noir */
+@layer utilities {
+  .dark .text-gold-500, .dark .text-gold-600, .dark .text-gold-700, .dark .text-gold-800, .dark .text-gold-900 { color: #e8a5b0; }
+  .dark .text-lyrical-500, .dark .text-lyrical-600, .dark .text-lyrical-700, .dark .text-lyrical-800,
+  .dark .text-lyrical-900, .dark .text-lyrical-950 { color: hsl(var(--foreground)); }
+  /* Fonds clairs codés en dur (blanc, teintes 50/100) : surface sombre du thème */
+  .dark .bg-white, .dark .bg-lyrical-50, .dark .bg-lyrical-100, .dark .bg-gold-50, .dark .bg-gold-100,
+  .dark .bg-amber-50, .dark .bg-gray-50, .dark .bg-gray-100 { background-color: hsl(var(--card)); }
 }

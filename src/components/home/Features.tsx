@@ -15,7 +15,7 @@ import {
 
 const Features = () => {
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-muted/50">
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-serif font-bold">
@@ -125,7 +125,7 @@ const Features = () => {
                     </div>
                   </div>
                 </div>
-                <Button className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white md:w-fit" asChild>
+                <Button className="md:w-fit" asChild>
                   <Link to="/abonnements">Découvrir nos abonnements</Link>
                 </Button>
               </div>
@@ -135,7 +135,7 @@ const Features = () => {
                   alt="Premium Features" 
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-lyrical-950/40 to-gold-950/40"></div>
+                <div className="absolute inset-0 bg-lyrical-950/40"></div>
               </div>
             </div>
           </div>

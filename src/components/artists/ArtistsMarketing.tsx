@@ -35,7 +35,7 @@ const ArtistsMarketing = () => {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
+    <div className="min-h-screen bg-muted/30">
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">

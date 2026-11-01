@@ -185,7 +185,7 @@ const ArtistProfile = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Banner */}
         <div 
-          className={`${isMobile ? 'h-48' : 'h-64'} bg-gradient-to-r from-blue-600 to-purple-600 relative`}
+          className={`${isMobile ? 'h-48' : 'h-64'} bg-lyrical-900 relative`}
           style={{
             backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
             backgroundSize: 'cover',

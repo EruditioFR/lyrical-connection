@@ -69,31 +69,32 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// « lyrical » = encres et gris chauds ; « gold » = rouge rideau (accent unique)
 				lyrical: {
-					50: '#f9f7f4',
-					100: '#f1ede5',
-					200: '#e2d8ca',
-					300: '#d0bc9f',
-					400: '#b99c74',
-					500: '#a68355',
-					600: '#8c6944',
-					700: '#735338',
-					800: '#614733',
-					900: '#523c2e',
-					950: '#2c1f18',
+					50: '#f7f6f3',
+					100: '#efede8',
+					200: '#dedad2',
+					300: '#c5bfb3',
+					400: '#a39c8f',
+					500: '#7d776c',
+					600: '#5e5a52',
+					700: '#45423c',
+					800: '#2e2c28',
+					900: '#1f1d1a',
+					950: '#15130f',
 				},
 				gold: {
-					50: '#fbf8eb',
-					100: '#f7efc7',
-					200: '#f0dc8a',
-					300: '#e8c54d',
-					400: '#e2b32b',
-					500: '#d49a1c',
-					600: '#b77616',
-					700: '#955516',
-					800: '#7a4417',
-					900: '#663917',
-					950: '#391d09',
+					50: '#fbf1f2',
+					100: '#f6dfe2',
+					200: '#ecbcc4',
+					300: '#de8f9c',
+					400: '#c95a6d',
+					500: '#b3304a',
+					600: '#9e1b32',
+					700: '#84162a',
+					800: '#6c1323',
+					900: '#58101d',
+					950: '#33070f',
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -108,10 +109,23 @@ export default {
 				composer: 'hsl(var(--composer-text))',
 				'secondary-text': 'hsl(var(--secondary-text))'
 			},
+			// Coins presque droits ; « full » reste rond (avatars, pastilles)
 			borderRadius: {
 				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				md: 'var(--radius)',
+				sm: 'var(--radius)',
+				xl: '0.25rem',
+				'2xl': '0.375rem',
+				'3xl': '0.5rem'
+			},
+			// Pas d'ombre sur la page (filets à la place) ; ombre réservée aux éléments flottants
+			boxShadow: {
+				sm: 'none',
+				DEFAULT: 'none',
+				md: 'none',
+				lg: '0 12px 32px -12px rgb(21 19 15 / 0.28)',
+				xl: '0 12px 32px -12px rgb(21 19 15 / 0.28)',
+				'2xl': '0 16px 40px -12px rgb(21 19 15 / 0.32)'
 			},
 			keyframes: {
 				'accordion-down': {

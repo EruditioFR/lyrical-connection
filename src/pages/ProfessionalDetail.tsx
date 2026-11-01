@@ -112,7 +112,7 @@ const ProfessionalDetail = () => {
 
   return (
     <Layout breadcrumbTitle={professional?.company_name}>
-      <div className="min-h-screen bg-gradient-to-b from-muted/30 to-background">
+      <div className="min-h-screen bg-muted/30">
         {/* Hero Section */}
         <div className="relative h-64 md:h-80 overflow-hidden">
           {heroMedia?.media_type === 'image' && heroMedia?.file_path ? (
@@ -163,7 +163,7 @@ const ProfessionalDetail = () => {
               );
             })()
           ) : (
-            <div className="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20" />
+            <div className="w-full h-full bg-primary/20" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
         </div>

@@ -24,7 +24,7 @@ const NotFound = () => {
           <p className="text-muted-foreground mb-8">
             La page que vous recherchez n'existe pas ou a été déplacée.
           </p>
-          <Button size="lg" className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600 text-white" asChild>
+          <Button size="lg" asChild>
             <Link to="/" className="flex items-center gap-2">
               <Home className="h-5 w-5" />
               Retour à l'accueil

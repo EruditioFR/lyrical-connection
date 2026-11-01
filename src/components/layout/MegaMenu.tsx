@@ -271,7 +271,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
 
   return (
     <div 
-      className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50"
+      className="absolute top-full left-0 right-0 bg-background border-t border-border shadow-lg z-50"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -288,7 +288,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
                     <Link 
                       to={item.href}
                       onClick={onClose}
-                      className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                      className="flex items-center p-3 rounded-lg hover:bg-accent transition-colors group"
                     >
                       <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                         <item.icon className="w-5 h-5 text-primary" />
