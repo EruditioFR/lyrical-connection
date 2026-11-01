@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { EditorialSection, EditorialList, Eyebrow } from '@/components/editorial/Editorial';
 import { Clock, ArrowRight } from 'lucide-react';
 
 const CastingsMarketing = () => {
@@ -69,10 +70,10 @@ const CastingsMarketing = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Ouverture */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto">
+      <section className="py-20">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl">
-          <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-4">Castings</p>
+          <Eyebrow className="mb-4">Castings</Eyebrow>
           <h1 className="text-4xl md:text-6xl font-serif text-foreground mb-6">
             Votre prochain rôle commence ici
           </h1>
@@ -95,22 +96,14 @@ const CastingsMarketing = () => {
         </div>
       </section>
 
-      {/* Castings ouverts */}
-      <section className="py-16 px-4 border-t border-border">
-        <div className="container mx-auto grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <div>
-            <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">À l'affiche</p>
-            <h2 className="text-3xl font-serif text-foreground mb-3">Castings ouverts</h2>
-            <p className="text-muted-foreground">
-              {openCastings.length > 0
-                ? 'Les prochaines dates limites. Inscrivez-vous pour voir tous les castings et postuler.'
-                : 'Aucun casting ouvert pour le moment. Inscrivez-vous pour être averti des prochains.'}
-            </p>
-            <Button asChild variant="outline" className="mt-6">
-              <Link to="/auth">Voir tous les castings</Link>
-            </Button>
-          </div>
-
+      <EditorialSection
+        label="À l'affiche"
+        title="Castings ouverts"
+        intro={openCastings.length > 0
+          ? 'Les prochaines dates limites. Inscrivez-vous pour voir tous les castings et postuler.'
+          : 'Aucun casting ouvert pour le moment. Inscrivez-vous pour être averti des prochains.'}
+        aside={<Button asChild variant="outline"><Link to="/auth">Voir tous les castings</Link></Button>}
+      >
           {openCastings.length > 0 && (
             <ul className="divide-y divide-border border-y border-border">
               {openCastings.map((casting) => {
@@ -136,47 +129,15 @@ const CastingsMarketing = () => {
               })}
             </ul>
           )}
-        </div>
-      </section>
+      </EditorialSection>
 
-      {/* Ce que la plateforme apporte */}
-      <section className="py-16 px-4 border-t border-border">
-        <div className="container mx-auto grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <div>
-            <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">Pour les artistes</p>
-            <h2 className="text-3xl font-serif text-foreground">Ce que vous y trouvez</h2>
-          </div>
-          <ul className="divide-y divide-border border-y border-border">
-            {features.map((feature) => (
-              <li key={feature.title} className="py-5">
-                <h3 className="text-xl">{feature.title}</h3>
-                <p className="mt-1 text-muted-foreground">{feature.description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <EditorialSection label="Pour les artistes" title="Ce que vous y trouvez">
+        <EditorialList entries={features} />
+      </EditorialSection>
 
-      {/* Étapes */}
-      <section className="py-16 px-4 border-t border-border">
-        <div className="container mx-auto grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-          <div>
-            <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">En trois temps</p>
-            <h2 className="text-3xl font-serif text-foreground">Comment ça fonctionne</h2>
-          </div>
-          <ol className="divide-y divide-border border-y border-border">
-            {steps.map((step, i) => (
-              <li key={step.title} className="py-5 grid grid-cols-[2.5rem_1fr] gap-x-4">
-                <span className="font-serif text-lg text-muted-foreground tabular-nums">{String(i + 1).padStart(2, '0')}</span>
-                <div>
-                  <h3 className="text-xl">{step.title}</h3>
-                  <p className="mt-1 text-muted-foreground">{step.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
+      <EditorialSection label="En trois temps" title="Comment ça fonctionne">
+        <EditorialList entries={steps} numbered />
+      </EditorialSection>
 
       {/* Appel final */}
       <section className="py-20 px-4 bg-primary">

@@ -43,6 +43,8 @@ describe('système visuel', () => {
   });
 
   it('les boutons utilisent les variantes du thème, pas une couleur maison', () => {
-    expect(offenders(/<Button[^>]*\bbg-lyrical-\d{3}\b/)).toEqual([]);
+    expect(offenders(/<Button[^>]*\bbg-(?:lyrical|gold)-\d{3}\b/)).toEqual([]);
+    // aplat de marque avec survol : signature d'un bouton recoloré, même sur plusieurs lignes
+    expect(offenders(/\bbg-(?:lyrical|gold)-\d{3} hover:bg-(?:lyrical|gold)-\d{3}\b/)).toEqual([]);
   });
 });

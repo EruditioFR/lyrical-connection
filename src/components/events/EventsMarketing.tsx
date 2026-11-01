@@ -1,204 +1,142 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Star, 
-  Clock,
-  Award,
-  Music,
-  BookOpen,
-  Target
-} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { EditorialSection, EditorialList, Eyebrow } from '@/components/editorial/Editorial';
+
+const eventTypeLabels: Record<string, string> = {
+  masterclass: 'Masterclass',
+  stage: 'Stage',
+  atelier: 'Atelier',
+  concours: 'Concours',
+  conference: 'Conférence',
+};
+
+const reasons = [
+  {
+    title: 'Travailler avec des maîtres',
+    description: 'Masterclasses et stages publiés par les maisons, académies et pédagogues inscrits.',
+  },
+  {
+    title: 'Se présenter aux concours',
+    description: 'Inscription en ligne avec votre profil, votre répertoire et vos enregistrements.',
+  },
+  {
+    title: "S'inscrire en quelques étapes",
+    description: "Programme, lieu, dates et tarif sur la fiche ; suivez ensuite le statut de votre inscription.",
+  },
+];
 
 const EventsMarketing = () => {
-  // Récupérer les vrais événements pour la démonstration
+  // Prochains événements réellement publiés
   const { data: events = [], isLoading } = useQuery({
     queryKey: ['marketing-events'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('professional_events')
-        .select('*')
+        .select('id, title, event_type, start_date, location, venue, price, currency')
         .eq('status', 'published')
+        .gte('start_date', format(new Date(), 'yyyy-MM-dd'))
         .order('start_date', { ascending: true })
-        .limit(3);
+        .limit(4);
 
       if (error) {
         console.error('Erreur lors de la récupération des événements:', error);
         return [];
       }
-
       return data || [];
-    }
+    },
   });
-  
-  // Transformer les événements pour l'affichage
-  const displayEvents = events.map(event => ({
-    id: event.id,
-    title: event.title,
-    type: event.event_type === 'stage' ? 'Stage' : 
-          event.event_type === 'atelier' ? 'Atelier' :
-          event.event_type === 'concours' ? 'Concours' :
-          event.event_type === 'conference' ? 'Conférence' : 'Événement',
-    date: new Date(event.start_date).toLocaleDateString('fr-FR'),
-    location: event.location || event.venue || 'Lieu à confirmer',
-    instructor: 'Professionnel', // TODO: Récupérer depuis professional_profiles
-    price: event.price ? `${event.price}${event.currency || '€'}` : 'Gratuit',
-    difficulty: 'Tous niveaux' // TODO: Ajouter un champ difficulty aux événements
-  }));
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6">
-            Événements & Formations
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Participez aux masterclass, stages et concours organisés par les meilleurs professionnels du chant lyrique
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link to="/auth">
-                Rejoindre la plateforme
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link to="/about">
-                En savoir plus
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Événements réels */}
-      <section className="py-16 px-4 bg-card">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-serif font-bold text-center mb-12">
-            Événements à venir
-          </h2>
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(3)].map((_, index) => (
-                <div key={index} className="animate-pulse">
-                  <div className="bg-muted rounded-xl h-64"></div>
-                </div>
-              ))}
-            </div>
-          ) : displayEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {displayEvents.map((event) => (
-                <Card key={event.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start mb-2">
-                      <Badge variant="secondary">{event.type}</Badge>
-                      <Badge variant="outline">{event.difficulty}</Badge>
-                    </div>
-                    <CardTitle className="text-xl">{event.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      {event.date}
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4 mr-2" />
-                      {event.location}
-                    </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Users className="w-4 h-4 mr-2" />
-                      {event.instructor}
-                    </div>
-                    <div className="flex justify-between items-center pt-4">
-                      <span className="text-lg font-semibold text-primary">{event.price}</span>
-                      <Button size="sm" asChild>
-                        <Link to={`/evenements/${event.id}`}>S'inscrire</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <p>Aucun événement programmé pour le moment.</p>
-              <Button asChild className="mt-4">
-                <Link to="/auth">Créer le premier événement</Link>
+    <div className="min-h-screen bg-background">
+      {/* Ouverture */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="max-w-4xl">
+            <Eyebrow className="mb-4">Événements</Eyebrow>
+            <h1 className="text-4xl md:text-6xl font-serif text-foreground mb-6">
+              Masterclasses, stages et concours
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
+              Les formations et les épreuves organisées par les professionnels du lyrique inscrits sur
+              Lyrisphere. Consultez le programme et inscrivez-vous avec votre profil.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button asChild size="lg">
+                <Link to="/auth">Créer mon compte</Link>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/features">Voir les fonctionnalités</Link>
               </Button>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Fonctionnalités */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <h2 className="text-3xl font-serif font-bold text-center mb-12">
-            Pourquoi participer à nos événements ?
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Professionnels reconnus</h3>
-              <p className="text-muted-foreground">
-                Apprenez auprès des meilleurs artistes et pédagogues du milieu lyrique
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Formation complète</h3>
-              <p className="text-muted-foreground">
-                Techniques vocales, interprétation, préparation scénique et plus
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Réseau professionnel</h3>
-              <p className="text-muted-foreground">
-                Rencontrez d'autres artistes et créez des connexions durables
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Award className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Opportunités</h3>
-              <p className="text-muted-foreground">
-                Concours, auditions et occasions de vous faire remarquer
-              </p>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 px-4 bg-primary text-primary-foreground">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl font-serif font-bold mb-4">
-            Prêt à faire évoluer votre carrière lyrique ?
+      <EditorialSection
+        label="Au programme"
+        title="Prochains événements"
+        intro={!isLoading && events.length === 0
+          ? 'Aucun événement programmé pour le moment. Les professionnels peuvent publier le premier.'
+          : 'Les prochaines dates publiées sur la plateforme.'}
+        aside={
+          <Button asChild variant="outline">
+            <Link to="/auth">{events.length === 0 ? 'Publier un événement' : 'Voir tous les événements'}</Link>
+          </Button>
+        }
+      >
+        {isLoading ? (
+          <ul className="divide-y divide-border border-y border-border" aria-busy="true">
+            {[0, 1, 2].map((i) => (
+              <li key={i} className="py-5">
+                <div className="h-5 w-2/3 bg-muted animate-pulse" />
+                <div className="mt-2 h-4 w-1/2 bg-muted animate-pulse" />
+              </li>
+            ))}
+          </ul>
+        ) : events.length > 0 && (
+          <ul className="divide-y divide-border border-y border-border">
+            {events.map((event) => {
+              const details = [
+                eventTypeLabels[event.event_type] || event.event_type,
+                event.venue || event.location,
+                event.price ? `${event.price} ${event.currency || '€'}` : 'Gratuit',
+              ].filter(Boolean);
+              return (
+                <li key={event.id} className="py-5 grid gap-1 sm:grid-cols-[7rem_1fr_auto] sm:gap-6 sm:items-baseline">
+                  <time dateTime={event.start_date} className="font-serif text-lg text-gold-600 first-letter:uppercase">
+                    {format(new Date(event.start_date), 'd MMM yyyy', { locale: fr })}
+                  </time>
+                  <div className="min-w-0">
+                    <h3 className="text-xl">{event.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{details.join(' · ')}</p>
+                  </div>
+                  <Button asChild variant="outline" size="sm" className="justify-self-start">
+                    <Link to={`/evenements/${event.id}`}>Programme</Link>
+                  </Button>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </EditorialSection>
+
+      <EditorialSection label="Pour les artistes" title="Pourquoi y participer">
+        <EditorialList entries={reasons} />
+      </EditorialSection>
+
+      <section className="py-20 px-4 bg-primary">
+        <div className="container mx-auto text-center max-w-3xl">
+          <h2 className="text-3xl md:text-4xl font-serif text-primary-foreground mb-6">
+            Prêt à vous inscrire ?
           </h2>
-          <p className="text-xl mb-8 opacity-90">
-            Rejoignez notre communauté et accédez à tous nos événements exclusifs
-          </p>
+          <p className="text-xl text-primary-foreground/80 mb-8">Inscription gratuite et sans engagement.</p>
           <Button asChild size="lg" variant="secondary">
-            <Link to="/auth">
-              Créer mon compte gratuitement
-            </Link>
+            <Link to="/auth">Créer mon compte</Link>
           </Button>
         </div>
       </section>

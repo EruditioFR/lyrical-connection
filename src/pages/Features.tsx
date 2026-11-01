@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
+import { EditorialSection, EditorialList, Eyebrow, type EditorialEntry } from '@/components/editorial/Editorial';
 
-type Entry = { title: string; description: string };
 
 // Ce que la plateforme fait réellement aujourd'hui (voir docs/benchmark-outils-professionnels.md)
-const artistEntries: Entry[] = [
+const artistEntries: EditorialEntry[] = [
   {
     title: 'Un profil qui se fait entendre',
     description: "Enregistrements audio et vidéo, photos, répertoire œuvre par œuvre avec les rôles chantés, l'année et le lieu.",
@@ -25,7 +25,7 @@ const artistEntries: Entry[] = [
   },
 ];
 
-const professionalEntries: Entry[] = [
+const professionalEntries: EditorialEntry[] = [
   {
     title: 'Recherche par tessiture et répertoire',
     description: 'Filtrez par type de voix, rôle déjà chanté, localisation et disponibilité sur une période ; enregistrez vos recherches.',
@@ -48,40 +48,18 @@ const professionalEntries: Entry[] = [
   },
 ];
 
-const platformEntries: Entry[] = [
+const platformEntries: EditorialEntry[] = [
   { title: 'Messagerie', description: 'Échanges directs entre artistes et professionnels, avec notifications.' },
-  { title: 'Paiement sécurisé', description: 'Abonnements et inscriptions payantes réglés par carte via Stripe.' },
+  { title: 'Paiement sécurisé', description: 'Abonnements réglés par carte via Stripe ; factures disponibles dans votre espace.' },
   { title: 'Six langues', description: 'Interface en français, anglais, allemand, italien, chinois et coréen.' },
 ];
-
-const Section = ({ label, title, entries }: { label: string; title: string; entries: Entry[] }) => (
-  <section className="py-16 border-t border-border">
-    <div className="container mx-auto px-4 md:px-6 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-      <div>
-        <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">{label}</p>
-        <h2 className="text-3xl font-serif">{title}</h2>
-      </div>
-      <ol className="divide-y divide-border border-y border-border">
-        {entries.map((entry, i) => (
-          <li key={entry.title} className="py-5 grid grid-cols-[2.5rem_1fr] gap-x-4">
-            <span className="font-serif text-lg text-muted-foreground tabular-nums">{String(i + 1).padStart(2, '0')}</span>
-            <div>
-              <h3 className="text-xl">{entry.title}</h3>
-              <p className="mt-1 text-muted-foreground">{entry.description}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-);
 
 const Features = () => (
   <Layout>
     <section className="py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="max-w-4xl">
-        <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-4">Fonctionnalités</p>
+        <Eyebrow className="mb-4">Fonctionnalités</Eyebrow>
         <h1 className="text-4xl md:text-6xl font-serif mb-6">
           Faire entendre les voix, et les trouver
         </h1>
@@ -101,9 +79,15 @@ const Features = () => (
       </div>
     </section>
 
-    <Section label="Artistes" title="Pour les artistes" entries={artistEntries} />
-    <Section label="Professionnels" title="Pour les professionnels" entries={professionalEntries} />
-    <Section label="Pour tous" title="Sur toute la plateforme" entries={platformEntries} />
+    <EditorialSection label="Artistes" title="Pour les artistes">
+      <EditorialList entries={artistEntries} numbered />
+    </EditorialSection>
+    <EditorialSection label="Professionnels" title="Pour les professionnels">
+      <EditorialList entries={professionalEntries} numbered />
+    </EditorialSection>
+    <EditorialSection label="Pour tous" title="Sur toute la plateforme">
+      <EditorialList entries={platformEntries} numbered />
+    </EditorialSection>
 
     <section className="py-20 bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 md:px-6 text-center max-w-2xl">

@@ -1,174 +1,49 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Globe, 
-  Database, 
-  Search, 
-  Calendar, 
-  MessageSquare, 
-  Users, 
-  Activity 
-} from 'lucide-react';
-import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+import { Button } from '@/components/ui/button';
+import { EditorialSection, EditorialList } from '@/components/editorial/Editorial';
 
 const professionalFeatures = [
   {
-    icon: Database,
-    title: "Base de Données Exclusive",
-    description: "Accédez à plus de 500 profils d'artistes lyriques vérifiés et qualifiés",
-    color: "lyrical"
+    title: 'Recherche par tessiture et répertoire',
+    description: 'Type de voix, rôle déjà chanté, lieu et disponibilité sur une période ; recherches enregistrées.',
   },
   {
-    icon: Search,
-    title: "Recherche Avancée",
-    description: "Filtrez par tessiture, répertoire, expérience, localisation et disponibilité",
-    color: "gold"
+    title: 'Castings et suivi des candidatures',
+    description: 'Appels à candidatures avec vos critères de notation ; reçues, présélectionnées, retenues, refusées ; export CSV.',
   },
   {
-    icon: Calendar,
-    title: "Gestion d'Événements",
-    description: "Organisez auditions, masterclasses et spectacles avec gestion des inscriptions",
-    color: "lyrical"
+    title: "Séances d'audition",
+    description: 'Planning par créneaux, export agenda (.ics), jury à plusieurs avec notation en séance et synthèse.',
   },
   {
-    icon: MessageSquare,
-    title: "Communication Centralisée",
-    description: "Gérez tous vos échanges avec les artistes depuis une interface unique",
-    color: "gold"
+    title: 'Listes de projet et comparateur',
+    description: 'Une liste par production, partageable par lien ; deux à quatre finalistes côte à côte.',
   },
   {
-    icon: Users,
-    title: "Outils de Casting",
-    description: "Créez des appels à candidatures personnalisés et gérez les réponses efficacement",
-    color: "lyrical"
+    title: 'Événements',
+    description: 'Publiez masterclasses, stages et concours, et gérez les inscriptions.',
   },
-  {
-    icon: Activity,
-    title: "Tableau de Bord Pro",
-    description: "Suivez vos statistiques, candidatures reçues et taux de réponse",
-    color: "gold"
-  }
 ];
 
-const FeaturesProfessionals = () => {
-  const sectionRef = useAnimateOnScroll();
-  const ctaRef = useAnimateOnScroll();
-
-  return (
-    <section className="py-24 bg-background">
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div ref={sectionRef} className="text-appear">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif font-bold mb-4 leading-tight">Fonctionnalités pour les Professionnels</h2>
-            <p className="text-foreground/80 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-              Trouvez les talents qui correspondent exactement à vos besoins artistiques
-            </p>
-          </div>
-          <div className="mt-8">
-            <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
-              <Link to="/auth">Créez votre compte pro</Link>
-            </Button>
-          </div>
-        </div>
-        
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {professionalFeatures.map((feature, index) => {
-            const FeatureCard = () => {
-              const cardRef = useAnimateOnScroll();
-              const IconComponent = feature.icon;
-              const isLyrical = feature.color === "lyrical";
-              
-              return (
-                <Card 
-                  ref={cardRef} 
-                  key={index} 
-                  className={`h-full transition-all duration-300 ease-out text-appear group hover:scale-105 ${
-                    isLyrical 
-                      ? "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
-                      : "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
-                  }`}
-                >
-                  <CardContent className="p-4 md:p-6 h-full flex flex-col text-center relative">
-                    {/* Icon */}
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto transition-all duration-300 ${
-                      isLyrical 
-                        ? "bg-lyrical-100 group-hover:bg-lyrical-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
-                        : "bg-gold-100 group-hover:bg-gold-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
-                    }`}>
-                      <IconComponent className={`h-6 w-6 ${
-                        isLyrical ? "text-lyrical-700" : "text-gold-700"
-                      }`} />
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-xl md:text-2xl mb-3 text-foreground group-hover:text-primary transition-colors leading-tight">
-                        {feature.title}
-                      </h4>
-                      <p className="text-foreground/70 text-base md:text-sm leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            };
-            return <FeatureCard key={index} />;
-          })}
-        </div>
-        
-        {/* Mobile CTA */}
-        <div className="md:hidden mt-8 text-center">
-          <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
-            <Link to="/auth">Créez votre compte pro</Link>
-          </Button>
-        </div>
-
-        {/* Castings Section */}
-        <div className="mt-12 md:mt-16 bg-lyrical-50 rounded-2xl p-6 md:p-8 border border-lyrical-200">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-12 h-12 bg-lyrical-500 rounded-xl flex items-center justify-center">
-              <Users className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg md:text-xl font-semibold mb-2 text-lyrical-800">
-                Castings : Gagnez du temps en ciblant votre recherche de talents grâce à la puissance de nos filtres
-              </h3>
-              <p className="text-lyrical-700/80 text-sm md:text-base mb-4">
-                Créez des appels à candidatures précis avec des critères de sélection avancés
-              </p>
-              <Button size="sm" asChild>
-                <Link to="/castings">Découvrir les castings</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom CTA */}
-        <div ref={ctaRef} className="mt-16 md:mt-20 text-center bg-muted rounded-2xl p-6 md:p-12 text-appear">
-          <h3 className="text-xl md:text-2xl lg:text-3xl font-serif font-bold mb-4 leading-tight">
-            Optimisez votre recherche de talents
-          </h3>
-          <p className="text-foreground/80 mb-6 md:mb-8 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-            Plus de 250 professionnels utilisent déjà nos outils pour dénicher 
-            les meilleurs artistes lyriques et organiser leurs événements.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
-              <Link to="/auth">Créez votre compte pro</Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link to="/professionnels">Voir des profils pros</Link>
-            </Button>
-          </div>
-        </div>
+const FeaturesProfessionals = () => (
+  <EditorialSection
+    label="Professionnels"
+    title="Recruter, de la recherche à l'audition"
+    intro="Pour les maisons d'opéra, festivals, concours, agents et pédagogues."
+    aside={
+      <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3">
+        <Button asChild>
+          <Link to="/auth">Créer mon compte pro</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link to="/castings">Découvrir les castings</Link>
+        </Button>
       </div>
-    </section>
-  );
-};
+    }
+  >
+    <EditorialList entries={professionalFeatures} numbered />
+  </EditorialSection>
+);
 
 export default FeaturesProfessionals;

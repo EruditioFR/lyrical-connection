@@ -57,7 +57,7 @@ prennent la surface sombre du thème.
 | Bouton principal | variante par défaut (encre) — ne pas surcharger la couleur |
 | Bouton secondaire | `variant="outline"` |
 | Carte | contour fin, pas d'ombre ; préférer des listes séparées par des filets |
-| Liste éditoriale | colonne de titre (étiquette rouge + titre serif) à gauche, liste `divide-y` numérotée « 01, 02… » à droite ; voir `pages/Features.tsx` |
+| Liste éditoriale | `components/editorial/Editorial.tsx` : `EditorialSection` (étiquette rouge + titre serif à gauche, contenu à droite), `EditorialList` (liste à filets, `numbered` pour « 01, 02… »), `Eyebrow` (étiquette seule) |
 | Écoute | bouton rond de 44 px minimum, `aria-label` « Écouter … », `aria-pressed` |
 | Images d'illustration | photos réelles des artistes et des productions ; pas d'image générée |
 
@@ -69,6 +69,7 @@ prennent la surface sombre du thème.
 | Une couleur d'accent, en aplat | Dégradés, texte en dégradé |
 | Jetons du thème (`bg-background`, `text-muted-foreground`) | Couleurs codées en dur (`bg-white`, `text-gray-600`) |
 | Libellés concrets (« Écoutez la distribution ») | Emojis décoratifs, formules creuses |
+| Décrire ce que l'application fait réellement | Chiffres non sourcés (« 500+ artistes »), profils fictifs, données tirées au hasard |
 
 ## Garde-fous automatiques
 
@@ -78,4 +79,5 @@ dur (`text-green-600`, `bg-gray-100`…), fond `bg-white` opaque.
 
 ## Reste à reprendre
 
-- Pages de présentation encore en grilles de cartes : artistes, professionnels, événements (`*Marketing.tsx`), accueil (`FeaturesArtists`, `FeaturesProfessionals`, `PortalsSection`). Modèle à suivre : `Features.tsx` et `CastingsMarketing.tsx`.
+- Pages internes (tableaux de bord, administration) : couleurs migrées vers les jetons, mais mise en page encore en cartes ; à reprendre écran par écran.
+- Les petites pastilles en rouge rideau sur les photos (« À la une », « Recommandé ») restent en aplat : conforme, à surveiller pour ne pas les multiplier.

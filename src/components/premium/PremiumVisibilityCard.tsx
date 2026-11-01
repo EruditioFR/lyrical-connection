@@ -136,7 +136,7 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
             <Button 
               onClick={handleSubscribe}
               disabled={isCreatingPremium}
-              className="w-full bg-gold-600 hover:bg-gold-700"
+              className="w-full"
               size="lg"
             >
               {isCreatingPremium ? (

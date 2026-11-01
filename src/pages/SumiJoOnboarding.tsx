@@ -81,7 +81,6 @@ const SumiJoOnboarding = () => {
               <Button 
                 onClick={() => navigate('/auth', { state: { returnTo: '/sumi-jo' } })}
                 size="lg"
-                className="bg-gold-500 hover:bg-gold-600"
               >
                 Se connecter / S'inscrire
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -145,7 +144,7 @@ const SumiJoOnboarding = () => {
                   <div className="flex flex-col gap-3">
                     <Button 
                       onClick={() => navigate('/dashboard')}
-                      className="w-full bg-gold-500 hover:bg-gold-600"
+                      className="w-full"
                     >
                       Accéder à mon tableau de bord
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -221,7 +220,7 @@ const SumiJoOnboarding = () => {
 
                     <Button 
                       type="submit" 
-                      className="w-full bg-gold-500 hover:bg-gold-600"
+                      className="w-full"
                       disabled={isRedeeming}
                     >
                       {isRedeeming ? (
