@@ -55,7 +55,7 @@ const NotificationCenter = () => {
   const NotificationItem = ({ notification }: { notification: Notification }) => (
     <div
       className={`p-3 border-b last:border-b-0 cursor-pointer transition-colors ${
-        !notification.is_read ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-muted/50'
+        !notification.is_read ? 'bg-info/10 hover:bg-info/15' : 'hover:bg-muted/50'
       }`}
       onClick={() => !notification.is_read && markAsRead(notification.id)}
     >
@@ -73,7 +73,7 @@ const NotificationCenter = () => {
             </h4>
             
             {!notification.is_read && (
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-1 flex-shrink-0" />
+              <div className="w-2 h-2 bg-info rounded-full mt-1 flex-shrink-0" />
             )}
           </div>
           

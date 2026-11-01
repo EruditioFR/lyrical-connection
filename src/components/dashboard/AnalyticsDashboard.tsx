@@ -1,48 +1,51 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Eye, TrendingUp, Calendar, Users } from 'lucide-react';
+import React from 'react';
 import { useAnalytics, useProfileViews } from '@/hooks/useAnalytics';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Panel, PanelList, PanelEmpty, Stat, StatRow } from '@/components/dashboard/Panel';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 interface AnalyticsDashboardProps {
   profileType: 'artist' | 'professional';
 }
 
+// Série unique en rouge rideau (jeton --chart-1, validé en clair et en sombre) ; axes et grille en retrait
+const SERIES = 'hsl(var(--chart-1))';
+const AXIS = { fontSize: 12, fill: 'hsl(var(--muted-foreground))' };
+const GRID = 'hsl(var(--border))';
+
+const shortDate = (value: string) =>
+  new Date(`${value}T00:00:00`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+const longDate = (value: string) =>
+  new Date(`${value}T00:00:00`).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+const ChartTooltip = ({ active, payload, label, prefix = '' }: {
+  active?: boolean; payload?: { value: number }[]; label?: string; prefix?: string;
+}) =>
+  active && payload?.length ? (
+    <div className="border border-border bg-popover px-3 py-2 text-sm shadow-lg">
+      <p className="text-muted-foreground">{prefix}{label && longDate(label)}</p>
+      <p className="font-semibold tabular-nums">{payload[0].value} vue{payload[0].value > 1 ? 's' : ''}</p>
+    </div>
+  ) : null;
+
 const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
   const { profile: artistProfile } = useArtistProfile();
   const { profile: professionalProfile } = useProfessionalProfile();
-  
   const profileId = profileType === 'artist' ? artistProfile?.id : professionalProfile?.id;
-  
+
   const { data: analytics, isLoading } = useAnalytics(profileId, profileType);
   const { data: recentViews } = useProfileViews(profileId, profileType);
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 border-y border-border py-4" aria-busy="true">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-6">
-              <div className="animate-pulse space-y-2">
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-8 bg-muted rounded w-1/2"></div>
-              </div>
-            </CardContent>
-          </Card>
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-8 w-16" />
+          </div>
         ))}
       </div>
     );
@@ -50,191 +53,77 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
 
   if (!analytics) return null;
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000) {
-      return `${(num / 1000).toFixed(1)}k`;
-    }
-    return num.toString();
-  };
+  const change = analytics.change7;
+  const changeNote =
+    change === null
+      ? 'Pas encore de semaine de comparaison'
+      : `${change > 0 ? '+' : ''}${change} % par rapport aux 7 jours précédents`;
+  const hasViews = analytics.periodViews > 0;
 
   return (
-    <div className="space-y-6">
-      {/* Key Metrics */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Vues totales</CardTitle>
-            <Eye className="h-4 w-4 text-gold-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">{formatNumber(analytics.totalViews)}</div>
-            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
-              Nombre total de vues de profil
-            </p>
-          </CardContent>
-        </Card>
+    <div className="space-y-10">
+      <StatRow>
+        <Stat label="7 derniers jours" value={analytics.last7} note={changeNote} />
+        <Stat label="Aujourd'hui" value={analytics.today} />
+        <Stat label="12 semaines" value={analytics.periodViews} note="Vues de votre profil" />
+        <Stat label="Membres" value={analytics.distinctMembers} note="Membres connectés distincts" />
+      </StatRow>
 
-        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Visiteurs uniques</CardTitle>
-            <Users className="h-4 w-4 text-gold-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">{formatNumber(analytics.uniqueViews)}</div>
-            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
-              Visiteurs distincts
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Croissance</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gold-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">
-              {analytics.dailyViews.length > 1 ? '+12%' : 'N/A'}
+      {hasViews ? (
+        <div className="grid gap-10 lg:grid-cols-2">
+          <Panel title="Vues par jour">
+            <p className="text-sm text-muted-foreground mb-4">30 derniers jours</p>
+            <div role="img" aria-label={`Vues par jour sur 30 jours, ${analytics.dailyViews.reduce((s, d) => s + d.count, 0)} au total`}>
+              <ResponsiveContainer width="100%" height={260}>
+                <AreaChart data={analytics.dailyViews} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                  <CartesianGrid stroke={GRID} vertical={false} />
+                  <XAxis dataKey="date" tick={AXIS} tickLine={false} axisLine={{ stroke: GRID }} tickFormatter={shortDate} minTickGap={24} />
+                  <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip content={<ChartTooltip />} cursor={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1 }} />
+                  <Area type="monotone" dataKey="count" stroke={SERIES} strokeWidth={2} fill={SERIES} fillOpacity={0.12}
+                    activeDot={{ r: 4, stroke: 'hsl(var(--background))', strokeWidth: 2, fill: SERIES }} />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
-            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
-              Par rapport au mois dernier
-            </p>
-          </CardContent>
-        </Card>
+          </Panel>
 
-        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Vues aujourd'hui</CardTitle>
-            <Calendar className="h-4 w-4 text-gold-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-lyrical-900 dark:text-lyrical-100">
-              {analytics.dailyViews.find(v => 
-                v.date === new Date().toISOString().split('T')[0]
-              )?.count || 0}
+          <Panel title="Vues par semaine">
+            <p className="text-sm text-muted-foreground mb-4">12 dernières semaines</p>
+            <div role="img" aria-label={`Vues par semaine sur 12 semaines, ${analytics.periodViews} au total`}>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={analytics.weeklyViews} margin={{ top: 8, right: 8, left: -16, bottom: 0 }} barCategoryGap={4}>
+                  <CartesianGrid stroke={GRID} vertical={false} />
+                  <XAxis dataKey="week" tick={AXIS} tickLine={false} axisLine={{ stroke: GRID }} tickFormatter={shortDate} minTickGap={24} />
+                  <YAxis tick={AXIS} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <Tooltip content={<ChartTooltip prefix="Semaine du " />} cursor={{ fill: 'hsl(var(--muted))' }} />
+                  <Bar dataKey="count" fill={SERIES} radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-            <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
-              Vues d'aujourd'hui
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+          </Panel>
+        </div>
+      ) : (
+        <PanelEmpty>
+          Votre profil n'a pas encore été consulté. Les visites apparaîtront ici dès les premières consultations.
+        </PanelEmpty>
+      )}
 
-      {/* Charts */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* Daily Views Chart */}
-        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200">
-          <CardHeader>
-            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Vues quotidiennes</CardTitle>
-            <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
-              Évolution des vues sur les 30 derniers jours
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={analytics.dailyViews}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="date" 
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => new Date(value).toLocaleDateString('fr-FR', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
-                />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  labelFormatter={(value) => new Date(value).toLocaleDateString('fr-FR')}
-                  formatter={(value) => [value, 'Vues']}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="count" 
-                  stroke="hsl(var(--lyrical-600))" 
-                  fill="hsl(var(--lyrical-600))" 
-                  fillOpacity={0.2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Weekly Views Chart */}
-        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200">
-          <CardHeader>
-            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Vues hebdomadaires</CardTitle>
-            <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
-              Évolution des vues sur les 12 dernières semaines
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={analytics.weeklyViews}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="week" 
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => new Date(value).toLocaleDateString('fr-FR', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
-                />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  labelFormatter={(value) => `Semaine du ${new Date(value).toLocaleDateString('fr-FR')}`}
-                  formatter={(value) => [value, 'Vues']}
-                />
-                <Bar 
-                  dataKey="count" 
-                  fill="hsl(var(--lyrical-600))" 
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Views */}
-      <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200">
-        <CardHeader>
-          <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Vues récentes</CardTitle>
-          <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
-            Les 20 dernières vues de votre profil
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {recentViews && recentViews.length > 0 ? (
-            <div className="space-y-2">
-              {recentViews.slice(0, 20).map((view, index) => (
-                <div key={view.id} className="flex items-center justify-between py-2 border-b border-gold-200/20 last:border-b-0">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gold-100 rounded-full flex items-center justify-center text-sm font-medium text-lyrical-700 dark:text-lyrical-200">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">
-                        {view.viewer_id ? 'Utilisateur connecté' : 'Visiteur anonyme'}
-                      </p>
-                      <p className="text-xs text-lyrical-600 dark:text-lyrical-400">
-                        {new Date(view.created_at).toLocaleString('fr-FR')}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge variant="outline" className="border-gold-300 text-gold-700 dark:border-gold-600 dark:text-gold-300">
-                    {view.profile_type === 'artist' ? 'Artiste' : 'Professionnel'}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-lyrical-500 dark:text-lyrical-400">
-              <Eye className="w-12 h-12 mx-auto mb-2 opacity-50 text-gold-400" />
-              <p>Aucune vue récente</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <Panel title="Dernières visites">
+        {recentViews && recentViews.length > 0 ? (
+          <PanelList>
+            {recentViews.slice(0, 20).map((view) => (
+              <li key={view.id} className="flex items-baseline justify-between gap-4 py-3">
+                <span className="text-sm">{view.viewer_id ? 'Membre connecté' : 'Visiteur anonyme'}</span>
+                <time dateTime={view.created_at} className="text-sm text-muted-foreground tabular-nums">
+                  {new Date(view.created_at).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })}
+                </time>
+              </li>
+            ))}
+          </PanelList>
+        ) : (
+          <PanelEmpty>Aucune visite récente.</PanelEmpty>
+        )}
+      </Panel>
     </div>
   );
 };

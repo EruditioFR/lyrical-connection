@@ -56,7 +56,7 @@ const CastingApplication = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-serif mb-4">
             Connexion requise
           </h1>
           <p className="text-muted-foreground mb-6">
@@ -84,7 +84,7 @@ const CastingApplication = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-serif mb-4">
             Casting non trouvé
           </h1>
           <Button onClick={() => navigate('/castings')}>
@@ -108,7 +108,7 @@ const CastingApplication = () => {
             Retour au casting
           </Button>
           
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl md:text-4xl font-serif mb-2">
             Postuler : {casting.title}
           </h1>
           <p className="text-muted-foreground">
@@ -136,7 +136,7 @@ const CastingApplication = () => {
                       {...form.register('cover_letter')}
                     />
                     {form.formState.errors.cover_letter && (
-                      <p className="text-sm text-red-600 mt-1">
+                      <p className="text-sm text-destructive mt-1">
                         {form.formState.errors.cover_letter.message}
                       </p>
                     )}
@@ -153,7 +153,7 @@ const CastingApplication = () => {
                       {...form.register('motivation')}
                     />
                     {form.formState.errors.motivation && (
-                      <p className="text-sm text-red-600 mt-1">
+                      <p className="text-sm text-destructive mt-1">
                         {form.formState.errors.motivation.message}
                       </p>
                     )}
@@ -224,7 +224,7 @@ const CastingApplication = () => {
                 {casting.application_deadline && (
                   <div>
                     <h4 className="font-medium text-foreground mb-1">Date limite</h4>
-                    <p className="text-red-600 font-medium">
+                    <p className="text-destructive font-medium">
                       {new Date(casting.application_deadline).toLocaleDateString('fr-FR')}
                     </p>
                   </div>

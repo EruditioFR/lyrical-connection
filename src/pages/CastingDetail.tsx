@@ -37,7 +37,7 @@ const CastingDetail = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Casting non trouvé</h1>
+          <h1 className="text-2xl font-serif mb-4">Casting non trouvé</h1>
           <Button onClick={() => navigate('/castings')}>
             Retour aux castings
           </Button>
@@ -94,7 +94,7 @@ const CastingDetail = () => {
           
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">
+              <h1 className="text-3xl md:text-4xl font-serif mb-2">
                 {casting.title}
               </h1>
               <div className="flex items-center gap-4 text-muted-foreground mb-4">
@@ -131,10 +131,10 @@ const CastingDetail = () => {
                     </div>
                     {casting.results_published ? (
                       <Badge className={
-                        application.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        application.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        application.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                        application.status === 'accepted' ? 'bg-success/15 text-success' :
+                        application.status === 'rejected' ? 'bg-destructive/15 text-destructive' :
+                        application.status === 'waitlisted' ? 'bg-info/15 text-info' :
+                        'bg-warning/15 text-warning'
                       }>
                         {application.status === 'accepted' ? 'Accepté(e)' :
                          application.status === 'rejected' ? 'Refusé(e)' :
@@ -310,7 +310,7 @@ const CastingDetail = () => {
                 {casting.application_deadline && (
                   <div>
                     <h4 className="font-medium text-foreground mb-1">Date limite</h4>
-                    <p className="text-muted-foreground font-medium text-red-600">
+                    <p className="text-muted-foreground font-medium text-destructive">
                       {formatDate(casting.application_deadline)}
                     </p>
                   </div>
@@ -364,10 +364,10 @@ const CastingDetail = () => {
                     </div>
                     {casting.results_published ? (
                       <Badge className={
-                        application.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        application.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        application.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                        application.status === 'accepted' ? 'bg-success/15 text-success' :
+                        application.status === 'rejected' ? 'bg-destructive/15 text-destructive' :
+                        application.status === 'waitlisted' ? 'bg-info/15 text-info' :
+                        'bg-warning/15 text-warning'
                       }>
                         {application.status === 'accepted' ? 'Accepté(e)' :
                          application.status === 'rejected' ? 'Refusé(e)' :

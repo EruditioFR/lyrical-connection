@@ -39,22 +39,22 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
         
         <div className="space-y-4 mb-6">
           <div className="flex justify-between text-sm">
-            <span className="text-white">Date de début</span>
+            <span className="text-muted-foreground">Date de début</span>
             <span className="font-medium">{format(new Date(event.start_date), 'dd/MM/yyyy HH:mm', { locale: fr })}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-white">Date de fin</span>
+            <span className="text-muted-foreground">Date de fin</span>
             <span className="font-medium">{format(new Date(event.end_date), 'dd/MM/yyyy HH:mm', { locale: fr })}</span>
           </div>
           {event.registration_deadline && (
             <div className="flex justify-between text-sm">
-              <span className="text-white">Date limite d'inscription</span>
+              <span className="text-muted-foreground">Date limite d'inscription</span>
               <span className="font-medium">{format(new Date(event.registration_deadline), 'dd/MM/yyyy', { locale: fr })}</span>
             </div>
           )}
           {event.price && (
             <div className="flex justify-between text-sm">
-              <span className="text-white">Prix</span>
+              <span className="text-muted-foreground">Prix</span>
               <span className="font-medium">
                 {event.price} {event.currency || 'EUR'} ({getCurrencySymbol(event.currency || 'EUR')})
               </span>
@@ -62,12 +62,12 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
           )}
           {event.max_participants && (
             <div className="flex justify-between text-sm">
-              <span className="text-white">Places disponibles</span>
+              <span className="text-muted-foreground">Places disponibles</span>
               <span className="font-medium">{event.max_participants - applicationsCount} / {event.max_participants}</span>
             </div>
           )}
           <div className="flex justify-between text-sm">
-            <span className="text-white">Inscriptions</span>
+            <span className="text-muted-foreground">Inscriptions</span>
             <span className="font-medium">{applicationsCount}</span>
           </div>
         </div>
@@ -78,16 +78,16 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
             <Card className="bg-muted/50">
               <CardContent className="p-4 space-y-3">
                 <h4 className="font-medium text-sm">Mon inscription</h4>
-                <div className="flex items-center gap-2 text-sm text-white">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   Inscrit le {format(new Date(artistApplication.applied_at), 'dd MMMM yyyy', { locale: fr })}
                 </div>
                 {event.results_published && (
                   <Badge className={
-                    artistApplication.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                    artistApplication.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                    artistApplication.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
-                    'bg-yellow-100 text-yellow-800'
+                    artistApplication.status === 'accepted' ? 'bg-success/15 text-success' :
+                    artistApplication.status === 'rejected' ? 'bg-destructive/15 text-destructive' :
+                    artistApplication.status === 'waitlisted' ? 'bg-info/15 text-info' :
+                    'bg-warning/15 text-warning'
                   }>
                     {artistApplication.status === 'accepted' ? 'Accepté(e)' :
                      artistApplication.status === 'rejected' ? 'Refusé(e)' :
@@ -110,7 +110,7 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
             </EventApplicationDialog>
           ) : !isArtist && (
             <Button className="w-full" asChild>
-              <Link to={`/evenements/${event.id}/inscriptions`}>
+              <Link to={`/professional/event-applications?eventId=${event.id}`}>
                 <Users className="w-4 h-4 mr-2" />
                 Voir les inscriptions
               </Link>

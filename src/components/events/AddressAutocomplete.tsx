@@ -221,7 +221,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-border rounded-md shadow-lg max-h-60 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-60 overflow-y-auto"
         >
           {suggestions.map((suggestion, index) => {
             const formattedAddress = formatAddressDisplay(suggestion);

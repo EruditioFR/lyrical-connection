@@ -61,8 +61,8 @@ const Install = () => {
         <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[60vh]">
           <Card className="max-w-md w-full text-center">
             <CardHeader>
-              <div className="mx-auto w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+              <div className="mx-auto w-16 h-16 bg-success/15 dark:bg-success/30 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle className="w-8 h-8 text-success dark:text-success" />
               </div>
               <CardTitle className="text-2xl">Application installée !</CardTitle>
               <CardDescription>
@@ -83,7 +83,7 @@ const Install = () => {
             <div className="mx-auto w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
               <Smartphone className="w-10 h-10 text-primary" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+            <h1 className="text-3xl md:text-4xl mb-4">
               Installez Lyrisphere
             </h1>
             <p className="text-muted-foreground text-lg">
@@ -214,23 +214,23 @@ const Install = () => {
             <CardContent>
               <ul className="space-y-3">
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
                   <span>Accès rapide depuis l'écran d'accueil</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
                   <span>Fonctionne hors-ligne (pages visitées)</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
                   <span>Chargement ultra-rapide</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
                   <span>Expérience plein écran</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
                   <span>Mises à jour automatiques</span>
                 </li>
               </ul>

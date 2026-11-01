@@ -242,7 +242,7 @@ export default i18n;`;
               <p className="text-sm text-muted-foreground">
                 Générez un fichier i18n compatible avec react-i18next basé sur les traductions actuelles.
               </p>
-              <p className="text-xs text-amber-600">
+              <p className="text-xs text-warning">
                 ⚠️ Ce fichier peut remplacer votre fichier src/i18n/index.ts actuel
               </p>
               <Button onClick={generateI18nFile}>

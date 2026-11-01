@@ -96,7 +96,7 @@ const EventForm = () => {
             title: "Succès",
             description: "Événement mis à jour avec succès."
           });
-          navigate('/professional/events');
+          navigate('/mes-evenements');
         }
       });
     } else {
@@ -106,7 +106,7 @@ const EventForm = () => {
             title: "Succès", 
             description: "Événement créé avec succès."
           });
-          navigate('/professional/events');
+          navigate('/mes-evenements');
         }
       });
     }

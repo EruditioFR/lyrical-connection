@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Eyebrow } from '@/components/editorial/Editorial';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,7 +27,7 @@ const MyApplications = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-serif mb-4">
             Connexion requise
           </h1>
           <p className="text-muted-foreground mb-6">
@@ -76,11 +76,11 @@ const MyApplications = () => {
 
   const getEventTypeBadge = (eventType: string) => {
     const typeConfig = {
-      masterclass: { label: 'Masterclass', icon: Users, color: 'bg-blue-100 text-blue-800' },
-      stage: { label: 'Stage', icon: Music, color: 'bg-green-100 text-green-800' },
-      concours: { label: 'Concours', icon: Trophy, color: 'bg-yellow-100 text-yellow-800' },
-      atelier: { label: 'Atelier', icon: Mic, color: 'bg-purple-100 text-purple-800' },
-      conference: { label: 'Conférence', icon: Users, color: 'bg-gray-100 text-foreground' },
+      masterclass: { label: 'Masterclass', icon: Users, color: 'border border-border bg-transparent text-muted-foreground' },
+      stage: { label: 'Stage', icon: Music, color: 'border border-border bg-transparent text-muted-foreground' },
+      concours: { label: 'Concours', icon: Trophy, color: 'border border-border bg-transparent text-muted-foreground' },
+      atelier: { label: 'Atelier', icon: Mic, color: 'border border-border bg-transparent text-muted-foreground' },
+      conference: { label: 'Conférence', icon: Users, color: 'border border-border bg-transparent text-muted-foreground' },
     };
 
     const config = typeConfig[eventType as keyof typeof typeConfig];
@@ -159,13 +159,14 @@ const MyApplications = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Mes candidatures</h1>
+      <div className="container mx-auto px-4 md:px-6 py-12">
+        <header className="mb-8">
+          <Eyebrow className="mb-3">Espace artiste</Eyebrow>
+          <h1 className="text-3xl md:text-4xl font-serif">Mes candidatures</h1>
           <p className="text-muted-foreground mt-2">
-            Suivez l'état de vos candidatures aux castings et inscriptions aux événements
+            Castings et événements auxquels vous avez postulé, et où en est chacun.
           </p>
-        </div>
+        </header>
 
         {/* Filtres par type */}
         <div className="mb-6">
@@ -209,12 +210,10 @@ const MyApplications = () => {
 
           <TabsContent value={activeTab} className="mt-6">
             {filteredApplications.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-foreground mb-2">
+              <div className="border-y border-border py-10">
+                  <h2 className="text-xl font-serif mb-2">
                     Aucune candidature
-                  </h3>
+                  </h2>
                   <p className="text-muted-foreground mb-4">
                     {activeTab === 'all' 
                       ? typeFilter === 'all'
@@ -222,10 +221,10 @@ const MyApplications = () => {
                         : typeFilter === 'castings'
                         ? "Vous n'avez pas encore postulé à des castings."
                         : "Vous n'êtes pas encore inscrit à des événements."
-                      : `Aucune candidature ${activeTab === 'pending' ? 'en attente' : activeTab}.`
+                      : `Aucune candidature ${({ pending: 'en attente', accepted: 'acceptée', rejected: 'refusée', waitlisted: 'présélectionnée' } as Record<string, string>)[activeTab] ?? ''}.`
                     }
                   </p>
-                  <div className="flex flex-wrap gap-3 justify-center">
+                  <div className="flex flex-wrap gap-3">
                     {(typeFilter === 'all' || typeFilter === 'castings') && (
                       <Button onClick={() => navigate('/castings')}>
                         Découvrir les castings
@@ -237,23 +236,21 @@ const MyApplications = () => {
                       </Button>
                     )}
                   </div>
-                </CardContent>
-              </Card>
+              </div>
             ) : (
-              <div className="grid gap-6">
+              <ul className="divide-y divide-border border-y border-border">
                 {filteredApplications.map((application) => (
-                  <Card key={`${application.type}-${application.id}`} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
+                  <li key={`${application.type}-${application.id}`} className="py-6">
+                    <div>
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <CardTitle className="text-xl">
+                            <h2 className="text-xl font-serif">
                               {application.title}
-                            </CardTitle>
+                            </h2>
                             <div className="flex items-center gap-2">
                               {application.type === 'casting' ? (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                  <Music className="h-3 w-3 mr-1" />
+                                <span className="inline-flex items-center px-2 py-0.5 text-xs border border-border text-muted-foreground">
                                   Casting
                                 </span>
                               ) : (
@@ -274,16 +271,16 @@ const MyApplications = () => {
                         </div>
                         {getStatusBadge(application.status, application.resultsPublished)}
                       </div>
-                    </CardHeader>
-                    <CardContent>
+                    </div>
+                    <div className="mt-4">
                       <div className="space-y-4">
                         {/* Motivation pour les événements ou lettre de motivation pour les castings */}
                         {((application.type === 'casting' && application.cover_letter) || 
                           (application.type === 'event' && application.motivation)) && (
                           <div>
-                            <h4 className="font-medium text-foreground mb-2">
+                            <h3 className="text-sm font-semibold mb-1">
                               {application.type === 'casting' ? 'Lettre de motivation' : 'Motivation'}
-                            </h4>
+                            </h3>
                             <p className="text-muted-foreground text-sm line-clamp-3">
                               {application.type === 'casting' ? application.cover_letter : application.motivation}
                             </p>
@@ -291,9 +288,9 @@ const MyApplications = () => {
                         )}
 
                         {application.professional_notes && (
-                          <div className="bg-blue-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-blue-900 mb-2">Notes du professionnel</h4>
-                            <p className="text-blue-800 text-sm">
+                          <div className="border-l-2 border-info pl-4">
+                            <h3 className="text-sm font-semibold mb-1">Notes du professionnel</h3>
+                            <p className="text-sm">
                               {application.professional_notes}
                             </p>
                           </div>
@@ -301,9 +298,9 @@ const MyApplications = () => {
 
                         {/* Audition pour les castings */}
                         {application.type === 'casting' && application.audition_scheduled_at && (
-                          <div className="bg-green-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-green-900 mb-2">Audition programmée</h4>
-                            <p className="text-green-800 text-sm">
+                          <div className="border-l-2 border-success pl-4">
+                            <h3 className="text-sm font-semibold text-success mb-1">Audition programmée</h3>
+                            <p className="text-sm">
                               {new Date(application.audition_scheduled_at).toLocaleDateString('fr-FR', {
                                 weekday: 'long',
                                 year: 'numeric',
@@ -314,7 +311,7 @@ const MyApplications = () => {
                               })}
                             </p>
                             {application.audition_notes && (
-                              <p className="text-green-700 text-sm mt-2">
+                              <p className="text-sm text-muted-foreground mt-2">
                                 {application.audition_notes}
                               </p>
                             )}
@@ -323,8 +320,8 @@ const MyApplications = () => {
 
                         {/* Dates de l'événement */}
                         {application.type === 'event' && application.eventDetails && (
-                          <div className="bg-gray-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-foreground mb-2">Dates de l'événement</h4>
+                          <div>
+                            <h3 className="text-sm font-semibold mb-1">Dates de l'événement</h3>
                             <p className="text-muted-foreground text-sm">
                               Du {new Date(application.eventDetails.start_date).toLocaleDateString('fr-FR')} 
                               {application.eventDetails.end_date && 
@@ -334,7 +331,7 @@ const MyApplications = () => {
                           </div>
                         )}
 
-                        <div className="flex gap-3 pt-4">
+                        <div className="flex gap-3 pt-1">
                           <Button
                             variant="outline"
                             size="sm"
@@ -342,22 +339,12 @@ const MyApplications = () => {
                           >
                             {application.type === 'casting' ? 'Voir le casting' : 'Voir l\'événement'}
                           </Button>
-                          
-                          {application.status === 'pending' && application.type === 'casting' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => navigate(`/applications/${application.id}/edit`)}
-                            >
-                              Modifier
-                            </Button>
-                          )}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </TabsContent>
         </Tabs>

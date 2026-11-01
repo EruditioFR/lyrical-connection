@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { Stat, StatRow } from '@/components/dashboard/Panel';
 import { Navigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
@@ -65,9 +66,9 @@ const ProfessionalEvents = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Mes Événements</h1>
+            <h1 className="text-3xl md:text-4xl font-serif">Mes événements</h1>
             <p className="text-muted-foreground mt-2">
-              Gérez vos masterclass, stages et concours avec un formulaire amélioré
+              Vos masterclasses, stages et concours, publiés ou en brouillon.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -94,9 +95,9 @@ const ProfessionalEvents = () => {
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <h3 className="text-red-800 font-medium">Erreur de chargement</h3>
-            <p className="text-red-600 text-sm mt-1">{error.message}</p>
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-6">
+            <h3 className="text-destructive font-medium">Erreur de chargement</h3>
+            <p className="text-destructive text-sm mt-1">{error.message}</p>
             <Button 
               variant="outline" 
               size="sm" 
@@ -109,47 +110,13 @@ const ProfessionalEvents = () => {
         )}
 
         {/* Statistiques */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total événements</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{events.length}</div>
-            </CardContent>
-          </Card>
+        <StatRow className="mb-8">
+          <Stat label="Événements" value={events.length} />
+          <Stat label="Publiés" value={publishedEvents.length} />
           
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Publiés</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{publishedEvents.length}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Brouillons</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{draftEvents.length}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Inscriptions totales</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalApplications}</div>
-            </CardContent>
-          </Card>
-        </div>
+          <Stat label="Brouillons" value={draftEvents.length} />
+          <Stat label="Inscriptions" value={totalApplications} />
+        </StatRow>
 
         <Tabs defaultValue="published" className="space-y-6">
           <TabsList>

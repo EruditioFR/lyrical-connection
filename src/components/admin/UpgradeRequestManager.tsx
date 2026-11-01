@@ -70,13 +70,27 @@ const UpgradeRequestManager = () => {
 
       if (error) throw error;
 
-      // Simulation d'informations utilisateur supplémentaires
-      const enrichedData = data.map(request => ({
-        ...request,
-        user_name: `Utilisateur ${request.user_id.slice(-4)}`,
-        profile_name: request.profile_type === 'artist' ? 'Profil Artiste' : 'Profil Professionnel',
-        contact_email: `user${request.user_id.slice(-4)}@example.com`
-      }));
+      // Nom et contact réels, lus sur le profil concerné
+      const artistIds = data.filter(r => r.profile_type === 'artist').map(r => r.profile_id);
+      const proIds = data.filter(r => r.profile_type !== 'artist').map(r => r.profile_id);
+      const [{ data: artists = [] }, { data: pros = [] }] = await Promise.all([
+        artistIds.length
+          ? supabase.from('artist_profiles').select('id, stage_name, contact_email').in('id', artistIds)
+          : Promise.resolve({ data: [] as { id: string; stage_name: string; contact_email: string | null }[] }),
+        proIds.length
+          ? supabase.from('professional_profiles').select('id, company_name, contact_email').in('id', proIds)
+          : Promise.resolve({ data: [] as { id: string; company_name: string | null; contact_email: string | null }[] }),
+      ]);
+      const enrichedData = data.map(request => {
+        const artist = artists?.find(a => a.id === request.profile_id);
+        const pro = pros?.find(p => p.id === request.profile_id);
+        return {
+          ...request,
+          user_name: artist?.stage_name || pro?.company_name || 'Profil introuvable',
+          profile_name: request.profile_type === 'artist' ? 'Profil artiste' : 'Profil professionnel',
+          contact_email: artist?.contact_email || pro?.contact_email || '',
+        };
+      });
 
       return enrichedData as UpgradeRequest[];
     }
@@ -115,7 +129,7 @@ const UpgradeRequestManager = () => {
       
       toast({
         title: "Lien de paiement créé",
-        description: "Un lien de paiement Stripe a été généré et envoyé à l'utilisateur."
+        description: "Le lien de paiement Stripe a été enregistré sur la demande. Il n'est pas envoyé automatiquement."
       });
     },
     onError: (error) => {
@@ -131,12 +145,11 @@ const UpgradeRequestManager = () => {
   // Envoyer un email personnalisé
   const sendCustomEmail = useMutation({
     mutationFn: async ({ request, message }: { request: UpgradeRequest; message: string }) => {
-      // Ici, on utiliserait une edge function pour envoyer l'email via Resend
-      console.log('Envoi email personnalisé:', { request, message });
-      
-      // Simulation d'envoi d'email
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Envoi réel par la fonction serveur (adresse du compte, via Resend)
+      const { error } = await supabase.functions.invoke('send-upgrade-reminder', {
+        body: { upgrade_request_id: request.id, custom_message: message },
+      });
+      if (error) throw error;
       return { success: true };
     },
     onSuccess: () => {
@@ -159,15 +172,15 @@ const UpgradeRequestManager = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />En attente</Badge>;
+        return <Badge className="bg-warning/15 text-warning"><Clock className="h-3 w-3 mr-1" />En attente</Badge>;
       case 'sent':
-        return <Badge className="bg-blue-100 text-blue-800"><Send className="h-3 w-3 mr-1" />Envoyé</Badge>;
+        return <Badge className="bg-info/15 text-info"><Send className="h-3 w-3 mr-1" />Envoyé</Badge>;
       case 'paid':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Payé</Badge>;
+        return <Badge className="bg-success/15 text-success"><CheckCircle className="h-3 w-3 mr-1" />Payé</Badge>;
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Complété</Badge>;
+        return <Badge className="bg-success/15 text-success"><CheckCircle className="h-3 w-3 mr-1" />Complété</Badge>;
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Annulé</Badge>;
+        return <Badge className="bg-destructive/15 text-destructive"><XCircle className="h-3 w-3 mr-1" />Annulé</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -186,7 +199,7 @@ const UpgradeRequestManager = () => {
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-64 bg-gray-200 rounded"></div>
+        <div className="h-64 bg-muted rounded"></div>
       </div>
     );
   }
@@ -232,9 +245,9 @@ const UpgradeRequestManager = () => {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {request.profile_type === 'artist' ? (
-                          <User className="h-4 w-4 text-blue-500" />
+                          <User className="h-4 w-4 text-info" />
                         ) : (
-                          <Briefcase className="h-4 w-4 text-green-500" />
+                          <Briefcase className="h-4 w-4 text-success" />
                         )}
                         <Badge variant={request.profile_type === 'artist' ? 'default' : 'secondary'}>
                           {request.profile_type === 'artist' ? 'Artiste' : 'Professionnel'}

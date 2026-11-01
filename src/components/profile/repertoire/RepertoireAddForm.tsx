@@ -31,11 +31,11 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'opera': return 'bg-purple-100 text-purple-800';
-      case 'oratorio': return 'bg-blue-100 text-blue-800';
-      case 'song': return 'bg-green-100 text-green-800';
-      case 'operetta': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-gray-100 text-foreground';
+      case 'opera': return 'border border-border bg-transparent text-muted-foreground';
+      case 'oratorio': return 'border border-border bg-transparent text-muted-foreground';
+      case 'song': return 'border border-border bg-transparent text-muted-foreground';
+      case 'operetta': return 'border border-border bg-transparent text-muted-foreground';
+      default: return 'border border-border bg-transparent text-muted-foreground';
     }
   };
 
@@ -138,7 +138,7 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
 
   if (step === 'details' && selectedAir) {
     return (
-      <Card className="border-2 border-dashed border-gray-300">
+      <Card className="border-2 border-dashed border-border">
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Button
@@ -153,7 +153,7 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
           </div>
           <div className="bg-muted p-3 rounded-md">
             <div className="flex items-center gap-2 mb-1">
-              <Music className="h-4 w-4 text-purple-600" />
+              <Music className="h-4 w-4 text-gold-600" />
               <span className="font-medium">{selectedAir.displayTitle}</span>
             </div>
             <div className="text-sm text-muted-foreground">
@@ -238,7 +238,7 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
   }
 
   return (
-    <Card className="border-2 border-dashed border-gray-300">
+    <Card className="border-2 border-dashed border-border">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg">Sélectionner un air</CardTitle>
       </CardHeader>
@@ -276,7 +276,7 @@ const RepertoireAddForm: React.FC<RepertoireAddFormProps> = ({ artistProfileId, 
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <Music className="h-4 w-4 text-purple-600" />
+                    <Music className="h-4 w-4 text-gold-600" />
                     <span className="font-medium">{air.displayTitle}</span>
                     <Badge variant="outline" className="text-xs">
                       Air

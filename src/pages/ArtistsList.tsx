@@ -76,9 +76,9 @@ const ArtistsList = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-serif font-bold mb-4">Erreur</h1>
+          <h1 className="text-2xl font-serif mb-4">Erreur</h1>
           <p className="text-muted-foreground">Impossible de charger la liste des artistes.</p>
-          <p className="text-sm text-red-500 mt-2">{error?.message || 'Erreur inconnue'}</p>
+          <p className="text-sm text-destructive mt-2">{error?.message || 'Erreur inconnue'}</p>
         </div>
       </Layout>
     );
@@ -90,7 +90,7 @@ const ArtistsList = () => {
       <section className="bg-muted py-12 md:py-[30px]">
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl font-serif mb-4">
               Nos Artistes
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

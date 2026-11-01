@@ -38,7 +38,7 @@ const Blog = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-destructive mb-4">Erreur</h1>
+            <h1 className="text-2xl font-serif text-destructive mb-4">Erreur</h1>
             <p className="text-muted-foreground">{error}</p>
           </div>
         </div>
@@ -55,7 +55,7 @@ const Blog = () => {
         {/* Hero Section */}
         <section className="bg-primary/10 py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+            <h1 className="text-4xl md:text-5xl text-foreground mb-6">
               Blog Lyrisphere
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">

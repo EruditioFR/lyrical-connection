@@ -22,7 +22,9 @@ const languages = [
 export const LanguageSelector = () => {
   const { i18n } = useTranslation();
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  // « en-US » → « en » : langue réellement affichée, pas le code brut du navigateur
+  const activeCode = i18n.resolvedLanguage ?? i18n.language;
+  const currentLanguage = languages.find(lang => lang.code === activeCode) || languages[0];
 
   const handleLanguageChange = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
@@ -43,7 +45,7 @@ export const LanguageSelector = () => {
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
             className={`flex items-center gap-3 ${
-              i18n.language === language.code ? 'bg-accent' : ''
+              activeCode === language.code ? 'bg-accent' : ''
             }`}
           >
             <span className="text-lg">{language.flag}</span>

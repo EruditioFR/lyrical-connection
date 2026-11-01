@@ -66,14 +66,14 @@ const SumiJoOnboarding = () => {
   if (!authLoading && !user) {
     return (
       <Layout>
-        <div className="min-h-screen bg-amber-50">
+        <div className="min-h-screen bg-gold-50">
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-lg mx-auto text-center">
               <div className="mb-8">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-400 mb-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-400 mb-6">
                   <Star className="w-10 h-10 text-white" />
                 </div>
-                <h1 className="text-3xl font-bold mb-4">Concours Sumi Jo 2026</h1>
+                <h1 className="text-3xl md:text-4xl font-serif mb-4">Concours Sumi Jo 2026</h1>
                 <p className="text-muted-foreground">
                   Connectez-vous ou créez un compte pour activer votre code promo
                 </p>
@@ -81,7 +81,6 @@ const SumiJoOnboarding = () => {
               <Button 
                 onClick={() => navigate('/auth', { state: { returnTo: '/sumi-jo' } })}
                 size="lg"
-                className="bg-amber-500 hover:bg-amber-600"
               >
                 Se connecter / S'inscrire
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -97,19 +96,19 @@ const SumiJoOnboarding = () => {
   if (success && result) {
     return (
       <Layout>
-        <div className="min-h-screen bg-amber-50">
+        <div className="min-h-screen bg-gold-50">
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-lg mx-auto">
-              <Card className="border-amber-200 dark:border-amber-800 shadow-xl overflow-hidden">
-                <div className="bg-amber-500 p-6 text-center text-white">
+              <Card className="border-gold-200 dark:border-gold-800 shadow-xl overflow-hidden">
+                <div className="bg-gold-500 p-6 text-center text-white">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
-                  <h1 className="text-2xl font-bold">Félicitations !</h1>
+                  <h1 className="text-2xl font-serif">Félicitations !</h1>
                 </div>
                 <CardContent className="p-6 space-y-6">
                   <div className="text-center">
-                    <Sparkles className="w-12 h-12 mx-auto text-amber-500 mb-4" />
+                    <Sparkles className="w-12 h-12 mx-auto text-gold-500 mb-4" />
                     <h2 className="text-xl font-semibold mb-2">
                       Bienvenue au Concours Sumi Jo 2026
                     </h2>
@@ -119,10 +118,10 @@ const SumiJoOnboarding = () => {
                   </div>
 
                   {result.badges && result.badges.length > 0 && (
-                    <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 text-center">
+                    <div className="bg-gold-50 dark:bg-gold-900/30 rounded-lg p-4 text-center">
                       <p className="text-sm text-muted-foreground mb-2">Badge obtenu</p>
-                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-400/50">
-                        <span className="font-medium text-amber-700 dark:text-amber-300">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500/20 border border-gold-400/50">
+                        <span className="font-medium text-gold-700 dark:text-gold-300">
                           {result.badges[0]}
                         </span>
                       </div>
@@ -145,14 +144,14 @@ const SumiJoOnboarding = () => {
                   <div className="flex flex-col gap-3">
                     <Button 
                       onClick={() => navigate('/dashboard')}
-                      className="w-full bg-amber-500 hover:bg-amber-600"
+                      className="w-full"
                     >
                       Accéder à mon tableau de bord
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Button>
                     <Button 
                       variant="outline"
-                      onClick={() => navigate('/profile')}
+                      onClick={() => navigate('/profil')}
                       className="w-full"
                     >
                       Compléter mon profil
@@ -170,15 +169,15 @@ const SumiJoOnboarding = () => {
   // Main form
   return (
     <Layout>
-      <div className="min-h-screen bg-amber-50">
+      <div className="min-h-screen bg-gold-50">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto">
             {/* Hero Section */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-400 mb-6 shadow-lg shadow-amber-500/30">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold-400 mb-6">
                 <Star className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold mb-4 text-foreground">
+              <h1 className="text-4xl mb-4 text-foreground">
                 Concours International Sumi Jo 2026
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg mx-auto">
@@ -188,10 +187,10 @@ const SumiJoOnboarding = () => {
 
             <div className="grid md:grid-cols-2 gap-8">
               {/* Form Card */}
-              <Card className="border-amber-200 dark:border-amber-800 shadow-lg">
+              <Card className="border-gold-200 dark:border-gold-800 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-amber-500" />
+                    <Sparkles className="w-5 h-5 text-gold-500" />
                     Activez votre code
                   </CardTitle>
                   <CardDescription>
@@ -221,7 +220,7 @@ const SumiJoOnboarding = () => {
 
                     <Button 
                       type="submit" 
-                      className="w-full bg-amber-500 hover:bg-amber-600"
+                      className="w-full"
                       disabled={isRedeeming}
                     >
                       {isRedeeming ? (
@@ -241,7 +240,7 @@ const SumiJoOnboarding = () => {
               </Card>
 
               {/* Benefits Card */}
-              <Card className="bg-amber-500 text-white border-0 shadow-lg">
+              <Card className="bg-gold-500 text-white border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Star className="w-5 h-5" />

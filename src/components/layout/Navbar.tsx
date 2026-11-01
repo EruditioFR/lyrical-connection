@@ -131,7 +131,7 @@ const Navbar = () => {
                 </div>}
 
               {/* Lien d'administration pour les admins */}
-              {isAdmin && <Link to="/admin" className="text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-1">
+              {isAdmin && <Link to="/admin" className="text-destructive hover:text-destructive font-medium transition-colors flex items-center gap-1">
                   <Shield className="h-4 w-4" />
                   {t('navigation:admin')}
                 </Link>}
@@ -204,7 +204,7 @@ const Navbar = () => {
                         <span>{t('navigation:admin')}</span>
                       </DropdownMenuItem>
                     </>}
-                  {user.app_metadata.provider === 'email' && <DropdownMenuItem onClick={() => navigate('/auth/update-password')}>
+                  {user.app_metadata.provider === 'email' && <DropdownMenuItem onClick={() => navigate('/change-password')}>
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Changer le mot de passe</span>
                     </DropdownMenuItem>}

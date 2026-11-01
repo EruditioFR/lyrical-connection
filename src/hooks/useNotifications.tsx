@@ -101,7 +101,8 @@ export const useNotifications = () => {
     if (!user) return;
 
     const channel = supabase
-      .channel('notifications-changes')
+      // Nom unique : la cloche et la page Notifications s'abonnent en même temps
+      .channel(`notifications-changes_${user.id}_${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {

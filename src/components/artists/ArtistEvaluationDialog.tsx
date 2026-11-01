@@ -108,8 +108,8 @@ const ArtistEvaluationDialog: React.FC<ArtistEvaluationDialogProps> = ({
               <Star
                 className={`h-4 w-4 ${
                   value && rating <= value
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-gray-300'
+                    ? 'fill-warning text-warning'
+                    : 'text-muted-foreground'
                 }`}
               />
             </button>

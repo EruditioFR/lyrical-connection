@@ -11,11 +11,11 @@ export const WebhookDeliveries = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'success':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case 'failed':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'pending':
-        return <Clock className="h-4 w-4 text-yellow-500" />;
+        return <Clock className="h-4 w-4 text-warning" />;
       default:
         return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
@@ -98,7 +98,7 @@ export const WebhookDeliveries = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
+              <CheckCircle className="h-4 w-4 text-success" />
               <div>
                 <p className="text-2xl font-bold">156</p>
                 <p className="text-xs text-muted-foreground">Succès</p>
@@ -109,7 +109,7 @@ export const WebhookDeliveries = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-red-500" />
+              <XCircle className="h-4 w-4 text-destructive" />
               <div>
                 <p className="text-2xl font-bold">12</p>
                 <p className="text-xs text-muted-foreground">Échecs</p>
@@ -120,7 +120,7 @@ export const WebhookDeliveries = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-yellow-500" />
+              <Clock className="h-4 w-4 text-warning" />
               <div>
                 <p className="text-2xl font-bold">3</p>
                 <p className="text-xs text-muted-foreground">En attente</p>
@@ -131,7 +131,7 @@ export const WebhookDeliveries = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <RefreshCw className="h-4 w-4 text-blue-500" />
+              <RefreshCw className="h-4 w-4 text-info" />
               <div>
                 <p className="text-2xl font-bold">92.8%</p>
                 <p className="text-xs text-muted-foreground">Taux de succès</p>

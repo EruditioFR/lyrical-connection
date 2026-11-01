@@ -44,7 +44,7 @@ const FeaturedArtistCard = ({ artist }: { artist: any }) => {
         {/* Audio indicators */}
         {isAnalyzing && (
           <div className="absolute top-3 left-3">
-            <div className="bg-muted-foreground/90 backdrop-blur-sm rounded-full p-3">
+            <div className="bg-black/70 backdrop-blur-sm rounded-full p-3">
               <Loader2 className="h-6 w-6 text-white animate-spin" />
             </div>
           </div>
@@ -172,7 +172,7 @@ const FeaturedArtists = () => {
               <Link to="/auth">{t('featuredArtists.becomeArtist.createProfile')}</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link to="/guide-artistes">{t('featuredArtists.becomeArtist.guide')}</Link>
+              <Link to="/faq">{t('featuredArtists.becomeArtist.guide')}</Link>
             </Button>
           </div>
         </div>

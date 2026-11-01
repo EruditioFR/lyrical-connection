@@ -529,6 +529,8 @@ i18n
   .init({
     resources,
     fallbackLng: 'fr',
+    supportedLngs: Object.keys(resources),
+    nonExplicitSupportedLngs: true,
     debug: false,
     
     detection: {

@@ -31,11 +31,11 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'opera': return 'bg-purple-100 text-purple-800';
-      case 'oratorio': return 'bg-blue-100 text-blue-800';
-      case 'song': return 'bg-green-100 text-green-800';
-      case 'operetta': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-gray-100 text-foreground';
+      case 'opera': return 'border border-border bg-transparent text-muted-foreground';
+      case 'oratorio': return 'border border-border bg-transparent text-muted-foreground';
+      case 'song': return 'border border-border bg-transparent text-muted-foreground';
+      case 'operetta': return 'border border-border bg-transparent text-muted-foreground';
+      default: return 'border border-border bg-transparent text-muted-foreground';
     }
   };
 
@@ -113,7 +113,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
 
             {editingItem === item.id ? (
               // Mode édition
-              <div className="space-y-4 mt-4 p-4 bg-gray-50 rounded-lg">
+              <div className="space-y-4 mt-4 p-4 bg-muted rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Année de représentation</Label>
@@ -135,11 +135,11 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
                       onChange={(e) => setEditVenueSearch(e.target.value)}
                     />
                     {editVenueSearch.length > 1 && editVenues.length > 0 && (
-                      <div className="border rounded-md max-h-40 overflow-y-auto bg-white">
+                      <div className="border rounded-md max-h-40 overflow-y-auto bg-card">
                         {editVenues.map((venueItem) => (
                           <div
                             key={venueItem.id}
-                            className="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
+                            className="p-2 cursor-pointer hover:bg-muted border-b last:border-b-0"
                             onClick={() => handleVenueSelection(venueItem)}
                           >
                             <div className="font-medium">{venueItem.name}</div>
@@ -213,7 +213,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
                 variant="ghost"
                 size="sm"
                 onClick={() => handleEditStart(item)}
-                className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                className="text-info hover:text-info hover:bg-info/10"
               >
                 <Edit className="h-4 w-4" />
               </Button>
@@ -222,7 +222,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
               variant="ghost"
               size="sm"
               onClick={() => onDelete(item.id)}
-              className="text-red-600 hover:text-red-800 hover:bg-red-50"
+              className="text-destructive hover:text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

@@ -80,13 +80,13 @@ export const EventRulesStep: React.FC<EventRulesStepProps> = ({
         </CardContent>
       </Card>
 
-      <Card className="border-orange-200 bg-orange-50">
+      <Card className="border-warning/30 bg-warning/10">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-warning mt-0.5" />
             <div className="space-y-1">
-              <h4 className="font-medium text-orange-900">Conseils pour un bon règlement</h4>
-              <ul className="text-sm text-orange-800 space-y-1">
+              <h4 className="font-medium text-warning">Conseils pour un bon règlement</h4>
+              <ul className="text-sm text-warning space-y-1">
                 <li>• Soyez clair et précis dans vos conditions</li>
                 <li>• Mentionnez les équipements requis ou fournis</li>
                 <li>• Précisez les modalités de remboursement</li>

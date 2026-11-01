@@ -144,7 +144,7 @@ const VerificationPanel = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-green-600 border-green-600 hover:bg-green-50"
+                  className="text-success border-success hover:bg-success/10"
                   onClick={() => handleStatusChange(request.id, 'approved')}
                   disabled={isPending}
                 >
@@ -153,7 +153,7 @@ const VerificationPanel = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-red-600 border-red-600 hover:bg-red-50"
+                  className="text-destructive border-destructive hover:bg-destructive/10"
                   onClick={() => handleStatusChange(request.id, 'rejected')}
                   disabled={isPending}
                 >
@@ -309,7 +309,7 @@ const VerificationPanel = () => {
             <CardTitle className="text-sm font-medium">En attente</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">
+            <div className="text-2xl font-bold text-warning">
               {pendingRequests.length}
             </div>
           </CardContent>
@@ -320,7 +320,7 @@ const VerificationPanel = () => {
             <CardTitle className="text-sm font-medium">Approuvées</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold text-success">
               {requests.filter(r => r.status === 'approved').length}
             </div>
           </CardContent>
@@ -331,7 +331,7 @@ const VerificationPanel = () => {
             <CardTitle className="text-sm font-medium">Rejetées</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-2xl font-bold text-destructive">
               {requests.filter(r => r.status === 'rejected').length}
             </div>
           </CardContent>

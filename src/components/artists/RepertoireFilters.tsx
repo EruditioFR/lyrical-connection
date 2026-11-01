@@ -116,8 +116,8 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               {works.map((work) => (
                 <div
                   key={work.id}
-                  className={`p-2 cursor-pointer hover:bg-gray-100 ${
-                    filters.workId === work.id ? 'bg-blue-100' : ''
+                  className={`p-2 cursor-pointer hover:bg-muted ${
+                    filters.workId === work.id ? 'bg-info/15' : ''
                   }`}
                   onClick={() => {
                     handleFilterChange('workId', work.id);
@@ -324,7 +324,7 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="text-red-600 hover:text-red-800"
+              className="text-destructive hover:text-destructive"
             >
               Effacer tous les filtres
             </Button>

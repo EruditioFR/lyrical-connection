@@ -60,10 +60,10 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
   };
 
   const getConfidenceColor = (confidence?: number) => {
-    if (!confidence) return 'bg-gray-200';
-    if (confidence >= 0.8) return 'bg-green-500';
-    if (confidence >= 0.6) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (!confidence) return 'bg-muted';
+    if (confidence >= 0.8) return 'bg-success';
+    if (confidence >= 0.6) return 'bg-warning';
+    return 'bg-destructive';
   };
 
   const getConfidenceLabel = (confidence?: number) => {
@@ -134,7 +134,7 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
             </CardHeader>
             <CardContent className="pt-0">
               {/* Texte original en français */}
-              <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+              <div className="mb-4 p-3 bg-info/10 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">🇫🇷</span>
                   <span className="font-medium">Français (original)</span>
@@ -143,7 +143,7 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
               </div>
 
               {/* Suggestion de traduction */}
-              <div className="mb-4 p-3 bg-green-50 rounded-lg">
+              <div className="mb-4 p-3 bg-success/10 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">{languageInfo.flag}</span>
                   <span className="font-medium">{languageInfo.name} (suggestion IA)</span>
@@ -157,7 +157,7 @@ export const TranslationSuggestions: React.FC<TranslationSuggestionsProps> = ({
 
               {/* Contexte utilisé */}
               {suggestion.context_used && (
-                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <div className="mb-4 p-3 bg-muted rounded-lg">
                   <p className="text-xs text-muted-foreground mb-1">Contexte fourni à l'IA:</p>
                   <p className="text-xs italic">{suggestion.context_used}</p>
                 </div>

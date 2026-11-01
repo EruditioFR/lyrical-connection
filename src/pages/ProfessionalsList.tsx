@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
 import { useAuth } from '@/hooks/useAuth';
-import ProfessionalsMarketing from '@/components/professionals/ProfessionalsMarketing';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Target, Building, CheckCircle, MessageCircle, Crown } from 'lucide-react';
@@ -140,7 +139,7 @@ const ProfessionalsList = () => {
 
           <div className="flex flex-wrap gap-2 mb-4">
             {professional.is_verified && (
-              <Badge variant="default" className="bg-green-100 text-green-800">
+              <Badge variant="default" className="bg-success/15 text-success">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Vérifié
               </Badge>
@@ -189,7 +188,7 @@ const ProfessionalsList = () => {
   return (
     <Layout>
       <div className="container mx-auto py-8">
-        <h1 className="text-2xl font-bold mb-4">Liste des professionnels</h1>
+        <h1 className="text-2xl font-serif mb-4">Liste des professionnels</h1>
 
         <div className="mb-4">
           <Input

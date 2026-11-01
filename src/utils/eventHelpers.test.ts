@@ -14,10 +14,10 @@ describe('getEventTypeLabel', () => {
 
 describe('getStatusLabel / getStatusColor', () => {
   it.each([
-    ['published', 'Publié', 'bg-green-100 text-green-800'],
-    ['draft', 'Brouillon', 'bg-gray-100 text-gray-800'],
-    ['cancelled', 'Annulé', 'bg-red-100 text-red-800'],
-    ['completed', 'Terminé', 'bg-blue-100 text-blue-800'],
+    ['published', 'Publié', 'bg-success/15 text-success'],
+    ['draft', 'Brouillon', 'bg-muted text-foreground'],
+    ['cancelled', 'Annulé', 'bg-destructive/15 text-destructive'],
+    ['completed', 'Terminé', 'bg-info/15 text-info'],
   ])('%s', (status, label, color) => {
     expect(getStatusLabel(status)).toBe(label);
     expect(getStatusColor(status)).toBe(color);
@@ -25,7 +25,7 @@ describe('getStatusLabel / getStatusColor', () => {
 
   it('gère un statut inconnu', () => {
     expect(getStatusLabel('archived')).toBe('archived');
-    expect(getStatusColor('archived')).toBe('bg-gray-100 text-gray-800');
+    expect(getStatusColor('archived')).toBe('bg-muted text-foreground');
   });
 });
 

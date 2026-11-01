@@ -111,7 +111,7 @@ const PricingSection = ({
           {plans.map((plan, index) => {
           const PricingCard = () => {
             const cardRef = useAnimateOnScroll();
-            return <div ref={cardRef} key={plan.name} className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-amber-200 bg-amber-50/50' : ''}`}>
+            return <div ref={cardRef} key={plan.name} className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-gold-200 bg-gold-50/50' : ''}`}>
               {/* Popular Badge */}
               {plan.popular && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gold-600 text-white">

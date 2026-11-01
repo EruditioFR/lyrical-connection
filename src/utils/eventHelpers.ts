@@ -29,15 +29,15 @@ export const getStatusLabel = (status: string) => {
 export const getStatusColor = (status: string) => {
   switch (status) {
     case 'published':
-      return 'bg-green-100 text-green-800';
+      return 'bg-success/15 text-success';
     case 'draft':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-muted text-foreground';
     case 'cancelled':
-      return 'bg-red-100 text-red-800';
+      return 'bg-destructive/15 text-destructive';
     case 'completed':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-info/15 text-info';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-muted text-foreground';
   }
 };
 

@@ -119,7 +119,7 @@ const ProfessionalEventApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Candidatures aux Événements</h1>
+          <h1 className="text-3xl md:text-4xl font-serif">Candidatures aux événements</h1>
           <p className="text-muted-foreground mt-2">
             Gérez les candidatures reçues pour vos événements avec des statistiques détaillées
           </p>
@@ -297,21 +297,21 @@ const ProfessionalEventApplications = () => {
                     
                     <CardContent>
                       {application.artist_profiles?.bio && (
-                        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                        <div className="mb-4 p-3 bg-muted rounded-lg">
                           <h4 className="font-medium mb-2">Biographie</h4>
                           <p className="text-sm text-muted-foreground">{application.artist_profiles.bio}</p>
                         </div>
                       )}
                       
                       {application.motivation && (
-                        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                        <div className="mb-4 p-3 bg-info/10 rounded-lg">
                           <h4 className="font-medium mb-2">Motivation</h4>
                           <p className="text-sm text-muted-foreground">{application.motivation}</p>
                         </div>
                       )}
                       
                       {application.special_requirements && (
-                        <div className="mb-4 p-3 bg-yellow-50 rounded-lg">
+                        <div className="mb-4 p-3 bg-warning/10 rounded-lg">
                           <h4 className="font-medium mb-2">Exigences particulières</h4>
                           <p className="text-sm text-muted-foreground">{application.special_requirements}</p>
                         </div>
@@ -321,7 +321,7 @@ const ProfessionalEventApplications = () => {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => navigate(`/artiste/${application.artist_profiles?.id}`)}
+                          onClick={() => navigate(`/artistes/${application.artist_profiles?.id}`)}
                         >
                           Voir le profil complet
                         </Button>

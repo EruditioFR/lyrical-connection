@@ -1,21 +1,20 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Eyebrow } from '@/components/editorial/Editorial';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const FAQ = () => {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8 text-center">Foire Aux Questions (FAQ)</h1>
+      <article className="container mx-auto px-4 md:px-6 py-16 max-w-3xl">
+        <Eyebrow className="mb-4">Aide</Eyebrow>
+        <h1 className="text-4xl md:text-5xl font-serif mb-8">Questions fréquentes</h1>
         
-        <div className="space-y-8">
+        <div className="border-b border-border">
           {/* Section Général */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Questions Générales</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Questions Générales</h2>
+            <div>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="item-1">
                   <AccordionTrigger>Qu'est-ce que Lyrisphere ?</AccordionTrigger>
@@ -44,15 +43,13 @@ const FAQ = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Section Inscription et Profil */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Inscription et Profil</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Inscription et Profil</h2>
+            <div>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="profile-1">
                   <AccordionTrigger>Comment créer mon profil d'artiste ?</AccordionTrigger>
@@ -81,15 +78,13 @@ const FAQ = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Section Abonnements */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Abonnements et Tarifs</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Abonnements et Tarifs</h2>
+            <div>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="pricing-1">
                   <AccordionTrigger>Lyrisphere est-il gratuit ?</AccordionTrigger>
@@ -117,15 +112,13 @@ const FAQ = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Section Recherche et Contact */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recherche et Contact</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Recherche et Contact</h2>
+            <div>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="search-1">
                   <AccordionTrigger>Comment rechercher des artistes ?</AccordionTrigger>
@@ -154,15 +147,13 @@ const FAQ = () => {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Section Technique */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Questions Techniques</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Questions Techniques</h2>
+            <div>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="tech-1">
                   <AccordionTrigger>J'ai oublié mon mot de passe, que faire ?</AccordionTrigger>
@@ -184,20 +175,18 @@ const FAQ = () => {
                 <AccordionItem value="tech-3">
                   <AccordionTrigger>Comment supprimer mon compte ?</AccordionTrigger>
                   <AccordionContent>
-                    Connectez-vous, accédez à vos paramètres de compte et cliquez sur "Supprimer le compte". 
-                    Cette action est irréversible et toutes vos données seront définitivement supprimées.
+                    Écrivez à support@lyrisphere.com depuis l'adresse e-mail de votre compte en demandant
+                    sa suppression. Elle est définitive : profil, enregistrements et messages sont effacés.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Section Confidentialité et Sécurité */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Confidentialité et Sécurité</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Confidentialité et Sécurité</h2>
+            <div>
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="privacy-1">
                   <AccordionTrigger>Mes données sont-elles sécurisées ?</AccordionTrigger>
@@ -219,21 +208,18 @@ const FAQ = () => {
                 <AccordionItem value="privacy-3">
                   <AccordionTrigger>Comment signaler un comportement inapproprié ?</AccordionTrigger>
                   <AccordionContent>
-                    Utilisez le bouton "Signaler" sur le profil ou message concerné, ou contactez 
-                    directement notre équipe de modération à abuse@lyrisphere.com. Nous prenons 
-                    tous les signalements au sérieux.
+                    Écrivez à notre équipe de modération à abuse@lyrisphere.com en indiquant le profil
+                    ou le message concerné. Chaque signalement est examiné.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
           {/* Contact */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Vous ne trouvez pas la réponse à votre question ?</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-2">Vous ne trouvez pas la réponse à votre question ?</h2>
+            <div>
               <p className="mb-4">
                 Notre équipe support est là pour vous aider. N'hésitez pas à nous contacter :
               </p>
@@ -242,10 +228,10 @@ const FAQ = () => {
                 <p><strong>Temps de réponse :</strong> Sous 24h en moyenne</p>
                 <p><strong>Horaires :</strong> Lundi au vendredi, 9h-18h (heure de Paris)</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         </div>
-      </div>
+      </article>
     </Layout>
   );
 };

@@ -48,7 +48,7 @@ const FeaturedEvents = () => {
             Découvrez les prochains événements lyriques sélectionnés pour vous.
           </p>
           <Button variant="link" className="flex items-center justify-center mt-4" asChild>
-            <Link to="/events">
+            <Link to="/evenements">
               Voir tous les événements
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -93,14 +93,14 @@ const FeaturedEvents = () => {
                     {event.event_type === 'conference' && 'Conférence'}
                   </span>
                   {event.price && (
-                    <span className="text-xs font-medium text-green-600">
+                    <span className="text-xs font-medium text-success">
                       {event.price}€
                     </span>
                   )}
                 </div>
 
                 <h3 className="font-serif font-semibold text-lg mb-3">
-                  <Link to={`/events/${event.id}`}>{event.title}</Link>
+                  <Link to={`/evenements/${event.id}`}>{event.title}</Link>
                 </h3>
 
                 <div className="space-y-2 mb-4">
@@ -129,7 +129,7 @@ const FeaturedEvents = () => {
                   className="w-full hover:bg-muted"
                   asChild
                 >
-                  <Link to={`/events/${event.id}`}>En savoir plus</Link>
+                  <Link to={`/evenements/${event.id}`}>En savoir plus</Link>
                 </Button>
               </div>
             </div>

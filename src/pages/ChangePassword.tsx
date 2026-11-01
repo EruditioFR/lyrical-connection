@@ -33,7 +33,7 @@ const ChangePassword = () => {
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-serif font-bold mb-2">Sécurité du compte</h1>
+            <h1 className="text-3xl font-serif mb-2">Sécurité du compte</h1>
             <p className="text-muted-foreground">
               Gérez les paramètres de sécurité de votre compte
             </p>

@@ -244,9 +244,9 @@ export const EventReviewStep: React.FC<EventReviewStepProps> = ({
         </Card>
       )}
 
-      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h4 className="font-medium text-blue-900 mb-2">Prêt à publier ?</h4>
-        <p className="text-sm text-blue-800">
+      <div className="bg-info/10 p-4 rounded-lg border border-info/30">
+        <h4 className="font-medium text-info mb-2">Prêt à publier ?</h4>
+        <p className="text-sm text-info">
           Vérifiez que toutes les informations sont correctes. Vous pourrez modifier votre événement après publication.
         </p>
       </div>

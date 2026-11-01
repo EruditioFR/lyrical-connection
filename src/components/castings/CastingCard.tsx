@@ -64,12 +64,12 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
 
   const getStatusColor = (status: string) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      waitlisted: 'bg-blue-100 text-blue-800',
-      accepted: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800'
+      pending: 'bg-warning/15 text-warning',
+      waitlisted: 'bg-info/15 text-info',
+      accepted: 'bg-success/15 text-success',
+      rejected: 'bg-destructive/15 text-destructive'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-foreground';
+    return colors[status as keyof typeof colors] || 'bg-muted text-foreground';
   };
 
   return (
@@ -168,7 +168,7 @@ const CastingCard: React.FC<CastingCardProps> = ({ casting }) => {
         <div className="pt-2">
           {isArtist && user && application ? (
             <Button 
-              className="w-full bg-green-600 hover:bg-green-700"
+              className="w-full"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/castings/${casting.id}`);

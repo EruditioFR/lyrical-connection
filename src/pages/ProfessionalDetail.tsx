@@ -1,4 +1,5 @@
 
+import { getProfessionalRoleLabel } from '@/constants/professionalRoles';
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -53,19 +54,7 @@ const ProfessionalDetail = () => {
 
   const heroMedia = media?.[0];
 
-  const getRoleLabel = (role: string) => {
-    const roleLabels: Record<string, string> = {
-      'casting_director': 'Directeur de casting',
-      'vocal_coach': 'Coach vocal',
-      'conductor': 'Chef d\'orchestre',
-      'opera_house_manager': 'Directeur d\'opéra',
-      'voice_teacher': 'Professeur de chant',
-      'artistic_agent': 'Agent artistique',
-      'producer': 'Producteur',
-      'competition_director': 'Directeur de concours'
-    };
-    return roleLabels[role] || role;
-  };
+  const getRoleLabel = getProfessionalRoleLabel;
 
   if (!id) {
     return <Navigate to="/professionnels" replace />;
@@ -86,7 +75,7 @@ const ProfessionalDetail = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-foreground mb-4">
+            <h1 className="text-2xl font-serif mb-4">
               Professionnel non trouvé
             </h1>
             <p className="text-muted-foreground mb-6">
@@ -185,11 +174,11 @@ const ProfessionalDetail = () => {
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <h1 className="text-3xl md:text-4xl font-serif font-bold">
+                          <h1 className="text-3xl md:text-4xl font-serif">
                             {professional.company_name || 'Professionnel'}
                           </h1>
                           {professional.is_verified && (
-                            <Badge className="bg-green-100 text-green-800">
+                            <Badge className="bg-success/15 text-success">
                               <CheckCircle className="w-3 h-3 mr-1" />
                               Vérifié
                             </Badge>
@@ -203,7 +192,7 @@ const ProfessionalDetail = () => {
                         </div>
 
                         {professional.location && (
-                          <div className="flex items-center gap-2 text-white mb-2">
+                          <div className="flex items-center gap-2 text-muted-foreground mb-2">
                             <MapPin className="h-4 w-4" />
                             <span>{professional.location}</span>
                           </div>
@@ -234,7 +223,7 @@ const ProfessionalDetail = () => {
                     </div>
 
                     {professional.bio && (
-                      <p className="text-white leading-relaxed">
+                      <p className="text-foreground leading-relaxed">
                         {professional.bio}
                       </p>
                     )}
@@ -256,7 +245,7 @@ const ProfessionalDetail = () => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-white whitespace-pre-wrap leading-relaxed">
+                      <p className="text-foreground whitespace-pre-wrap leading-relaxed">
                         {professional.team_description}
                       </p>
                     </CardContent>
@@ -276,7 +265,7 @@ const ProfessionalDetail = () => {
                       <>
                         <div className="flex items-center gap-3">
                           <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                          <span className="text-white text-sm break-all">{professional.contact_email}</span>
+                          <span className="text-sm break-all">{professional.contact_email}</span>
                         </div>
                         <Separator />
                       </>
@@ -286,7 +275,7 @@ const ProfessionalDetail = () => {
                       <>
                         <div className="flex items-center gap-3">
                           <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                          <span className="text-white text-sm">{professional.phone}</span>
+                          <span className="text-sm">{professional.phone}</span>
                         </div>
                         <Separator />
                       </>
@@ -313,7 +302,7 @@ const ProfessionalDetail = () => {
                       <>
                         <div className="flex items-center gap-3">
                           <MapPin className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                          <span className="text-white text-sm">{professional.location}</span>
+                          <span className="text-sm">{professional.location}</span>
                         </div>
                         {professional.intervention_radius && <Separator />}
                       </>
@@ -322,7 +311,7 @@ const ProfessionalDetail = () => {
                     {professional.intervention_radius && (
                       <div className="flex items-center gap-3">
                         <Building className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                        <span className="text-white text-sm">
+                        <span className="text-sm">
                           Rayon: {professional.intervention_radius} km
                         </span>
                       </div>

@@ -16,7 +16,7 @@ const EventDetailError: React.FC<EventDetailErrorProps> = ({ error, eventId }) =
       <div className="container mx-auto px-4 py-20">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-3xl font-serif font-bold mb-4">
+          <h1 className="text-3xl font-serif mb-4">
             {error ? 'Erreur de chargement' : 'Événement non trouvé'}
           </h1>
           <p className="text-muted-foreground mb-6">

@@ -306,7 +306,7 @@ export const LyricalWorksManager = () => {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => setDeleteWork(work)}
-                          className="text-red-600"
+                          className="text-destructive"
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Supprimer
@@ -375,7 +375,7 @@ export const LyricalWorksManager = () => {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => setDeleteRole(role)}
-                              className="text-red-600"
+                              className="text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
                               Supprimer
@@ -424,7 +424,7 @@ export const LyricalWorksManager = () => {
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteWork && handleDeleteWork(deleteWork)}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeletingWork}
             >
               Supprimer
@@ -447,7 +447,7 @@ export const LyricalWorksManager = () => {
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteRole && handleDeleteRole(deleteRole)}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={isDeletingRole}
             >
               Supprimer

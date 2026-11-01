@@ -19,7 +19,16 @@ Les garde-fous automatiques sont dans `src/design-system.test.ts` (lancés par `
 | `primary` | encre | boutons principaux | — |
 | `border` | filet `hsl(40 13% 78%)` | séparations, contours | traits seulement |
 | `ring`, `gold-600` | rideau `#9e1b32` | accent : étiquettes, focus, soulignés | 7:1 |
-| `destructive` | `hsl(4 74% 42%)` | suppression uniquement | — |
+| `destructive` | `hsl(4 74% 37%)` | suppression, erreurs | 6,6:1 |
+| `success` | `hsl(145 45% 26%)` | statut accepté, publié, confirmé | 6,6:1 |
+| `warning` | `hsl(30 80% 30%)` | en attente, à vérifier | 5,9:1 |
+| `info` | `hsl(212 55% 34%)` | information, statut en cours | 6,9:1 |
+
+Les jetons d'état s'emploient en texte (`text-success`), en fond teinté (`bg-success/15`, texte
+toujours ≥ 4,5:1) ou en aplat avec leur couleur de texte (`bg-success text-success-foreground`).
+En mode sombre ils sont éclaircis et leur texte d'aplat passe à l'encre. Ils servent aux **états**,
+jamais aux **catégories** (type d'événement, d'œuvre, niveau) : celles-ci sont des étiquettes neutres à
+filet (`border border-border text-muted-foreground`), le libellé suffit.
 
 Le rouge rideau n'est **jamais** la couleur des boutons principaux : il resterait confondu avec les
 actions de suppression. Les boutons sont à l'encre (papier en mode sombre).
@@ -48,6 +57,10 @@ prennent la surface sombre du thème.
 | Bouton principal | variante par défaut (encre) — ne pas surcharger la couleur |
 | Bouton secondaire | `variant="outline"` |
 | Carte | contour fin, pas d'ombre ; préférer des listes séparées par des filets |
+| Panneau de tableau de bord | `components/dashboard/Panel.tsx` : `Panel` (filet encre + titre serif + lien d'action), `PanelList`/`PanelLink` (lignes cliquables qui sont de vrais liens), `StatRow`/`Stat` (chiffres clés en serif séparés par des filets, pas de tuiles) |
+| Graphique | série unique en `hsl(var(--chart-1))` (rideau, validé contre le papier et le fond sombre), grille et axes en `--border` / `--muted-foreground`, info-bulle au survol, pas de légende pour une seule série |
+| Page de lecture | `<article>` de 3xl de large, étiquette + titre serif, sections séparées par des filets (`py-8 border-t`), listes de définitions plutôt que des encadrés ; voir `pages/TermsOfService.tsx` |
+| Liste éditoriale | `components/editorial/Editorial.tsx` : `EditorialSection` (étiquette rouge + titre serif à gauche, contenu à droite), `EditorialList` (liste à filets, `numbered` pour « 01, 02… »), `Eyebrow` (étiquette seule) |
 | Écoute | bouton rond de 44 px minimum, `aria-label` « Écouter … », `aria-pressed` |
 | Images d'illustration | photos réelles des artistes et des productions ; pas d'image générée |
 
@@ -59,13 +72,22 @@ prennent la surface sombre du thème.
 | Une couleur d'accent, en aplat | Dégradés, texte en dégradé |
 | Jetons du thème (`bg-background`, `text-muted-foreground`) | Couleurs codées en dur (`bg-white`, `text-gray-600`) |
 | Libellés concrets (« Écoutez la distribution ») | Emojis décoratifs, formules creuses |
+| Décrire ce que l'application fait réellement | Chiffres non sourcés (« 500+ artistes »), profils fictifs, données tirées au hasard |
 
 ## Garde-fous automatiques
 
 `npm test` échoue si l'un de ces motifs réapparaît : dégradé décoratif, texte en dégradé, emoji
-décoratif, bouton avec une couleur maison au lieu d'une variante du thème.
+décoratif, bouton avec une couleur maison au lieu d'une variante du thème, couleur Tailwind codée en
+dur (`text-green-600`, `bg-gray-100`…), fond `bg-white` opaque.
+
+## Garde-fou des liens
+
+`src/routes.test.ts` échoue si un lien interne (`to=`, `navigate(`, `href=`) ne correspond à aucune route déclarée.
 
 ## Reste à reprendre
 
-- Environ 600 couleurs Tailwind codées en dur (statuts, pages admin, page du concours Sumi Jo en ambre).
-- Les pages de présentation (castings, fonctionnalités) gardent leurs grilles de cartes : à transformer en listes éditoriales.
+- Pages internes encore en cartes à contour fin (conforme, mais moins éditorial) : candidatures côté professionnel, castings, administration. Les chiffres clés y sont déjà en `StatRow`.
+- Statistiques d'administration (âge, nationalité, genre) : cartes avec graphiques, à reprendre avec la méthode des graphiques.
+- Mentions légales : éditeur, hébergeur, directeur de la publication et tribunal compétent sont « [À compléter] » (obligation légale, à renseigner par l'éditeur).
+- FAQ : « candidatures prioritaires » (Premium) et limites de taille des fichiers (10 Mo / 50 Mo) ne sont pas vérifiables dans le code ; à confirmer.
+- Administration, demandes d'upgrade : le lien de paiement Stripe est créé pour le compte de l'administrateur connecté, pas pour le demandeur (fonction `create-subscription`) ; à corriger côté serveur.

@@ -32,7 +32,19 @@ describe('système visuel', () => {
     expect(offenders(/[✨🌟🎉🚀💫]/u)).toEqual([]);
   });
 
+  it("pas de couleur Tailwind codée en dur : jetons du thème (success, warning, info, destructive, muted…)", () => {
+    expect(offenders(
+      /(?<![\w-])(?:[a-z-]+:)*(?:bg|text|border|ring|from|to|via|fill|stroke|divide|outline|placeholder)-(?:red|green|blue|yellow|amber|orange|purple|pink|indigo|violet|emerald|teal|cyan|sky|lime|rose|fuchsia|gray|slate|zinc|neutral|stone)-\d{2,3}(?![\w-])/
+    )).toEqual([]);
+  });
+
+  it('pas de fond blanc opaque : surface du thème (bg-card, bg-background)', () => {
+    expect(offenders(/(?<![\w:-])bg-white(?![\w/-])/)).toEqual([]);
+  });
+
   it('les boutons utilisent les variantes du thème, pas une couleur maison', () => {
-    expect(offenders(/<Button[^>]*\bbg-lyrical-\d{3}\b/)).toEqual([]);
+    expect(offenders(/<Button[^>]*\bbg-(?:lyrical|gold)-\d{3}\b/)).toEqual([]);
+    // aplat de marque avec survol : signature d'un bouton recoloré, même sur plusieurs lignes
+    expect(offenders(/\bbg-(?:lyrical|gold)-\d{3} hover:bg-(?:lyrical|gold)-\d{3}\b/)).toEqual([]);
   });
 });

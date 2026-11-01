@@ -155,7 +155,7 @@ const ProfessionalCastingApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Candidatures aux Castings</h1>
+          <h1 className="text-3xl md:text-4xl font-serif">Candidatures aux castings</h1>
           <p className="text-muted-foreground mt-2">
             Gérez les candidatures reçues pour vos castings avec des statistiques détaillées
           </p>
@@ -188,7 +188,7 @@ const ProfessionalCastingApplications = () => {
               <Button
                 onClick={handlePublishResults}
                 disabled={publishResults.isPending}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-success text-success-foreground hover:bg-success/90"
               >
                 <CheckCheck className="h-4 w-4 mr-2" />
                 {publishResults.isPending ? 'Publication...' : 'Publier les résultats'}
@@ -198,7 +198,7 @@ const ProfessionalCastingApplications = () => {
                 onClick={handleUnpublishResults}
                 disabled={unpublishResults.isPending}
                 variant="outline"
-                className="border-red-500 text-red-600 hover:bg-red-50"
+                className="border-destructive text-destructive hover:bg-destructive/10"
               >
                 <XCircle className="h-4 w-4 mr-2" />
                 {unpublishResults.isPending ? 'Annulation...' : 'Annuler la publication'}
@@ -345,21 +345,21 @@ const ProfessionalCastingApplications = () => {
                       
                       <CardContent>
                         {application.artist_profiles?.bio && (
-                          <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                          <div className="mb-4 p-3 bg-muted rounded-lg">
                             <h4 className="font-medium mb-2">Biographie</h4>
                             <p className="text-sm text-muted-foreground">{application.artist_profiles.bio}</p>
                           </div>
                         )}
                         
                         {application.motivation && (
-                          <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                          <div className="mb-4 p-3 bg-info/10 rounded-lg">
                             <h4 className="font-medium mb-2">Motivation</h4>
                             <p className="text-sm text-muted-foreground">{application.motivation}</p>
                           </div>
                         )}
                         
                         {application.cover_letter && (
-                          <div className="mb-4 p-3 bg-green-50 rounded-lg">
+                          <div className="mb-4 p-3 bg-success/10 rounded-lg">
                             <h4 className="font-medium mb-2">Lettre de motivation</h4>
                             <p className="text-sm text-muted-foreground">{application.cover_letter}</p>
                           </div>
@@ -369,7 +369,7 @@ const ProfessionalCastingApplications = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => navigate(`/artiste/${application.artist_profiles?.id}`)}
+                            onClick={() => navigate(`/artistes/${application.artist_profiles?.id}`)}
                           >
                             Voir le profil complet
                           </Button>
@@ -430,7 +430,7 @@ const ProfessionalCastingApplications = () => {
                               size="sm"
                               onClick={() => handleCancelStatus(application.id)}
                               disabled={updateApplication.isPending}
-                              className="text-orange-600 border-orange-300 hover:bg-orange-50"
+                              className="text-warning border-warning/30 hover:bg-warning/10"
                             >
                               <RotateCcw className="h-4 w-4 mr-1" />
                               Annuler

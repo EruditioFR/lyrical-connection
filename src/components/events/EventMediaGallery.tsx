@@ -56,7 +56,7 @@ const EventMediaGallery: React.FC<EventMediaGalleryProps> = ({
                   >
                     {isVideoUrl(item.file_path) ? (
                       <div className="relative w-full h-full">
-                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                        <div className="w-full h-full bg-black flex items-center justify-center">
                           <div className="text-center text-white">
                             <Play className="h-16 w-16 mx-auto mb-2 text-white/80" />
                             <p className="text-sm font-medium">{item.title || 'Vidéo'}</p>

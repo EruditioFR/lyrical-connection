@@ -109,7 +109,7 @@ export const TranslationManager = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-orange-600">{stats.pendingSuggestions}</div>
+            <div className="text-2xl font-bold text-warning">{stats.pendingSuggestions}</div>
             <div className="text-sm text-muted-foreground">Suggestions en attente</div>
           </CardContent>
         </Card>
@@ -129,9 +129,9 @@ export const TranslationManager = () => {
                 <div className="text-sm text-muted-foreground">
                   {lang.completed}/{lang.total}
                 </div>
-                <div className="mt-2 bg-gray-200 rounded-full h-2">
+                <div className="mt-2 bg-muted rounded-full h-2">
                   <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all"
+                    className="bg-info h-2 rounded-full transition-all"
                     style={{ width: `${lang.percentage}%` }}
                   />
                 </div>

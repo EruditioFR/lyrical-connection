@@ -55,7 +55,7 @@ const Castings = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-3xl md:text-4xl font-serif">
               {isProfessional ? 'Mes Castings' : 'Castings'}
             </h1>
             <p className="text-muted-foreground mt-1">

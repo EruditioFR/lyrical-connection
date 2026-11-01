@@ -125,11 +125,11 @@ const ArtistProfile = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="animate-pulse">
-            <div className="h-64 bg-gray-200 rounded-lg mb-8"></div>
+            <div className="h-64 bg-muted rounded-lg mb-8"></div>
             <div className="space-y-4">
-              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-8 bg-muted rounded w-1/3"></div>
+              <div className="h-4 bg-muted rounded w-2/3"></div>
+              <div className="h-4 bg-muted rounded w-1/2"></div>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ const ArtistProfile = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Profil non trouvé</h1>
+          <h1 className="text-2xl font-serif mb-4">Profil non trouvé</h1>
           <p className="text-muted-foreground">Ce profil d'artiste n'existe pas ou n'est plus actif.</p>
           <Button 
             onClick={() => window.history.back()} 
@@ -182,7 +182,7 @@ const ArtistProfile = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-muted">
         {/* Banner */}
         <div 
           className={`${isMobile ? 'h-48' : 'h-64'} bg-lyrical-900 relative`}
@@ -201,7 +201,7 @@ const ArtistProfile = () => {
                 variant="outline"
                 size={isMobile ? "default" : "lg"}
                 onClick={() => window.location.href = '/profil'}
-                className="bg-white/95 text-foreground border-white/30 hover:bg-white hover:text-gray-900 shadow-lg backdrop-blur-sm transition-all duration-300 font-semibold px-4"
+                className="bg-white/95 text-foreground border-white/30 hover:bg-card hover:text-foreground shadow-lg backdrop-blur-sm transition-all duration-300 font-semibold px-4"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 {isMobile ? 'Éditer' : 'Editer mon profil'}
@@ -223,10 +223,10 @@ const ArtistProfile = () => {
         </div>
 
         <div className={`container mx-auto px-4 ${isMobile ? '-mt-12' : '-mt-20'} relative z-10`}>
-          <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 mb-8">
+          <div className="bg-card rounded-lg shadow-lg p-4 md:p-6 mb-8">
             <div className={`flex ${isMobile ? 'flex-col items-center text-center' : 'items-start'} gap-6`}>
               {/* Avatar */}
-              <div className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg rounded-full overflow-hidden bg-gray-100 flex-shrink-0`}>
+              <div className={`${isMobile ? 'w-24 h-24' : 'w-32 h-32'} border-4 border-white shadow-lg rounded-full overflow-hidden bg-muted flex-shrink-0`}>
                 {avatarImageSrc ? (
                   <AspectRatio ratio={1}>
                     <img 
@@ -248,7 +248,7 @@ const ArtistProfile = () => {
               <div className="flex-1 w-full">
                 <div className={`${isMobile ? 'space-y-4' : 'flex items-center justify-between'}`}>
                   <div className="w-full">
-                    <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-foreground mb-2`}>
+                    <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} text-foreground mb-2`}>
                       {profile.stage_name}
                     </h1>
                     

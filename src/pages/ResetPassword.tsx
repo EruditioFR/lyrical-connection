@@ -252,12 +252,12 @@ const ResetPassword = () => {
       <Layout>
         <div className="container mx-auto px-4 py-20">
           <div className="max-w-md mx-auto">
-            <Card className="border-red-200 bg-red-50">
+            <Card className="border-destructive/30 bg-destructive/10">
               <CardContent className="text-center p-8">
                 <div className="flex items-center justify-center mb-4">
-                  <AlertCircle className="h-16 w-16 text-red-500" />
+                  <AlertCircle className="h-16 w-16 text-destructive" />
                 </div>
-                <h1 className="text-2xl font-bold mb-4">Lien invalide</h1>
+                <h1 className="text-2xl font-serif mb-4">Lien invalide</h1>
                 <p className="text-muted-foreground mb-6">
                   Ce lien de réinitialisation de mot de passe est invalide ou a expiré.
                 </p>
@@ -283,7 +283,7 @@ const ResetPassword = () => {
             <div className="flex items-center justify-center mb-4">
               <Lock className="h-12 w-12 text-primary" />
             </div>
-            <h1 className="text-3xl font-serif font-bold mb-2">Nouveau mot de passe</h1>
+            <h1 className="text-3xl font-serif mb-2">Nouveau mot de passe</h1>
             <p className="text-muted-foreground">
               Choisissez un nouveau mot de passe sécurisé
             </p>
@@ -349,14 +349,14 @@ const ResetPassword = () => {
                   </div>
                 </div>
                 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-info/10 border border-info/30 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-info mt-0.5 flex-shrink-0" />
                     <div className="text-sm">
-                      <h3 className="font-medium text-blue-900 mb-1">
+                      <h3 className="font-medium text-info mb-1">
                         Conseils pour un mot de passe sécurisé :
                       </h3>
-                      <ul className="text-blue-700 space-y-1 list-disc list-inside">
+                      <ul className="text-info space-y-1 list-disc list-inside">
                         <li>Au moins 8 caractères</li>
                         <li>Mélange de lettres, chiffres et symboles</li>
                         <li>Évitez les informations personnelles</li>

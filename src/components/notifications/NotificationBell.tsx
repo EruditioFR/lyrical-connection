@@ -24,13 +24,13 @@ const NotificationBell = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'accepted':
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       case 'rejected':
-        return <XCircle className="h-4 w-4 text-red-600" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'waitlisted':
-        return <AlertCircle className="h-4 w-4 text-yellow-600" />;
+        return <AlertCircle className="h-4 w-4 text-warning" />;
       case 'shortlisted':
-        return <Eye className="h-4 w-4 text-blue-600" />;
+        return <Eye className="h-4 w-4 text-info" />;
       default:
         return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
@@ -39,13 +39,13 @@ const NotificationBell = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'accepted':
-        return 'text-green-800';
+        return 'text-success';
       case 'rejected':
-        return 'text-red-800';
+        return 'text-destructive';
       case 'waitlisted':
-        return 'text-yellow-800';
+        return 'text-warning';
       case 'shortlisted':
-        return 'text-blue-800';
+        return 'text-info';
       default:
         return 'text-foreground';
     }
@@ -106,7 +106,7 @@ const NotificationBell = () => {
         
         {notifications.length === 0 ? (
           <div className="p-4 text-center text-muted-foreground">
-            <Megaphone className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+            <Megaphone className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
             <p className="text-sm">Aucune notification</p>
           </div>
         ) : (
@@ -114,7 +114,7 @@ const NotificationBell = () => {
             {notifications.map((notification) => (
               <DropdownMenuItem
                 key={notification.id}
-                className={`p-3 cursor-pointer ${!notification.is_read ? 'bg-blue-50' : ''}`}
+                className={`p-3 cursor-pointer ${!notification.is_read ? 'bg-info/10' : ''}`}
                 onClick={(event) => handleNotificationClick(notification, event)}
               >
                 <div className="flex items-start space-x-3 w-full">
@@ -128,7 +128,7 @@ const NotificationBell = () => {
                         {notification.title}
                       </p>
                       {!notification.is_read && (
-                        <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 ml-2 mt-1" />
+                        <div className="w-2 h-2 bg-info rounded-full flex-shrink-0 ml-2 mt-1" />
                       )}
                     </div>
                     

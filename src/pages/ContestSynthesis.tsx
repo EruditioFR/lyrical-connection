@@ -43,10 +43,10 @@ const calculateAge = (birthDate: string | null): number | null => {
 };
 
 const getScoreClass = (score: number): string => {
-  if (score >= 8) return 'text-green-600 font-bold';
+  if (score >= 8) return 'text-success font-bold';
   if (score >= 6) return 'text-foreground';
-  if (score >= 4) return 'text-yellow-600';
-  return 'text-red-500';
+  if (score >= 4) return 'text-gold-600';
+  return 'text-destructive';
 };
 
 type SortKey = 'name' | 'average' | 'age' | 'nationality' | 'voice_type';
@@ -239,7 +239,7 @@ const ContestSynthesis = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Concours non trouvé</h1>
+          <h1 className="text-2xl font-serif mb-4">Concours non trouvé</h1>
           <Button asChild><Link to="/castings">Retour</Link></Button>
         </div>
       </Layout>
@@ -259,7 +259,7 @@ const ContestSynthesis = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold">Synthèse du Concours</h1>
+            <h1 className="text-3xl md:text-4xl font-serif">Synthèse du concours</h1>
           </div>
           <h2 className="text-xl text-muted-foreground">{contest.title}</h2>
         </div>
@@ -280,7 +280,7 @@ const ContestSynthesis = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <Trophy className="w-8 h-8 text-green-600" />
+                <Trophy className="w-8 h-8 text-success" />
                 <div>
                   <p className="text-2xl font-bold">{synthesis.filter(s => s.averageScores.overall >= 8).length}</p>
                   <p className="text-sm text-muted-foreground">Excellents (≥8/10)</p>
@@ -291,7 +291,7 @@ const ContestSynthesis = () => {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
-                <Crown className="w-8 h-8 text-amber-500" />
+                <Crown className="w-8 h-8 text-gold-500" />
                 <div>
                   <p className="text-2xl font-bold">{Math.min(24, synthesis.filter(s => !s.isRejected).length)}</p>
                   <p className="text-sm text-muted-foreground">Places Top 24</p>
@@ -451,15 +451,15 @@ const ContestSynthesis = () => {
                               key={item.artist?.id} 
                               className={cn(
                                 item.isRejected && "bg-destructive/5 opacity-60",
-                                isTop24 && "bg-amber-50 dark:bg-amber-950/20"
+                                isTop24 && "bg-gold-50 dark:bg-gold-900/20"
                               )}
                             >
                               <TableCell className="font-medium text-muted-foreground">
-                                {isTop24 && <Crown className="w-3 h-3 text-amber-500 inline mr-1" />}
+                                {isTop24 && <Crown className="w-3 h-3 text-gold-500 inline mr-1" />}
                                 {index + 1}
                               </TableCell>
                               <TableCell>
-                                <Link to={`/artiste/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
+                                <Link to={`/artistes/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
                                   <Avatar className="w-8 h-8">
                                     <AvatarImage src={item.artist?.profile_image_url || ''} />
                                     <AvatarFallback>{item.artist?.stage_name?.charAt(0) || '?'}</AvatarFallback>
@@ -522,7 +522,7 @@ const ContestSynthesis = () => {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Crown className="w-6 h-6 text-amber-500" />
+                  <Crown className="w-6 h-6 text-gold-500" />
                   Les 24 Demi-Finalistes
                 </CardTitle>
                 <CardDescription>
@@ -539,7 +539,7 @@ const ContestSynthesis = () => {
                     variant="default" 
                     onClick={() => setShowEmailConfirm('shortlisted')}
                     disabled={sendEmails.isPending}
-                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                    className="flex items-center gap-2 bg-success text-success-foreground hover:bg-success/90"
                   >
                     <Mail className="w-4 h-4" />
                     Envoyer les félicitations
@@ -563,7 +563,7 @@ const ContestSynthesis = () => {
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-amber-50 dark:bg-amber-950/30">
+                      <TableRow className="bg-gold-50 dark:bg-gold-900/30">
                         <TableHead className="w-[60px] text-center">#</TableHead>
                         <TableHead>Candidat</TableHead>
                         <TableHead>Âge</TableHead>
@@ -587,13 +587,13 @@ const ContestSynthesis = () => {
                         top24Candidates.map((item, index) => {
                           const age = calculateAge(item.artist?.birth_date);
                           return (
-                            <TableRow key={item.artist?.id} className="hover:bg-amber-50/50 dark:hover:bg-amber-950/10">
-                              <TableCell className="text-center font-bold text-amber-600">{index + 1}</TableCell>
+                            <TableRow key={item.artist?.id} className="hover:bg-gold-50/50 dark:hover:bg-gold-900/10">
+                              <TableCell className="text-center font-bold text-gold-600">{index + 1}</TableCell>
                               <TableCell>
-                                <Link to={`/artiste/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
-                                  <Avatar className="w-10 h-10 border-2 border-amber-200">
+                                <Link to={`/artistes/${item.artist?.id}`} className="flex items-center gap-3 hover:underline">
+                                  <Avatar className="w-10 h-10 border-2 border-gold-200">
                                     <AvatarImage src={item.artist?.profile_image_url || ''} />
-                                    <AvatarFallback className="bg-amber-100 text-amber-800">
+                                    <AvatarFallback className="bg-gold-100 text-gold-800">
                                       {item.artist?.stage_name?.charAt(0) || '?'}
                                     </AvatarFallback>
                                   </Avatar>
@@ -609,13 +609,13 @@ const ContestSynthesis = () => {
                               </TableCell>
                               <TableCell>
                                 {item.artist?.voice_type && (
-                                  <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                                  <Badge variant="secondary" className="bg-gold-100 text-gold-800 dark:bg-gold-900 dark:text-gold-200">
                                     {item.artist.voice_type}
                                   </Badge>
                                 )}
                               </TableCell>
                               <TableCell className="text-center">
-                                <span className="text-xl font-bold text-green-600">
+                                <span className="text-xl font-bold text-success">
                                   {item.averageScores.overall.toFixed(1)}
                                 </span>
                               </TableCell>
@@ -636,7 +636,7 @@ const ContestSynthesis = () => {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-amber-500" />
+                <AlertTriangle className="w-5 h-5 text-gold-500" />
                 Égalité détectée
               </AlertDialogTitle>
               <AlertDialogDescription asChild>
@@ -681,7 +681,7 @@ const ContestSynthesis = () => {
               <AlertDialogCancel>Annuler</AlertDialogCancel>
               <AlertDialogAction 
                 onClick={() => showEmailConfirm && handleSendEmails(showEmailConfirm)}
-                className={showEmailConfirm === 'shortlisted' ? 'bg-green-600 hover:bg-green-700' : ''}
+                className={showEmailConfirm === 'shortlisted' ? 'bg-success text-success-foreground hover:bg-success/90' : ''}
               >
                 <Check className="w-4 h-4 mr-2" />
                 Confirmer l'envoi

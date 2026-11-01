@@ -93,7 +93,7 @@ const BlogPostComponent = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="text-center max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold text-destructive mb-4">
+            <h1 className="text-2xl font-serif text-destructive mb-4">
               {error || 'Article non trouvé'}
             </h1>
             <p className="text-muted-foreground mb-6">
@@ -125,7 +125,7 @@ const BlogPostComponent = () => {
 
           {/* Header */}
           <header className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
+            <h1 className="text-4xl md:text-5xl text-foreground mb-4 leading-tight">
               {post.title}
             </h1>
             

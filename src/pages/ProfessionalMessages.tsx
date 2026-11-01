@@ -60,7 +60,7 @@ const ProfessionalMessages = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Messages & Invitations</h1>
+          <h1 className="text-3xl md:text-4xl font-serif">Messages et invitations</h1>
           <p className="text-muted-foreground mt-2">
             Gérez vos communications avec les artistes
           </p>
@@ -122,18 +122,18 @@ const ProfessionalMessages = () => {
                           )}
                         </div>
                         
-                        <div className="bg-gray-50 p-3 rounded-lg">
+                        <div className="bg-muted p-3 rounded-lg">
                           <p className="text-sm">{invitation.message}</p>
                         </div>
                         
                         {invitation.status === 'viewed' && (
-                          <p className="text-xs text-blue-600">
+                          <p className="text-xs text-info">
                             Lu le {format(new Date(invitation.viewed_at!), 'dd/MM/yyyy à HH:mm', { locale: fr })}
                           </p>
                         )}
                         
                         {invitation.responded_at && (
-                          <p className="text-xs text-green-600">
+                          <p className="text-xs text-success">
                             Répondu le {format(new Date(invitation.responded_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
                           </p>
                         )}
@@ -188,18 +188,18 @@ const ProfessionalMessages = () => {
                           )}
                         </div>
                         
-                        <div className="bg-gray-50 p-3 rounded-lg">
+                        <div className="bg-muted p-3 rounded-lg">
                           <p className="text-sm">{contact.message}</p>
                         </div>
                         
                         {contact.status === 'viewed' && contact.viewed_at && (
-                          <p className="text-xs text-blue-600">
+                          <p className="text-xs text-info">
                             Lu le {format(new Date(contact.viewed_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
                           </p>
                         )}
                         
                         {contact.replied_at && (
-                          <p className="text-xs text-green-600">
+                          <p className="text-xs text-success">
                             Répondu le {format(new Date(contact.replied_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
                           </p>
                         )}

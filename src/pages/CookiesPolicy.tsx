@@ -1,45 +1,40 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Eyebrow } from '@/components/editorial/Editorial';
 
 const CookiesPolicy = () => {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8 text-center">Politique des Cookies</h1>
+      <article className="container mx-auto px-4 md:px-6 py-16 max-w-3xl">
+        <Eyebrow className="mb-4">Informations légales</Eyebrow>
+        <h1 className="text-4xl md:text-5xl font-serif mb-8">Politique des Cookies</h1>
         
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>1. Qu'est-ce qu'un cookie ?</CardTitle>
-            </CardHeader>
-            <CardContent>
+        <div className="border-b border-border">
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">1. Qu'est-ce qu'un cookie ?</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, tablette, 
                 smartphone) lors de la visite d'un site web. Il permet de reconnaître votre navigateur 
                 et de collecter certaines informations sur votre navigation.
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>2. Utilisation des cookies sur Lyrisphere</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">2. Utilisation des cookies sur Lyrisphere</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Lyrisphere utilise des cookies pour améliorer votre expérience utilisateur, 
                 analyser l'utilisation de notre site et personnaliser nos services. 
                 Nous respectons votre vie privée et vous informons des cookies que nous utilisons.
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>3. Types de cookies utilisés</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">3. Types de cookies utilisés</h2>
+            <div className="space-y-6 leading-relaxed">
               <div>
                 <h4 className="font-semibold mb-2">Cookies strictement nécessaires</h4>
                 <p className="text-sm text-muted-foreground mb-2">
@@ -87,40 +82,36 @@ const CookiesPolicy = () => {
                   <li>Cookies de partenaires publicitaires</li>
                 </ul>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>4. Durée de conservation</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Cookies de session</h5>
-                  <p className="text-sm">Supprimés à la fermeture du navigateur</p>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">4. Durée de conservation</h2>
+            <div className="space-y-4 leading-relaxed">
+              <dl className="divide-y divide-border border-y border-border">
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Cookies de session</dt>
+                  <dd className="text-muted-foreground">Supprimés à la fermeture du navigateur</dd>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Cookies persistants</h5>
-                  <p className="text-sm">Conservés jusqu'à 13 mois maximum</p>
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Cookies persistants</dt>
+                  <dd className="text-muted-foreground">Conservés jusqu'à 13 mois maximum</dd>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Cookies analytiques</h5>
-                  <p className="text-sm">Conservés 26 mois maximum</p>
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Cookies analytiques</dt>
+                  <dd className="text-muted-foreground">Conservés 26 mois maximum</dd>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Cookies publicitaires</h5>
-                  <p className="text-sm">Conservés 13 mois maximum</p>
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Cookies publicitaires</dt>
+                  <dd className="text-muted-foreground">Conservés 13 mois maximum</dd>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </dl>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>5. Gestion de vos préférences</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">5. Gestion de vos préférences</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Vous avez le contrôle sur les cookies déposés sur votre terminal. 
                 Vous pouvez à tout moment :
@@ -132,48 +123,44 @@ const CookiesPolicy = () => {
                 <li>Supprimer les cookies déjà stockés</li>
               </ul>
               
-              <div className="bg-muted p-4 rounded-lg mt-4">
+              <div className="border-l-2 border-gold-600 pl-4 mt-4">
                 <p className="text-sm">
                   <strong>Note :</strong> Désactiver certains cookies peut affecter le fonctionnement 
                   optimal de notre site et limiter certaines fonctionnalités.
                 </p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>6. Configuration par navigateur</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">6. Configuration par navigateur</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>Voici comment gérer les cookies selon votre navigateur :</p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Chrome</h5>
-                  <p className="text-sm">Paramètres → Confidentialité et sécurité → Cookies</p>
+              <dl className="divide-y divide-border border-y border-border">
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Chrome</dt>
+                  <dd className="text-muted-foreground">Paramètres → Confidentialité et sécurité → Cookies</dd>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Firefox</h5>
-                  <p className="text-sm">Préférences → Vie privée et sécurité → Cookies</p>
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Firefox</dt>
+                  <dd className="text-muted-foreground">Préférences → Vie privée et sécurité → Cookies</dd>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Safari</h5>
-                  <p className="text-sm">Préférences → Confidentialité → Cookies</p>
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Safari</dt>
+                  <dd className="text-muted-foreground">Préférences → Confidentialité → Cookies</dd>
                 </div>
-                <div className="border rounded-lg p-4">
-                  <h5 className="font-semibold mb-2">Edge</h5>
-                  <p className="text-sm">Paramètres → Cookies et autorisations</p>
+                <div className="py-3 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-4">
+                  <dt className="font-semibold">Edge</dt>
+                  <dd className="text-muted-foreground">Paramètres → Cookies et autorisations</dd>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </dl>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>7. Cookies tiers</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">7. Cookies tiers</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Certains cookies sont déposés par des services tiers que nous utilisons :
               </p>
@@ -186,14 +173,12 @@ const CookiesPolicy = () => {
               <p className="mt-4 text-sm text-muted-foreground">
                 Ces services ont leurs propres politiques de cookies que nous vous invitons à consulter.
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>8. Vos droits</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">8. Vos droits</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Vous disposez de droits concernant les cookies conformément au RGPD :
               </p>
@@ -203,29 +188,24 @@ const CookiesPolicy = () => {
                 <li>Droit de retrait du consentement à tout moment</li>
                 <li>Droit d'opposition au traçage publicitaire</li>
               </ul>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>9. Contact</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">9. Contact</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Pour toute question sur notre politique des cookies, contactez-nous :
               </p>
               <div className="mt-4 space-y-2">
                 <p><strong>Email :</strong> cookies@lyrisphere.com</p>
-                <p><strong>Adresse :</strong> Lyrisphere, 123 rue de la Musique, 75001 Paris, France</p>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>10. Mise à jour</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="py-8 border-t border-border">
+              <h2 className="text-2xl font-serif mb-4">10. Mise à jour</h2>
+            <div className="space-y-4 leading-relaxed">
               <p>
                 Cette politique des cookies peut être mise à jour pour refléter les changements 
                 dans nos pratiques ou pour d'autres raisons opérationnelles, légales ou réglementaires.
@@ -233,10 +213,10 @@ const CookiesPolicy = () => {
               <p className="mt-4 text-sm text-muted-foreground">
                 Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         </div>
-      </div>
+      </article>
     </Layout>
   );
 };

@@ -86,9 +86,9 @@ const CandidateScoring = ({
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 16) return 'text-green-600';
-    if (score >= 12) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 16) return 'text-success';
+    if (score >= 12) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getScoreLabel = (score: number) => {

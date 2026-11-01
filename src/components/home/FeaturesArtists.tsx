@@ -1,153 +1,49 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Mic, 
-  User, 
-  Calendar, 
-  Eye, 
-  MessageCircle, 
-  BarChart3, 
-  FileCheck 
-} from 'lucide-react';
-import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+import { Button } from '@/components/ui/button';
+import { EditorialSection, EditorialList } from '@/components/editorial/Editorial';
 
 const artistFeatures = [
   {
-    icon: User,
-    title: "Profil Artistique Complet",
-    description: "Créez votre vitrine personnelle avec photos, vidéos, extraits audio et répertoire détaillé",
-    color: "lyrical"
+    title: 'Un profil qui se fait entendre',
+    description: 'Enregistrements audio et vidéo, photos, répertoire œuvre par œuvre avec les rôles chantés.',
   },
   {
-    icon: Calendar,
-    title: "Gestion d'Agenda",
-    description: "Organisez vos auditions, concerts et événements avec notre calendrier intégré",
-    color: "gold"
+    title: 'Être trouvé par les recruteurs',
+    description: 'Les professionnels vous recherchent par tessiture, répertoire, lieu et disponibilités.',
   },
   {
-    icon: Eye,
-    title: "Visibilité Maximale",
-    description: "Soyez découvert par les professionnels grâce à notre moteur de recherche avancé",
-    color: "lyrical"
+    title: 'Postuler en quelques clics',
+    description: 'Castings, concours et masterclasses : votre profil sert de dossier et vous suivez chaque candidature.',
   },
   {
-    icon: MessageCircle,
-    title: "Communication Directe",
-    description: "Échangez directement avec les directeurs artistiques et agents",
-    color: "gold"
+    title: 'Agenda et disponibilités',
+    description: 'Déclarez engagements et périodes libres pour apparaître dans les recherches à ces dates.',
   },
   {
-    icon: BarChart3,
-    title: "Statistiques Détaillées",
-    description: "Suivez les visites de votre profil et l'engagement de votre audience",
-    color: "lyrical"
+    title: 'Messagerie et statistiques',
+    description: 'Échangez directement avec les professionnels et suivez les visites de votre profil.',
   },
-  {
-    icon: FileCheck,
-    title: "Candidatures Simplifiées",
-    description: "Postulez aux auditions et concours en un clic avec votre profil pré-rempli",
-    color: "gold"
-  }
 ];
 
-const FeaturesArtists = () => {
-  const sectionRef = useAnimateOnScroll();
-  const ctaRef = useAnimateOnScroll();
-
-  return (
-    <section className="py-24 bg-background">
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div ref={sectionRef} className="text-appear">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-serif font-bold mb-4 leading-tight">Fonctionnalités pour les Artistes</h2>
-            <p className="text-foreground/80 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-              Développez votre carrière avec des outils professionnels de promotion et de networking
-            </p>
-          </div>
-          <div className="mt-8">
-            <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
-              <Link to="/auth">Créer mon profil artiste</Link>
-            </Button>
-          </div>
-        </div>
-        
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {artistFeatures.map((feature, index) => {
-            const FeatureCard = () => {
-              const cardRef = useAnimateOnScroll();
-              const IconComponent = feature.icon;
-              const isLyrical = feature.color === "lyrical";
-              
-              return (
-                <Card 
-                  ref={cardRef} 
-                  key={index} 
-                  className={`h-full transition-all duration-300 ease-out text-appear group hover:scale-105 ${
-                    isLyrical 
-                      ? "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
-                      : "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
-                  }`}
-                >
-                  <CardContent className="p-4 md:p-6 h-full flex flex-col text-center relative">
-                    {/* Icon */}
-                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto transition-all duration-300 ${
-                      isLyrical 
-                        ? "bg-lyrical-100 group-hover:bg-lyrical-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
-                        : "bg-gold-100 group-hover:bg-gold-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
-                    }`}>
-                      <IconComponent className={`h-6 w-6 ${
-                        isLyrical ? "text-lyrical-700" : "text-gold-700"
-                      }`} />
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-xl md:text-2xl mb-3 text-foreground group-hover:text-primary transition-colors leading-tight">
-                        {feature.title}
-                      </h4>
-                      <p className="text-foreground/70 text-base md:text-sm leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            };
-            return <FeatureCard key={index} />;
-          })}
-        </div>
-        
-        {/* Mobile CTA */}
-        <div className="md:hidden mt-8 text-center">
-          <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
-            <Link to="/auth">Créer mon profil artiste</Link>
-          </Button>
-        </div>
-
-        {/* Bottom CTA */}
-        <div ref={ctaRef} className="mt-16 md:mt-20 text-center bg-muted rounded-2xl p-6 md:p-12 text-appear">
-          <h3 className="text-xl md:text-2xl lg:text-3xl font-serif font-bold mb-4 leading-tight">
-            Prêt à développer votre carrière ?
-          </h3>
-          <p className="text-foreground/80 mb-6 md:mb-8 max-w-xl md:max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
-            Rejoignez les artistes lyriques qui utilisent déjà Lyrisphere, développez votre visibilité et décrochez des opportunités.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
-              <Link to="/auth">Créer mon profil gratuit</Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link to="/artistes">Voir des profils d'artistes</Link>
-            </Button>
-          </div>
-        </div>
+const FeaturesArtists = () => (
+  <EditorialSection
+    label="Artistes"
+    title="Ce que Lyrisphere fait pour votre voix"
+    intro="Présentez-vous comme dans un programme de salle, et laissez les recruteurs vous écouter."
+    aside={
+      <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3">
+        <Button asChild>
+          <Link to="/auth">Créer mon profil d'artiste</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link to="/artistes">Voir des profils</Link>
+        </Button>
       </div>
-    </section>
-  );
-};
+    }
+  >
+    <EditorialList entries={artistFeatures} numbered />
+  </EditorialSection>
+);
 
 export default FeaturesArtists;

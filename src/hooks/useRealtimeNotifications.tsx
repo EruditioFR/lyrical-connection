@@ -23,7 +23,7 @@ export const useRealtimeNotifications = () => {
 
     // Subscribe to new mail messages
     const messagesChannel = supabase
-      .channel('new-mail-messages')
+      .channel(`new-mail-messages_${user.id}_${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {
@@ -54,7 +54,7 @@ export const useRealtimeNotifications = () => {
 
     // Subscribe to new notifications
     const notificationsChannel = supabase
-      .channel('user-notifications')
+      .channel(`user-notifications_${user.id}_${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         {

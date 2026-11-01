@@ -170,7 +170,7 @@ export const MessageViewer = ({
                 className={cn(
                   "w-4 h-4",
                   message.is_starred 
-                    ? "fill-yellow-400 text-yellow-400" 
+                    ? "fill-warning text-warning" 
                     : "text-muted-foreground"
                 )} 
               />

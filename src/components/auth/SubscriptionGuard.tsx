@@ -86,12 +86,12 @@ export const SubscriptionGuard = ({ children }: SubscriptionGuardProps) => {
     return (
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-md mx-auto">
-          <Card className="border-orange-200 bg-orange-50">
+          <Card className="border-warning/30 bg-warning/10">
             <CardContent className="text-center p-8">
               <div className="flex items-center justify-center mb-4">
-                <CreditCard className="h-16 w-16 text-orange-500" />
+                <CreditCard className="h-16 w-16 text-warning" />
               </div>
-              <h1 className="text-2xl font-bold mb-4">Abonnement requis</h1>
+              <h1 className="text-2xl font-serif mb-4">Abonnement requis</h1>
               <p className="text-muted-foreground mb-6">
                 Vous devez avoir un abonnement actif pour accéder à cette fonctionnalité.
               </p>

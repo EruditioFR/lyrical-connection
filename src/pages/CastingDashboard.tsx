@@ -8,9 +8,10 @@ import { Loader2 } from 'lucide-react';
 
 const CastingDashboardPage = () => {
   const { user, loading } = useAuth();
-  const { isProfessional } = useUserType();
+  const { isProfessional, isLoading: userTypeLoading } = useUserType();
 
-  if (loading) {
+  // Attendre le type de compte : sinon un professionnel est redirigé avant d'être reconnu
+  if (loading || userTypeLoading) {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-20 flex justify-center">

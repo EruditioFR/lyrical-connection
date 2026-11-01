@@ -61,7 +61,40 @@ const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({ customTitle
       'modifier-mot-de-passe': 'Modifier le mot de passe',
       'comparer': 'Comparer des artistes',
       'liste': 'Liste partagée',
-      'seance': 'Séance d\'audition'
+      'seance': 'Séance d\'audition',
+      // Segments des routes réellement déclarées (AppRouter)
+      'mes-candidatures': 'Mes candidatures',
+      'candidatures-reçues': 'Candidatures reçues',
+      'mentions-legales': 'Mentions légales',
+      'politique-confidentialite': 'Politique de confidentialité',
+      'cgu': 'Conditions d\'utilisation',
+      'qui-sommes-nous': 'À propos',
+      'fonctionnalites': 'Fonctionnalités',
+      'change-password': 'Modifier le mot de passe',
+      'reset-password': 'Nouveau mot de passe',
+      'nouveau': 'Nouveau',
+      'modifier': 'Modifier',
+      'postuler': 'Postuler',
+      'synthese': 'Synthèse',
+      'concours': 'Concours',
+      'professional': 'Espace professionnel',
+      'professionnel': 'Professionnel',
+      'casting-applications': 'Candidatures aux castings',
+      'event-applications': 'Candidatures aux événements',
+      'applications': 'Candidatures',
+      'professional-profile': 'Profil professionnel',
+      'profil-professionnel': 'Profil professionnel',
+      'casting-dashboard': 'Tableau de bord des castings',
+      'facturation': 'Facturation',
+      'subscription': 'Abonnement',
+      'installer': 'Installer l\'application',
+      'invitation': 'Invitation',
+      'sumi-jo': 'Concours Sumi Jo',
+      'admin-profile': 'Profil administrateur'
+    };
+    const readable = (segment: string) => {
+      const text = decodeURIComponent(segment).replace(/-/g, ' ');
+      return text.charAt(0).toUpperCase() + text.slice(1);
     };
 
     let currentPath = '';
@@ -93,7 +126,7 @@ const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({ customTitle
         });
       } else {
         // Routes normales
-        const label = routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+        const label = routeLabels[decodeURIComponent(segment)] || routeLabels[segment] || readable(segment);
         crumbs.push({
           label,
           path: currentPath

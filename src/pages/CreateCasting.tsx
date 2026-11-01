@@ -27,7 +27,7 @@ const CreateCasting = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground">Créer un casting</h1>
+          <h1 className="text-3xl md:text-4xl font-serif">Créer un casting</h1>
           <p className="text-muted-foreground mt-2">
             Publiez votre casting pour attirer les meilleurs talents
           </p>

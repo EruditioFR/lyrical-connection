@@ -284,8 +284,8 @@ const Auth = () => {
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
                   <div className="relative">
-                    <CheckCircle className="h-16 w-16 text-green-500" />
-                    <Mail className="h-8 w-8 text-lyrical-600 absolute -bottom-1 -right-1 bg-white rounded-full p-1" />
+                    <CheckCircle className="h-16 w-16 text-success" />
+                    <Mail className="h-8 w-8 text-lyrical-600 absolute -bottom-1 -right-1 bg-card rounded-full p-1" />
                   </div>
                 </div>
                 <CardTitle className="text-2xl font-serif font-bold mb-2">
@@ -296,17 +296,17 @@ const Auth = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-info/10 border border-info/30 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <Mail className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <Mail className="h-5 w-5 text-info mt-0.5 flex-shrink-0" />
                     <div className="text-left">
-                      <h3 className="font-medium text-blue-900 mb-1">
+                      <h3 className="font-medium text-info mb-1">
                         Confirmation requise
                       </h3>
-                      <p className="text-sm text-blue-700 mb-2">
+                      <p className="text-sm text-info mb-2">
                         Un email de confirmation a été envoyé à :
                       </p>
-                      <p className="text-sm font-medium text-blue-900 bg-blue-100 rounded px-2 py-1">
+                      <p className="text-sm font-medium text-info bg-info/15 rounded px-2 py-1">
                         {signupEmail}
                       </p>
                     </div>
@@ -343,7 +343,7 @@ const Auth = () => {
             <div className="flex items-center justify-center mb-4">
               <Music className="h-12 w-12 text-lyrical-600" />
             </div>
-            <h1 className="text-3xl font-serif font-bold mb-2">Espace Connexion</h1>
+            <h1 className="text-3xl font-serif mb-2">Espace Connexion</h1>
             <p className="text-muted-foreground">
               Connectez-vous ou créez votre compte
             </p>
@@ -478,10 +478,10 @@ const Auth = () => {
                         </>
                       ) : (
                         <div className="text-center space-y-4">
-                          <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
+                          <CheckCircle className="h-12 w-12 text-success mx-auto" />
                           <div>
-                            <h3 className="font-medium text-green-900 mb-1">Email envoyé</h3>
-                            <p className="text-sm text-green-700">
+                            <h3 className="font-medium text-success mb-1">Email envoyé</h3>
+                            <p className="text-sm text-success">
                               Un lien de réinitialisation a été envoyé à <strong>{forgotPasswordEmail}</strong>
                             </p>
                           </div>
@@ -614,17 +614,17 @@ const Auth = () => {
                         </div>
 
                         {/* Informations sur les coûts */}
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
                           <div className="flex items-start gap-3">
-                            <Clock className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                            <Clock className="h-5 w-5 text-warning mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium text-amber-900 mb-1">
+                              <p className="text-sm font-medium text-warning mb-1">
                                 Abonnement requis
                               </p>
-                              <p className="text-xs text-amber-700 mb-2">
+                              <p className="text-xs text-warning mb-2">
                                 À partir de 9€/mois pour accéder aux opportunités
                               </p>
-                              <button type="button" className="text-xs text-amber-700 hover:text-amber-800 underline flex items-center gap-1" onClick={() => window.open('/pricing', '_blank')}>
+                              <button type="button" className="text-xs text-warning hover:text-warning underline flex items-center gap-1" onClick={() => window.open('/pricing', '_blank')}>
                                 Voir les tarifs <ExternalLink className="h-3 w-3" />
                               </button>
                             </div>
@@ -740,17 +740,17 @@ const Auth = () => {
                         </div>
 
                         {/* Informations sur les coûts */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="bg-info/10 border border-info/30 rounded-lg p-4">
                           <div className="flex items-start gap-3">
-                            <Users className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <Users className="h-5 w-5 text-info mt-0.5 flex-shrink-0" />
                             <div>
-                              <p className="text-sm font-medium text-blue-900 mb-1">
+                              <p className="text-sm font-medium text-info mb-1">
                                 Accès professionnel
                               </p>
-                              <p className="text-xs text-blue-700 mb-2">
+                              <p className="text-xs text-info mb-2">
                                 À partir de 29€/mois pour recruter et contacter les artistes
                               </p>
-                              <button type="button" className="text-xs text-blue-700 hover:text-blue-800 underline flex items-center gap-1" onClick={() => window.open('/pricing', '_blank')}>
+                              <button type="button" className="text-xs text-info hover:text-info underline flex items-center gap-1" onClick={() => window.open('/pricing', '_blank')}>
                                 Voir les tarifs <ExternalLink className="h-3 w-3" />
                               </button>
                             </div>

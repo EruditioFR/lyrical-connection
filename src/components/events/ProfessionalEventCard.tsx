@@ -1,4 +1,5 @@
 
+import { getEventTypeLabel } from '@/constants/eventTypes';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -35,11 +36,11 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
   const getStatusBorder = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'border-l-4 border-l-gray-400';
+        return 'border-l-4 border-l-border';
       case 'published':
-        return 'border-l-4 border-l-green-500';
+        return 'border-l-4 border-l-success';
       case 'completed':
-        return 'border-l-4 border-l-blue-500';
+        return 'border-l-4 border-l-info';
       default:
         return '';
     }
@@ -84,7 +85,7 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
             className="w-full h-48 object-cover object-center rounded-t-md"
           />
         ) : (
-          <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center">
+          <div className="w-full h-48 bg-muted rounded-t-md flex items-center justify-center">
             <span className="text-muted-foreground">Aucune image</span>
           </div>
         )}
@@ -93,7 +94,7 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold line-clamp-1">{event.title}</h3>
-          <Badge variant="secondary">{event.event_type}</Badge>
+          <Badge variant="outline" className="font-normal">{getEventTypeLabel(event.event_type)}</Badge>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">{event.description || 'Aucune description'}</p>
 

@@ -63,7 +63,7 @@ const PhotoGallery = ({ artistProfileId }: PhotoGalleryProps) => {
         </CardHeader>
         <CardContent>
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-input"></div>
           </div>
         </CardContent>
       </Card>
@@ -142,7 +142,7 @@ const PhotoGallery = ({ artistProfileId }: PhotoGalleryProps) => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {photos.map((photo) => (
                 <div key={photo.id} className="relative group">
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
+                  <div className="aspect-square rounded-lg overflow-hidden bg-muted">
                     <img
                       src={getPhotoUrl(photo.file_path)}
                       alt={photo.file_name}

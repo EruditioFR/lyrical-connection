@@ -27,7 +27,7 @@ export default function Billing() {
           <Card>
             <CardContent className="text-center p-8">
               <Receipt className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h1 className="text-2xl font-bold mb-4">Connexion requise</h1>
+              <h1 className="text-2xl font-serif mb-4">Connexion requise</h1>
               <p className="text-muted-foreground mb-6">
                 Vous devez être connecté pour consulter vos factures.
               </p>

@@ -1,208 +1,80 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { 
-  Mic, 
-  Users, 
-  ArrowRight, 
-  Music, 
-  Calendar, 
-  Search, 
-  MessageSquare,
-  BarChart3,
-  Settings
-} from 'lucide-react';
-import { useAnimateOnScroll } from '@/hooks/useIntersectionObserver';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Eyebrow } from '@/components/editorial/Editorial';
 
-const PortalsSection = () => {
-  const headerRef = useAnimateOnScroll();
-  const artistsPortalRef = useAnimateOnScroll();
-  const prosPortalRef = useAnimateOnScroll();
-  const bottomRef = useAnimateOnScroll();
-  
-  return (
-    <section className="py-24 bg-muted/30">
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 text-appear">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
-            Deux univers, une passion commune
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Que vous soyez artiste ou professionnel, accédez à votre espace dédié 
-            avec des outils adaptés à vos besoins spécifiques
-          </p>
-        </div>
+const portals = [
+  {
+    label: 'Artistes',
+    title: 'Faire entendre votre voix',
+    items: [
+      'Profil avec enregistrements audio et vidéo',
+      'Répertoire et disponibilités',
+      'Candidatures aux castings et concours',
+      'Messagerie avec les professionnels',
+    ],
+    primary: { to: '/auth', label: 'Créer mon profil d\'artiste' },
+    secondary: { to: '/artistes', label: 'Découvrir les artistes' },
+  },
+  {
+    label: 'Professionnels',
+    title: 'Trouver la distribution',
+    items: [
+      'Recherche par tessiture, répertoire et dates',
+      'Castings, candidatures et séances d\'audition',
+      'Listes de projet partageables',
+      'Publication d\'événements',
+    ],
+    primary: { to: '/auth', label: 'Accéder à l\'espace pro' },
+    secondary: { to: '/evenements', label: 'Voir les événements' },
+  },
+];
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-7xl mx-auto">
-          {/* Portail Artistes */}
-          <div ref={artistsPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
-            {/* Header Card */}
-            <div className="bg-lyrical-600 p-8 text-white">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="bg-white/20 p-3 rounded-xl">
-                  <Mic className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-serif font-bold">Portail Artistes</h3>
-                  <p className="text-white/80">Développez votre carrière lyrique</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-8">
-              <p className="text-muted-foreground mb-8">
-                Créez votre profil professionnel, partagez votre talent et connectez-vous 
-                avec les professionnels du milieu lyrique.
-              </p>
-
-              {/* Features List */}
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-lyrical-100 p-2 rounded-lg">
-                    <Music className="h-4 w-4 text-lyrical-700" />
-                  </div>
-                  <span className="text-sm">Profil artistique avec audio/vidéo</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-lyrical-100 p-2 rounded-lg">
-                    <Calendar className="h-4 w-4 text-lyrical-700" />
-                  </div>
-                  <span className="text-sm">Gestion d'agenda et candidatures</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-lyrical-100 p-2 rounded-lg">
-                    <BarChart3 className="h-4 w-4 text-lyrical-700" />
-                  </div>
-                  <span className="text-sm">Statistiques et suivi de performance</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-lyrical-100 p-2 rounded-lg">
-                    <MessageSquare className="h-4 w-4 text-lyrical-700" />
-                  </div>
-                  <span className="text-sm">Communication directe avec les pros</span>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="space-y-4">
-                <Button 
-                  className="w-full"
-                  asChild
-                >
-                  <Link to="/auth">
-                    Créer mon profil artiste
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full border-lyrical-200 hover:bg-lyrical-50"
-                  asChild
-                >
-                  <Link to="/artistes">Découvrir les artistes</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Portail Professionnels */}
-          <div ref={prosPortalRef} className="bg-card rounded-2xl overflow-hidden border border-border shadow-lg hover:shadow-xl transition-all duration-300 text-appear">
-            {/* Header Card */}
-            <div className="bg-gold-500 p-8 text-white">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="bg-white/20 p-3 rounded-xl">
-                  <Users className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-serif font-bold">Portail Professionnels</h3>
-                  <p className="text-white/80">Trouvez les talents de demain</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-8">
-              <p className="text-muted-foreground mb-8">
-                Accédez à une base de données exclusive d'artistes lyriques et gérez 
-                vos projets artistiques avec des outils professionnels.
-              </p>
-
-              {/* Features List */}
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gold-100 p-2 rounded-lg">
-                    <Search className="h-4 w-4 text-gold-700" />
-                  </div>
-                  <span className="text-sm">Recherche avancée dans la base d'artistes</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gold-100 p-2 rounded-lg">
-                    <Calendar className="h-4 w-4 text-gold-700" />
-                  </div>
-                  <span className="text-sm">Création et gestion d'événements</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gold-100 p-2 rounded-lg">
-                    <Settings className="h-4 w-4 text-gold-700" />
-                  </div>
-                  <span className="text-sm">Outils de casting et de sélection</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gold-100 p-2 rounded-lg">
-                    <BarChart3 className="h-4 w-4 text-gold-700" />
-                  </div>
-                  <span className="text-sm">Tableau de bord et analytics</span>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="space-y-4">
-                <Button 
-                  className="w-full bg-gold-500 hover:bg-gold-600 text-white"
-                  asChild
-                >
-                  <Link to="/auth">
-                    Accéder à l'espace pro
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full border-gold-200 hover:bg-gold-50"
-                  asChild
-                >
-                  <Link to="/evenements">Voir les événements</Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section */}
-        <div ref={bottomRef} className="mt-16 text-center text-appear">
-          <div className="bg-card rounded-xl border p-8 max-w-4xl mx-auto">
-            <h3 className="text-xl font-serif font-semibold mb-4">
-              Vous ne savez pas par où commencer ?
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Notre équipe est là pour vous accompagner dans la découverte de la plateforme 
-              et vous aider à tirer le meilleur parti de nos outils.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="outline" asChild>
-                <Link to="/contact">Nous contacter</Link>
-              </Button>
-              <Button variant="link" asChild>
-                <Link to="/guide">Guide de démarrage</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+const PortalsSection = () => (
+  <section className="py-16 border-t border-border">
+    <div className="container mx-auto px-4 md:px-6">
+      <div className="max-w-3xl mb-12">
+        <Eyebrow className="mb-3">Deux espaces</Eyebrow>
+        <h2 className="text-3xl md:text-4xl font-serif">Une scène, deux côtés du rideau</h2>
+        <p className="mt-3 text-lg text-muted-foreground">
+          Artiste ou professionnel, chacun dispose d'un espace et d'outils adaptés.
+        </p>
       </div>
-    </section>
-  );
-};
+
+      <div className="grid gap-12 md:grid-cols-2 md:divide-x md:divide-border">
+        {portals.map((portal, i) => (
+          <div key={portal.label} className={i === 1 ? 'md:pl-12' : 'md:pr-12'}>
+            <Eyebrow className="mb-2">{portal.label}</Eyebrow>
+            <h3 className="text-2xl font-serif mb-4">{portal.title}</h3>
+            <ul className="divide-y divide-border border-y border-border mb-6">
+              {portal.items.map((item) => (
+                <li key={item} className="py-3">{item}</li>
+              ))}
+            </ul>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild>
+                <Link to={portal.primary.to}>
+                  {portal.primary.label}
+                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link to={portal.secondary.to}>{portal.secondary.label}</Link>
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <p className="mt-12 text-muted-foreground">
+        Une question avant de commencer ?{' '}
+        <Link to="/faq" className="underline underline-offset-4 hover:text-foreground">Consultez la FAQ</Link>
+        {' '}ou{' '}
+        <Link to="/contact" className="underline underline-offset-4 hover:text-foreground">écrivez-nous</Link>.
+      </p>
+    </div>
+  </section>
+);
 
 export default PortalsSection;
