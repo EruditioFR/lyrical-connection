@@ -1,143 +1,62 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Target, Heart, Music } from 'lucide-react';
+import { EditorialList, Eyebrow } from '@/components/editorial/Editorial';
 
-const About = () => {
-  return (
-    <Layout>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            Qui sommes-nous ?
-          </h1>
-          <p className="text-xl text-muted-foreground leading-relaxed">
-            Lyrical est la plateforme de référence qui connecte les artistes lyriques 
-            et les professionnels du secteur musical classique.
-          </p>
-        </div>
+const objectives = [
+  {
+    title: 'Faciliter les rencontres',
+    description: "Mettre en relation directe les artistes lyriques avec les directeurs de casting, les maisons d'opéra, les festivals, les concours et les agents.",
+  },
+  {
+    title: 'Faire entendre les voix',
+    description: 'Offrir aux artistes une page où présenter leur répertoire, leur parcours et surtout leurs enregistrements.',
+  },
+  {
+    title: 'Simplifier le recrutement',
+    description: "Donner aux professionnels des outils pensés pour le lyrique : recherche par tessiture et par rôle, suivi des candidatures, séances d'audition.",
+  },
+];
 
-        {/* Mission */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Target className="w-6 h-6 text-primary" />
-              Notre Mission
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-foreground leading-relaxed">
-              Nous croyons que chaque voix mérite d'être entendue et que chaque talent 
-              doit avoir l'opportunité de s'épanouir. Notre mission est de démocratiser 
-              l'accès aux opportunités dans le monde de l'art lyrique en créant un pont 
-              entre les artistes passionnés et les professionnels à la recherche de nouveaux talents.
-            </p>
-          </CardContent>
-        </Card>
+const About = () => (
+  <Layout>
+    <article className="container mx-auto px-4 md:px-6 py-16 max-w-3xl">
+      <Eyebrow className="mb-4">Qui sommes-nous</Eyebrow>
+      <h1 className="text-4xl md:text-5xl font-serif mb-6">Chaque voix mérite d'être entendue</h1>
+      <p className="text-xl text-muted-foreground leading-relaxed mb-12">
+        Lyrisphere relie les artistes lyriques et les professionnels de l'opéra et de la musique classique.
+      </p>
 
-        {/* Objectifs */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Music className="w-6 h-6 text-primary" />
-              Nos Objectifs
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-semibold text-foreground mb-2">
-                  Faciliter les connexions
-                </h3>
-                <p className="text-muted-foreground">
-                  Mettre en relation directe les artistes lyriques avec les directeurs 
-                  de casting, maisons d'opéra, et autres professionnels du secteur.
-                </p>
-              </div>
-              
-              <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-semibold text-foreground mb-2">
-                  Valoriser les talents
-                </h3>
-                <p className="text-muted-foreground">
-                  Offrir aux artistes une vitrine professionnelle pour présenter 
-                  leur répertoire, leurs expériences et leurs enregistrements.
-                </p>
-              </div>
-              
-              <div className="border-l-4 border-primary pl-4">
-                <h3 className="font-semibold text-foreground mb-2">
-                  Moderniser le recrutement
-                </h3>
-                <p className="text-muted-foreground">
-                  Simplifier les processus de casting et de recrutement grâce 
-                  à des outils numériques innovants et intuitifs.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <section className="py-8 border-t border-border">
+        <h2 className="text-2xl font-serif mb-4">Notre mission</h2>
+        <p className="leading-relaxed">
+          Nous croyons que chaque talent doit avoir l'occasion de s'épanouir. Notre mission est d'ouvrir
+          l'accès aux opportunités du monde lyrique en créant un pont entre les artistes et les
+          professionnels qui cherchent de nouvelles voix.
+        </p>
+      </section>
 
-        {/* Équipe */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Users className="w-6 h-6 text-primary" />
-              Notre Équipe
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-foreground leading-relaxed mb-6">
-              Lyrical a été fondée par une équipe passionnée d'entrepreneurs et de 
-              professionnels du secteur musical, unis par la conviction que la technologie 
-              peut transformer positivement l'industrie de l'art lyrique.
-            </p>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">
-                  Expertise Artistique
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  Des professionnels issus du monde de l'opéra et de la musique classique 
-                  qui comprennent les enjeux du secteur.
-                </p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Target className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">
-                  Innovation Technologique
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  Une équipe technique experte dans le développement de solutions 
-                  numériques sur mesure pour les arts.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <section className="py-8 border-t border-border">
+        <h2 className="text-2xl font-serif mb-6">Nos objectifs</h2>
+        <EditorialList entries={objectives} numbered />
+      </section>
 
-        {/* Vision */}
-        <div className="text-center bg-muted/50 rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            Notre Vision
-          </h2>
-          <p className="text-lg text-foreground leading-relaxed">
-            Devenir la référence mondiale pour les professionnels de l'art lyrique, 
-            en créant un écosystème numérique qui favorise la découverte de nouveaux talents 
-            et facilite la création de collaborations artistiques exceptionnelles.
-          </p>
-        </div>
-      </div>
-    </Layout>
-  );
-};
+      <section className="py-8 border-t border-border">
+        <h2 className="text-2xl font-serif mb-4">Notre équipe</h2>
+        <p className="leading-relaxed">
+          Lyrisphere a été fondée par une équipe d'entrepreneurs et de professionnels du secteur musical,
+          convaincus que des outils bien pensés peuvent servir l'art lyrique.
+        </p>
+      </section>
+
+      <section className="py-8 border-t border-b border-border">
+        <h2 className="text-2xl font-serif mb-4">Notre vision</h2>
+        <p className="leading-relaxed">
+          Devenir le lieu de référence des professionnels de l'art lyrique : là où l'on découvre de nouveaux
+          talents et où naissent les collaborations artistiques.
+        </p>
+      </section>
+    </article>
+  </Layout>
+);
 
 export default About;

@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Mail, MapPin, Phone, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { EditorialList, Eyebrow } from '@/components/editorial/Editorial';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/layout/Layout';
+import { Link } from 'react-router-dom';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
@@ -70,74 +71,36 @@ const Contact = () => {
     <Layout>
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
-              Contactez-nous
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Une question, une suggestion ou besoin d'aide ? Notre équipe est là pour vous accompagner dans votre parcours lyrique.
+          <div className="max-w-3xl mb-12">
+            <Eyebrow className="mb-4">Contact</Eyebrow>
+            <h1 className="text-4xl md:text-5xl font-serif text-foreground mb-6">Écrivez-nous</h1>
+            <p className="text-xl text-muted-foreground">
+              Une question, une suggestion ou besoin d'aide ? Nous vous répondons par e-mail.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {/* Contact Info */}
-            <div className="lg:col-span-1 space-y-6">
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-lyrical-700">
-                    <Mail className="h-5 w-5 text-gold-500" />
-                    Par email
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-2">Écrivez-nous directement</p>
-                  <p className="font-medium">contact@lyrisphere.com</p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-lyrical-700">
-                    <MapPin className="h-5 w-5 text-gold-500" />
-                    Notre adresse
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-2">Siège social</p>
-                  <p className="font-medium">
-                    Paris, France<br />
-                    Au cœur de la culture lyrique
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-lyrical-700">
-                    <Phone className="h-5 w-5 text-gold-500" />
-                    Support
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-2">Aide et assistance</p>
-                  <p className="font-medium">Lun-Ven: 9h-18h</p>
-                </CardContent>
-              </Card>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {/* Coordonnées */}
+            <dl className="lg:col-span-1 divide-y divide-border border-y border-border self-start">
+              <div className="py-4">
+                <dt className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-1">Par e-mail</dt>
+                <dd><a href="mailto:contact@lyrisphere.com" className="font-medium underline underline-offset-4">contact@lyrisphere.com</a></dd>
+              </div>
+              <div className="py-4">
+                <dt className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-1">Siège</dt>
+                <dd className="font-medium">Paris, France</dd>
+              </div>
+              <div className="py-4">
+                <dt className="text-xs uppercase tracking-[0.14em] text-muted-foreground mb-1">Assistance</dt>
+                <dd className="font-medium">Du lundi au vendredi, 9 h – 18 h</dd>
+              </div>
+            </dl>
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <Card className="border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-lyrical-700">
-                    Envoyez-nous un message
-                  </CardTitle>
-                  <CardDescription>
-                    Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
+              <div>
+                <h2 className="text-2xl font-serif mb-2">Envoyer un message</h2>
+                <p className="text-muted-foreground mb-6">Nous vous répondons à l'adresse indiquée.</p>
                   {isSubmitted ? (
                     <div className="text-center py-12">
                       <CheckCircle className="h-16 w-16 text-success mx-auto mb-4" />
@@ -150,7 +113,7 @@ const Contact = () => {
                       <Button
                         onClick={() => setIsSubmitted(false)}
                         variant="outline"
-                        className="border-lyrical-200 text-lyrical-700 hover:bg-lyrical-50"
+                        
                       >
                         Envoyer un autre message
                       </Button>
@@ -250,79 +213,24 @@ const Contact = () => {
                       </p>
                     </form>
                   )}
-                </CardContent>
-              </Card>
+              </div>
             </div>
           </div>
 
-          {/* FAQ Section */}
-          <div className="mt-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-serif font-bold text-lyrical-700 mb-4">
-                Questions fréquentes
-              </h2>
-              <p className="text-muted-foreground">
-                Trouvez rapidement les réponses à vos questions les plus courantes
+          <div className="mt-20 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] border-t border-border pt-16">
+            <div>
+              <Eyebrow className="mb-3">Avant d'écrire</Eyebrow>
+              <h2 className="text-3xl font-serif">Questions fréquentes</h2>
+              <p className="mt-3 text-muted-foreground">
+                D'autres réponses dans la <Link to="/faq" className="underline underline-offset-4">FAQ complète</Link>.
               </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg text-lyrical-700">
-                    Comment créer mon profil artiste ?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Inscrivez-vous gratuitement et complétez votre profil avec vos informations artistiques, 
-                    votre répertoire et vos médias pour être visible par les professionnels.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg text-lyrical-700">
-                    Comment postuler à un casting ?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Parcourez les castings disponibles, consultez les détails et postulez directement 
-                    depuis la plateforme avec votre profil et vos documents.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg text-lyrical-700">
-                    Quels sont les tarifs ?
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Lyrisphere propose des formules adaptées à tous les besoins. 
-                    Consultez notre page tarifs pour découvrir nos offres.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-lg text-lyrical-700">
-                    Support technique
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Notre équipe support est disponible pour vous aider. 
-                    Contactez-nous via ce formulaire ou par email.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            <EditorialList entries={[
+              { title: 'Comment créer mon profil artiste ?', description: 'Inscrivez-vous gratuitement et complétez votre profil avec vos informations artistiques, votre répertoire et vos médias pour être visible par les professionnels.' },
+              { title: 'Comment postuler à un casting ?', description: 'Parcourez les castings disponibles, consultez les détails et postulez directement depuis la plateforme avec votre profil et vos documents.' },
+              { title: 'Quels sont les tarifs ?', description: 'Lyrisphere propose des formules adaptées à tous les besoins. Consultez notre page tarifs pour découvrir nos offres.' },
+              { title: 'Support technique', description: 'Notre équipe support est disponible pour vous aider. Contactez-nous via ce formulaire ou par email.' }
+            ]} />
           </div>
         </div>
       </div>

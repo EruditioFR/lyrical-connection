@@ -57,6 +57,7 @@ prennent la surface sombre du thème.
 | Bouton principal | variante par défaut (encre) — ne pas surcharger la couleur |
 | Bouton secondaire | `variant="outline"` |
 | Carte | contour fin, pas d'ombre ; préférer des listes séparées par des filets |
+| Page de lecture | `<article>` de 3xl de large, étiquette + titre serif, sections séparées par des filets (`py-8 border-t`), listes de définitions plutôt que des encadrés ; voir `pages/TermsOfService.tsx` |
 | Liste éditoriale | `components/editorial/Editorial.tsx` : `EditorialSection` (étiquette rouge + titre serif à gauche, contenu à droite), `EditorialList` (liste à filets, `numbered` pour « 01, 02… »), `Eyebrow` (étiquette seule) |
 | Écoute | bouton rond de 44 px minimum, `aria-label` « Écouter … », `aria-pressed` |
 | Images d'illustration | photos réelles des artistes et des productions ; pas d'image générée |
@@ -79,5 +80,6 @@ dur (`text-green-600`, `bg-gray-100`…), fond `bg-white` opaque.
 
 ## Reste à reprendre
 
-- Pages internes (tableaux de bord, administration) : couleurs migrées vers les jetons, mais mise en page encore en cartes ; à reprendre écran par écran.
-- Les petites pastilles en rouge rideau sur les photos (« À la une », « Recommandé ») restent en aplat : conforme, à surveiller pour ne pas les multiplier.
+- Pages internes (tableaux de bord, administration, candidatures) : couleurs migrées vers les jetons, mise en page encore en cartes ; à reprendre écran par écran.
+- Mentions légales : éditeur, hébergeur, directeur de la publication et tribunal compétent sont « [À compléter] » (obligation légale, à renseigner par l'éditeur).
+- FAQ : « candidatures prioritaires » (Premium) et limites de taille des fichiers (10 Mo / 50 Mo) ne sont pas vérifiables dans le code ; à confirmer.

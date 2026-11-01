@@ -153,7 +153,7 @@ const Invitation = () => {
           </div>
           <CardTitle>Activez votre compte</CardTitle>
           <CardDescription>
-            Vous avez été invité à rejoindre Lyrical Connection en tant que{' '}
+            Vous avez été invité à rejoindre Lyrisphere en tant que{' '}
             {invitation.profile_type === 'artist' ? 'artiste' : 'professionnel'}.
           </CardDescription>
         </CardHeader>
