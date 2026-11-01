@@ -140,7 +140,7 @@ const ProfessionalsList = () => {
 
           <div className="flex flex-wrap gap-2 mb-4">
             {professional.is_verified && (
-              <Badge variant="default" className="bg-green-100 text-green-800">
+              <Badge variant="default" className="bg-success/15 text-success">
                 <CheckCircle className="w-3 h-3 mr-1" />
                 Vérifié
               </Badge>

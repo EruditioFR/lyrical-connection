@@ -124,7 +124,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
           </CardHeader>
           <CardContent className="pt-0">
             {/* Texte français (référence) */}
-            <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+            <div className="mb-4 p-3 bg-info/10 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">🇫🇷</span>
                 <span className="font-medium">Français (référence)</span>
@@ -233,7 +233,7 @@ export const TranslationTable: React.FC<TranslationTableProps> = ({
                     ) : (
                       <div className="min-h-[60px] flex items-center">
                         {loadingTranslation ? (
-                          <div className="flex items-center gap-2 text-sm text-blue-600">
+                          <div className="flex items-center gap-2 text-sm text-info">
                             <Loader2 className="h-4 w-4 animate-spin" />
                             Génération de la traduction...
                           </div>

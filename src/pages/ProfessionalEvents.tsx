@@ -94,9 +94,9 @@ const ProfessionalEvents = () => {
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <h3 className="text-red-800 font-medium">Erreur de chargement</h3>
-            <p className="text-red-600 text-sm mt-1">{error.message}</p>
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 mb-6">
+            <h3 className="text-destructive font-medium">Erreur de chargement</h3>
+            <p className="text-destructive text-sm mt-1">{error.message}</p>
             <Button 
               variant="outline" 
               size="sm" 

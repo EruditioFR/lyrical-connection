@@ -45,19 +45,19 @@ const Notifications = () => {
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
       case 'message':
-        return <MessageSquare className="h-5 w-5 text-blue-500" />;
+        return <MessageSquare className="h-5 w-5 text-info" />;
       case 'casting_application':
-        return <Megaphone className="h-5 w-5 text-purple-500" />;
+        return <Megaphone className="h-5 w-5 text-gold-500" />;
       case 'event_registration':
-        return <Calendar className="h-5 w-5 text-green-500" />;
+        return <Calendar className="h-5 w-5 text-success" />;
       case 'profile_view':
-        return <Eye className="h-5 w-5 text-orange-500" />;
+        return <Eye className="h-5 w-5 text-warning" />;
       case 'casting_update':
-        return <RotateCcw className="h-5 w-5 text-yellow-500" />;
+        return <RotateCcw className="h-5 w-5 text-warning" />;
       case 'event_update':
-        return <RotateCcw className="h-5 w-5 text-teal-500" />;
+        return <RotateCcw className="h-5 w-5 text-success" />;
       case 'invitation':
-        return <Mail className="h-5 w-5 text-pink-500" />;
+        return <Mail className="h-5 w-5 text-gold-500" />;
       case 'system':
       default:
         return <AlertCircle className="h-5 w-5 text-muted-foreground" />;
@@ -98,9 +98,9 @@ const Notifications = () => {
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="h-8 bg-muted rounded w-1/4"></div>
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div key={i} className="h-32 bg-muted rounded"></div>
             ))}
           </div>
         </div>
@@ -127,7 +127,7 @@ const Notifications = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {unreadCount > 0 ? (
-                <BellRing className="h-8 w-8 text-blue-500" />
+                <BellRing className="h-8 w-8 text-info" />
               ) : (
                 <Bell className="h-8 w-8 text-muted-foreground" />
               )}
@@ -161,7 +161,7 @@ const Notifications = () => {
         {notifications.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <Bell className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+              <Bell className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
               <h3 className="text-xl font-semibold mb-2">Aucune notification</h3>
               <p className="text-muted-foreground">
                 Vous n'avez pas encore reçu de notifications.
@@ -175,7 +175,7 @@ const Notifications = () => {
                 key={notification.id}
                 className={`transition-all duration-200 ${
                   !notification.is_read 
-                    ? 'border-blue-200 bg-blue-50/50 shadow-md' 
+                    ? 'border-info/30 bg-info/50 shadow-md' 
                     : 'hover:shadow-sm'
                 }`}
               >
@@ -191,7 +191,7 @@ const Notifications = () => {
                             {notification.title}
                           </CardTitle>
                           {!notification.is_read && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                            <div className="w-2 h-2 bg-info rounded-full flex-shrink-0" />
                           )}
                         </div>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -209,7 +209,7 @@ const Notifications = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => markAsRead(notification.id)}
-                        className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-xs text-info hover:text-info hover:bg-info/10"
                       >
                         Marquer comme lu
                       </Button>
@@ -219,7 +219,7 @@ const Notifications = () => {
 
                 {notification.content && (
                   <CardContent className="pt-0">
-                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-l-blue-500">
+                    <div className="bg-muted rounded-lg p-4 border-l-4 border-l-info">
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">
                         {notification.content}
                       </p>

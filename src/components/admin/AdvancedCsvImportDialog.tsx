@@ -285,19 +285,19 @@ const AdvancedCsvImportDialog = ({ open, onOpenChange, onImportSuccess }: Advanc
                   <CardContent className="space-y-3">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{importResult.imported.composers}</div>
+                        <div className="text-2xl font-bold text-info">{importResult.imported.composers}</div>
                         <div className="text-xs text-muted-foreground">Compositeurs</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">{importResult.imported.works}</div>
+                        <div className="text-2xl font-bold text-success">{importResult.imported.works}</div>
                         <div className="text-xs text-muted-foreground">Œuvres</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">{importResult.imported.roles}</div>
+                        <div className="text-2xl font-bold text-gold-600">{importResult.imported.roles}</div>
                         <div className="text-xs text-muted-foreground">Rôles</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-orange-600">{importResult.imported.arias}</div>
+                        <div className="text-2xl font-bold text-warning">{importResult.imported.arias}</div>
                         <div className="text-xs text-muted-foreground">Airs</div>
                       </div>
                     </div>

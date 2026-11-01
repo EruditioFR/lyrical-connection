@@ -130,9 +130,9 @@ export default function Pricing() {
       <div className="container mx-auto px-4 py-8">
         {(isPostRegistration || isRequired) && (
           <div className="mb-8 max-w-4xl mx-auto">
-            <Alert className={isRequired ? "border-orange-200 bg-orange-50" : "border-green-200 bg-green-50"}>
-              <CheckCircle className={`h-4 w-4 ${isRequired ? "text-orange-600" : "text-green-600"}`} />
-              <AlertDescription className={isRequired ? "text-orange-800" : "text-green-800"}>
+            <Alert className={isRequired ? "border-gold-200 bg-gold-50" : "border-success/30 bg-success/10"}>
+              <CheckCircle className={`h-4 w-4 ${isRequired ? "text-gold-600" : "text-success"}`} />
+              <AlertDescription className={isRequired ? "text-gold-800" : "text-success"}>
                 {isRequired ? (
                   <strong>Abonnement requis :</strong>
                 ) : (

@@ -76,11 +76,11 @@ const MyApplications = () => {
 
   const getEventTypeBadge = (eventType: string) => {
     const typeConfig = {
-      masterclass: { label: 'Masterclass', icon: Users, color: 'bg-blue-100 text-blue-800' },
-      stage: { label: 'Stage', icon: Music, color: 'bg-green-100 text-green-800' },
-      concours: { label: 'Concours', icon: Trophy, color: 'bg-yellow-100 text-yellow-800' },
-      atelier: { label: 'Atelier', icon: Mic, color: 'bg-purple-100 text-purple-800' },
-      conference: { label: 'Conférence', icon: Users, color: 'bg-gray-100 text-foreground' },
+      masterclass: { label: 'Masterclass', icon: Users, color: 'border border-border bg-transparent text-muted-foreground' },
+      stage: { label: 'Stage', icon: Music, color: 'border border-border bg-transparent text-muted-foreground' },
+      concours: { label: 'Concours', icon: Trophy, color: 'border border-border bg-transparent text-muted-foreground' },
+      atelier: { label: 'Atelier', icon: Mic, color: 'border border-border bg-transparent text-muted-foreground' },
+      conference: { label: 'Conférence', icon: Users, color: 'border border-border bg-transparent text-muted-foreground' },
     };
 
     const config = typeConfig[eventType as keyof typeof typeConfig];
@@ -252,7 +252,7 @@ const MyApplications = () => {
                             </CardTitle>
                             <div className="flex items-center gap-2">
                               {application.type === 'casting' ? (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gold-100 text-gold-800">
                                   <Music className="h-3 w-3 mr-1" />
                                   Casting
                                 </span>
@@ -291,9 +291,9 @@ const MyApplications = () => {
                         )}
 
                         {application.professional_notes && (
-                          <div className="bg-blue-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-blue-900 mb-2">Notes du professionnel</h4>
-                            <p className="text-blue-800 text-sm">
+                          <div className="bg-info/10 p-4 rounded-lg">
+                            <h4 className="font-medium text-info mb-2">Notes du professionnel</h4>
+                            <p className="text-info text-sm">
                               {application.professional_notes}
                             </p>
                           </div>
@@ -301,9 +301,9 @@ const MyApplications = () => {
 
                         {/* Audition pour les castings */}
                         {application.type === 'casting' && application.audition_scheduled_at && (
-                          <div className="bg-green-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-green-900 mb-2">Audition programmée</h4>
-                            <p className="text-green-800 text-sm">
+                          <div className="bg-success/10 p-4 rounded-lg">
+                            <h4 className="font-medium text-success mb-2">Audition programmée</h4>
+                            <p className="text-success text-sm">
                               {new Date(application.audition_scheduled_at).toLocaleDateString('fr-FR', {
                                 weekday: 'long',
                                 year: 'numeric',
@@ -314,7 +314,7 @@ const MyApplications = () => {
                               })}
                             </p>
                             {application.audition_notes && (
-                              <p className="text-green-700 text-sm mt-2">
+                              <p className="text-success text-sm mt-2">
                                 {application.audition_notes}
                               </p>
                             )}
@@ -323,7 +323,7 @@ const MyApplications = () => {
 
                         {/* Dates de l'événement */}
                         {application.type === 'event' && application.eventDetails && (
-                          <div className="bg-gray-50 p-4 rounded-lg">
+                          <div className="bg-muted p-4 rounded-lg">
                             <h4 className="font-medium text-foreground mb-2">Dates de l'événement</h4>
                             <p className="text-muted-foreground text-sm">
                               Du {new Date(application.eventDetails.start_date).toLocaleDateString('fr-FR')} 

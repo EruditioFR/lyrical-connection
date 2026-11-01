@@ -140,8 +140,8 @@ const Contact = () => {
                 <CardContent>
                   {isSubmitted ? (
                     <div className="text-center py-12">
-                      <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-green-700 mb-2">
+                      <CheckCircle className="h-16 w-16 text-success mx-auto mb-4" />
+                      <h3 className="text-xl font-semibold text-success mb-2">
                         Message envoyé avec succès !
                       </h3>
                       <p className="text-muted-foreground mb-6">
@@ -164,10 +164,10 @@ const Contact = () => {
                             id="name"
                             {...register('name')}
                             placeholder="Votre nom"
-                            className={errors.name ? 'border-red-500' : ''}
+                            className={errors.name ? 'border-destructive' : ''}
                           />
                           {errors.name && (
-                            <p className="text-sm text-red-500 flex items-center gap-1">
+                            <p className="text-sm text-destructive flex items-center gap-1">
                               <AlertCircle className="h-4 w-4" />
                               {errors.name.message}
                             </p>
@@ -181,10 +181,10 @@ const Contact = () => {
                             type="email"
                             {...register('email')}
                             placeholder="votre@email.com"
-                            className={errors.email ? 'border-red-500' : ''}
+                            className={errors.email ? 'border-destructive' : ''}
                           />
                           {errors.email && (
-                            <p className="text-sm text-red-500 flex items-center gap-1">
+                            <p className="text-sm text-destructive flex items-center gap-1">
                               <AlertCircle className="h-4 w-4" />
                               {errors.email.message}
                             </p>
@@ -198,10 +198,10 @@ const Contact = () => {
                           id="subject"
                           {...register('subject')}
                           placeholder="L'objet de votre message"
-                          className={errors.subject ? 'border-red-500' : ''}
+                          className={errors.subject ? 'border-destructive' : ''}
                         />
                         {errors.subject && (
-                          <p className="text-sm text-red-500 flex items-center gap-1">
+                          <p className="text-sm text-destructive flex items-center gap-1">
                             <AlertCircle className="h-4 w-4" />
                             {errors.subject.message}
                           </p>
@@ -215,10 +215,10 @@ const Contact = () => {
                           {...register('message')}
                           placeholder="Décrivez votre demande en détail..."
                           rows={6}
-                          className={errors.message ? 'border-red-500' : ''}
+                          className={errors.message ? 'border-destructive' : ''}
                         />
                         {errors.message && (
-                          <p className="text-sm text-red-500 flex items-center gap-1">
+                          <p className="text-sm text-destructive flex items-center gap-1">
                             <AlertCircle className="h-4 w-4" />
                             {errors.message.message}
                           </p>

@@ -186,8 +186,7 @@ pour tous les acteurs du lyrique</h2>
             Rejoignez la communauté lyrique
           </h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Plus de 650 artistes et professionnels nous font déjà confiance. 
-            Découvrez pourquoi Lyrisphere est devenu la référence du secteur.
+            Présentez votre voix et votre répertoire, ou trouvez la distribution de votre prochaine production.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>

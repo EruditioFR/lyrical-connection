@@ -76,7 +76,7 @@ const ProfessionalsMarketing = () => {
       </section>
 
       {/* Professionnels d'exemple */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-card">
         <div className="container mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">
             Nos professionnels partenaires
@@ -91,7 +91,7 @@ const ProfessionalsMarketing = () => {
                       <Badge variant="secondary">{prof.role}</Badge>
                     </div>
                     {prof.verified && (
-                      <Badge variant="default" className="bg-green-100 text-green-800">
+                      <Badge variant="default" className="bg-success/15 text-success">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Vérifié
                       </Badge>
@@ -219,7 +219,7 @@ const ProfessionalsMarketing = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-lg">
+            <div className="bg-card p-8 rounded-lg shadow-lg">
               <h3 className="text-2xl font-serif font-bold mb-4">Rejoignez notre réseau</h3>
               <p className="text-white mb-6">
                 Accédez à notre réseau exclusif de professionnels du chant lyrique et développez votre carrière artistique.

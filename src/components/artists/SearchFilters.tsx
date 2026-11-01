@@ -99,7 +99,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
                     variant="ghost"
                     size="icon"
                     onClick={clearAllFilters}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-destructive hover:text-destructive"
                   >
                     <X className="h-4 w-4" />
                   </Button>

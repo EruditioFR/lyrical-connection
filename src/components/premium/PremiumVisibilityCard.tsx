@@ -66,15 +66,15 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
             
             <div className="grid grid-cols-1 gap-2 text-sm">
               <div className="flex items-center space-x-2">
-                <Eye className="w-4 h-4 text-green-600" />
+                <Eye className="w-4 h-4 text-success" />
                 <span>Visible par les visiteurs non connectés</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-green-600" />
+                <Users className="w-4 h-4 text-success" />
                 <span>Priorité dans les résultats de recherche</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Zap className="w-4 h-4 text-green-600" />
+                <Zap className="w-4 h-4 text-success" />
                 <span>Badge premium sur votre profil</span>
               </div>
             </div>
@@ -87,11 +87,11 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
   // Si l'utilisateur a un abonnement standard mais pas la visibilité premium
   if (hasStandardSubscription) {
     return (
-      <Card className="border-amber-200 bg-amber-50">
+      <Card className="border-gold-200 bg-gold-50">
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <ArrowUp className="w-5 h-5 text-amber-600" />
-            <CardTitle className="text-lg text-amber-800">
+            <ArrowUp className="w-5 h-5 text-gold-600" />
+            <CardTitle className="text-lg text-gold-800">
               Upgrade : Visibilité Premium
             </CardTitle>
           </div>
@@ -102,13 +102,13 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+            <div className="flex items-center justify-between p-3 bg-card rounded-lg border">
               <div>
-                <p className="font-medium text-amber-800">Add-on Visibilité Premium</p>
-                <p className="text-sm text-amber-600">En complément de votre abonnement actuel</p>
+                <p className="font-medium text-gold-800">Add-on Visibilité Premium</p>
+                <p className="text-sm text-gold-600">En complément de votre abonnement actuel</p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-amber-800">
+                <div className="text-2xl font-bold text-gold-800">
                   +29€<span className="text-sm font-normal">/mois</span>
                 </div>
               </div>
@@ -116,19 +116,19 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
             
             <div className="space-y-2 text-sm">
               <div className="flex items-center space-x-2">
-                <Eye className="w-4 h-4 text-amber-600" />
+                <Eye className="w-4 h-4 text-gold-600" />
                 <span>Apparaître dans les pages publiques</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-amber-600" />
+                <Users className="w-4 h-4 text-gold-600" />
                 <span>Visible par les visiteurs non connectés</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Zap className="w-4 h-4 text-amber-600" />
+                <Zap className="w-4 h-4 text-gold-600" />
                 <span>Priorité dans les résultats de recherche</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Crown className="w-4 h-4 text-amber-600" />
+                <Crown className="w-4 h-4 text-gold-600" />
                 <span>Badge premium sur votre profil</span>
               </div>
             </div>
@@ -136,7 +136,7 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
             <Button 
               onClick={handleSubscribe}
               disabled={isCreatingPremium}
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full bg-gold-600 hover:bg-gold-700"
               size="lg"
             >
               {isCreatingPremium ? (
@@ -152,7 +152,7 @@ const PremiumVisibilityCard: React.FC<PremiumVisibilityCardProps> = ({
               )}
             </Button>
             
-            <p className="text-xs text-amber-600 text-center">
+            <p className="text-xs text-gold-600 text-center">
               Facturation supplémentaire • Résiliable indépendamment de votre abonnement principal
             </p>
           </div>

@@ -131,7 +131,7 @@ const Navbar = () => {
                 </div>}
 
               {/* Lien d'administration pour les admins */}
-              {isAdmin && <Link to="/admin" className="text-red-600 hover:text-red-700 font-medium transition-colors flex items-center gap-1">
+              {isAdmin && <Link to="/admin" className="text-destructive hover:text-destructive font-medium transition-colors flex items-center gap-1">
                   <Shield className="h-4 w-4" />
                   {t('navigation:admin')}
                 </Link>}

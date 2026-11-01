@@ -93,7 +93,7 @@ const FeaturedEvents = () => {
                     {event.event_type === 'conference' && 'Conférence'}
                   </span>
                   {event.price && (
-                    <span className="text-xs font-medium text-green-600">
+                    <span className="text-xs font-medium text-success">
                       {event.price}€
                     </span>
                   )}

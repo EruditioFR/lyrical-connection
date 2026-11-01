@@ -53,25 +53,25 @@ const AutomatedDataImportSystem = () => {
       icon: Users,
       title: 'Compositeurs',
       description: 'Import des compositeurs avec biographies',
-      color: 'text-blue-600'
+      color: 'text-info'
     },
     works: {
       icon: BookOpen,
       title: 'Œuvres lyriques',
       description: 'Import des opéras, oratorios et mélodies',
-      color: 'text-green-600'
+      color: 'text-success'
     },
     roles: {
       icon: Mic,
       title: 'Rôles',
       description: 'Import des personnages et tessitures',
-      color: 'text-purple-600'
+      color: 'text-gold-600'
     },
     arias: {
       icon: Music,
       title: 'Airs',
       description: 'Import des arias et mélodies',
-      color: 'text-orange-600'
+      color: 'text-warning'
     }
   };
 
@@ -284,9 +284,9 @@ const AutomatedDataImportSystem = () => {
 
   const getStepIcon = (status: ImportStepStatus['status']) => {
     switch (status) {
-      case 'completed': return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'loading': return <Clock className="h-4 w-4 text-blue-600 animate-spin" />;
-      case 'error': return <AlertCircle className="h-4 w-4 text-red-600" />;
+      case 'completed': return <CheckCircle className="h-4 w-4 text-success" />;
+      case 'loading': return <Clock className="h-4 w-4 text-info animate-spin" />;
+      case 'error': return <AlertCircle className="h-4 w-4 text-destructive" />;
       default: return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
@@ -345,25 +345,25 @@ const AutomatedDataImportSystem = () => {
                     <CardContent className="space-y-3">
                       <div className="grid grid-cols-4 gap-2 text-center">
                         <div>
-                          <div className="text-lg font-bold text-blue-600">
+                          <div className="text-lg font-bold text-info">
                             {template.estimatedItems.composers}
                           </div>
                           <div className="text-xs text-muted-foreground">Compositeurs</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-green-600">
+                          <div className="text-lg font-bold text-success">
                             {template.estimatedItems.works}
                           </div>
                           <div className="text-xs text-muted-foreground">Œuvres</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-purple-600">
+                          <div className="text-lg font-bold text-gold-600">
                             {template.estimatedItems.roles}
                           </div>
                           <div className="text-xs text-muted-foreground">Rôles</div>
                         </div>
                         <div>
-                          <div className="text-lg font-bold text-orange-600">
+                          <div className="text-lg font-bold text-warning">
                             {template.estimatedItems.arias}
                           </div>
                           <div className="text-xs text-muted-foreground">Airs</div>
@@ -436,7 +436,7 @@ const AutomatedDataImportSystem = () => {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card className="p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <Database className="h-6 w-6 text-blue-600" />
+                    <Database className="h-6 w-6 text-info" />
                     <div>
                       <h3 className="font-medium">MusicBrainz</h3>
                       <p className="text-sm text-muted-foreground">Base de données musicale ouverte</p>
@@ -457,7 +457,7 @@ const AutomatedDataImportSystem = () => {
 
                 <Card className="p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <Globe className="h-6 w-6 text-green-600" />
+                    <Globe className="h-6 w-6 text-success" />
                     <div>
                       <h3 className="font-medium">Wikidata</h3>
                       <p className="text-sm text-muted-foreground">Données structurées de Wikipedia</p>
@@ -478,7 +478,7 @@ const AutomatedDataImportSystem = () => {
 
                 <Card className="p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <Music className="h-6 w-6 text-purple-600" />
+                    <Music className="h-6 w-6 text-gold-600" />
                     <div>
                       <h3 className="font-medium">OpenOpus</h3>
                       <p className="text-sm text-muted-foreground">API spécialisée musique classique</p>
@@ -499,7 +499,7 @@ const AutomatedDataImportSystem = () => {
 
                 <Card className="p-4">
                   <div className="flex items-center gap-3 mb-3">
-                    <Zap className="h-6 w-6 text-orange-600" />
+                    <Zap className="h-6 w-6 text-warning" />
                     <div>
                       <h3 className="font-medium">Import Complet</h3>
                       <p className="text-sm text-muted-foreground">Combine toutes les sources</p>

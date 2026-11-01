@@ -147,11 +147,11 @@ export const ImageGenerationPanel: React.FC<ImageGenerationPanelProps> = ({
         </CardTitle>
         <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-success" />
             {artistsWithImages.length} avec image
           </span>
           <span className="flex items-center gap-1">
-            <AlertCircle className="h-4 w-4 text-orange-500" />
+            <AlertCircle className="h-4 w-4 text-warning" />
             {artistsWithoutImages.length} sans image
           </span>
         </div>
@@ -229,11 +229,11 @@ export const ImageGenerationPanel: React.FC<ImageGenerationPanelProps> = ({
 
         {artistsWithImages.length > 0 && (
           <div className="space-y-2">
-            <h4 className="font-medium text-green-700">Artistes avec image :</h4>
+            <h4 className="font-medium text-success">Artistes avec image :</h4>
             <div className="grid gap-2">
               {artistsWithImages.slice(0, 5).map((artist) => (
                 <div key={artist.id} className="flex items-center gap-3 p-2 text-sm text-muted-foreground">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <CheckCircle className="h-4 w-4 text-success" />
                   <span>{artist.stage_name}</span>
                   {artist.voice_type && (
                     <Badge variant="secondary">

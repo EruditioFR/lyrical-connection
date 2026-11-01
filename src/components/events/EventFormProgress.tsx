@@ -32,9 +32,9 @@ export const EventFormProgress: React.FC<EventFormProgressProps> = ({ steps, cur
                 className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors",
                   isActive && "bg-primary text-primary-foreground",
-                  isPassed && "bg-green-500 text-white",
+                  isPassed && "bg-success text-success-foreground",
                   !isActive && !isPassed && "bg-muted text-muted-foreground",
-                  step.hasErrors && !isPassed && "bg-red-500 text-white"
+                  step.hasErrors && !isPassed && "bg-destructive text-destructive-foreground"
                 )}
               >
                 {isPassed ? (
@@ -49,7 +49,7 @@ export const EventFormProgress: React.FC<EventFormProgressProps> = ({ steps, cur
                   // Sur mobile, seul le titre de l'étape en cours tient sur la ligne
                   !isActive && "hidden sm:inline",
                   isActive && "text-primary",
-                  isPassed && "text-green-600",
+                  isPassed && "text-success",
                   !isActive && !isPassed && "text-muted-foreground"
                 )}
               >

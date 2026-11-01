@@ -12,10 +12,10 @@ export const ApplicationScoreDisplay = ({ applicationId }: ApplicationScoreDispl
   if (isLoading || !averageScore) return null;
 
   const getScoreColor = (score: number) => {
-    if (score >= 16) return 'bg-green-100 text-green-800 border-green-300';
-    if (score >= 13) return 'bg-blue-100 text-blue-800 border-blue-300';
-    if (score >= 10) return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-    return 'bg-red-100 text-red-800 border-red-300';
+    if (score >= 16) return 'bg-success/15 text-success border-success/30';
+    if (score >= 13) return 'bg-info/15 text-info border-info/30';
+    if (score >= 10) return 'bg-warning/15 text-warning border-warning/30';
+    return 'bg-destructive/15 text-destructive border-destructive/30';
   };
 
   return (

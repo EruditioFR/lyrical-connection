@@ -65,9 +65,9 @@ const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
     if (error) {
       return (
         <div className="flex flex-col items-center justify-center h-full text-white">
-          <AlertTriangle className="h-12 w-12 mb-4 text-yellow-500" />
+          <AlertTriangle className="h-12 w-12 mb-4 text-warning" />
           <p className="text-lg mb-2">Impossible de charger la vidéo</p>
-          <p className="text-sm text-gray-300 mb-4">Vérifiez l'URL ou essayez un autre format</p>
+          <p className="text-sm text-muted-foreground mb-4">Vérifiez l'URL ou essayez un autre format</p>
           <Button
             variant="outline"
             size="sm"
@@ -118,9 +118,9 @@ const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({
           <div className="flex-1">
             <h3 className="text-lg font-semibold">{title}</h3>
             {description && (
-              <p className="text-sm text-gray-300 mt-1">{description}</p>
+              <p className="text-sm text-muted-foreground mt-1">{description}</p>
             )}
-            <p className="text-xs text-gray-400 mt-1 capitalize">
+            <p className="text-xs text-muted-foreground mt-1 capitalize">
               {videoInfo.type === 'direct' ? 'Vidéo directe' : videoInfo.type}
             </p>
           </div>

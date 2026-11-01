@@ -408,7 +408,7 @@ const PromoCodeManager = () => {
                           onClick={(e) => { e.stopPropagation(); handleCopy(promo.code, promo.id); }}
                         >
                           {copiedId === promo.id ? (
-                            <Check className="w-3 h-3 text-green-500" />
+                            <Check className="w-3 h-3 text-success" />
                           ) : (
                             <Copy className="w-3 h-3" />
                           )}

@@ -102,10 +102,10 @@ const JuryEvaluationPanel: React.FC<JuryEvaluationPanelProps> = ({
 
   const getScoreColor = (score: number | null) => {
     if (score === null) return 'text-muted-foreground';
-    if (score >= 8) return 'text-green-600 font-bold';
+    if (score >= 8) return 'text-success font-bold';
     if (score >= 6) return 'text-primary';
-    if (score >= 4) return 'text-yellow-600';
-    return 'text-red-500';
+    if (score >= 4) return 'text-warning';
+    return 'text-destructive';
   };
 
   if (!professionalProfile) {

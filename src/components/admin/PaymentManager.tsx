@@ -86,13 +86,13 @@ const PaymentManager = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Complété</Badge>;
+        return <Badge className="bg-success/15 text-success"><CheckCircle className="h-3 w-3 mr-1" />Complété</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />En attente</Badge>;
+        return <Badge className="bg-warning/15 text-warning"><Clock className="h-3 w-3 mr-1" />En attente</Badge>;
       case 'failed':
-        return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Échoué</Badge>;
+        return <Badge className="bg-destructive/15 text-destructive"><XCircle className="h-3 w-3 mr-1" />Échoué</Badge>;
       case 'refunded':
-        return <Badge className="bg-gray-100 text-foreground">Remboursé</Badge>;
+        return <Badge className="bg-muted text-foreground">Remboursé</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -131,10 +131,10 @@ const PaymentManager = () => {
         <div className="animate-pulse space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+              <div key={i} className="h-24 bg-muted rounded"></div>
             ))}
           </div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-64 bg-muted rounded"></div>
         </div>
       </div>
     );
@@ -157,20 +157,20 @@ const PaymentManager = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Paiements Complétés</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{paymentStats.completed}</div>
+            <div className="text-2xl font-bold text-success">{paymentStats.completed}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">En Attente</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-600" />
+            <Clock className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{paymentStats.pending}</div>
+            <div className="text-2xl font-bold text-warning">{paymentStats.pending}</div>
           </CardContent>
         </Card>
 

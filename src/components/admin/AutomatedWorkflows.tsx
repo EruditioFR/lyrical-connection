@@ -106,7 +106,7 @@ const AutomatedWorkflows = () => {
               <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center gap-3">
                   {workflow.active ? (
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <CheckCircle2 className="h-5 w-5 text-success" />
                   ) : (
                     <AlertCircle className="h-5 w-5 text-muted-foreground" />
                   )}
@@ -151,7 +151,7 @@ const AutomatedWorkflows = () => {
             </div>
             
             {settings.upgradeReminders.enabled && (
-              <div className="ml-6 space-y-3 p-4 bg-gray-50 rounded-lg">
+              <div className="ml-6 space-y-3 p-4 bg-muted rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="reminderDays">Jours avant expiration</Label>
@@ -201,7 +201,7 @@ const AutomatedWorkflows = () => {
             </div>
             
             {settings.accountExpiry.enabled && (
-              <div className="ml-6 space-y-3 p-4 bg-gray-50 rounded-lg">
+              <div className="ml-6 space-y-3 p-4 bg-muted rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="trialPeriod">Période d'essai (jours)</Label>
@@ -248,7 +248,7 @@ const AutomatedWorkflows = () => {
             </div>
             
             {settings.inactivityAlerts.enabled && (
-              <div className="ml-6 space-y-3 p-4 bg-gray-50 rounded-lg">
+              <div className="ml-6 space-y-3 p-4 bg-muted rounded-lg">
                 <div>
                   <Label htmlFor="inactiveDays">Jours d'inactivité</Label>
                   <Input
@@ -291,7 +291,7 @@ const AutomatedWorkflows = () => {
             </div>
             
             {settings.autoUpgrade.enabled && (
-              <div className="ml-6 space-y-3 p-4 bg-gray-50 rounded-lg">
+              <div className="ml-6 space-y-3 p-4 bg-muted rounded-lg">
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={settings.autoUpgrade.requiresApproval}

@@ -84,10 +84,10 @@ const EventSidebar: React.FC<EventSidebarProps> = ({
                 </div>
                 {event.results_published && (
                   <Badge className={
-                    artistApplication.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                    artistApplication.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                    artistApplication.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
-                    'bg-yellow-100 text-yellow-800'
+                    artistApplication.status === 'accepted' ? 'bg-success/15 text-success' :
+                    artistApplication.status === 'rejected' ? 'bg-destructive/15 text-destructive' :
+                    artistApplication.status === 'waitlisted' ? 'bg-info/15 text-info' :
+                    'bg-warning/15 text-warning'
                   }>
                     {artistApplication.status === 'accepted' ? 'Accepté(e)' :
                      artistApplication.status === 'rejected' ? 'Refusé(e)' :

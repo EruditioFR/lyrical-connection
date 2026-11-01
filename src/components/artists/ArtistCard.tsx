@@ -102,7 +102,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
               <h3 className="artist-name-card flex items-center gap-2">
                 {artist.stage_name}
                 {showProfessionalActions && isFav && (
-                  <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+                  <Heart className="w-4 h-4 text-destructive fill-destructive" />
                 )}
               </h3>
               <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                 )}
                 {showProfessionalActions && averageScore && (
                   <Badge variant="outline" className="text-xs">
-                    <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
+                    <Star className="w-3 h-3 mr-1 fill-warning text-warning" />
                     {averageScore}/10
                   </Badge>
                 )}
@@ -157,7 +157,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                 className="w-20 h-20 rounded-full object-cover"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
                 <User className="w-8 h-8 text-muted-foreground" />
               </div>
             )}
@@ -196,13 +196,13 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
         </div>
 
         {showContactInfo && isUserAuthenticated && (
-          <div className="space-y-2 mb-4 p-3 bg-gray-50 rounded-lg">
+          <div className="space-y-2 mb-4 p-3 bg-muted rounded-lg">
             {artist.contact_email && (
               <div className="flex items-center text-sm text-muted-foreground">
                 <Mail className="w-4 h-4 mr-2" />
                 <a 
                   href={`mailto:${artist.contact_email}`}
-                  className="hover:text-blue-600 transition-colors"
+                  className="hover:text-info transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {artist.contact_email}
@@ -215,7 +215,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                 <Phone className="w-4 h-4 mr-2" />
                 <a 
                   href={`tel:${artist.phone}`}
-                  className="hover:text-blue-600 transition-colors"
+                  className="hover:text-info transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {artist.phone}
@@ -230,7 +230,7 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                   href={artist.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-blue-600 transition-colors"
+                  className="hover:text-info transition-colors"
                   onClick={(e) => e.stopPropagation()}
                 >
                   Site web
@@ -279,9 +279,9 @@ const ArtistCard: React.FC<ArtistCardProps> = ({
                   size="sm"
                   onClick={handleToggleFavorite}
                   disabled={toggleFavorite.isPending}
-                  className={isFav ? "text-red-600 border-red-200 hover:bg-red-50" : ""}
+                  className={isFav ? "text-destructive border-destructive/30 hover:bg-destructive/10" : ""}
                 >
-                  <Heart className={`w-4 h-4 mr-1 ${isFav ? 'fill-red-500 text-red-500' : ''}`} />
+                  <Heart className={`w-4 h-4 mr-1 ${isFav ? 'fill-destructive text-destructive' : ''}`} />
                   {isFav ? 'Favori' : 'Favoris'}
                 </Button>
                 

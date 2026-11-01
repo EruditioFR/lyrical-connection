@@ -5,51 +5,25 @@ import { useQuery } from '@tanstack/react-query';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Star, 
-  Users, 
-  Search, 
-  MessageSquare, 
-  Award, 
-  Clock,
-  MapPin,
-  Euro,
-  CheckCircle,
-  ArrowRight
-} from 'lucide-react';
+import { Clock, ArrowRight } from 'lucide-react';
 
 const CastingsMarketing = () => {
   const features = [
     {
-      icon: Star,
-      title: "Opportunités Premium",
-      description: "Accédez aux meilleurs castings d'opéra, théâtre musical et spectacles lyriques"
+      title: "Des castings d'opéra, de concert et de concours",
+      description: "Productions, concours et masterclasses publiés par les maisons, festivals et organisateurs inscrits."
     },
     {
-      icon: Search,
-      title: "Recherche Ciblée",
-      description: "Filtrez par tessiture, expérience, localisation et type de production"
+      title: "Filtrer par voix et par conditions",
+      description: "Tessiture recherchée, lieu, type de production, rémunération et date limite de candidature."
     },
     {
-      icon: Users,
-      title: "Réseau Professionnel",
-      description: "Connectez-vous avec directeurs artistiques, metteurs en scène et producteurs"
+      title: "Votre profil comme dossier",
+      description: "Postulez avec votre répertoire et vos enregistrements, puis suivez le statut de chaque candidature."
     },
     {
-      icon: MessageSquare,
-      title: "Communication Directe",
-      description: "Échangez directement avec les professionnels du secteur"
-    },
-    {
-      icon: Award,
-      title: "Candidatures Simplifiées",
-      description: "Postulez en quelques clics avec votre profil artistique complet"
-    },
-    {
-      icon: Clock,
-      title: "Notifications en Temps Réel",
-      description: "Soyez alerté des nouvelles opportunités correspondant à votre profil"
+      title: "Échanger avec les recruteurs",
+      description: "Messagerie directe et notifications quand un casting correspond à votre profil."
     }
   ];
 
@@ -86,221 +60,136 @@ const CastingsMarketing = () => {
     },
   });
 
+  const steps = [
+    { title: 'Créez votre profil', description: 'Répertoire, photos et enregistrements : ce que les recruteurs écouteront en premier.' },
+    { title: 'Repérez les castings', description: 'Filtrez par tessiture, lieu et type de production.' },
+    { title: 'Postulez', description: "Envoyez votre candidature au responsable du casting et suivez son évolution." },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-              Votre Carrière Lyrique
-              <span className="block text-primary">
-                Commence Ici
-              </span>
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              Découvrez les meilleures opportunités de castings dans l'univers de l'opéra, 
-              du théâtre musical et des spectacles lyriques. Connectez-vous avec les professionnels 
-              et donnez vie à vos ambitions artistiques.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="text-lg px-8">
-                <Link to="/auth">
-                  Rejoindre la communauté
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8">
-                En savoir plus
-              </Button>
-            </div>
+      {/* Ouverture */}
+      <section className="py-20 px-4">
+        <div className="container mx-auto">
+          <div className="max-w-4xl">
+          <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-4">Castings</p>
+          <h1 className="text-4xl md:text-6xl font-serif text-foreground mb-6">
+            Votre prochain rôle commence ici
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
+            Les appels à candidatures des maisons d'opéra, festivals et concours, avec la tessiture
+            recherchée et la date limite. Postulez avec votre profil et vos enregistrements.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button asChild size="lg">
+              <Link to="/auth">
+                Créer mon compte
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/features">Voir les fonctionnalités</Link>
+            </Button>
+          </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4 bg-background">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Pourquoi Choisir Notre Plateforme ?
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Des outils professionnels pour artistes lyriques ambitieux
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-border hover:shadow-lg transition-shadow text-center w-full">
-                <CardHeader className="items-center">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Open Castings Preview */}
-      <section className="py-16 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Castings ouverts
-            </h2>
-            <p className="text-lg text-muted-foreground">
+      {/* Castings ouverts */}
+      <section className="py-16 px-4 border-t border-border">
+        <div className="container mx-auto grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+          <div>
+            <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">À l'affiche</p>
+            <h2 className="text-3xl font-serif text-foreground mb-3">Castings ouverts</h2>
+            <p className="text-muted-foreground">
               {openCastings.length > 0
-                ? 'Aperçu des castings en cours sur la plateforme'
+                ? 'Les prochaines dates limites. Inscrivez-vous pour voir tous les castings et postuler.'
                 : 'Aucun casting ouvert pour le moment. Inscrivez-vous pour être averti des prochains.'}
             </p>
+            <Button asChild variant="outline" className="mt-6">
+              <Link to="/auth">Voir tous les castings</Link>
+            </Button>
           </div>
 
           {openCastings.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <ul className="divide-y divide-border border-y border-border">
               {openCastings.map((casting) => {
                 const daysLeft = differenceInCalendarDays(new Date(casting.application_deadline), new Date());
+                const details = [
+                  productionTypeLabels[casting.production_type] || casting.production_type,
+                  casting.location,
+                  casting.required_voice_types?.length ? casting.required_voice_types.join(', ') : null,
+                  casting.compensation_type ? compensationLabels[casting.compensation_type] || casting.compensation_type : null,
+                ].filter(Boolean);
                 return (
-                  <Card key={casting.id} className="border-border">
-                    <CardHeader>
-                      <div className="flex justify-between items-start mb-2">
-                        <CardTitle className="text-lg">{casting.title}</CardTitle>
-                        <span className="text-sm bg-primary/10 text-primary px-2 py-1 rounded">
-                          {productionTypeLabels[casting.production_type] || casting.production_type}
-                        </span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      {casting.location && (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          {casting.location}
-                        </div>
-                      )}
-                      {casting.required_voice_types && casting.required_voice_types.length > 0 && (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Users className="h-4 w-4 mr-2" />
-                          {casting.required_voice_types.join(', ')}
-                        </div>
-                      )}
-                      {casting.compensation_type && (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Euro className="h-4 w-4 mr-2" />
-                          {compensationLabels[casting.compensation_type] || casting.compensation_type}
-                        </div>
-                      )}
-                      <div className="flex items-center text-sm text-primary font-medium">
-                        <Clock className="h-4 w-4 mr-2" />
-                        {daysLeft === 0 ? 'Dernier jour' : `${daysLeft} jour${daysLeft > 1 ? 's' : ''} restant${daysLeft > 1 ? 's' : ''}`}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <li key={casting.id} className="py-5 grid gap-1 sm:grid-cols-[1fr_auto] sm:gap-6">
+                    <div className="min-w-0">
+                      <h3 className="text-xl">{casting.title}</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">{details.join(' · ')}</p>
+                    </div>
+                    <p className="flex items-center text-sm text-gold-600 font-medium whitespace-nowrap">
+                      <Clock className="h-4 w-4 mr-2" aria-hidden="true" />
+                      {daysLeft === 0 ? 'Dernier jour' : `${daysLeft} jour${daysLeft > 1 ? 's' : ''} restant${daysLeft > 1 ? 's' : ''}`}
+                    </p>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           )}
-
-          <div className="text-center">
-            <div className="bg-card border border-border rounded-lg p-8 max-w-md mx-auto">
-              <h3 className="text-xl font-semibold mb-4">Voir tous les castings</h3>
-              <p className="text-muted-foreground mb-6">
-                Inscrivez-vous pour accéder à l'ensemble des castings actifs
-              </p>
-              <Button asChild className="w-full">
-                <Link to="/auth">
-                  Créer mon compte gratuitement
-                </Link>
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section className="py-16 px-4 bg-background">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
-              Comment Ça Fonctionne ?
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              En 3 étapes simples vers votre prochaine opportunité
-            </p>
+      {/* Ce que la plateforme apporte */}
+      <section className="py-16 px-4 border-t border-border">
+        <div className="container mx-auto grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+          <div>
+            <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">Pour les artistes</p>
+            <h2 className="text-3xl font-serif text-foreground">Ce que vous y trouvez</h2>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-primary-foreground">1</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Créez votre profil</h3>
-              <p className="text-muted-foreground">
-                Complétez votre profil artistique avec votre répertoire, 
-                photos et enregistrements audio
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-primary-foreground">2</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Explorez les castings</h3>
-              <p className="text-muted-foreground">
-                Découvrez les opportunités qui correspondent à votre profil 
-                grâce à nos filtres intelligents
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-bold text-primary-foreground">3</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Postulez en un clic</h3>
-              <p className="text-muted-foreground">
-                Envoyez votre candidature directement aux directeurs de casting 
-                et suivez son évolution
-              </p>
-            </div>
-          </div>
+          <ul className="divide-y divide-border border-y border-border">
+            {features.map((feature) => (
+              <li key={feature.title} className="py-5">
+                <h3 className="text-xl">{feature.title}</h3>
+                <p className="mt-1 text-muted-foreground">{feature.description}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Étapes */}
+      <section className="py-16 px-4 border-t border-border">
+        <div className="container mx-auto grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+          <div>
+            <p className="text-xs uppercase tracking-[0.14em] text-gold-600 mb-3">En trois temps</p>
+            <h2 className="text-3xl font-serif text-foreground">Comment ça fonctionne</h2>
+          </div>
+          <ol className="divide-y divide-border border-y border-border">
+            {steps.map((step, i) => (
+              <li key={step.title} className="py-5 grid grid-cols-[2.5rem_1fr] gap-x-4">
+                <span className="font-serif text-lg text-muted-foreground tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3 className="text-xl">{step.title}</h3>
+                  <p className="mt-1 text-muted-foreground">{step.description}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Appel final */}
       <section className="py-20 px-4 bg-primary">
-        <div className="container mx-auto text-center">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6">
-              Prêt à Donner Vie à Vos Ambitions ?
-            </h2>
-            <p className="text-xl text-primary-foreground/90 mb-8">
-              Rejoignez plus de 1000 artistes lyriques qui font confiance à notre plateforme 
-              pour développer leur carrière.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                asChild 
-                size="lg" 
-                variant="secondary"
-                className="text-lg px-8"
-              >
-                <Link to="/auth">
-                  Commencer maintenant - C'est gratuit
-                </Link>
-              </Button>
-            </div>
-            <div className="flex items-center justify-center mt-6 text-primary-foreground/80">
-              <CheckCircle className="h-5 w-5 mr-2" />
-              <span>Inscription gratuite • Sans engagement</span>
-            </div>
-          </div>
+        <div className="container mx-auto text-center max-w-3xl">
+          <h2 className="text-3xl md:text-4xl font-serif text-primary-foreground mb-6">
+            Prêt à postuler ?
+          </h2>
+          <p className="text-xl text-primary-foreground/80 mb-8">
+            Inscription gratuite et sans engagement.
+          </p>
+          <Button asChild size="lg" variant="secondary">
+            <Link to="/auth">Créer mon compte</Link>
+          </Button>
         </div>
       </section>
     </div>

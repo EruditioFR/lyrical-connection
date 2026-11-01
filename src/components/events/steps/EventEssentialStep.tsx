@@ -88,7 +88,7 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
 
     return (
       <div className="space-y-2">
-        <Label className={error ? "text-red-500" : ""}>{label}</Label>
+        <Label className={error ? "text-destructive" : ""}>{label}</Label>
         <div className="flex flex-col sm:flex-row gap-2">
           <Popover>
             <PopoverTrigger asChild>
@@ -97,7 +97,7 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
                 className={cn(
                   "flex-1 justify-start text-left font-normal",
                   !value && "text-muted-foreground",
-                  error && "border-red-500 focus:border-red-500"
+                  error && "border-destructive focus:border-destructive"
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
@@ -134,7 +134,7 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
           )}
         </div>
         {error && (
-          <div className="flex items-center gap-1 text-sm text-red-500">
+          <div className="flex items-center gap-1 text-sm text-destructive">
             <AlertCircle className="h-3 w-3" />
             {error}
           </div>
@@ -196,8 +196,8 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
         />
       </div>
 
-      <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
-        <h4 className="font-medium text-blue-900 mb-4 flex items-center gap-2">
+      <div className="bg-info/10 p-4 rounded-lg border-l-4 border-info">
+        <h4 className="font-medium text-info mb-4 flex items-center gap-2">
           <CalendarIcon className="h-4 w-4" />
           Programmation
         </h4>
@@ -237,7 +237,7 @@ export const EventEssentialStep: React.FC<EventEssentialStepProps> = ({
         </div>
 
         {startDate && endDate && !dateErrors.endDate && (
-          <div className="mt-3 p-2 bg-green-50 rounded text-sm text-green-700">
+          <div className="mt-3 p-2 bg-success/10 rounded text-sm text-success">
             Durée de l'événement : {Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))} jour(s)
           </div>
         )}

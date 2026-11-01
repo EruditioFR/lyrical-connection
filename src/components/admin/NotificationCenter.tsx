@@ -33,13 +33,13 @@ const NotificationCenter = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'upgrade_request':
-        return <CreditCard className="h-4 w-4 text-blue-500" />;
+        return <CreditCard className="h-4 w-4 text-info" />;
       case 'account_expiry':
-        return <Clock className="h-4 w-4 text-orange-500" />;
+        return <Clock className="h-4 w-4 text-warning" />;
       case 'inactive_account':
-        return <UserX className="h-4 w-4 text-red-500" />;
+        return <UserX className="h-4 w-4 text-destructive" />;
       case 'payment_completed':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-success" />;
       default:
         return <Info className="h-4 w-4 text-muted-foreground" />;
     }
@@ -84,7 +84,7 @@ const NotificationCenter = () => {
         <CardContent>
           <div className="animate-pulse space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 bg-gray-200 rounded"></div>
+              <div key={i} className="h-16 bg-muted rounded"></div>
             ))}
           </div>
         </CardContent>
@@ -98,7 +98,7 @@ const NotificationCenter = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             {unreadCount > 0 ? (
-              <BellRing className="h-5 w-5 text-blue-500" />
+              <BellRing className="h-5 w-5 text-info" />
             ) : (
               <Bell className="h-5 w-5" />
             )}
@@ -153,7 +153,7 @@ const NotificationCenter = () => {
                     <div
                       key={notification.id}
                       className={`p-4 rounded-lg border ${
-                        !notification.is_read ? 'bg-blue-50 border-blue-200' : 'bg-white'
+                        !notification.is_read ? 'bg-info/10 border-info/30' : 'bg-card'
                       } hover:shadow-sm transition-shadow`}
                     >
                       <div className="flex items-start gap-3">

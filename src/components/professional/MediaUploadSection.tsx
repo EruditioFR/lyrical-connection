@@ -311,7 +311,7 @@ const MediaUploadSection: React.FC<MediaUploadSectionProps> = ({ profileId }) =>
                   )}
 
                   {item.media_type === 'video' && (
-                    <div className="w-full h-32 bg-gray-100 rounded flex items-center justify-center">
+                    <div className="w-full h-32 bg-muted rounded flex items-center justify-center">
                       {isExternalUrl(item.file_path) ? (
                         <div className="text-center">
                           <Video className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
@@ -330,7 +330,7 @@ const MediaUploadSection: React.FC<MediaUploadSectionProps> = ({ profileId }) =>
                   {item.media_type === 'audio' && (
                     <div className="w-full">
                       {isExternalUrl(item.file_path) ? (
-                        <div className="h-12 bg-gray-100 rounded flex items-center justify-center">
+                        <div className="h-12 bg-muted rounded flex items-center justify-center">
                           <div className="text-center">
                             <Music className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
                             <p className="text-xs text-muted-foreground">Lien externe</p>
@@ -354,7 +354,7 @@ const MediaUploadSection: React.FC<MediaUploadSectionProps> = ({ profileId }) =>
                       </p>
                     )}
                     {isExternalUrl(item.file_path) && (
-                      <p className="text-xs text-blue-600 truncate mt-1">
+                      <p className="text-xs text-info truncate mt-1">
                         {item.file_path}
                       </p>
                     )}

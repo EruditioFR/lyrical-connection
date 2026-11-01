@@ -33,8 +33,16 @@
     --accent: 40 14% 89%;
     --accent-foreground: 40 17% 7%;
 
-    --destructive: 4 74% 42%;
+    --destructive: 4 74% 37%;
     --destructive-foreground: 0 0% 100%;
+
+    /* États (statuts, confirmations, informations) : teintes sourdes, lisibles sur le papier */
+    --success: 145 45% 26%;
+    --success-foreground: 0 0% 100%;
+    --warning: 30 80% 30%;
+    --warning-foreground: 0 0% 100%;
+    --info: 212 55% 34%;
+    --info-foreground: 0 0% 100%;
 
     --border: 40 13% 78%;
     --input: 40 13% 70%;
@@ -77,8 +85,15 @@
     --accent: 40 8% 18%;
     --accent-foreground: 43 19% 92%;
 
-    --destructive: 4 70% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 4 80% 64%;
+    --destructive-foreground: 40 17% 7%;
+
+    --success: 145 38% 60%;
+    --success-foreground: 40 17% 7%;
+    --warning: 38 75% 60%;
+    --warning-foreground: 40 17% 7%;
+    --info: 212 65% 72%;
+    --info-foreground: 40 17% 7%;
 
     --border: 40 8% 24%;
     --input: 40 8% 32%;
@@ -254,6 +269,5 @@
   .dark .text-lyrical-500, .dark .text-lyrical-600, .dark .text-lyrical-700, .dark .text-lyrical-800,
   .dark .text-lyrical-900, .dark .text-lyrical-950 { color: hsl(var(--foreground)); }
   /* Fonds clairs codés en dur (blanc, teintes 50/100) : surface sombre du thème */
-  .dark .bg-white, .dark .bg-lyrical-50, .dark .bg-lyrical-100, .dark .bg-gold-50, .dark .bg-gold-100,
-  .dark .bg-amber-50, .dark .bg-gray-50, .dark .bg-gray-100 { background-color: hsl(var(--card)); }
+  .dark .bg-white, .dark .bg-lyrical-50, .dark .bg-lyrical-100, .dark .bg-gold-50, .dark .bg-gold-100 { background-color: hsl(var(--card)); }
 }

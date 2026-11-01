@@ -297,21 +297,21 @@ const ProfessionalEventApplications = () => {
                     
                     <CardContent>
                       {application.artist_profiles?.bio && (
-                        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                        <div className="mb-4 p-3 bg-muted rounded-lg">
                           <h4 className="font-medium mb-2">Biographie</h4>
                           <p className="text-sm text-muted-foreground">{application.artist_profiles.bio}</p>
                         </div>
                       )}
                       
                       {application.motivation && (
-                        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                        <div className="mb-4 p-3 bg-info/10 rounded-lg">
                           <h4 className="font-medium mb-2">Motivation</h4>
                           <p className="text-sm text-muted-foreground">{application.motivation}</p>
                         </div>
                       )}
                       
                       {application.special_requirements && (
-                        <div className="mb-4 p-3 bg-yellow-50 rounded-lg">
+                        <div className="mb-4 p-3 bg-warning/10 rounded-lg">
                           <h4 className="font-medium mb-2">Exigences particulières</h4>
                           <p className="text-sm text-muted-foreground">{application.special_requirements}</p>
                         </div>

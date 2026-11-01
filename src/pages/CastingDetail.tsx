@@ -131,10 +131,10 @@ const CastingDetail = () => {
                     </div>
                     {casting.results_published ? (
                       <Badge className={
-                        application.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        application.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        application.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                        application.status === 'accepted' ? 'bg-success/15 text-success' :
+                        application.status === 'rejected' ? 'bg-destructive/15 text-destructive' :
+                        application.status === 'waitlisted' ? 'bg-info/15 text-info' :
+                        'bg-warning/15 text-warning'
                       }>
                         {application.status === 'accepted' ? 'Accepté(e)' :
                          application.status === 'rejected' ? 'Refusé(e)' :
@@ -310,7 +310,7 @@ const CastingDetail = () => {
                 {casting.application_deadline && (
                   <div>
                     <h4 className="font-medium text-foreground mb-1">Date limite</h4>
-                    <p className="text-muted-foreground font-medium text-red-600">
+                    <p className="text-muted-foreground font-medium text-destructive">
                       {formatDate(casting.application_deadline)}
                     </p>
                   </div>
@@ -364,10 +364,10 @@ const CastingDetail = () => {
                     </div>
                     {casting.results_published ? (
                       <Badge className={
-                        application.status === 'accepted' ? 'bg-green-100 text-green-800' :
-                        application.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                        application.status === 'waitlisted' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
+                        application.status === 'accepted' ? 'bg-success/15 text-success' :
+                        application.status === 'rejected' ? 'bg-destructive/15 text-destructive' :
+                        application.status === 'waitlisted' ? 'bg-info/15 text-info' :
+                        'bg-warning/15 text-warning'
                       }>
                         {application.status === 'accepted' ? 'Accepté(e)' :
                          application.status === 'rejected' ? 'Refusé(e)' :

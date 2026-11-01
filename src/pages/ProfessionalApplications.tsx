@@ -239,7 +239,7 @@ const ProfessionalApplications = () => {
                         {application.cover_letter && (
                           <div>
                             <h4 className="font-medium text-foreground mb-2">Lettre de motivation</h4>
-                            <p className="text-muted-foreground text-sm bg-gray-50 p-3 rounded-lg">
+                            <p className="text-muted-foreground text-sm bg-muted p-3 rounded-lg">
                               {application.cover_letter}
                             </p>
                           </div>
@@ -248,7 +248,7 @@ const ProfessionalApplications = () => {
                         {application.motivation && (
                           <div>
                             <h4 className="font-medium text-foreground mb-2">Motivation</h4>
-                            <p className="text-muted-foreground text-sm bg-gray-50 p-3 rounded-lg">
+                            <p className="text-muted-foreground text-sm bg-muted p-3 rounded-lg">
                               {application.motivation}
                             </p>
                           </div>
@@ -257,25 +257,25 @@ const ProfessionalApplications = () => {
                         {application.availability_notes && (
                           <div>
                             <h4 className="font-medium text-foreground mb-2">Disponibilités</h4>
-                            <p className="text-muted-foreground text-sm bg-gray-50 p-3 rounded-lg">
+                            <p className="text-muted-foreground text-sm bg-muted p-3 rounded-lg">
                               {application.availability_notes}
                             </p>
                           </div>
                         )}
 
                         {application.professional_notes && (
-                          <div className="bg-blue-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-blue-900 mb-2">Vos notes</h4>
-                            <p className="text-blue-800 text-sm">
+                          <div className="bg-info/10 p-4 rounded-lg">
+                            <h4 className="font-medium text-info mb-2">Vos notes</h4>
+                            <p className="text-info text-sm">
                               {application.professional_notes}
                             </p>
                           </div>
                         )}
 
                         {application.audition_scheduled_at && (
-                          <div className="bg-green-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-green-900 mb-2">Audition programmée</h4>
-                            <p className="text-green-800 text-sm">
+                          <div className="bg-success/10 p-4 rounded-lg">
+                            <h4 className="font-medium text-success mb-2">Audition programmée</h4>
+                            <p className="text-success text-sm">
                               {new Date(application.audition_scheduled_at).toLocaleDateString('fr-FR', {
                                 weekday: 'long',
                                 year: 'numeric',
@@ -286,7 +286,7 @@ const ProfessionalApplications = () => {
                               })}
                             </p>
                             {application.audition_notes && (
-                              <p className="text-green-700 text-sm mt-2">
+                              <p className="text-success text-sm mt-2">
                                 {application.audition_notes}
                               </p>
                             )}

@@ -98,19 +98,19 @@ export default function SubscriptionSuccess() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Success Card */}
-          <Card className="border-green-200 bg-green-50/50">
+          <Card className="border-success/30 bg-success/50">
             <CardHeader className="text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-success/15">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
-              <CardTitle className="text-2xl font-bold text-green-800">
+              <CardTitle className="text-2xl font-bold text-success">
                 Félicitations ! Votre abonnement est activé
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
+              <Alert className="border-success/30 bg-success/10">
+                <CheckCircle className="h-4 w-4 text-success" />
+                <AlertDescription className="text-success">
                   {subscription?.plan?.name?.toLowerCase().includes('premium') ? (
                     <>
                       Votre <strong>abonnement Premium</strong> a été activé avec succès ! 

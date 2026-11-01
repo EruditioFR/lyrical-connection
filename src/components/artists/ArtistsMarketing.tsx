@@ -61,7 +61,7 @@ const ArtistsMarketing = () => {
       </section>
 
       {/* Artistes réels */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-card">
         <div className="container mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">
             Nos artistes membres
@@ -222,7 +222,7 @@ const ArtistsMarketing = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white p-8 rounded-lg shadow-lg">
+            <div className="bg-card p-8 rounded-lg shadow-lg">
               <h3 className="text-2xl font-serif font-bold mb-4">Professionnels</h3>
               <p className="text-muted-foreground mb-6">
                 Vous êtes directeur artistique, coach vocal ou organisateur d'événements ? 

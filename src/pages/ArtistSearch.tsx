@@ -279,10 +279,10 @@ const ArtistSearch = () => {
         {hasActiveFilters && (
           <div className="mb-4 text-sm text-muted-foreground">
             <span className="font-medium">Critères actifs :</span>
-            {searchTerm && <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-md">"{searchTerm}"</span>}
-            {voiceType && <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-md">{voiceType}</span>}
-            {location && <span className="ml-2 px-2 py-1 bg-purple-100 text-purple-800 rounded-md">{location}</span>}
-            {Object.values(repertoireFilters).some(Boolean) && <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-800 rounded-md">Répertoire</span>}
+            {searchTerm && <span className="ml-2 px-2 py-1 bg-info/15 text-info rounded-md">"{searchTerm}"</span>}
+            {voiceType && <span className="ml-2 px-2 py-1 bg-success/15 text-success rounded-md">{voiceType}</span>}
+            {location && <span className="ml-2 px-2 py-1 bg-gold-100 text-gold-800 rounded-md">{location}</span>}
+            {Object.values(repertoireFilters).some(Boolean) && <span className="ml-2 px-2 py-1 bg-warning/15 text-warning rounded-md">Répertoire</span>}
           </div>
         )}
 

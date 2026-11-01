@@ -132,7 +132,7 @@ const DeactivateAccountDialog = ({ account, onAccountUpdated }: DeactivateAccoun
           <AlertDialogAction
             onClick={handleToggleActive}
             disabled={isProcessing}
-            className={isActive ? "bg-orange-600 text-white hover:bg-orange-700" : "bg-green-600 text-white hover:bg-green-700"}
+            className={isActive ? "bg-warning text-warning-foreground hover:bg-warning/90" : "bg-success text-success-foreground hover:bg-success/90"}
           >
             {isProcessing ? 'Traitement...' : (isActive ? 'Désactiver le compte' : 'Réactiver le compte')}
           </AlertDialogAction>

@@ -83,13 +83,13 @@ export const SubscriptionManager = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-100 text-green-800">Actif</Badge>;
+        return <Badge className="bg-success/15 text-success">Actif</Badge>;
       case 'trialing':
-        return <Badge className="bg-blue-100 text-blue-800">Période d'essai</Badge>;
+        return <Badge className="bg-info/15 text-info">Période d'essai</Badge>;
       case 'past_due':
-        return <Badge className="bg-yellow-100 text-yellow-800">Paiement en retard</Badge>;
+        return <Badge className="bg-warning/15 text-warning">Paiement en retard</Badge>;
       case 'canceled':
-        return <Badge className="bg-red-100 text-red-800">Annulé</Badge>;
+        return <Badge className="bg-destructive/15 text-destructive">Annulé</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }

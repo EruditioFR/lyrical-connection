@@ -19,7 +19,16 @@ Les garde-fous automatiques sont dans `src/design-system.test.ts` (lancés par `
 | `primary` | encre | boutons principaux | — |
 | `border` | filet `hsl(40 13% 78%)` | séparations, contours | traits seulement |
 | `ring`, `gold-600` | rideau `#9e1b32` | accent : étiquettes, focus, soulignés | 7:1 |
-| `destructive` | `hsl(4 74% 42%)` | suppression uniquement | — |
+| `destructive` | `hsl(4 74% 37%)` | suppression, erreurs | 6,6:1 |
+| `success` | `hsl(145 45% 26%)` | statut accepté, publié, confirmé | 6,6:1 |
+| `warning` | `hsl(30 80% 30%)` | en attente, à vérifier | 5,9:1 |
+| `info` | `hsl(212 55% 34%)` | information, statut en cours | 6,9:1 |
+
+Les jetons d'état s'emploient en texte (`text-success`), en fond teinté (`bg-success/15`, texte
+toujours ≥ 4,5:1) ou en aplat avec leur couleur de texte (`bg-success text-success-foreground`).
+En mode sombre ils sont éclaircis et leur texte d'aplat passe à l'encre. Ils servent aux **états**,
+jamais aux **catégories** (type d'événement, d'œuvre, niveau) : celles-ci sont des étiquettes neutres à
+filet (`border border-border text-muted-foreground`), le libellé suffit.
 
 Le rouge rideau n'est **jamais** la couleur des boutons principaux : il resterait confondu avec les
 actions de suppression. Les boutons sont à l'encre (papier en mode sombre).
@@ -48,6 +57,7 @@ prennent la surface sombre du thème.
 | Bouton principal | variante par défaut (encre) — ne pas surcharger la couleur |
 | Bouton secondaire | `variant="outline"` |
 | Carte | contour fin, pas d'ombre ; préférer des listes séparées par des filets |
+| Liste éditoriale | colonne de titre (étiquette rouge + titre serif) à gauche, liste `divide-y` numérotée « 01, 02… » à droite ; voir `pages/Features.tsx` |
 | Écoute | bouton rond de 44 px minimum, `aria-label` « Écouter … », `aria-pressed` |
 | Images d'illustration | photos réelles des artistes et des productions ; pas d'image générée |
 
@@ -63,9 +73,9 @@ prennent la surface sombre du thème.
 ## Garde-fous automatiques
 
 `npm test` échoue si l'un de ces motifs réapparaît : dégradé décoratif, texte en dégradé, emoji
-décoratif, bouton avec une couleur maison au lieu d'une variante du thème.
+décoratif, bouton avec une couleur maison au lieu d'une variante du thème, couleur Tailwind codée en
+dur (`text-green-600`, `bg-gray-100`…), fond `bg-white` opaque.
 
 ## Reste à reprendre
 
-- Environ 600 couleurs Tailwind codées en dur (statuts, pages admin, page du concours Sumi Jo en ambre).
-- Les pages de présentation (castings, fonctionnalités) gardent leurs grilles de cartes : à transformer en listes éditoriales.
+- Pages de présentation encore en grilles de cartes : artistes, professionnels, événements (`*Marketing.tsx`), accueil (`FeaturesArtists`, `FeaturesProfessionals`, `PortalsSection`). Modèle à suivre : `Features.tsx` et `CastingsMarketing.tsx`.

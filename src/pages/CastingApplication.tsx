@@ -136,7 +136,7 @@ const CastingApplication = () => {
                       {...form.register('cover_letter')}
                     />
                     {form.formState.errors.cover_letter && (
-                      <p className="text-sm text-red-600 mt-1">
+                      <p className="text-sm text-destructive mt-1">
                         {form.formState.errors.cover_letter.message}
                       </p>
                     )}
@@ -153,7 +153,7 @@ const CastingApplication = () => {
                       {...form.register('motivation')}
                     />
                     {form.formState.errors.motivation && (
-                      <p className="text-sm text-red-600 mt-1">
+                      <p className="text-sm text-destructive mt-1">
                         {form.formState.errors.motivation.message}
                       </p>
                     )}
@@ -224,7 +224,7 @@ const CastingApplication = () => {
                 {casting.application_deadline && (
                   <div>
                     <h4 className="font-medium text-foreground mb-1">Date limite</h4>
-                    <p className="text-red-600 font-medium">
+                    <p className="text-destructive font-medium">
                       {new Date(casting.application_deadline).toLocaleDateString('fr-FR')}
                     </p>
                   </div>

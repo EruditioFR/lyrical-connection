@@ -19,12 +19,12 @@ const CtaSection = () => {
             {t('cta.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
-            <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-white hover:bg-white/90 text-lyrical-900" asChild>
+            <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-card hover:bg-white/90 text-lyrical-900" asChild>
               <Link to="/inscription">
                 {t('cta.createAccount')}
               </Link>
             </Button>
-            <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-lyrical-900 bg-transparent" asChild>
+            <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg border-white text-white hover:bg-card hover:text-lyrical-900 bg-transparent" asChild>
               <Link to="/abonnements">
                 {t('cta.viewPlans')}
                 <ArrowRight className="ml-2 h-5 w-5" />

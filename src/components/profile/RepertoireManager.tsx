@@ -49,16 +49,6 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
     return matchesSearch && matchesCategory && matchesComposer && matchesRole && matchesYear && matchesVenue;
   });
 
-  const getMasteryColor = (level: string) => {
-    switch (level) {
-      case 'beginner': return 'bg-red-100 text-red-800';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'advanced': return 'bg-green-100 text-green-800';
-      case 'expert': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-foreground';
-    }
-  };
-
   const handleCloseForm = () => {
     setShowAddForm(false);
   };
@@ -260,61 +250,38 @@ export const RepertoireManager: React.FC<RepertoireManagerProps> = ({ artistProf
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ul className="divide-y divide-border border-y border-border">
           {filteredRepertoire.map((item) => (
-            <Card key={item.id} className="border-2 hover:border-amber-400/50 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-200 bg-amber-900/95 text-amber-50 border-amber-700/50">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg line-clamp-2 mb-1 text-amber-50">
-                      {item.lyrical_works?.title}
-                    </CardTitle>
-                    <p className="text-sm text-amber-200/80">
-                      {item.lyrical_works?.composer}
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="pt-0">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs border-amber-400/50 text-amber-200 bg-amber-800/50">
-                      {item.lyrical_works?.category}
-                    </Badge>
-                    <Badge className={`text-xs border-amber-500/50 bg-amber-700/70 text-amber-100 ${getMasteryColor(item.mastery_level || 'intermediate')}`}>
-                      {item.mastery_level}
-                    </Badge>
-                  </div>
-                  
-                  {item.work_roles && (
-                    <p className="text-sm text-amber-200/90">
-                      <strong className="text-amber-100">Rôle:</strong> {item.work_roles.role_name}
-                    </p>
-                  )}
-                  
-                  {item.performance_year && (
-                    <p className="text-sm text-amber-200/90">
-                      <strong className="text-amber-100">Année:</strong> {item.performance_year}
-                    </p>
-                  )}
-                  
-                  {item.venue && (
-                    <p className="text-sm text-amber-200/90">
-                      <strong className="text-amber-100">Lieu:</strong> {item.venue}
-                    </p>
-                  )}
-                  
-                  {item.notes && (
-                    <p className="text-xs text-amber-200/80 line-clamp-2 mt-2">
-                      {item.notes}
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <li key={item.id} className="py-4 grid gap-1 sm:grid-cols-[1fr_auto] sm:gap-6">
+              <div className="min-w-0">
+                <p className="work-title text-base">{item.lyrical_works?.title}</p>
+                {item.lyrical_works?.composer && (
+                  <p className="composer-name">{item.lyrical_works.composer}</p>
+                )}
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {[
+                    item.work_roles?.role_name && `Rôle : ${item.work_roles.role_name}`,
+                    item.performance_year && `${item.performance_year}`,
+                    item.venue,
+                  ].filter(Boolean).join(' · ')}
+                </p>
+                {item.notes && (
+                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{item.notes}</p>
+                )}
+              </div>
+              <div className="flex items-start gap-2 sm:justify-end">
+                {item.lyrical_works?.category && (
+                  <Badge variant="outline" className="text-xs font-normal">
+                    {item.lyrical_works.category}
+                  </Badge>
+                )}
+                <Badge variant="outline" className="text-xs font-normal">
+                  {item.mastery_level}
+                </Badge>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

@@ -30,13 +30,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
 
   const getEventTypeColor = (type: string) => {
     const colors = {
-      masterclass: 'bg-purple-100 text-purple-800',
-      stage: 'bg-blue-100 text-blue-800',
-      concours: 'bg-green-100 text-green-800',
-      atelier: 'bg-orange-100 text-orange-800',
-      conference: 'bg-gray-100 text-foreground'
+      masterclass: 'border border-border bg-transparent text-muted-foreground',
+      stage: 'border border-border bg-transparent text-muted-foreground',
+      concours: 'border border-border bg-transparent text-muted-foreground',
+      atelier: 'border border-border bg-transparent text-muted-foreground',
+      conference: 'border border-border bg-transparent text-muted-foreground'
     };
-    return colors[type as keyof typeof colors] || 'bg-gray-100 text-foreground';
+    return colors[type as keyof typeof colors] || 'border border-border bg-transparent text-muted-foreground';
   };
 
   const isRegistrationOpen = () => {
@@ -61,12 +61,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
 
   const getStatusColor = (status: string) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      waitlisted: 'bg-blue-100 text-blue-800',
-      accepted: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800'
+      pending: 'bg-warning/15 text-warning',
+      waitlisted: 'bg-info/15 text-info',
+      accepted: 'bg-success/15 text-success',
+      rejected: 'bg-destructive/15 text-destructive'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-foreground';
+    return colors[status as keyof typeof colors] || 'bg-muted text-foreground';
   };
 
   return (
@@ -154,7 +154,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
         <CardFooter className="flex-shrink-0">
           {application ? (
             <Button 
-              className="w-full bg-green-600 hover:bg-green-700"
+              className="w-full"
               onClick={() => {/* Naviger vers les détails de l'événement */}}
             >
               <div className="flex flex-col items-center">

@@ -81,7 +81,7 @@ const EventsMarketing = () => {
       </section>
 
       {/* Événements réels */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-card">
         <div className="container mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">
             Événements à venir

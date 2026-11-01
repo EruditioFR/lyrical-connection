@@ -54,7 +54,7 @@ const SavedSearchesPanel: React.FC<SavedSearchesPanelProps> = ({ onLoadSearch })
               return (
                 <div
                   key={search.id}
-                  className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
+                  className="border rounded-lg p-3 hover:bg-muted transition-colors"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="font-medium text-sm">{search.name}</h4>
@@ -63,7 +63,7 @@ const SavedSearchesPanel: React.FC<SavedSearchesPanelProps> = ({ onLoadSearch })
                       size="sm"
                       onClick={() => deleteSearchMutation.mutate(search.id)}
                       disabled={deleteSearchMutation.isPending}
-                      className="text-red-600 hover:text-red-800 h-6 w-6 p-0"
+                      className="text-destructive hover:text-destructive h-6 w-6 p-0"
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>

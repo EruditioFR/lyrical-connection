@@ -101,10 +101,10 @@ const InvoicesList = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <Euro className="h-5 w-5 text-green-600" />
+              <Euro className="h-5 w-5 text-success" />
               <div>
                 <p className="text-sm text-muted-foreground">Montant payé</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-success">
                   {formatAmount(totalPaid)}
                 </p>
                 {totalTestPaid > 0 && (
@@ -120,10 +120,10 @@ const InvoicesList = () => {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <Euro className="h-5 w-5 text-orange-600" />
+              <Euro className="h-5 w-5 text-warning" />
               <div>
                 <p className="text-sm text-muted-foreground">En attente</p>
-                <p className="text-2xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-warning">
                   {formatAmount(totalDue)}
                 </p>
                 {totalTestDue > 0 && (

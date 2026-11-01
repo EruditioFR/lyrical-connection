@@ -159,15 +159,15 @@ const UpgradeRequestManager = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="h-3 w-3 mr-1" />En attente</Badge>;
+        return <Badge className="bg-warning/15 text-warning"><Clock className="h-3 w-3 mr-1" />En attente</Badge>;
       case 'sent':
-        return <Badge className="bg-blue-100 text-blue-800"><Send className="h-3 w-3 mr-1" />Envoyé</Badge>;
+        return <Badge className="bg-info/15 text-info"><Send className="h-3 w-3 mr-1" />Envoyé</Badge>;
       case 'paid':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Payé</Badge>;
+        return <Badge className="bg-success/15 text-success"><CheckCircle className="h-3 w-3 mr-1" />Payé</Badge>;
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="h-3 w-3 mr-1" />Complété</Badge>;
+        return <Badge className="bg-success/15 text-success"><CheckCircle className="h-3 w-3 mr-1" />Complété</Badge>;
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-800"><XCircle className="h-3 w-3 mr-1" />Annulé</Badge>;
+        return <Badge className="bg-destructive/15 text-destructive"><XCircle className="h-3 w-3 mr-1" />Annulé</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -186,7 +186,7 @@ const UpgradeRequestManager = () => {
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-64 bg-gray-200 rounded"></div>
+        <div className="h-64 bg-muted rounded"></div>
       </div>
     );
   }
@@ -232,9 +232,9 @@ const UpgradeRequestManager = () => {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {request.profile_type === 'artist' ? (
-                          <User className="h-4 w-4 text-blue-500" />
+                          <User className="h-4 w-4 text-info" />
                         ) : (
-                          <Briefcase className="h-4 w-4 text-green-500" />
+                          <Briefcase className="h-4 w-4 text-success" />
                         )}
                         <Badge variant={request.profile_type === 'artist' ? 'default' : 'secondary'}>
                           {request.profile_type === 'artist' ? 'Artiste' : 'Professionnel'}

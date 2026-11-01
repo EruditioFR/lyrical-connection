@@ -78,7 +78,7 @@ const ArtistsList = () => {
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-2xl font-serif font-bold mb-4">Erreur</h1>
           <p className="text-muted-foreground">Impossible de charger la liste des artistes.</p>
-          <p className="text-sm text-red-500 mt-2">{error?.message || 'Erreur inconnue'}</p>
+          <p className="text-sm text-destructive mt-2">{error?.message || 'Erreur inconnue'}</p>
         </div>
       </Layout>
     );

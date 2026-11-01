@@ -139,9 +139,9 @@ export const MailboxSidebar = ({
                   className={cn(
                     "ml-auto text-xs px-2 py-0.5",
                     folder.id === 'inbox' && "bg-primary text-primary-foreground",
-                    folder.id === 'starred' && "bg-yellow-500 text-white",
-                    folder.id === 'drafts' && "bg-blue-500 text-white",
-                    folder.id === 'trash' && "bg-red-500 text-white"
+                    folder.id === 'starred' && "bg-warning text-warning-foreground",
+                    folder.id === 'drafts' && "bg-info text-info-foreground",
+                    folder.id === 'trash' && "bg-destructive text-destructive-foreground"
                   )}
                 >
                   {folder.count}

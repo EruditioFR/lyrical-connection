@@ -22,21 +22,21 @@ const SumiJoBanner = ({ artistProfileId }: SumiJoBannerProps) => {
   }
 
   return (
-    <Card className="border-amber-200 dark:border-amber-800 bg-amber-50 overflow-hidden">
+    <Card className="border-gold-200 dark:border-gold-800 bg-gold-50 overflow-hidden">
       <CardContent className="p-4 md:p-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-full bg-gold-400 flex items-center justify-center flex-shrink-0">
               <Star className="w-6 h-6 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">{sumiJoBadge.badge_icon}</span>
-                <h3 className="font-semibold text-amber-900 dark:text-amber-100">
+                <h3 className="font-semibold text-gold-900 dark:text-gold-100">
                   {sumiJoBadge.badge_name}
                 </h3>
               </div>
-              <p className="text-sm text-amber-700 dark:text-amber-300">
+              <p className="text-sm text-gold-700 dark:text-gold-300">
                 Vous êtes inscrit au Concours International Sumi Jo 2026
               </p>
             </div>
@@ -45,7 +45,7 @@ const SumiJoBanner = ({ artistProfileId }: SumiJoBannerProps) => {
             variant="outline" 
             size="sm"
             onClick={() => navigate('/profil')}
-            className="hidden md:flex border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
+            className="hidden md:flex border-gold-300 text-gold-700 hover:bg-gold-100 dark:border-gold-700 dark:text-gold-300 dark:hover:bg-gold-900/30"
           >
             Voir mon profil
             <ArrowRight className="w-4 h-4 ml-2" />

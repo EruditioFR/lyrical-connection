@@ -35,11 +35,11 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
   const getStatusBorder = (status: string) => {
     switch (status) {
       case 'draft':
-        return 'border-l-4 border-l-gray-400';
+        return 'border-l-4 border-l-border';
       case 'published':
-        return 'border-l-4 border-l-green-500';
+        return 'border-l-4 border-l-success';
       case 'completed':
-        return 'border-l-4 border-l-blue-500';
+        return 'border-l-4 border-l-info';
       default:
         return '';
     }
@@ -84,7 +84,7 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
             className="w-full h-48 object-cover object-center rounded-t-md"
           />
         ) : (
-          <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center">
+          <div className="w-full h-48 bg-muted rounded-t-md flex items-center justify-center">
             <span className="text-muted-foreground">Aucune image</span>
           </div>
         )}
