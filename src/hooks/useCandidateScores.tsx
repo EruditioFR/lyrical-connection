@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { isMissingConflictTarget } from '@/lib/supabaseErrors';
+import { useAuth } from '@/hooks/useAuth';
 
 interface CandidateScore {
   id: string;
@@ -13,8 +16,37 @@ interface CandidateScore {
   updated_at: string;
 }
 
+export interface ScoreRow {
+  application_id: string;
+  criteria_id: string;
+  score: number;
+  comments?: string | null;
+  scored_by: string;
+}
+
+/** Enregistre (ou remplace) la note d'un juré sur un critère */
+export const saveCandidateScore = async (row: ScoreRow) => {
+  // Une note par critère et par juré ; sans onConflict, re-noter créait un doublon refusé
+  let { data, error } = await supabase
+    .from('candidate_scores')
+    .upsert(row, { onConflict: 'application_id,criteria_id,scored_by' })
+    .select()
+    .single();
+  if (isMissingConflictTarget(error)) {
+    // Base pas encore migrée : contrainte unique (candidature, critère)
+    ({ data, error } = await supabase
+      .from('candidate_scores')
+      .upsert(row, { onConflict: 'application_id,criteria_id' })
+      .select()
+      .single());
+  }
+  if (error) throw error;
+  return data;
+};
+
 export const useCandidateScores = (applicationId?: string) => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { data: scores, isLoading } = useQuery({
     queryKey: ['candidate-scores', applicationId],
@@ -40,20 +72,13 @@ export const useCandidateScores = (applicationId?: string) => {
     }) => {
       if (!applicationId) throw new Error('Application ID required');
       
-      const { data, error } = await supabase
-        .from('candidate_scores')
-        .upsert({
-          application_id: applicationId,
-          criteria_id: scoreData.criteria_id,
-          score: scoreData.score,
-          comments: scoreData.comments,
-          scored_by: (await supabase.auth.getUser()).data.user?.id
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      return saveCandidateScore({
+        application_id: applicationId,
+        criteria_id: scoreData.criteria_id,
+        score: scoreData.score,
+        comments: scoreData.comments,
+        scored_by: (await supabase.auth.getUser()).data.user?.id as string
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['candidate-scores', applicationId] });
@@ -66,8 +91,14 @@ export const useCandidateScores = (applicationId?: string) => {
     return Math.round((total / scores.length) * 10) / 10;
   };
 
+  // Référence stable : CandidateScoring s'en sert comme dépendance d'effet
+  const myScores = useMemo(() => (scores || []).filter(s => s.scored_by === user?.id), [scores, user?.id]);
+
   return {
+    // Toutes les notes visibles (le propriétaire du casting voit celles de chaque juré)
     scores: scores || [],
+    // Les notes de l'utilisateur connecté, pour pré-remplir sa grille
+    myScores,
     isLoading,
     upsertScore,
     getAverageScore,

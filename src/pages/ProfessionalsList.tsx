@@ -84,7 +84,7 @@ const ProfessionalsList = () => {
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-xl font-semibold text-white">
+                <h3 className="text-xl font-semibold text-foreground">
                   {professional.company_name}
                 </h3>
                 {professional.public_visibility_premium && (
@@ -104,13 +104,13 @@ const ProfessionalsList = () => {
                 {professional.professional_role === 'producer' && 'Producteur'}
               </Badge>
               
-              <div className="flex items-center text-white text-sm mb-2">
+              <div className="flex items-center text-muted-foreground text-sm mb-2">
                 <MapPin className="w-4 h-4 mr-1" />
                 {professional.location || 'Lieu non spécifié'}
               </div>
               
               {isUserAuthenticated && (
-                <div className="flex items-center text-white text-sm">
+                <div className="flex items-center text-muted-foreground text-sm">
                   <Target className="w-4 h-4 mr-1" />
                   Rayon: {professional.intervention_radius || 50} km
                 </div>
@@ -133,7 +133,7 @@ const ProfessionalsList = () => {
           </div>
 
           {professional.bio && (
-            <p className="text-white text-sm mb-4 line-clamp-3">
+            <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
               {professional.bio}
             </p>
           )}
@@ -200,17 +200,23 @@ const ProfessionalsList = () => {
           />
         </div>
 
-        <ScrollArea className="rounded-md border">
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
-            {filteredProfessionals.map(professional => (
-              <ProfessionalCard 
-                key={professional.id} 
-                professional={professional} 
-                isUserAuthenticated={!!user}
-              />
-            ))}
-          </div>
-        </ScrollArea>
+        {filteredProfessionals.length === 0 ? (
+          <p className="rounded-md border p-8 text-center text-muted-foreground">
+            {searchQuery ? 'Aucun professionnel ne correspond à votre recherche.' : 'Aucun professionnel à afficher pour le moment.'}
+          </p>
+        ) : (
+          <ScrollArea className="rounded-md border">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
+              {filteredProfessionals.map(professional => (
+                <ProfessionalCard
+                  key={professional.id}
+                  professional={professional}
+                  isUserAuthenticated={!!user}
+                />
+              ))}
+            </div>
+          </ScrollArea>
+        )}
       </div>
     </Layout>
   );

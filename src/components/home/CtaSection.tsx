@@ -11,7 +11,7 @@ const CtaSection = () => {
   const contentRef = useAnimateOnScroll();
   
   return (
-    <section className="bg-gradient-to-r from-lyrical-900 to-gold-900 text-white py-24">
+    <section className="bg-lyrical-900 text-white py-24">
       <div className="container mx-auto px-4 md:px-6">
         <div ref={contentRef} className="max-w-5xl mx-auto text-center space-y-6 text-appear">
           <h2 className="text-3xl md:text-4xl font-serif font-bold">{t('cta.title')}</h2>

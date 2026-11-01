@@ -10,6 +10,12 @@ import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
+import { attachmentName } from '@/lib/messageAttachments';
+
+// Le texte des messages est saisi par les utilisateurs : on l'échappe avant de l'insérer dans le HTML exporté
+const esc = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
 interface Message {
   id: string;
   sender_id: string;
@@ -133,11 +139,11 @@ export const MessageExport = ({ messages, selectedMessages, folder }: MessageExp
     ${messagesToExport.map(message => `
         <div class="message">
             <div class="message-header">
-                <div class="subject ${!message.is_read ? 'unread' : ''}">${message.subject || '(sans objet)'}</div>
+                <div class="subject ${!message.is_read ? 'unread' : ''}">${esc(message.subject || '(sans objet)')}</div>
                 <div class="metadata">
-                    <strong>De :</strong> ${message.sender?.stage_name || message.sender?.company_name || 'Inconnu'} 
+                    <strong>De :</strong> ${esc(message.sender?.stage_name || message.sender?.company_name || 'Inconnu')} 
                     <br>
-                    <strong>À :</strong> ${message.recipient?.stage_name || message.recipient?.company_name || 'Inconnu'}
+                    <strong>À :</strong> ${esc(message.recipient?.stage_name || message.recipient?.company_name || 'Inconnu')}
                     <br>
                     <strong>Date :</strong> ${new Date(message.created_at).toLocaleDateString('fr-FR')} à ${new Date(message.created_at).toLocaleTimeString('fr-FR')}
                     ${message.is_starred ? '<span class="starred"> ★</span>' : ''}
@@ -146,11 +152,11 @@ export const MessageExport = ({ messages, selectedMessages, folder }: MessageExp
                 </div>
             </div>
             <div class="message-body">
-                <div class="content">${message.content}</div>
+                <div class="content">${esc(message.content)}</div>
                 ${message.attachment_urls && message.attachment_urls.length > 0 ? `
                     <div class="attachments">
                         <strong>Pièces jointes :</strong><br>
-                        ${message.attachment_urls.map(url => `<span class="attachment">${url.split('/').pop()}</span>`).join('')}
+                        ${message.attachment_urls.map(url => `<span class="attachment">${esc(attachmentName(url))}</span>`).join('')}
                     </div>
                 ` : ''}
             </div>

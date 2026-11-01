@@ -34,9 +34,9 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
       stage: 'bg-blue-100 text-blue-800',
       concours: 'bg-green-100 text-green-800',
       atelier: 'bg-orange-100 text-orange-800',
-      conference: 'bg-gray-100 text-gray-800'
+      conference: 'bg-gray-100 text-foreground'
     };
-    return colors[type as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[type as keyof typeof colors] || 'bg-gray-100 text-foreground';
   };
 
   const isRegistrationOpen = () => {
@@ -66,7 +66,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
       accepted: 'bg-green-100 text-green-800',
       rejected: 'bg-red-100 text-red-800'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-foreground';
   };
 
   return (
@@ -99,13 +99,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
       <CardContent className="flex-1">
         <div className="space-y-3">
           {event.description && (
-            <p className="text-sm text-gray-600 line-clamp-3">
+            <p className="text-sm text-muted-foreground line-clamp-3">
               {event.description}
             </p>
           )}
 
           <div className="space-y-2">
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
               <span>
                 {format(new Date(event.start_date), 'dd MMMM yyyy', { locale: fr })}
@@ -116,14 +116,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
             </div>
 
             {event.location && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
                 <span>{event.location}</span>
               </div>
             )}
 
             {event.max_participants && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Users className="h-4 w-4 mr-2 flex-shrink-0" />
                 <span>
                   {event.applications_count || 0} / {event.max_participants} participants
@@ -132,14 +132,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, showApplyButton = f
             )}
 
             {event.price && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Euro className="h-4 w-4 mr-2 flex-shrink-0" />
                 <span>{event.price} {event.currency}</span>
               </div>
             )}
 
             {event.registration_deadline && (
-              <div className="flex items-center text-sm text-gray-600">
+              <div className="flex items-center text-sm text-muted-foreground">
                 <Clock className="h-4 w-4 mr-2 flex-shrink-0" />
                 <span>
                   Inscription jusqu'au {format(new Date(event.registration_deadline), 'dd MMMM yyyy', { locale: fr })}

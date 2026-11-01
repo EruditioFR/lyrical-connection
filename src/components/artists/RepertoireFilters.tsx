@@ -102,7 +102,7 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
         <div className="space-y-2">
           <Label htmlFor="work-search">Rechercher une œuvre spécifique</Label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="work-search"
               placeholder="Tapez le titre d'une œuvre..."
@@ -125,7 +125,7 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
                   }}
                 >
                   <div className="font-medium">{work.title}</div>
-                  <div className="text-sm text-gray-600">{work.composer}</div>
+                  <div className="text-sm text-muted-foreground">{work.composer}</div>
                 </div>
               ))}
             </div>
@@ -150,7 +150,7 @@ const RepertoireFilters: React.FC<RepertoireFiltersProps> = ({ filters, onFilter
         <div className="space-y-2">
           <Label htmlFor="air-search">Rechercher dans les airs (audio/vidéo)</Label>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="air-search"
               placeholder="Titre d'air, description..."

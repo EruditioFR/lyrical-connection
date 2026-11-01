@@ -314,8 +314,8 @@ const Auth = () => {
                 </div>
                 
                 <div className="text-left space-y-2">
-                  <h4 className="font-medium text-gray-900">Étapes suivantes :</h4>
-                  <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                  <h4 className="font-medium text-foreground">Étapes suivantes :</h4>
+                  <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
                     <li>Vérifiez votre boîte de réception (et dossier spam)</li>
                     <li>Cliquez sur le lien de confirmation dans l'email</li>
                     <li>Vous pourrez ensuite vous connecter à votre compte</li>
@@ -446,7 +446,7 @@ const Auth = () => {
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" 
+                        className="w-full" 
                         disabled={loading}
                       >
                         {loading ? 'Connexion...' : 'Se connecter'}
@@ -470,7 +470,7 @@ const Auth = () => {
                           <Button 
                             type="button"
                             onClick={handleForgotPassword} 
-                            className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" 
+                            className="w-full" 
                             disabled={loading}
                           >
                             {loading ? 'Envoi...' : 'Envoyer le lien de réinitialisation'}
@@ -565,7 +565,7 @@ const Auth = () => {
                    {userType === 'artist' && (
                      <div>
                        {/* Description du profil Artiste */}
-                       <div className="bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20 rounded-lg p-4 mb-6">
+                       <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
                          <div className="flex items-start gap-3">
                            <div className="bg-primary/10 rounded-full p-2">
                              <Star className="h-5 w-5 text-primary" />
@@ -631,7 +631,7 @@ const Auth = () => {
                           </div>
                         </div>
 
-                        <Button type="submit" className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-base font-medium" disabled={loading}>
+                        <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-base font-medium" disabled={loading}>
                           {loading ? <span className="flex items-center gap-2">
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                               Création en cours...
@@ -660,7 +660,7 @@ const Auth = () => {
                    {userType === 'professional' && (
                      <div>
                       {/* Description du profil Professionnel */}
-                      <div className="bg-gradient-to-br from-accent/5 to-primary/5 border border-accent/20 rounded-lg p-4 mb-6">
+                      <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 mb-6">
                         <div className="flex items-start gap-3">
                           <div className="bg-accent/10 rounded-full p-2">
                             <Building className="h-5 w-5 text-accent" />
@@ -757,7 +757,7 @@ const Auth = () => {
                           </div>
                         </div>
 
-                        <Button type="submit" className="w-full h-12 bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-base font-medium" disabled={loading}>
+                        <Button type="submit" className="w-full h-12 bg-accent hover:bg-accent/90 text-base font-medium" disabled={loading}>
                           {loading ? <span className="flex items-center gap-2">
                               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                               Création en cours...

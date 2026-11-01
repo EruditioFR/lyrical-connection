@@ -60,7 +60,7 @@ const Notifications = () => {
         return <Mail className="h-5 w-5 text-pink-500" />;
       case 'system':
       default:
-        return <AlertCircle className="h-5 w-5 text-gray-500" />;
+        return <AlertCircle className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -129,7 +129,7 @@ const Notifications = () => {
               {unreadCount > 0 ? (
                 <BellRing className="h-8 w-8 text-blue-500" />
               ) : (
-                <Bell className="h-8 w-8 text-gray-400" />
+                <Bell className="h-8 w-8 text-muted-foreground" />
               )}
               <div>
                 <h1 className="text-3xl font-bold">Notifications</h1>

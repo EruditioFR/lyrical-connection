@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -63,7 +63,8 @@ export const useBlogPosts = () => {
     }
   };
 
-  const fetchPostBySlug = async (slug: string): Promise<BlogPost> => {
+  // Stable references: BlogPost.tsx lists these as effect dependencies
+  const fetchPostBySlug = useCallback(async (slug: string): Promise<BlogPost> => {
     const { data, error } = await supabase
       .from('blog_posts')
       .select('*')
@@ -73,7 +74,7 @@ export const useBlogPosts = () => {
     
     if (error) throw error;
     return data as BlogPost;
-  };
+  }, []);
 
   const createPost = async (postData: any) => {
     if (!user) throw new Error('Utilisateur non connecté');
@@ -109,18 +110,18 @@ export const useBlogPosts = () => {
     if (error) throw error;
   };
 
-  const incrementViewCount = async (id: string) => {
+  const incrementViewCount = useCallback(async (post: BlogPost) => {
     try {
       const { error } = await supabase
         .from('blog_posts')
-        .update({ view_count: posts.find(p => p.id === id)?.view_count + 1 || 1 })
-        .eq('id', id);
+        .update({ view_count: (post.view_count || 0) + 1 })
+        .eq('id', post.id);
       
       if (error) throw error;
     } catch (err) {
       console.error('Erreur lors de l\'incrémentation des vues:', err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPublishedPosts();

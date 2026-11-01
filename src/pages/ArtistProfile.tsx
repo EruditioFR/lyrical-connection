@@ -31,7 +31,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUserType } from '@/hooks/useUserType';
 import PhotosTab from '@/components/profile/PhotosTab';
 import RepertoireTab from '@/components/profile/RepertoireTab';
-import ContactArtistDialog from '@/components/artists/ContactArtistDialog';
 import { useArtistPhotos } from '@/hooks/useArtistPhotos';
 import AirPlayer from '@/components/profile/AirPlayer';
 import ArtistPhotoPreview from '@/components/profile/ArtistPhotoPreview';
@@ -39,6 +38,8 @@ import { ComposeMessage } from '@/components/messaging/ComposeMessage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ArtistBadges from '@/components/profile/ArtistBadges';
 import JuryEvaluationPanel from '@/components/jury/JuryEvaluationPanel';
+import ProfessionalArtistTools from '@/components/professional/ProfessionalArtistTools';
+import AvailabilityTab from '@/components/profile/AvailabilityTab';
 
 
 const ArtistProfile = () => {
@@ -140,8 +141,8 @@ const ArtistProfile = () => {
     return (
       <Layout>
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Profil non trouvé</h1>
-          <p className="text-gray-600">Ce profil d'artiste n'existe pas ou n'est plus actif.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-4">Profil non trouvé</h1>
+          <p className="text-muted-foreground">Ce profil d'artiste n'existe pas ou n'est plus actif.</p>
           <Button 
             onClick={() => window.history.back()} 
             variant="outline" 
@@ -184,7 +185,7 @@ const ArtistProfile = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Banner */}
         <div 
-          className={`${isMobile ? 'h-48' : 'h-64'} bg-gradient-to-r from-blue-600 to-purple-600 relative`}
+          className={`${isMobile ? 'h-48' : 'h-64'} bg-lyrical-900 relative`}
           style={{
             backgroundImage: profile.cover_image_url ? `url(${profile.cover_image_url})` : undefined,
             backgroundSize: 'cover',
@@ -200,7 +201,7 @@ const ArtistProfile = () => {
                 variant="outline"
                 size={isMobile ? "default" : "lg"}
                 onClick={() => window.location.href = '/profil'}
-                className="bg-white/95 text-gray-900 border-white/30 hover:bg-white hover:text-gray-900 shadow-lg backdrop-blur-sm transition-all duration-300 font-semibold px-4"
+                className="bg-white/95 text-foreground border-white/30 hover:bg-white hover:text-gray-900 shadow-lg backdrop-blur-sm transition-all duration-300 font-semibold px-4"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 {isMobile ? 'Éditer' : 'Editer mon profil'}
@@ -247,13 +248,13 @@ const ArtistProfile = () => {
               <div className="flex-1 w-full">
                 <div className={`${isMobile ? 'space-y-4' : 'flex items-center justify-between'}`}>
                   <div className="w-full">
-                    <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-gray-900 mb-2`}>
+                    <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-foreground mb-2`}>
                       {profile.stage_name}
                     </h1>
                     
                     {/* Badges */}
                     <ArtistBadges artistProfileId={profile.id} className="mb-3" />
-                    <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-center gap-4'} text-gray-600 mb-4`}>
+                    <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-center gap-4'} text-muted-foreground mb-4`}>
                       {profile.voice_type && (
                         <Badge variant="secondary" className="text-sm w-fit">
                           {profile.voice_type}
@@ -321,8 +322,8 @@ const ArtistProfile = () => {
                         {/* Biographie */}
                         {profile.bio && (
                           <div>
-                            <h3 className="text-lg font-semibold text-gray-900 mb-3">À propos</h3>
-                            <p className="text-gray-700 leading-relaxed text-sm md:text-base">
+                            <h3 className="text-lg font-semibold text-foreground mb-3">À propos</h3>
+                            <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                               {profile.bio}
                             </p>
                           </div>
@@ -332,7 +333,7 @@ const ArtistProfile = () => {
                       {/* Galerie photos - Desktop seulement, sur mobile elle sera dans une section séparée */}
                       {!isMobile && (
                         <div className="lg:col-span-2">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                          <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
                             <Camera className="w-5 h-5" />
                             Galerie photos
                           </h3>
@@ -346,16 +347,11 @@ const ArtistProfile = () => {
                   {!isMobile && (
                     <div className="flex gap-2">
                       {!isOwnProfile && isProfessional && (
-                        <ContactArtistDialog 
-                          artistId={profile.id}
-                          artistName={profile.stage_name}
-                          trigger={
-                            <Button>
-                              <MessageCircle className="w-4 h-4 mr-2" />
-                              Contacter
-                            </Button>
-                          }
-                        />
+                        // Même chemin que sur mobile : le message arrive dans la messagerie de l'artiste
+                        <Button onClick={() => setShowComposeMessage(true)}>
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Contacter
+                        </Button>
                       )}
                     </div>
                   )}
@@ -378,6 +374,24 @@ const ArtistProfile = () => {
                   <ArtistPhotoPreview artistProfileId={profile.id} />
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {/* Suivi privé du professionnel : listes de projet, notes, étiquettes */}
+          {isProfessional && !isOwnProfile && professionalProfileId && (
+            <div className="mb-8">
+              <ProfessionalArtistTools
+                professionalProfileId={professionalProfileId}
+                artistProfileId={profile.id}
+                artistName={profile.stage_name}
+              />
+            </div>
+          )}
+
+          {/* Agenda déclaré par l'artiste (masqué s'il est vide) */}
+          {isProfessional && !isOwnProfile && (
+            <div className="mb-8">
+              <AvailabilityTab artistProfileId={profile.id} readOnly />
             </div>
           )}
 

@@ -188,7 +188,7 @@ export default i18n;`;
 
           <TabsContent value="export" className="space-y-4">
             <div className="space-y-2">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Exportez toutes les clés de traduction et leurs traductions au format JSON.
               </p>
               <div className="flex gap-2">
@@ -217,7 +217,7 @@ export default i18n;`;
 
           <TabsContent value="import" className="space-y-4">
             <div className="space-y-2">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Importez des traductions depuis un fichier JSON exporté précédemment.
               </p>
               <label className="text-sm font-medium">Données à importer:</label>
@@ -239,7 +239,7 @@ export default i18n;`;
 
           <TabsContent value="i18n" className="space-y-4">
             <div className="space-y-2">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Générez un fichier i18n compatible avec react-i18next basé sur les traductions actuelles.
               </p>
               <p className="text-xs text-amber-600">

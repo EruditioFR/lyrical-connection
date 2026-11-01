@@ -7,7 +7,8 @@ import { useArtists } from '@/hooks/useArtists';
 import { useArtistFavorites } from '@/hooks/useArtistFavorites';
 import { useArtistEvaluations } from '@/hooks/useArtistEvaluations';
 import { useProfessionalProfile } from '@/hooks/useProfessionalProfile';
-import { Heart, BarChart3, Users } from 'lucide-react';
+import { Heart, BarChart3, Users, ListChecks } from 'lucide-react';
+import ArtistListsPanel from '@/components/professional/ArtistListsPanel';
 import SearchFilters from '@/components/artists/SearchFilters';
 import ArtistsGrid from '@/components/artists/ArtistsGrid';
 import ArtistCard from '@/components/artists/ArtistCard';
@@ -104,7 +105,7 @@ const ArtistsManagement = () => {
       </Card>
 
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="h-auto flex-wrap justify-start">
           <TabsTrigger value="all" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Tous les artistes ({filteredArtists.length})
@@ -117,7 +118,15 @@ const ArtistsManagement = () => {
             <BarChart3 className="h-4 w-4" />
             Évalués ({evaluatedArtists.length})
           </TabsTrigger>
+          <TabsTrigger value="lists" className="flex items-center gap-2">
+            <ListChecks className="h-4 w-4" />
+            Mes listes
+          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="lists">
+          <ArtistListsPanel professionalProfileId={professionalProfile.id} />
+        </TabsContent>
 
         <TabsContent value="all">
           <ArtistsGrid

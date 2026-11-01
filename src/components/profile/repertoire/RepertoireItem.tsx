@@ -35,7 +35,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
       case 'oratorio': return 'bg-blue-100 text-blue-800';
       case 'song': return 'bg-green-100 text-green-800';
       case 'operetta': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-foreground';
     }
   };
 
@@ -90,7 +90,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
               )}
             </div>
             
-            <p className="text-gray-600 mb-2">
+            <p className="text-muted-foreground mb-2">
               <span className="font-medium">{item.lyrical_works.composer}</span>
               {item.work_roles && item.work_roles.aria_title ? (
                 <span> - {item.lyrical_works.title}</span>
@@ -101,7 +101,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
             
             {item.work_roles && (
               <div className="flex items-center gap-2 mb-2">
-                <User className="h-4 w-4 text-gray-500" />
+                <User className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">{item.work_roles.role_name}</span>
                 {item.work_roles.voice_type && (
                   <Badge variant="outline" className="text-xs">
@@ -144,7 +144,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
                           >
                             <div className="font-medium">{venueItem.name}</div>
                             {venueItem.city && (
-                              <div className="text-sm text-gray-600">
+                              <div className="text-sm text-muted-foreground">
                                 {venueItem.city}{venueItem.country && `, ${venueItem.country}`}
                               </div>
                             )}
@@ -190,7 +190,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
               // Mode affichage
               <div>
                 {(item.performance_year || item.venue) && (
-                  <div className="flex items-center gap-4 mb-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 mb-2 text-sm text-muted-foreground">
                     {item.performance_year && (
                       <span>Année: {item.performance_year}</span>
                     )}
@@ -201,7 +201,7 @@ const RepertoireItem: React.FC<RepertoireItemProps> = ({ item, onUpdate, onDelet
                 )}
                 
                 {item.notes && (
-                  <p className="text-sm text-gray-700 italic mt-2">{item.notes}</p>
+                  <p className="text-sm text-muted-foreground italic mt-2">{item.notes}</p>
                 )}
               </div>
             )}

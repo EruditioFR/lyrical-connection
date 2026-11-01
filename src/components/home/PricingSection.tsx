@@ -16,7 +16,7 @@ const allPlans = [{
   popular: false,
   cta: "Devenir Premium",
   icon: Star,
-  gradient: "from-lyrical-600 to-lyrical-700",
+  gradient: "bg-lyrical-800",
   userType: "artist"
 }, {
   name: "Premium Visibilité",
@@ -27,7 +27,7 @@ const allPlans = [{
   popular: true,
   cta: "Activer la visibilité premium",
   icon: Crown,
-  gradient: "from-amber-600 to-amber-700",
+  gradient: "bg-lyrical-600",
   userType: "artist",
   isPremiumAddon: true
 }, {
@@ -39,7 +39,7 @@ const allPlans = [{
   popular: false,
   cta: "Accéder à l'espace Pro",
   icon: Crown,
-  gradient: "from-gold-500 to-gold-600",
+  gradient: "bg-gold-600",
   userType: "professional"
 }];
 interface PricingSectionProps {
@@ -92,7 +92,7 @@ const PricingSection = ({
       profileId: artistProfile.id
     });
   };
-  return <section className="py-24 bg-gradient-to-b from-muted/30 to-background">
+  return <section className="py-24 bg-muted/30">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
         <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 text-appear">
@@ -111,18 +111,18 @@ const PricingSection = ({
           {plans.map((plan, index) => {
           const PricingCard = () => {
             const cardRef = useAnimateOnScroll();
-            return <div ref={cardRef} key={plan.name} className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-amber-200 bg-gradient-to-br from-amber-50/50 to-orange-50/30' : ''}`}>
+            return <div ref={cardRef} key={plan.name} className={`relative bg-card rounded-2xl border-2 p-8 transition-all duration-300 hover:shadow-xl text-appear ${plan.popular ? 'border-gold-200 shadow-lg scale-105' : 'border-border hover:border-lyrical-200'} ${plan.isPremiumAddon ? 'border-amber-200 bg-amber-50/50' : ''}`}>
               {/* Popular Badge */}
               {plan.popular && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-to-r from-amber-500 to-amber-600 text-white">
-                    ✨ Recommandé
+                  <Badge className="bg-gold-600 text-white">
+                    Recommandé
                   </Badge>
                 </div>}
 
 
               {/* Plan Header */}
               <div className="text-center mb-8">
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-r ${plan.gradient} mb-4`}>
+                <div className={`inline-flex p-3 rounded-xl ${plan.gradient} mb-4`}>
                   <plan.icon className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-serif font-bold mb-2">{plan.name}</h3>
@@ -134,7 +134,7 @@ const PricingSection = ({
                   <span className="text-muted-foreground">/ {plan.period}</span>
                 </div>
                 
-                {plan.isPremiumAddon && <p className="text-xs text-amber-600 mt-2">
+                {plan.isPremiumAddon && <p className="text-sm text-gold-700 mt-2">
                     En complément de votre abonnement principal
                   </p>}
               </div>
@@ -142,7 +142,7 @@ const PricingSection = ({
               {/* Features */}
               <div className="space-y-4 mb-8">
                 {plan.features.map((feature, featureIndex) => <div key={featureIndex} className="flex items-start space-x-3">
-                    <div className={`mt-1 p-1 rounded-full bg-gradient-to-r ${plan.gradient}`}>
+                    <div className={`mt-1 p-1 rounded-full ${plan.gradient}`}>
                       <Check className="h-3 w-3 text-white" />
                     </div>
                     <span className="text-sm">{feature}</span>
@@ -150,12 +150,12 @@ const PricingSection = ({
               </div>
 
               {/* CTA */}
-              {plan.isPremiumAddon ? <Button onClick={handlePremiumVisibility} disabled={isCreatingPremium} className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`}>
+              {plan.isPremiumAddon ? <Button onClick={handlePremiumVisibility} disabled={isCreatingPremium} className={`w-full py-6 text-lg font-medium ${plan.gradient} hover:opacity-90 text-white`}>
                   {isCreatingPremium ? <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                       Activation...
                     </> : plan.cta}
-                </Button> : <Button className={`w-full py-6 text-lg font-medium bg-gradient-to-r ${plan.gradient} hover:opacity-90 text-white`} asChild>
+                </Button> : <Button className={`w-full py-6 text-lg font-medium ${plan.gradient} hover:opacity-90 text-white`} asChild>
                   <Link to="/pricing">{plan.cta}</Link>
                 </Button>}
 

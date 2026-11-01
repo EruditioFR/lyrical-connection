@@ -46,7 +46,7 @@ const AdminProfile = () => {
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Informations principales */}
           <Card className="lg:col-span-2">
             <CardHeader>
@@ -56,7 +56,7 @@ const AdminProfile = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Adresse email
@@ -71,7 +71,7 @@ const AdminProfile = () => {
                   <label className="text-sm font-medium text-muted-foreground">
                     ID utilisateur
                   </label>
-                  <p className="text-sm font-mono bg-muted p-2 rounded mt-1">
+                  <p className="text-sm font-mono bg-muted p-2 rounded mt-1 break-all">
                     {user.id}
                   </p>
                 </div>

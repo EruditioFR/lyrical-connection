@@ -14,7 +14,7 @@ interface SectionTitleProps {
 
 /**
  * Elegant section title used across user / admin dashboards.
- * - Playfair Display serif heading
+ * - Source Serif 4 heading
  * - Gold eyebrow + accent underline
  */
 const SectionTitle = ({
@@ -76,7 +76,7 @@ const SectionTitle = ({
       </div>
       <div
         className={cn(
-          'mt-2 h-[2px] w-12 rounded-full bg-gradient-to-r from-gold-500 to-gold-300',
+          'mt-2 h-[2px] w-12 rounded-full bg-gold-500',
           align === 'center' && 'mx-auto'
         )}
       />

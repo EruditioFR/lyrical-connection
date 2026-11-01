@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { User, Phone, Music, Image as ImageIcon, Mic, Save, Crown } from 'lucide-react';
+import { User, Phone, Music, Image as ImageIcon, Mic, Save, Crown, CalendarX } from 'lucide-react';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import ProfileBasicInfo from './ProfileBasicInfo';
 import ContactInfo from './ContactInfo';
 import RepertoireTab from './RepertoireTab';
 import PhotosTab from './PhotosTab';
 import AudioTab from './AudioTab';
+import AvailabilityTab from './AvailabilityTab';
 import PremiumVisibilityCard from '@/components/premium/PremiumVisibilityCard';
 import SubscriptionSummary from '@/components/subscription/SubscriptionSummary';
 
@@ -119,7 +120,7 @@ const ArtistProfileForm = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="profile" className="flex items-center gap-2 body-text">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Profil</span>
@@ -139,6 +140,10 @@ const ArtistProfileForm = () => {
               <TabsTrigger value="audio" className="flex items-center gap-2 body-text" disabled={!profile}>
                 <Mic className="h-4 w-4" />
                 <span className="hidden sm:inline">Vos médias</span>
+              </TabsTrigger>
+              <TabsTrigger value="agenda" className="flex items-center gap-2 body-text" disabled={!profile}>
+                <CalendarX className="h-4 w-4" />
+                <span className="hidden sm:inline">Agenda</span>
               </TabsTrigger>
               <TabsTrigger value="premium" className="flex items-center gap-2 body-text" disabled={!profile}>
                 <Crown className="h-4 w-4" />
@@ -192,6 +197,16 @@ const ArtistProfileForm = () => {
             <TabsContent value="audio" className="mt-6">
               {profile ? (
                 <AudioTab artistProfileId={profile.id} />
+              ) : (
+                <div className="text-center py-8">
+                  <p className="secondary-text">Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="agenda" className="mt-6">
+              {profile ? (
+                <AvailabilityTab artistProfileId={profile.id} />
               ) : (
                 <div className="text-center py-8">
                   <p className="secondary-text">Créez d'abord votre profil dans l'onglet "Profil" pour accéder à cette section.</p>

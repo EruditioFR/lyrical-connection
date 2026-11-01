@@ -68,11 +68,11 @@ const Contact = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-lyrical-50/20">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-16">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-lyrical-700 to-gold-500 mb-6">
+            <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">
               Contactez-nous
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -229,7 +229,7 @@ const Contact = () => {
                         <Button
                           type="submit"
                           disabled={isSubmitting}
-                          className="w-full bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800 text-white"
+                          className="w-full"
                         >
                           {isSubmitting ? (
                             <>

@@ -129,7 +129,7 @@ export const CastingsFilterSidebar: React.FC<CastingsFilterSidebarProps> = ({
       {/* Sidebar */}
       <div className="fixed left-0 top-0 h-full w-80 bg-background border-r shadow-xl z-50 overflow-y-auto">
         <Card className="h-full rounded-none border-0">
-          <CardHeader className="pb-4 border-b bg-gradient-to-r from-lyrical-50 to-gold-50">
+          <CardHeader className="pb-4 border-b bg-lyrical-50">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <Search className="h-5 w-5 text-lyrical-600" />

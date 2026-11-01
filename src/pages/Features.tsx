@@ -122,13 +122,13 @@ const Features = () => {
   }];
   return <Layout>
       {/* Hero Section */}
-      <section className="py-24 bg-gradient-to-br from-lyrical-50 to-gold-50">
+      <section className="py-24 bg-lyrical-50">
         <div className="container mx-auto px-4 md:px-6">
           <div ref={heroRef} className="text-center max-w-4xl mx-auto text-appear">
             <Badge className="mb-6 bg-lyrical-100 text-lyrical-700 border-lyrical-200">
               Plateforme complète
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 bg-gradient-to-r from-lyrical-900 to-gold-800 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-foreground">
               Toutes les fonctionnalités pour réussir dans le lyrique
             </h1>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
@@ -136,7 +136,7 @@ const Features = () => {
               et professionnels avec des outils innovants et une technologie de pointe.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600" asChild>
+              <Button size="lg" asChild>
                 <Link to="/auth">Commencer gratuitement</Link>
               </Button>
               <Button variant="outline" size="lg" asChild>
@@ -252,7 +252,7 @@ const Features = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-lyrical-900 to-gold-900 text-white">
+      <section className="py-20 bg-lyrical-900 text-white">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-6">
             Prêt à développer votre carrière lyrique ?
@@ -264,7 +264,7 @@ const Features = () => {
             <Button size="lg" className="bg-white hover:bg-white/90 text-lyrical-900" asChild>
               <Link to="/auth">Commencer gratuitement</Link>
             </Button>
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10" asChild>
+            <Button variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10 hover:text-white" asChild>
               <Link to="/contact">Nous contacter</Link>
             </Button>
           </div>

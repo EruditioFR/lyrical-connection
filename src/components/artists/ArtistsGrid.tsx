@@ -3,6 +3,8 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Loader2 } from 'lucide-react';
 import ArtistCard from './ArtistCard';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface ArtistsGridProps {
   artists: any[];
@@ -14,6 +16,10 @@ interface ArtistsGridProps {
   isUserAuthenticated?: boolean;
   professionalProfileId?: string;
   showProfessionalActions?: boolean;
+  /** Sélection pour le comparateur ; sans ce prop, pas de case « Comparer » */
+  compareIds?: string[];
+  onToggleCompare?: (artistId: string) => void;
+  maxCompare?: number;
 }
 
 const ArtistsGrid: React.FC<ArtistsGridProps> = ({
@@ -25,7 +31,10 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
   onResetFilters,
   isUserAuthenticated = true,
   professionalProfileId,
-  showProfessionalActions = false
+  showProfessionalActions = false,
+  compareIds,
+  onToggleCompare,
+  maxCompare = 4
 }) => {
   console.log('ArtistsGrid - Rendering with:', {
     artists: artists.length,
@@ -84,7 +93,6 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
               {filteredArtists.map((artist, index) => {
-                console.log('Rendering artist card for:', artist.stage_name, 'at index:', index);
                 return (
                   <div 
                     key={artist.id}
@@ -100,6 +108,17 @@ const ArtistsGrid: React.FC<ArtistsGridProps> = ({
                       professionalProfileId={professionalProfileId}
                       showProfessionalActions={showProfessionalActions}
                     />
+                    {onToggleCompare && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Checkbox
+                          id={`compare-${artist.id}`}
+                          checked={compareIds?.includes(artist.id)}
+                          disabled={!compareIds?.includes(artist.id) && (compareIds?.length ?? 0) >= maxCompare}
+                          onCheckedChange={() => onToggleCompare(artist.id)}
+                        />
+                        <Label htmlFor={`compare-${artist.id}`} className="font-normal">Comparer</Label>
+                      </div>
+                    )}
                   </div>
                 );
               })}

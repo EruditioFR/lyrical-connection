@@ -398,6 +398,45 @@ export type Database = {
           },
         ]
       }
+      artist_badges: {
+        Row: {
+          artist_profile_id: string
+          awarded_at: string
+          awarded_by: string | null
+          badge_icon: string | null
+          badge_name: string
+          badge_type: string
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          metadata: Json | null
+        }
+        Insert: {
+          artist_profile_id: string
+          awarded_at?: string
+          awarded_by?: string | null
+          badge_icon?: string | null
+          badge_name: string
+          badge_type: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json | null
+        }
+        Update: {
+          artist_profile_id?: string
+          awarded_at?: string
+          awarded_by?: string | null
+          badge_icon?: string | null
+          badge_name?: string
+          badge_type?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json | null
+        }
+        Relationships: []
+      }
       artist_evaluations: {
         Row: {
           artist_profile_id: string
@@ -667,6 +706,47 @@ export type Database = {
           },
         ]
       }
+      artist_unavailabilities: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          end_date: string
+          id: string
+          kind: string
+          start_date: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          kind?: string
+          start_date: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          kind?: string
+          start_date?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_unavailabilities_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           content: string
@@ -862,6 +942,42 @@ export type Database = {
           },
           {
             foreignKeyName: "casting_invitations_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      casting_jury_members: {
+        Row: {
+          casting_id: string
+          created_at: string
+          id: string
+          professional_profile_id: string
+        }
+        Insert: {
+          casting_id: string
+          created_at?: string
+          id?: string
+          professional_profile_id: string
+        }
+        Update: {
+          casting_id?: string
+          created_at?: string
+          id?: string
+          professional_profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "casting_jury_members_casting_id_fkey"
+            columns: ["casting_id"]
+            isOneToOne: false
+            referencedRelation: "castings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "casting_jury_members_professional_profile_id_fkey"
             columns: ["professional_profile_id"]
             isOneToOne: false
             referencedRelation: "professional_profiles"
@@ -1438,8 +1554,12 @@ export type Database = {
           id: string
           is_deleted_by_recipient: boolean
           is_deleted_by_sender: boolean
+          is_purged_by_recipient: boolean
+          is_purged_by_sender: boolean
           is_read: boolean
           is_starred: boolean
+          is_starred_by_recipient: boolean
+          is_starred_by_sender: boolean
           read_at: string | null
           recipient_id: string
           reply_to_id: string | null
@@ -1454,8 +1574,12 @@ export type Database = {
           id?: string
           is_deleted_by_recipient?: boolean
           is_deleted_by_sender?: boolean
+          is_purged_by_recipient?: boolean
+          is_purged_by_sender?: boolean
           is_read?: boolean
           is_starred?: boolean
+          is_starred_by_recipient?: boolean
+          is_starred_by_sender?: boolean
           read_at?: string | null
           recipient_id: string
           reply_to_id?: string | null
@@ -1470,8 +1594,12 @@ export type Database = {
           id?: string
           is_deleted_by_recipient?: boolean
           is_deleted_by_sender?: boolean
+          is_purged_by_recipient?: boolean
+          is_purged_by_sender?: boolean
           is_read?: boolean
           is_starred?: boolean
+          is_starred_by_recipient?: boolean
+          is_starred_by_sender?: boolean
           read_at?: string | null
           recipient_id?: string
           reply_to_id?: string | null
@@ -1876,6 +2004,128 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      professional_artist_list_items: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          list_id: string
+          role_name: string | null
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          list_id: string
+          role_name?: string | null
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          list_id?: string
+          role_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_artist_list_items_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_artist_list_items_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: false
+            referencedRelation: "professional_artist_lists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_artist_lists: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          professional_profile_id: string
+          share_token: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          professional_profile_id: string
+          share_token?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          professional_profile_id?: string
+          share_token?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_artist_lists_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      professional_artist_notes: {
+        Row: {
+          artist_profile_id: string
+          created_at: string
+          id: string
+          note: string
+          professional_profile_id: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          artist_profile_id: string
+          created_at?: string
+          id?: string
+          note?: string
+          professional_profile_id: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          artist_profile_id?: string
+          created_at?: string
+          id?: string
+          note?: string
+          professional_profile_id?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_artist_notes_artist_profile_id_fkey"
+            columns: ["artist_profile_id"]
+            isOneToOne: false
+            referencedRelation: "artist_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_artist_notes_professional_profile_id_fkey"
+            columns: ["professional_profile_id"]
+            isOneToOne: false
+            referencedRelation: "professional_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       professional_availability: {
         Row: {
@@ -3009,6 +3259,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_shared_artist_list: { Args: { p_token: string }; Returns: Json }
+      purge_mail_messages: { Args: { p_ids: string[] }; Returns: number }
+      is_application_juror: { Args: { p_application_id: string }; Returns: boolean }
+      is_casting_juror: { Args: { p_casting_id: string }; Returns: boolean }
+      is_casting_owner: { Args: { p_casting_id: string }; Returns: boolean }
+      is_juror_for_professional: { Args: { p_professional_profile_id: string }; Returns: boolean }
       artist_matches_casting_criteria: {
         Args: { artist_profile_id_param: string; casting_id_param: string }
         Returns: boolean

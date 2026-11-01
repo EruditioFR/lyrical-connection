@@ -66,11 +66,11 @@ const SumiJoOnboarding = () => {
   if (!authLoading && !user) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-950">
+        <div className="min-h-screen bg-amber-50">
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-lg mx-auto text-center">
               <div className="mb-8">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-6">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-400 mb-6">
                   <Star className="w-10 h-10 text-white" />
                 </div>
                 <h1 className="text-3xl font-bold mb-4">Concours Sumi Jo 2026</h1>
@@ -81,7 +81,7 @@ const SumiJoOnboarding = () => {
               <Button 
                 onClick={() => navigate('/auth', { state: { returnTo: '/sumi-jo' } })}
                 size="lg"
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                className="bg-amber-500 hover:bg-amber-600"
               >
                 Se connecter / S'inscrire
                 <ArrowRight className="ml-2 w-4 h-4" />
@@ -97,11 +97,11 @@ const SumiJoOnboarding = () => {
   if (success && result) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-950">
+        <div className="min-h-screen bg-amber-50">
           <div className="container mx-auto px-4 py-16">
             <div className="max-w-lg mx-auto">
               <Card className="border-amber-200 dark:border-amber-800 shadow-xl overflow-hidden">
-                <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-6 text-center text-white">
+                <div className="bg-amber-500 p-6 text-center text-white">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
@@ -121,8 +121,7 @@ const SumiJoOnboarding = () => {
                   {result.badges && result.badges.length > 0 && (
                     <div className="bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 text-center">
                       <p className="text-sm text-muted-foreground mb-2">Badge obtenu</p>
-                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-400/50">
-                        <span>🌟</span>
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-400/50">
                         <span className="font-medium text-amber-700 dark:text-amber-300">
                           {result.badges[0]}
                         </span>
@@ -146,7 +145,7 @@ const SumiJoOnboarding = () => {
                   <div className="flex flex-col gap-3">
                     <Button 
                       onClick={() => navigate('/dashboard')}
-                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                      className="w-full bg-amber-500 hover:bg-amber-600"
                     >
                       Accéder à mon tableau de bord
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -171,15 +170,15 @@ const SumiJoOnboarding = () => {
   // Main form
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-amber-950">
+      <div className="min-h-screen bg-amber-50">
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto">
             {/* Hero Section */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-6 shadow-lg shadow-amber-500/30">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-amber-400 mb-6 shadow-lg shadow-amber-500/30">
                 <Star className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold mb-4 text-foreground">
                 Concours International Sumi Jo 2026
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg mx-auto">
@@ -222,7 +221,7 @@ const SumiJoOnboarding = () => {
 
                     <Button 
                       type="submit" 
-                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                      className="w-full bg-amber-500 hover:bg-amber-600"
                       disabled={isRedeeming}
                     >
                       {isRedeeming ? (
@@ -242,7 +241,7 @@ const SumiJoOnboarding = () => {
               </Card>
 
               {/* Benefits Card */}
-              <Card className="bg-gradient-to-br from-amber-500 to-orange-500 text-white border-0 shadow-lg">
+              <Card className="bg-amber-500 text-white border-0 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Star className="w-5 h-5" />
@@ -266,7 +265,7 @@ const SumiJoOnboarding = () => {
                   <div className="mt-6 pt-4 border-t border-white/20">
                     <div className="flex items-center gap-2 text-sm">
                       <span className="px-2 py-1 rounded-full bg-white/20 text-xs">
-                        🌟 Badge exclusif
+                        Badge exclusif
                       </span>
                       <span className="text-white/80">Candidat Sumi Jo 2026</span>
                     </div>

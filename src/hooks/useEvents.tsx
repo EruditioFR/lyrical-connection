@@ -133,7 +133,7 @@ export const useProfessionalEvents = () => {
         .from('professional_profiles')
         .select('id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error('Error fetching professional profile:', profileError);
@@ -223,7 +223,7 @@ export const useCreateEvent = () => {
         .from('professional_profiles')
         .select('id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error('Error fetching professional profile:', profileError);

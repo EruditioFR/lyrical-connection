@@ -17,7 +17,7 @@ interface RepertoireListProps {
 const RepertoireList: React.FC<RepertoireListProps> = ({ repertoire, onUpdate, onDelete, isUpdating }) => {
   if (repertoire.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-muted-foreground">
         <Music className="h-12 w-12 mx-auto mb-4 opacity-50" />
         <p>Aucun air dans votre répertoire</p>
         <p className="text-sm">Ajoutez votre premier air pour commencer</p>

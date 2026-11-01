@@ -61,7 +61,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
     <div className="space-y-6">
       {/* Key Metrics */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
+        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Vues totales</CardTitle>
             <Eye className="h-4 w-4 text-gold-600" />
@@ -74,7 +74,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
+        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Visiteurs uniques</CardTitle>
             <Users className="h-4 w-4 text-gold-600" />
@@ -87,7 +87,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
+        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Croissance</CardTitle>
             <TrendingUp className="h-4 w-4 text-gold-600" />
@@ -102,7 +102,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
+        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200 hover:border-gold-200/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-lyrical-800 dark:text-lyrical-200">Vues aujourd'hui</CardTitle>
             <Calendar className="h-4 w-4 text-gold-600" />
@@ -123,9 +123,9 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
       {/* Charts */}
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Daily Views Chart */}
-        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
+        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200">
           <CardHeader>
-            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Vues quotidiennes</CardTitle>
+            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Vues quotidiennes</CardTitle>
             <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
               Évolution des vues sur les 30 derniers jours
             </CardDescription>
@@ -160,9 +160,9 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
         </Card>
 
         {/* Weekly Views Chart */}
-        <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
+        <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200">
           <CardHeader>
-            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Vues hebdomadaires</CardTitle>
+            <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Vues hebdomadaires</CardTitle>
             <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
               Évolution des vues sur les 12 dernières semaines
             </CardDescription>
@@ -196,9 +196,9 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
       </div>
 
       {/* Recent Views */}
-      <Card className="border-2 border-gold-200/30 bg-gradient-to-br from-card to-gold-50/10 hover:shadow-lg transition-all duration-200">
+      <Card className="border-2 border-gold-200/30 bg-card hover:shadow-lg transition-all duration-200">
         <CardHeader>
-          <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Vues récentes</CardTitle>
+          <CardTitle className="font-serif text-xl tracking-tight text-lyrical-800 dark:text-lyrical-200 after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Vues récentes</CardTitle>
           <CardDescription className="text-lyrical-600 dark:text-lyrical-400">
             Les 20 dernières vues de votre profil
           </CardDescription>
@@ -209,7 +209,7 @@ const AnalyticsDashboard = ({ profileType }: AnalyticsDashboardProps) => {
               {recentViews.slice(0, 20).map((view, index) => (
                 <div key={view.id} className="flex items-center justify-between py-2 border-b border-gold-200/20 last:border-b-0">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-gold-100 to-lyrical-100 dark:from-gold-800 dark:to-lyrical-800 rounded-full flex items-center justify-center text-sm font-medium text-lyrical-700 dark:text-lyrical-200">
+                    <div className="w-8 h-8 bg-gold-100 rounded-full flex items-center justify-center text-sm font-medium text-lyrical-700 dark:text-lyrical-200">
                       {index + 1}
                     </div>
                     <div>

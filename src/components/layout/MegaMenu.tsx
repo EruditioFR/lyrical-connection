@@ -271,7 +271,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
 
   return (
     <div 
-      className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50"
+      className="absolute top-full left-0 right-0 bg-background border-t border-border shadow-lg z-50"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -279,7 +279,7 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {sections.map((section, sectionIndex) => (
             <div key={sectionIndex}>
-              <h3 className="font-semibold text-gray-900 mb-4 text-sm uppercase tracking-wide">
+              <h3 className="font-semibold text-foreground mb-4 text-sm uppercase tracking-wide">
                 {section.title}
               </h3>
               <ul className="space-y-3">
@@ -288,16 +288,16 @@ export const MegaMenu = ({ isOpen, onClose, menuType, onMouseEnter, onMouseLeave
                     <Link 
                       to={item.href}
                       onClick={onClose}
-                      className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                      className="flex items-center p-3 rounded-lg hover:bg-accent transition-colors group"
                     >
                       <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                         <item.icon className="w-5 h-5 text-primary" />
                       </div>
                       <div className="ml-3">
-                        <p className="font-medium text-gray-900 group-hover:text-primary transition-colors">
+                        <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                           {item.label}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {item.description}
                         </p>
                       </div>

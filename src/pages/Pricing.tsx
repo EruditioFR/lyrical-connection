@@ -207,8 +207,8 @@ export default function Pricing() {
 
         <div className="mt-12 text-center">
           {selectedUserType === 'artist' && (
-            <div className="mb-8 p-6 bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 rounded-lg max-w-4xl mx-auto">
-              <h3 className="text-lg font-semibold mb-2">🌟 Plan Premium Visibilité</h3>
+            <div className="mb-8 p-6 bg-primary/10 border border-primary/20 rounded-lg max-w-4xl mx-auto">
+              <h3 className="text-lg font-semibold mb-2">Plan Premium Visibilité</h3>
               <p className="text-muted-foreground text-sm mb-3">
                 Ajoutez l'option Premium Visibilité (+29€/mois) pour obtenir un badge premium, 
                 une priorité dans les résultats de recherche et des analytics avancées.

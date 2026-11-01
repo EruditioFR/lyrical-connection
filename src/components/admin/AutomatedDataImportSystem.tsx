@@ -287,7 +287,7 @@ const AutomatedDataImportSystem = () => {
       case 'completed': return <CheckCircle className="h-4 w-4 text-green-600" />;
       case 'loading': return <Clock className="h-4 w-4 text-blue-600 animate-spin" />;
       case 'error': return <AlertCircle className="h-4 w-4 text-red-600" />;
-      default: return <Clock className="h-4 w-4 text-gray-400" />;
+      default: return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -521,7 +521,7 @@ const AutomatedDataImportSystem = () => {
               </div>
               
               <div className="p-4 bg-muted rounded-lg">
-                <h4 className="font-medium mb-2">🌟 Avantages des APIs</h4>
+                <h4 className="font-medium mb-2">Avantages des APIs</h4>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• <strong>Données fiables</strong> : Sources reconnues et vérifiées</li>
                   <li>• <strong>Mise à jour automatique</strong> : Données toujours actuelles</li>

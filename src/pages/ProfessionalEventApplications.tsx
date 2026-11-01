@@ -119,8 +119,8 @@ const ProfessionalEventApplications = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Candidatures aux Événements</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">Candidatures aux Événements</h1>
+          <p className="text-muted-foreground mt-2">
             Gérez les candidatures reçues pour vos événements avec des statistiques détaillées
           </p>
         </div>
@@ -238,7 +238,7 @@ const ProfessionalEventApplications = () => {
                               {application.artist_profiles?.stage_name}
                             </CardTitle>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm text-gray-600">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm text-muted-foreground">
                               <div className="flex items-center gap-2">
                                 <User className="h-4 w-4" />
                                 <span>Type de voix: {application.artist_profiles?.voice_type || 'Non spécifié'}</span>
@@ -288,7 +288,7 @@ const ProfessionalEventApplications = () => {
                         
                         <div className="flex flex-col items-end gap-2">
                           {getStatusBadge(application.status)}
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-muted-foreground">
                             Niveau: {application.experience_level || 'Non spécifié'}
                           </span>
                         </div>
@@ -299,21 +299,21 @@ const ProfessionalEventApplications = () => {
                       {application.artist_profiles?.bio && (
                         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                           <h4 className="font-medium mb-2">Biographie</h4>
-                          <p className="text-sm text-gray-700">{application.artist_profiles.bio}</p>
+                          <p className="text-sm text-muted-foreground">{application.artist_profiles.bio}</p>
                         </div>
                       )}
                       
                       {application.motivation && (
                         <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                           <h4 className="font-medium mb-2">Motivation</h4>
-                          <p className="text-sm text-gray-700">{application.motivation}</p>
+                          <p className="text-sm text-muted-foreground">{application.motivation}</p>
                         </div>
                       )}
                       
                       {application.special_requirements && (
                         <div className="mb-4 p-3 bg-yellow-50 rounded-lg">
                           <h4 className="font-medium mb-2">Exigences particulières</h4>
-                          <p className="text-sm text-gray-700">{application.special_requirements}</p>
+                          <p className="text-sm text-muted-foreground">{application.special_requirements}</p>
                         </div>
                       )}
 
@@ -548,11 +548,11 @@ const ProfessionalEventApplications = () => {
         {!selectedEvent && (
           <Card>
             <CardContent className="py-12 text-center">
-              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Sélectionnez un événement
               </h3>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 Choisissez un événement dans la liste pour voir les candidatures et statistiques
               </p>
             </CardContent>

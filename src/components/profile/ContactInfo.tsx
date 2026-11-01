@@ -50,7 +50,7 @@ const ContactInfo = ({ formData, setFormData, onSubmit, isLoading, profile }: Co
 
       <Button 
         type="submit" 
-        className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+        className="w-full"
         disabled={isLoading}
       >
         {isLoading ? 'Sauvegarde...' : 'Mettre à jour les informations de contact'}

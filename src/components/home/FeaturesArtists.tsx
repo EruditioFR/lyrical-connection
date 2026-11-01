@@ -68,7 +68,7 @@ const FeaturesArtists = () => {
             </p>
           </div>
           <div className="mt-8">
-            <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
+            <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
               <Link to="/auth">Créer mon profil artiste</Link>
             </Button>
           </div>
@@ -88,16 +88,16 @@ const FeaturesArtists = () => {
                   key={index} 
                   className={`h-full transition-all duration-300 ease-out text-appear group hover:scale-105 ${
                     isLyrical 
-                      ? "bg-gradient-to-br from-background to-lyrical-50/30 border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
-                      : "bg-gradient-to-br from-background to-gold-50/30 border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
+                      ? "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-lyrical-500/10" 
+                      : "bg-background border-2 border-foreground/20 hover:border-foreground/40 hover:shadow-xl hover:shadow-gold-500/10"
                   }`}
                 >
                   <CardContent className="p-4 md:p-6 h-full flex flex-col text-center relative">
                     {/* Icon */}
                     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 mx-auto transition-all duration-300 ${
                       isLyrical 
-                        ? "bg-gradient-to-br from-lyrical-100 to-lyrical-200 group-hover:from-lyrical-200 group-hover:to-lyrical-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
-                        : "bg-gradient-to-br from-gold-100 to-gold-200 group-hover:from-gold-200 group-hover:to-gold-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
+                        ? "bg-lyrical-100 group-hover:bg-lyrical-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-lyrical-500/20" 
+                        : "bg-gold-100 group-hover:bg-gold-200 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-gold-500/20"
                     }`}>
                       <IconComponent className={`h-6 w-6 ${
                         isLyrical ? "text-lyrical-700" : "text-gold-700"
@@ -123,7 +123,7 @@ const FeaturesArtists = () => {
         
         {/* Mobile CTA */}
         <div className="md:hidden mt-8 text-center">
-          <Button className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
+          <Button className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
             <Link to="/auth">Créer mon profil artiste</Link>
           </Button>
         </div>
@@ -137,7 +137,7 @@ const FeaturesArtists = () => {
             Rejoignez les artistes lyriques qui utilisent déjà Lyrisphere, développez votre visibilité et décrochez des opportunités.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-gradient-to-r from-gold-600 to-gold-700 hover:from-gold-700 hover:to-gold-800 text-white" asChild>
+            <Button size="lg" className="bg-gold-600 hover:bg-gold-700 text-white" asChild>
               <Link to="/auth">Créer mon profil gratuit</Link>
             </Button>
             <Button variant="outline" size="lg" asChild>

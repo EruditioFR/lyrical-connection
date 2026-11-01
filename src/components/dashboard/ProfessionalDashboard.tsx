@@ -1,4 +1,5 @@
 
+import MyJuriesCard from '@/components/casting/MyJuriesCard';
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +21,6 @@ import { Link } from 'react-router-dom';
 import { useProfessionalEvents } from '@/hooks/useEvents';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { EventPromotionManager } from '@/components/events/EventPromotionManager';
-import operaDashboardHero from '@/assets/opera-dashboard-hero.jpg';
 import ArtistsManagement from '@/components/professional/ArtistsManagement';
 import SectionTitle from '@/components/dashboard/SectionTitle';
 
@@ -39,16 +39,10 @@ const ProfessionalDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Hero Banner avec image d'opéra */}
+      {/* Hero Banner */}
       <div 
-        className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-r from-lyrical-900 to-gold-900"
-        style={{
-          backgroundImage: `url(${operaDashboardHero})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
+        className="relative h-48 md:h-64 rounded-2xl overflow-hidden bg-lyrical-900"
       >
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
         <div className="relative h-full flex items-center justify-center text-center px-6">
           <div className="text-white">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold mb-2">
@@ -113,7 +107,7 @@ const ProfessionalDashboard = () => {
 
       {/* Contenu principal avec onglets */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
+        <TabsList className="h-auto flex-wrap justify-start">
           <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
           <TabsTrigger value="events">Mes événements</TabsTrigger>
           <TabsTrigger value="artists">Gestion artistes</TabsTrigger>
@@ -122,11 +116,12 @@ const ProfessionalDashboard = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
+          <MyJuriesCard />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Événements récents */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+                <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">
                   <Calendar className="h-5 w-5 text-gold-600" />
                   Événements récents
                 </CardTitle>
@@ -173,7 +168,7 @@ const ProfessionalDashboard = () => {
             {/* Actions rapides */}
             <Card>
               <CardHeader>
-                <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Actions rapides</CardTitle>
+                <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Actions rapides</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button asChild className="w-full justify-start">
@@ -216,7 +211,7 @@ const ProfessionalDashboard = () => {
         <TabsContent value="events">
           <Card>
             <CardHeader>
-              <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">Mes événements</CardTitle>
+              <CardTitle className="font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">Mes événements</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center">
@@ -239,7 +234,7 @@ const ProfessionalDashboard = () => {
         <TabsContent value="analytics">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gradient-to-r after:from-gold-500 after:to-gold-300">
+              <CardTitle className="flex items-center gap-2 font-serif text-xl tracking-tight after:block after:mt-2 after:h-[2px] after:w-10 after:rounded-full after:bg-gold-600">
                 <TrendingUp className="h-5 w-5 text-gold-600" />
                 Analytiques
               </CardTitle>

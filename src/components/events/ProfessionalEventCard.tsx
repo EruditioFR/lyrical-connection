@@ -85,7 +85,7 @@ export const ProfessionalEventCard: React.FC<ProfessionalEventCardProps> = ({ ev
           />
         ) : (
           <div className="w-full h-48 bg-gray-100 rounded-t-md flex items-center justify-center">
-            <span className="text-gray-500">Aucune image</span>
+            <span className="text-muted-foreground">Aucune image</span>
           </div>
         )}
       </CardHeader>

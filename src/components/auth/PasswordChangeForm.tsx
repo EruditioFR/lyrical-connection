@@ -203,7 +203,7 @@ const PasswordChangeForm = () => {
 
           <Button 
             type="submit" 
-            className="w-full bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+            className="w-full"
             disabled={loading}
           >
             {loading ? 'Modification...' : 'Changer le mot de passe'}

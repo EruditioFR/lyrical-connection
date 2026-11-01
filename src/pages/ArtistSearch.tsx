@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import SearchFilters from '@/components/artists/SearchFilters';
 import ArtistsGrid from '@/components/artists/ArtistsGrid';
@@ -8,6 +8,9 @@ import SavedSearchesPanel from '@/components/artists/SavedSearchesPanel';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useArtists } from '@/hooks/useArtists';
+import { useUnavailableArtistIds } from '@/hooks/useArtistAvailability';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useSaveSearch } from '@/hooks/useSavedSearches';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save, Download } from 'lucide-react';
@@ -22,6 +25,13 @@ const ArtistSearch = () => {
   const [location, setLocation] = useState('');
   const [repertoireFilters, setRepertoireFilters] = useState<RepertoireFilters>({});
   const [showSavedSearches, setShowSavedSearches] = useState(false);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [availableFrom, setAvailableFrom] = useState('');
+  const [availableTo, setAvailableTo] = useState('');
+  const availabilityTo = availableTo || availableFrom;
+  const { unavailableIds, featureUnavailable } = useUnavailableArtistIds(availableFrom || undefined, availabilityTo || undefined);
+  const toggleCompare = (id: string) =>
+    setCompareIds(ids => ids.includes(id) ? ids.filter(i => i !== id) : ids.length < 4 ? [...ids, id] : ids);
 
   const filters = {
     searchTerm,
@@ -37,12 +47,11 @@ const ArtistSearch = () => {
   const saveSearchMutation = useSaveSearch();
 
   // Filter artists based on current criteria
+  // Disponibilité : exclure les artistes ayant un engagement ou une indisponibilité sur la période
   const filteredArtists = useMemo(() => {
-    return artists.filter(artist => {
-      // Additional client-side filtering if needed
-      return true;
-    });
-  }, [artists]);
+    if (!unavailableIds) return artists;
+    return artists.filter(artist => !unavailableIds.has(artist.id));
+  }, [artists, unavailableIds]);
 
   // Get selected voice types for display
   const selectedVoiceTypes = useMemo(() => {
@@ -182,15 +191,15 @@ const ArtistSearch = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Recherche d'artistes</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-foreground">Recherche d'artistes</h1>
+            <p className="text-muted-foreground mt-2">
               Trouvez les artistes parfaits pour vos productions
             </p>
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               onClick={() => setShowSavedSearches(!showSavedSearches)}
@@ -243,9 +252,32 @@ const ArtistSearch = () => {
           />
         </div>
 
+        {/* Disponibilité */}
+        <fieldset className="mb-8 flex flex-wrap items-end gap-4 rounded-lg border p-4">
+          <legend className="px-1 text-sm font-medium">Disponible</legend>
+          <div>
+            <Label htmlFor="available-from">Du</Label>
+            <Input id="available-from" type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} />
+          </div>
+          <div>
+            <Label htmlFor="available-to">Au</Label>
+            <Input id="available-to" type="date" min={availableFrom || undefined} value={availableTo} onChange={e => setAvailableTo(e.target.value)} />
+          </div>
+          {(availableFrom || availableTo) && (
+            <Button variant="ghost" onClick={() => { setAvailableFrom(''); setAvailableTo(''); }}>Effacer les dates</Button>
+          )}
+          <p className="basis-full text-sm text-muted-foreground">
+            {featureUnavailable
+              ? 'Le filtre de disponibilité sera actif après la mise à jour de la base de données.'
+              : unavailableIds
+                ? `${unavailableIds.size} artiste(s) indisponible(s) sur cette période, masqué(s) des résultats.`
+                : "D'après l'agenda déclaré par chaque artiste."}
+          </p>
+        </fieldset>
+
         {/* Indicateur de critères actifs */}
         {hasActiveFilters && (
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-4 text-sm text-muted-foreground">
             <span className="font-medium">Critères actifs :</span>
             {searchTerm && <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 rounded-md">"{searchTerm}"</span>}
             {voiceType && <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded-md">{voiceType}</span>}
@@ -262,7 +294,27 @@ const ArtistSearch = () => {
           searchQuery={searchTerm}
           selectedVoiceTypes={selectedVoiceTypes}
           onResetFilters={handleResetFilters}
+          compareIds={compareIds}
+          onToggleCompare={toggleCompare}
         />
+
+        {/* Barre du comparateur */}
+        {compareIds.length > 0 && (
+          <div className="sticky bottom-4 z-20 mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card p-4 shadow-lg">
+            <p className="text-sm">
+              {compareIds.length} artiste(s) sélectionné(s) — jusqu'à 4
+            </p>
+            <div className="flex gap-2">
+              <Button variant="ghost" onClick={() => setCompareIds([])}>Effacer</Button>
+              <Button asChild disabled={compareIds.length < 2}>
+                <Link to={`/comparer?ids=${compareIds.join(',')}`} aria-disabled={compareIds.length < 2}
+                  onClick={e => { if (compareIds.length < 2) e.preventDefault(); }}>
+                  Comparer
+                </Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );

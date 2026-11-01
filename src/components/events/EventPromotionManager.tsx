@@ -98,7 +98,7 @@ export const EventPromotionManager = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-gradient-to-r from-gold-50 to-lyrical-50 p-4 rounded-lg border border-gold-200">
+          <div className="bg-gold-50 p-4 rounded-lg border border-gold-200">
             <h3 className="font-semibold text-gold-700 mb-2">Service de promotion</h3>
             <p className="text-sm text-gold-600 mb-3">
               Mettez en avant vos événements sur la page d'accueil du site pour plus de visibilité.

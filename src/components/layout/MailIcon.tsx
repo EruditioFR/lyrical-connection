@@ -3,11 +3,12 @@ import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
-import { useMailbox } from '@/hooks/useMailbox';
+import { useUnreadCount } from '@/hooks/useMailbox';
 
 const MailIcon = () => {
   const navigate = useNavigate();
-  const { unreadCount } = useMailbox();
+  // Un simple comptage : l'icône est présente sur toutes les pages
+  const unreadCount = useUnreadCount();
 
   const handleClick = () => {
     navigate('/messages');
@@ -18,9 +19,9 @@ const MailIcon = () => {
       variant="ghost"
       size="sm"
       onClick={handleClick}
-      className="relative p-2 hover:bg-gray-100"
+      className="relative p-2 hover:bg-accent"
     >
-      <Mail className="h-5 w-5 text-gray-600" />
+      <Mail className="h-5 w-5 text-muted-foreground" />
       {unreadCount > 0 && (
         <Badge
           variant="destructive"

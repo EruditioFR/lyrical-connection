@@ -30,7 +30,7 @@ const ArtistBadges = ({ artistProfileId, className = '', showAll = false }: Arti
             <TooltipTrigger asChild>
               <Badge
                 variant="outline"
-                className="bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border-amber-400/50 text-amber-700 dark:text-amber-300 hover:from-amber-500/30 hover:to-yellow-500/30 cursor-default transition-all"
+                className="bg-amber-500/20 border-amber-400/50 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 cursor-default transition-all"
               >
                 <span className="mr-1">{badge.badge_icon}</span>
                 {badge.badge_name}

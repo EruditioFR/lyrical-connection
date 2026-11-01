@@ -41,7 +41,7 @@ const NotificationCenter = () => {
       case 'payment_completed':
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       default:
-        return <Info className="h-4 w-4 text-gray-500" />;
+        return <Info className="h-4 w-4 text-muted-foreground" />;
     }
   };
 

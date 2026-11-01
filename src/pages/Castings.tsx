@@ -69,7 +69,7 @@ const Castings = () => {
           {user && (
             <Button
               onClick={() => navigate('/castings/nouveau')}
-              className="bg-gradient-to-r from-lyrical-600 to-gold-500 hover:from-lyrical-700 hover:to-gold-600"
+             
             >
               <Plus className="h-4 w-4 mr-2" />
               Créer un casting

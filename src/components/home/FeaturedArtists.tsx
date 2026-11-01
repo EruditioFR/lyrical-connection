@@ -23,11 +23,17 @@ const FeaturedArtistCard = ({ artist }: { artist: any }) => {
       onMouseLeave={hasAudioTracks ? stopAudioPreview : undefined}
     >
       <Link to={`/artistes/${artist.id}`} className="block relative aspect-[3/4] overflow-hidden">
-        <img 
-          src={artist.image} 
-          alt={artist.name} 
-          className="w-full h-full object-cover"
-        />
+        {artist.image ? (
+          <img 
+            src={artist.image} 
+            alt={artist.name} 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-muted flex items-center justify-center">
+            <Music className="h-12 w-12 text-muted-foreground" />
+          </div>
+        )}
         
         {artist.featured && (
           <div className="absolute top-3 right-3 bg-gold-500/90 text-white text-xs font-medium py-1 px-2 rounded-full">
@@ -96,11 +102,10 @@ const FeaturedArtists = () => {
     id: artist.id,
     name: artist.stage_name,
     voiceType: artist.voice_type || 'Artiste lyrique',
-    image: artist.profile_image_url || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    image: artist.profile_image_url,
     specialty: artist.bio ? artist.bio.substring(0, 50) + '...' : 'Artiste professionnel',
     location: artist.location || 'France',
-    featured: true,
-    profileViews: Math.floor(Math.random() * 1000) + 100 // TODO: Implémenter les vraies vues de profil
+    featured: true
   }));
 
   if (isLoading) {
@@ -152,7 +157,7 @@ const FeaturedArtists = () => {
         </div>
         
         {/* Call to action section */}
-        <div className="mt-16 bg-gradient-to-r from-lyrical-50 to-gold-50 rounded-xl p-8 text-center">
+        <div className="mt-16 bg-lyrical-50 rounded-xl p-8 text-center">
           <h3 className="text-xl font-serif font-semibold mb-4">
             {t('featuredArtists.becomeArtist.title')}
           </h3>
@@ -161,7 +166,7 @@ const FeaturedArtists = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="bg-gradient-to-r from-lyrical-600 to-lyrical-700 hover:from-lyrical-700 hover:to-lyrical-800 text-white"
+             
               asChild
             >
               <Link to="/auth">{t('featuredArtists.becomeArtist.createProfile')}</Link>

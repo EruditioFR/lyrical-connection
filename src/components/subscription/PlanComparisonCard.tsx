@@ -51,9 +51,9 @@ export const PlanComparisonCard = ({
         {isLoading ? 'Chargement...' : 'Choisir ce plan'}
       </Button>;
   };
-  return <Card className={`relative ${isPremium ? 'border-primary ring-2 ring-primary/50' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isPremiumVisibility ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary' : ''}`}>
+  return <Card className={`relative ${isPremium ? 'border-primary ring-2 ring-primary/50' : ''} ${isCurrentPlan ? 'ring-2 ring-primary' : ''} ${isPremiumVisibility ? 'bg-primary/10 border-primary' : ''}`}>
       {isPremium && <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
+          <Badge className="bg-primary text-primary-foreground">
             <Crown className="h-3 w-3 mr-1" />
             Option Premium
           </Badge>
